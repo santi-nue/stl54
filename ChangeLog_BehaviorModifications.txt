@@ -1,0 +1,46 @@
+
+2011/05/15  Add : MANAGE_WIRESHARK_PINFO into .wsgd
+  To have access to pinfo data,
+   you must add into wsgd file :
+  MANAGE_WIRESHARK_PINFO  yes
+
+
+
+2010/11/07  Mod : do not accept identifier which begin by a number
+
+  uint24[3]        3_bytes_3_times;  # NOT ok
+  uint24[3]    three_bytes_3_times;  #     ok
+
+
+
+2010/09/25  Prf : erase all data created during a function
+
+All variable/fields created during a function
+ are erased at the end of the function.
+
+They are still visible/usable inside wireshark,
+ but you can NOT use them into fdesc format description.
+
+
+Example, with the following function :
+
+  function void  function_name ()
+  {
+    uint16        an_integer_field;
+    var string    a_string_variable = "content";
+  }
+
+
+Call the function :
+
+  call function_name  ();
+
+  if (an_integer_field == 0)           # FATAL : an_integer_field does NOT exist
+  {
+    ...
+  }
+
+  if (a_string_variable == "content")  # FATAL : a_string_variable does NOT exist
+  {
+    ...
+  }

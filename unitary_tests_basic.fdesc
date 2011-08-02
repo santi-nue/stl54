@@ -1,0 +1,128 @@
+
+
+###############################################################################
+# Function for decoder
+###############################################################################
+
+function void  decode_stream_nothing (in frame  frame, in uint32   nb_of_bits_needed)
+{
+  while (nb_of_bits_needed > 0)
+  {
+    hide uint1  bit1;
+    call frame_append_data (frame, bit1);
+    set nb_of_bits_needed = nb_of_bits_needed - 1;
+  }
+}
+
+function void  decode_stream_nothing_byte (in frame  frame, in uint32   nb_of_bits_needed)
+{
+  hide var uint32   nb_of_bytes_needed = nb_of_bits_needed / 8;
+  while (nb_of_bytes_needed > 0)
+  {
+    hide uint8  byte1;
+    call frame_append_data (frame, byte1);
+    set nb_of_bytes_needed = nb_of_bytes_needed - 1;
+  }
+}
+
+function void  decode_stream_test16 (in frame  frame, in uint32   nb_of_bits_needed)
+{
+  if (nb_of_bits_needed != 16)
+  {
+    fatal ("decode_stream_test16 called with nb_of_bits_needed=%d (only 16 is accepted)", nb_of_bits_needed);
+    return;
+  }
+
+  hide uint8  byte1;
+  hide uint8  byte2;
+  # That's silly but it is just a test
+  call frame_append_data (frame, byte1 | byte2);
+  call frame_append_data (frame, byte1 & byte2);
+}
+
+###############################################################################
+# Print ip
+###############################################################################
+
+function string  print_ip3 ( in uint32  ip )
+{
+#  hide var uint8   ip_a = ( ip >> 24 ) & 255;        # NOT ok
+#  hide var uint8   ip_a =  255;                      #     ok
+#  hide var uint8   ip_a = ip & 255;                  # NOT ok
+#  hide var uint8   ip_a = ip >> 24;                  # NOT ok
+#  hide var uint32   ip_a = ip >> 24;                 # NOT ok
+#  hide var uint32   ip_a = ip + 24;                  # NOT ok
+  hide var uint32   ip_a = 255;
+  hide var uint32   ip_b = ( ip_a >> 2 ) & 0x03;
+  return  "ICIOA_print_ip";
+}
+
+function string  print_ip ( in uint32  ip )
+{
+  hide var uint8   ip_a = ( ip >> 24 ) & 255;
+  hide var uint8   ip_b = ( ip >> 16 ) & 255;
+  hide var uint8   ip_c = ( ip >>  8 ) & 255;
+  hide var uint8   ip_d = ( ip       ) & 255;
+  hide var string  ip_str = print("%d.%d.%d.%d", ip_a, ip_b, ip_c, ip_d);
+  return  ip_str;
+}
+
+function string  print_ip4 ( in int64  ip2 )
+{
+  hide var uint32  ip = 49727;
+  hide var uint8   ip_a = ( ip >> 24 ) & 255;
+  hide var uint8   ip_b = ( ip >> 16 ) & 255;
+  hide var uint8   ip_c = ( ip >>  8 ) & 255;
+  hide var uint8   ip_d = ( ip       ) & 255;
+  hide var string  ip_str = print("%d.%d.%d.%d", ip_a, ip_b, ip_c, ip_d);
+  return  ip_str;
+}
+
+###############################################################################
+# Print ip
+###############################################################################
+
+struct  T_struct_16_16
+{
+  uint16    val1;
+  uint16    val2;
+}
+
+###############################################################################
+# addition
+###############################################################################
+
+function any  addition (in any lhs, in any rhs, in string debug_message = "")
+{
+  if (debug_message != "")
+  {
+    print ("%s", debug_message);
+  }
+  return  (lhs + rhs) ;
+}
+
+###############################################################################
+# Const
+# "::" is mandatory
+# Forbidden :
+# - array,
+# - specifications no_statement, transform, display, constrains ...
+# - struct, switch, ...
+###############################################################################
+
+const uint16   konst::int = 2;
+const float32  konst::flt = -2.6;
+const string   konst::str = "abcdefgh - abcdefgh";
+
+enum16 T_enum_for_const
+{
+  cs_start  -
+}
+
+const uint32            konst::int_enum = T_enum_for_const::cs_start;
+const T_enum_for_const  konst::enum = T_enum_for_const::cs_start;
+
+const float64  Math::PI = 3.1415927;
+const float64  Math::deg_to_rad = Math::PI / 180;
+
+const string   konst::str_fct = string.replace_all (konst::str, "bc", "xyz");

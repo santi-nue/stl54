@@ -1,0 +1,9 @@
+
+REM Set environment
+
+REM Visual C++ 2008 EE 32 bits example
+REM call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat"
+
+REM Visual C++ 2008 EE 64 bits example
+REM call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars64.bat"
+

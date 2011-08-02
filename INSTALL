@@ -1,0 +1,11 @@
+
+Copy the dll into the plugins/<version> directory of wireshark.
+
+Put all needed *.wsgd and *.fdesc files into a single directory.
+
+The directory could be :
+- any directory if you set a environment variable : WIRESHARK_GENERIC_DISSECTOR_DIR = < directory where are example_1.* files>
+- wireshark profiles directory (e.g. C:\Users\< user>\AppData\Roaming\Wireshark\profiles)
+- Documents directory (e.g. C:\Users\< user>\Documents)
+- plugin directory (e.g. C:\Program Files\Wireshark1.0.3\plugins\1.0.3)
+- wireshark install directory (e.g. C:\Program Files\Wireshark1.0.3)

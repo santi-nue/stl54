@@ -1,0 +1,302 @@
+
+2011/08/01  Fix : fatal error (wireshark 1.2) on 2.7 because expecting 2,7 (or ..)
+2011/08/01  Fix : output 2,7 (or ..) instead of 2.7
+2011/07/17  Fix : error msg on forward declaration not implemented
+2011/05/15  Add : MANAGE_WIRESHARK_PINFO into .wsgd
+2011/05/15  Fix : desegmentation bug (wireshark 1.2.x only)
+2011/04/02  Fix : Bad data size take into account (byte_interpret.exe only)
+2011/03/26  Add : Built-in functions 
+                   getenv 
+2011/03/20  Add : Default value for function parameter 
+2011/03/18  Add : Built-in functions 
+                   to_integer 
+2011/03/13  Add : const 
+2011/03/12  Add : Built-in functions 
+                   string.length  string.substr  string.erase  string.insert
+                   string.replace  string.replace_all  string.find
+2010/12/30  Add : transform expression
+                  {tei=2*this-4}       the result of the expression must be an integer
+                  {tef=2*this-4.3}     the result of the expression must be a  float
+2010/12/24  Fix : "uint16{d=%s}   val ;" exception or crash because of %s
+2010/12/19  Fix : "return  print ("2");" rejected because of space after print
+2010/12/19  Fix : "return  lhs + rhs;" rejected because of space after lhs
+2010/12/09  Fix : "-0Xdf / -1" rejected
+2010/12/09  Fix : "-2**2" now gives 4 (instead of -4 previously)
+2010/11/10  Prf : T_expression pre_compute value & operation
+2010/11/07  Mod : do not accept identifier which begin by a number
+2010/10/29  Prf : use T_expression for var set condition return
+2010/10/28  Mod : modification of prototype of many functions
+2010/10/16  Prf : into get_complex_value, move get_value_of_read_variable in 4th place (instead 1st)
+2010/10/15  Add : unit_text_exec target into Makefile (linux) to execute unitary tests
+2010/10/13  Prf : do not create intermediate vector into compute_expression
+2010/10/09  Add : <a_type>{byte_order=<byte_order>}   <field_name>;
+2010/10/03  Add : <a_type>{decoder=<decode_function>} <field_name>;
+2010/09/25  Prf : erase all data created during a function
+2010/09/24  Prf : erase functions parameters
+2010/09/18  Prf : changed T_interpret_value.A_type implementation to short : 4 bytes less per data
+2010/09/18  Prf : changed T_attribute_value.original to string : 44 bytes less per data
+2010/09/18  Prf : removed T_attribute_value.more (unused member) : 12 bytes less per data
+2010/09/13  Fix : variable inside function does not work
+2010/08/06  Fix : performance (time/memory) problem on global data
+2010/07/26  Add : var <a_struct_type>  <name> = <var/field of the same type>;
+2010/07/21  Fix : variable array possible inside global data and at end of the msg
+2010/07/18  Fix : Array read/write is possible : set array[<expression>] = array[<expression>] + 7;
+2010/07/16  Add : explicit call to subdissector subproto(50){dissector=xxx}
+2010/07/15  Fix : Array read/write is possible : set array[2] = array[1] + 7;
+2010/07/14  Add : msg could be a parameter of function (thanks to Peter Remmers)
+2010/07/14  Add : decoder (undocumented feature, beta version with big performance problem)
+2010/05/27  Fix : Windows : print("%d",value_above_32_bits) print bad value
+2010/05/22  Add : MSG_TITLE permits to choose the field displayed into Info column
+2010/05/14  Fix : Change some code for source compatibility with VC2008
+2010/03/04  Mod : print command does not print "print: " anymore
+2010/03/02  Fix : Change some code for source compatibility with OS X (thanks to Guy Harris)
+2010/02/27  Fix : Change some code for source compatibility with 1.3.x and OS X (thanks to Guy Harris)
+2010/02/26  Add : value of raw data is now displayed : 0A347F...
+2010/02/25  Add : PARENT_SUBFIELD_RANGE  <low>  <high>
+2010/02/12  Fix : Makefile Linux : include of inexistent .deps file
+2010/02/12  Fix : Makefile Linux : relative path changed to absolute
+2010/02/10  Add : display the line  of a syntax error in *.fdesc
+2010/02/06  Add : display the place of a syntax error in *.fdesc
+2010/02/06  Add : switch case_type is optional.
+                 	 It is not if you try to specify enum values without ::.
+2010/02/06  Fix : existence of function (inside call ...) is checked at init
+                   NB: parameters (number and type) not checked
+                   NB: existence of function (inside expression) not checked
+2010/02/06  Fix : return  <value>; is possible into inline struct (inside a not void function)
+2010/02/06  Add : switch inline
+2010/01/17  Add : Makefile for Linux (Ubuntu 9.10 / gcc 4.4.1)
+2010/01/16  Fix : Linux : long protocol name contains a new line
+2010/01/16  Fix : Linux : 0.236 is not a valid number
+2010/01/16  Fix : Change some code for Linux compatibility
+2010/01/16  Fix : Add/change some include for Linux compatibility
+2009/12/27  Fix : Hexa dump highlight on bit data
+2009/12/25  Fix : Wireshark have good values when using bit data (and so filters work) 
+2009/12/25  Fix : Hexa dump highlight on variable
+2009/12/25  Fix : return  <value>; is possible into if or loop (inside a not void function)
+2009/12/23  Fix : print  xxx.* ; effectively print variables which begin by "xxx."
+2009/12/15  Add : multiple PARENT_SUBFIELD & PARENT_SUBFIELD_VALUES
+                   NB: PARENT_SUBFIELD could be a field of the proto itself
+2009/12/02  Add : msg type.
+                   Into global data :   msg  <msg_ref_name> = nil;
+                   Into a message   :   set  global.<msg_ref_name> = this_msg;
+                                or      set  global.<msg_ref_name> = <another_msg_ref_name>;
+                   Then use         :   global.<msg_ref_name>.xxx.yyy.zzz
+2009/11/30  Mod : Internal management of field/variable name.
+                   Function's parameters are local to the function.
+2009/11/11  Add : Multiple constaints, e.g: {min=2:max=9}{min=12:max=19}
+                   Must be specified in the good order.
+2009/11/11  Fix : Quantum and offset does not work for bit data (uint1, int3 ...)
+2009/11/09  Add : Debug information at beginning of trace file.
+2009/11/01  Add : No Statement value specification {ns=<value>}
+2009/10/18  Add : Bit data every where
+                   int2 to int32, enum1 to enum32
+2009/10/16  Add : Bit data every where
+                   uint1 to uint32
+2009/10/12  Add : Bit data every where
+                   int2 to int7, uint1 to uint7, bool1, enum1 to enum7
+                   padding_bits
+                   - loop_size          replaced by loop_size_bytes          and loop_size_bits
+                   - check_eof_distance replaced by check_eof_distance_bytes and check_eof_distance_bits
+                   - move_position      replaced by move_position_bytes      and move_position_bits
+                   NB: raw, subproto and insproto must start at a byte position
+2009/09/21  Fix : bitstream at the of the msg is not interpreted.
+2009/08/20  Fix : Move some code for Frhed compatibility
+2009/07/18  Add : global data (use GLOBAL_DATA_TYPE into your *.wsgd)
+2009/06/20  Fix : 1.2.0 code compatibility
+2009/06/02  Fix : little_endian and big_endian inverted !!!
+                   you must change your *.fdesc
+2009/06/02  Add : Added again pinfo.srcport/destport/...  ONLY for 1.0.x wireshark version
+2009/05/29  Fix : Removed pinfo.srcport/destport/... for 1.1.x compatibility
+2009/05/28  Add : print <anything>*;   e.g:  print pinfo.*;  print *;
+2009/05/28  Add : read access to pinfo.fd.num/pkt_len/cap_len/cum_bytes/abs_ts/...
+2009/05/21  Add : read access to pinfo.dl_src/dl_dst/src/dst/srcport/destport/...
+2009/05/21  Fix : pb on string+string on <fct> (..., "str" + "ing", ...);
+2009/05/21  Fix : "Malformed Packet: <proto>" on array when no more data to read the next elt
+                   systematic on array[*]
+2009/05/20  Fix : "Malformed Packet: <proto>" when a print/chat/... is done
+                   at the end of the msg input data
+2009/05/20  Fix : chat, note and warning are considered like "error_in_packet"
+2009/05/17  Add : forward declaration  struct <struct_name>;
+                   and enum, bitfield, bitstream, switch
+2009/05/17  Add : display expression  {de=string expression}
+                   var uint32{de=sec_to_dhms(this)}       unix_time = 23456789;
+2009/05/17  Add : functions
+                   NB: all fields/variables are global as usual
+                       function parameters are global also
+                       only this is scoped
+2009/05/16  Add : check (at initialization time) existence of all types used 
+2009/05/13  Mod : break and continue are no more deep
+                   if really necessary use deep_break or deep_continue
+2009/05/12  Fix : TCP (or other) packet reassembly does not work when colorize is off
+2009/05/08  Fix : include command take care of sub-directory
+2009/05/07  Add : could use <enum type>::<symbolic value> in any expression/condition
+2009/05/02  Add : variable/field can be use with the full name and partial ending name
+                  xxx
+                    yyy
+                      zzz
+                  The zzz variable/field can be use with :
+                  - simple name :         "zzz"
+                  - full name   : "xxx.yyy.zzz"
+                  - ending name :     "yyy.zzz"
+2009/05/01  Add : set command trigger a fatal if variable/field specified does not exist
+2009/05/01  Add : warning, note and chat (like error)
+2009/04/30  Add : return into a struct
+2009/04/26  Add : bitfield and bitstream could have enum
+                   NB: outside bitfield and bitstream,
+                        enum are always read on entire byte.
+                        E.g: an enum14 will be treated as enum16
+                        This is only the current behavior, do NOT rely on it for future.
+2009/04/25  Add : some statistics (very few), see Statistics/<protocol> inside wireshark
+2009/04/24  Add : bitstream, identic to bitfield except :
+                   read bits from left to right (does not take care of byte order) 
+2009/04/20  Fix : Fatal error on reading file.fdesc when there is a "<field_name>;"
+                   which ends at position 4096 (8192, ...) of the file.fdesc.
+2009/04/09  Add : to_numeric(...) get a numeric (integer or float) type value
+                  "12" + 4              triggers a fatal error
+                  to_numeric("12") + 4  gives 16
+                  to_numeric("toto")    triggers a fatal error
+2009/04/07  Add : to_string(...) get a string type value
+                  "12" + 4              triggers a fatal error
+                  "12" + to_string(4)   gives "124"                  
+2009/04/07  Add : print(...) could be used inside expression
+                   var string  msg_id = print ("J%s.%d", 12, 6);
+                   if (msg_id == print ("J%d", 12) + "." + "6")) { ... }
+2009/04/07  Fix : Hexa dump highlight on variable string
+2009/04/04  Add : Hexa dump highlight on variable
+2009/04/04  Add : Hexa dump highlight on bitfield field
+2009/04/03  Add : ( ) are no more necessary on set command
+2009/03/31  Fix : avoid infinite loop when PACKET_CONTAINS_ONLY_1_MSG=no        and
+                                           not enough data to read the header   and
+                                           msg id not recognized
+2009/03/29  Add : bitfield : the global integer value read is displayed in hexa
+2009/03/29  Add : inline bitfield : define a bitfield field without previous declaration
+2009/03/28  Add : inline struct : define a struct field without previous declaration
+2009/03/24  Add : Initialisation check : field name, accept "" only for struct, switch and bitfield fields.
+2009/03/24  Add : Initialisation check : field name, accept only alphanumeric and _
+2009/03/24  Add : Initialisation checks : output and byte_order parameters
+2009/03/21  Mod : Modified default values for parameters :
+                   PACKET_CONTAINS_ONLY_1_MSG           no
+                   PACKET_CONTAINS_ONLY_COMPLETE_MSG    no
+2009/03/21  Add : Could have many messages inside 1 packet.
+                   Must define PACKET_CONTAINS_ONLY_1_MSG  no into <file>.wsgd.
+                   Bug: when a message is on 2 packets,
+                    only the identifier of this message appears in the 2nd packet (inside packet sequence)
+2009/03/13  Add : Could print some additional info on a struct item :
+                   struct <name>  print (<printf format and arguments>)
+                   The arguments could be fields specified inside the struct.
+2009/03/13  Add : transform quantum & offset could be a static expression (without any attribute/variable).
+2009/03/13  Add : constraints min & max      could be a static expression (without any attribute/variable).
+2009/03/13  Add : expression with % (modulo) or ** (power) are possible.
+2009/03/10  Fix : switch case "a_string" works.
+                   NB: switch case a_string works also but it is NOT the good way to do. It will NOT work in the future.
+2009/03/07  Add : Check MSG_HEADER_TYPE is a defined type name.
+                  Check MSG_MAIN_TYPE, MSG_FROM_MAIN_TYPE & MSG_TO_MAIN_TYPE are a defined type name.
+2009/03/05  Add : PARENT_SUBFIELD_VALUES could be (and must be) strings if PARENT_SUBFIELD is a string field.
+2009/03/04  Add : MSG_TOTAL_LENGTH into <file>.wsgd
+                   MSG_TOTAL_LENGTH gives the total length of the msg (computed from the msg header)
+2009/02/22  Add : MSG_FROM_MAIN_TYPE & MSG_TO_MAIN_TYPE into <file>.wsgd
+                   To be used when it is necessary to distinguish msg coming from and msg going to PARENT_SUBFIELD_VALUES.
+                   Some protocols have some identical message identifier depending on the emitter.
+                   Does NOT work if PARENT_SUBFIELD_VALUES are strings.
+2009/02/21  Add : Added string for variable (var command) :
+                   var string      <variable name> = <value or expression> ;
+                   var string(12)  <variable name> = <value or expression> ;
+                   NB: if size specified, trigger a fatal error message if length of <value or expression> is bigger
+2009/02/14  Add : Check overflow for variables (var command).
+                   E.g, the following line will trigger (at execution time) a FATAL error :
+                   var uint8  <variable name> = 230*43 ;
+2009/02/13  Add : bitfield<8, 16, 24 or 32>  <type name>
+                  {
+                    uint3{d=bin}                             field1 ;
+                    hide uint2                               field2_unused ;
+                    uint15{q=2.34:o=-117.35}{min=-105.17}    field3 ;
+                    ...
+                  }
+                  Accepted inside : uintXX, var, set.
+                  Later : Must also manage enumXX.
+                  Perhaps later : array
+                  Perhaps later : if, while ...
+2009/02/10  Add : var <type>  <variable name> = <value or expression> ;
+                   permits to declare, initialize and display a variable
+                   <type> could be any int, float and enum
+                   NB: string not done at this time
+                   NB: could use hide before var keyword
+                   var uint32{q=3}{d=the int=0x%04x}   integer = 23;
+                   var float32                         flt = 136.234;
+                   var <an enum type>                  oper = 2;          # must be integer value and NOT the symbolic value
+                   var uint8{d=bin}         integer_bit_1     = (integer & 0x01);
+                   var uint8{d=bin}         integer_bit_2_3   = (integer & 0x06)>>1;
+2009/02/10  Add : set <variable name> = <value or expression> ;
+                   permits to set a value to a variable (the variable must already exist ?).
+                    set    Size = 0xa*3+3 ;
+                    set    Size = Size-10 ;
+                    set    Size_bit_part = (Size & 0xc)>>2;
+                  NB: set does not take care of quantum, offset, display, min and max
+                  NB: set does not take care of variable type ! (at this time)
+2009/02/08  Add : print ("printf format %d and %2.7f and %22s", <expression>, <expression>, <expression> ) ;
+                   Works also for debug_print, error and fatal.
+                   NB: %...s is accepted for any type
+                  print ("%s %s %s %s", <a string>, <an int>, <a float>, <an enum>);
+2009/02/06  Add : hide <type name>    <field name> ;
+                   permits to hide the variable (NOT displayed and could NOT filter on it)
+2009/01/28  Fix : (...) inside (...) is now accepted for raw and string, eg: string(xxx+(yyy-zzz))
+2009/01/20  Fix : a (hidden) error_in_packet field is added on each error so the display filter
+                  <your_proto>.error_in_packet
+                   is really effective
+2009/01/18  Mod : ";" must be added at the end of :
+                  - <type_name>  <field_name> ;
+                  - <command>    <parameter> ;
+                  - alias        <new_type_name>    <already_existent_type_name> ;
+                  - enumXX  <new_enum_type_name> as <already_existent_enum_type_name> ;
+                  - include <file_name> ;
+                  - do { ... } while (...) ;
+2009/01/12  Fix : Abort dissection if PACKET_CONTAINS_ONLY_COMPLETE_MSG == false and do NOT recognize value of MSG_ID_FIELD_NAME
+                  Still NOT work if there is many packets containing less than header size data.
+2009/01/10  Fix : Enum value is no more considered like a string (trigger a fatal error into numeric test)
+2009/01/04  Add : sub dissector SUBFIELD could be string (and could have 3 real fields)
+2008/12/31  Add : Display specification {d=printf format}
+2008/12/30  Mod : Display specification     <xxx>         -> {d=xxx}
+                  Transform specification   <q=xxx:o=yyy> -> {q=xxx:o=yyy}
+                  Constraints specification {0.12:23.7}   -> {min=0.12:max=23.7}
+2008/12/29  Fix : All Protocols which follow a bad protocol (some particular syntax error) are said already existent.
+2008/12/29  Add : Check that PARENT_SUBFIELD exist.
+2008/12/29  Add : Check that PROTOABBREV does NOT already exist.
+                  PROTONAME & PROTOSHORTNAME still NOT checked (missing some functions into proto.h)
+2008/12/28  Add : sub dissector and inside dissector
+                  in .wsgd  : SUBFIELD  port  uint16  from  srcport  dstport
+                  in .fdesc :
+                  - subproto(Taille-12)      data
+                  - insproto(Taille-12)      data
+2008/12/26  Mod : Names inside <file>.wsgd :
+                  - PACKET is what is captured by Wireshark
+                  - MSG is the user protocol data
+                  So, PACKET_HEADER_TYPE becomes MSG_HEADER_TYPE ...
+2008/12/21  Add : enum24
+2008/12/20  Fix : First level now appears inside a switch.
+                  Negative side effect : must specify "" to NOT see the useless msg name tree
+                                (useless because the corresponding tree is already created before)
+2008/12/19  Add : loop_size  <size_to_read> { ... }
+2008/12/19  Add : Check the numeric values of enum types
+                  Check partially field type name (error message not explicit about the error place)
+                  Check partially field name
+2008/12/18  Add : Display specification <bin>
+2008/12/16  Fix : DEBUG flags now effective (very less things traced into wireshark_generic_dissector_traces.txt if not set)
+2008/12/05  Add : break & continue    for loops (while, do while)
+2008/12/04  Add : do { ... } while ( ... )
+2008/11/29  Add : management of PACKET_CONTAINS_ONLY_COMPLETE_MSG
+2008/11/28  Add : Search for *.wsgd into the following directories (stop on the 1st directory where a <file>.wsgd is found) :
+                  - WIRESHARK_GENERIC_DISSECTOR_DIR
+                  - get_profiles_dir     = C:\Users\<user>\AppData\Roaming\Wireshark\profiles
+                  - get_persdatafile_dir = C:\Users\<user>\Documents
+                  - get_datafile_dir     = C:\Program Files\Wireshark1.0.3
+                  - get_plugin_dir       = C:\Program Files\Wireshark1.0.3\plugins\1.0.3
+                  - .
+2008/11/28  Fix : Transform : wireshark filters works on transformed value
+2008/11/23  Fix : Protocol which follow a bad protocol (syntax error) crash wireshark on 1st dissection
+2008/11/23  Add : many errors displayed
+2008/11/22  Add : Display specifications <hex> or <oct>
+2008/11/22  Add : string_nl : idem string + manage "\n" or "\r\n" as end of string
+2008/11/22  Add : Transform specifications <q=quantum:o=offset>
+                  BUT, wireshark filters do NOT see the transformation and still filter on NOT transformed value.
+                  NOT user friendly !
+2008/11/20  Fix : unlimited string without a zero (end of string) is no more an error
