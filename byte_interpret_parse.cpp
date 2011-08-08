@@ -43,10 +43,12 @@ using namespace std;
 #include "byte_interpret_parse.h"
 
 
+// must be called for each new line seen
 void    build_types_context_line_new (const istream  & is);
 
+
 //*****************************************************************************
-// skip_blanks
+// skip_blanks  including new lines
 //*****************************************************************************
 
 void    skip_blanks (istream  & is)
@@ -65,6 +67,7 @@ void    skip_blanks (istream  & is)
 
 		if (next_char == '\n')
 		{
+			// new line notification
 			build_types_context_line_new(is);
 		}
 
@@ -81,6 +84,7 @@ void    skip_blanks_and_comments (istream  & is)
     // While istream is ok ...
 	while (is.good())
 	{
+		// skip blanks including new lines
 		skip_blanks(is);
 
 		// NB: do NOT use unget or putback (bug on VC++ 2003/2005/2008)
@@ -97,6 +101,7 @@ void    skip_blanks_and_comments (istream  & is)
 	    string  tmp;
 		getline (is, tmp);
 
+		// new line notification
 		build_types_context_line_new(is);
 	}
 }
