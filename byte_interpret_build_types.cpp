@@ -979,7 +979,7 @@ string    build_field (istream                           & is,
 		{
 			read_token_key_word_specified (is, "while");
 
-			field_type_name.type = "do-while";
+			field_type_name.type = "do_while";
 
 			M_FATAL_IF_FALSE (read_token_expression_parenthesis (is, field_type_name.name));
 			field_type_name.condition_expression.build_expression(type_definitions, field_type_name.name);

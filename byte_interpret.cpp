@@ -1467,14 +1467,14 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
 	string    new_data_name = data_name;
 
     if ((type == "while") ||
-		(type == "do-while"))
+		(type == "do_while"))
     {
 		const T_expression  & condition_expression = field_type_name.get_condition_expression();
 
 		if (new_data_name != "")
             new_data_name += K_ATTRIBUTE_SEPARATOR;
 
-		bool      must_not_test_1st_time = (type == "do-while");
+		bool      must_not_test_1st_time = (type == "do_while");
         size_t    idx_while = 0;
         while (must_not_test_1st_time ||
 			   condition_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
@@ -1772,7 +1772,7 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
 				(field_type_name.type == "if") ||
 				(field_type_name.type == "while") ||
 				(field_type_name.type == "do") ||
-				(field_type_name.type == "do-while") ||
+				(field_type_name.type == "do_while") ||
 				(field_type_name.type == "loop_size_bytes") ||
 				(field_type_name.type == "loop_size_bits") ||
 

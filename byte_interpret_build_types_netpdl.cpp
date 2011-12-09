@@ -591,7 +591,7 @@ void  netpdl_manage_format_fields_loop(T_type_definitions  & type_definitions,
 	}
 	else if (strcmp(type, "do-while") == 0)
 	{
-		type_definitions.set_field_type(field_type_name, "do-while");
+		type_definitions.set_field_type(field_type_name, "do_while");
 	}
 	else
 	{

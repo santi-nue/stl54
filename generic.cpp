@@ -676,7 +676,7 @@ void    register_fields_struct_fields(T_generic_protocol_data  & protocol_data,
 
 	  if ((field_type_name.type != "if") &&
 		  (field_type_name.type != "while") &&
-		  (field_type_name.type != "do-while") &&
+		  (field_type_name.type != "do_while") &&
 		  (field_type_name.type != "loop_size_bytes") &&
 		  (field_type_name.type != "loop_size_bits") &&
 		  (field_type_name.type != "loop_nb_times"))
