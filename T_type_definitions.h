@@ -94,17 +94,33 @@ struct T_field_type_name_base
 	string         type;
     string         name;
 
+	// only for basic types (int, float, char) and enum
+	// NOT for struct ...
+	int            basic_type_bit_size;
+
+	// string/raw/subproto/insproto size or switch parameter
+	string         str_size_or_parameter;
+
+	//------------------------------------------------------------
+	// Pre treatment (raw data extraction)
+	//------------------------------------------------------------
+
 	// byte order
 	string         str_byte_order;
 
 	// decoder function name
 	string         str_decoder_function;
 
-	// string/raw/subproto/insproto size or switch parameter
-	string         str_size_or_parameter;
+	//------------------------------------------------------------
+	// Wireshark specific treatment
+	//------------------------------------------------------------
 
 	// subproto/insproto dissector name
 	string         str_dissector;
+
+	//------------------------------------------------------------
+	// Post treatment
+	//------------------------------------------------------------
 
 	// integer/float no_statement
 	C_value        no_statement;
@@ -122,12 +138,11 @@ struct T_field_type_name_base
 	string         str_display;
     string         str_display_expression;
 
-	// only for basic types (int, float, char) and enum
-	// NOT for struct ...
-	int            basic_type_bit_size;
-
 	// return true if no_statement or transform or constraints or display exist
 	bool    has_post_treatment() const;
+
+	//------------------------------------------------------------
+	//------------------------------------------------------------
 
 	T_field_type_name_base()
 		:basic_type_bit_size (-1)
@@ -146,61 +161,6 @@ struct T_switch_definition;
 
 struct T_field_type_name : public T_field_type_name_base
 {
-#if 0
-	// Qu'est-ce que ca change ?
-	// -> interpretation lors du build (donc check)
-	// -> gain de vitesse a l'interpretation ? combien ? comment est-ce que je peux mesurer ?
-	// -> meilleur code car centralisation du type
-	// -> code moins ouvert car centralisation du type
-	// -> code suivant la "classe" :
-	//    - print (print, debug_print, error, fatal)
-	//    - donnee
-	//    - ???
-	// -> implique un nouveau champ
-	enum E_type
-	{
-		K_type_cmd    = 0x1000,
-		K_type_print  = 0x2000,
-		K_type_ctrl   = 0x4000,
-		K_type_data   = 0x8000,
-		K_type_field  = 0x10000,
-
-		E_type_cmd_debug_print          = K_type_cmd & K_type_print + 1,
-		E_type_cmd_print                ,
-		E_type_cmd_error                ,
-		E_type_cmd_fatal                ,
-		E_type_cmd_output               = K_type_cmd + 1,
-		E_type_cmd_byte_order           ,
-		E_type_cmd_save_position        ,
-		E_type_cmd_goto_position        ,
-		E_type_cmd_move_position        ,
-		E_type_cmd_check_eof_distance   ,
-		E_type_ctrl_if                  = K_type_ctrl & K_type_data + 1,
-		E_type_ctrl_while               ,
-		E_type_ctrl_do_while            ,
-		E_type_ctrl_loop_size           ,
-		E_type_ctrl_return              = K_type_ctrl + 1,
-		E_type_ctrl_break               ,
-		E_type_ctrl_continue            ,
-		E_type_var_declare,                    // pas fait
-		E_type_var_assign,                    // pas fait
-
-		E_type_field_switch             = K_type_field + K_type_data +  1,
-		E_type_field_struct             ,
-
-		E_type_field_enum               ,
-		E_type_field_string             ,
-		E_type_field_string_nl          ,
-		E_type_field_raw                ,
-		E_type_field_subproto           ,
-		E_type_field_insproto           ,
-
-		E_type_field_struct_inline      ,
-		E_type_field_basic              ,
-		E_type_none                     = 0,
-	};
-#endif
-
 	enum E_output_directive
 	{
 		// Do NOT change values, directly used to change output level.
