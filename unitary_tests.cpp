@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2011 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -971,6 +971,36 @@ void    test_build_field ()
 		M_TEST_EQ(field_type_name.constraints[0].min.get_flt(), -3.2);      // min
 		M_TEST_EQ(field_type_name.constraints[0].max.get_flt(), 2.3);       // max
 		M_TEST_EQ(field_type_name.str_display_expression, "");
+		M_TEST_EQ(field_type_name.str_arrays.size(), 1);
+		M_TEST_EQ(field_type_name.str_arrays[0], " val + 2 ");
+		M_TEST_EQ(field_type_name.name, "toto");
+		M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+	}
+
+	// Field with size and specifications before and after
+	{
+		string         first_word = "hide";
+		istringstream  iss(" "
+			" string{decoder=decode_utf8}(50){d=string is %s}[ val + 2 ]"
+			" toto;");
+
+		T_field_type_name    field_type_name;
+
+		M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+
+		M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
+		M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+		M_TEST_EQ(field_type_name.type, "string");                          // type
+		M_TEST_EQ(field_type_name.no_statement.as_string(), "");            // ns
+		M_TEST_EQ(field_type_name.transform_quantum.as_string(), "");       // q
+		M_TEST_EQ(field_type_name.transform_offset.as_string(), "");        // o
+		M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+		M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+		M_TEST_EQ(field_type_name.str_decoder_function, "decode_utf8");
+		M_TEST_EQ(field_type_name.str_size_or_parameter, "50");
+		M_TEST_EQ(field_type_name.str_display, "string is %s");
 		M_TEST_EQ(field_type_name.str_arrays.size(), 1);
 		M_TEST_EQ(field_type_name.str_arrays[0], " val + 2 ");
 		M_TEST_EQ(field_type_name.name, "toto");

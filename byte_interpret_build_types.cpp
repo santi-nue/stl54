@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2011 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -222,140 +222,152 @@ void    post_build_field_base (
 		return;
 	}
 
-	string    simple_type;
-
-	// Display, transform and constraints (integer/float)
-	string    str_display_or_transform;
-	while (decompose_type_sep_value_sep (field_type_name.type,
-													  '{',
-													  '}',
-													  simple_type,
-													  str_display_or_transform) == E_rc_ok)
+	// while true because of (e.g.) : string{decoder=decoder_utf8}(50){d=%32.32s}
+	while (true)
 	{
-		field_type_name.type = type_definitions.get_final_type (simple_type);
-		M_STATE_DEBUG(str_display_or_transform);
+		string    simple_type;
 
-		if ((strncmp(str_display_or_transform.c_str(), "q=", 2) == 0) ||
-			(strncmp(str_display_or_transform.c_str(), "o=", 2) == 0))
+		// Display, transform and constraints (integer/float)
+		string    str_display_or_transform;
+		while (decompose_type_sep_value_sep (field_type_name.type,
+														  '{',
+														  '}',
+														  simple_type,
+														  str_display_or_transform) == E_rc_ok)
 		{
-			const string::size_type  idx_sep = str_display_or_transform.find (':');
-			if (strncmp(str_display_or_transform.c_str(), "q=", 2) == 0)
-			{
-				type_definitions.set_field_transform_quantum(field_type_name, str_display_or_transform.substr(2, idx_sep-2));
+			field_type_name.type = type_definitions.get_final_type (simple_type);
+			M_STATE_DEBUG(str_display_or_transform);
 
-				if (idx_sep != string::npos)
-				{
-					M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "o=", 2), 0);
-					type_definitions.set_field_transform_offset(field_type_name, str_display_or_transform.c_str()+idx_sep+1+2);
-				}
-			}
-			else
+			if ((strncmp(str_display_or_transform.c_str(), "q=", 2) == 0) ||
+				(strncmp(str_display_or_transform.c_str(), "o=", 2) == 0))
 			{
-				type_definitions.set_field_transform_offset(field_type_name, str_display_or_transform.substr(2, idx_sep));
+				const string::size_type  idx_sep = str_display_or_transform.find (':');
+				if (strncmp(str_display_or_transform.c_str(), "q=", 2) == 0)
+				{
+					type_definitions.set_field_transform_quantum(field_type_name, str_display_or_transform.substr(2, idx_sep-2));
 
-				if (idx_sep != string::npos)
-				{
-					M_FATAL_COMMENT("Bad transform specification (" << str_display_or_transform << ") : do NOT accept anything after offset");
-//						M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "q=", 2), 0);
-//						type_definitions.set_field_transform_quantum(field_type_name, str_display_or_transform.c_str()+idx_sep+1+2);
-				}
-			}
-		}
-#if 0
-		else if ((strncmp(str_display_or_transform.c_str(), "te=", 3) == 0))
-		{
-			type_definitions.set_field_transform_expression(field_type_name, str_display_or_transform.c_str()+3);
-		}
-#endif
-		else if ((strncmp(str_display_or_transform.c_str(), "tei=", 4) == 0))
-		{
-			type_definitions.set_field_transform_expression_integer(field_type_name, str_display_or_transform.c_str()+4);
-		}
-		else if ((strncmp(str_display_or_transform.c_str(), "tef=", 4) == 0))
-		{
-			type_definitions.set_field_transform_expression_float(field_type_name, str_display_or_transform.c_str()+4);
-		}
-#if 0
-		else if ((strncmp(str_display_or_transform.c_str(), "tes=", 4) == 0))
-		{
-			type_definitions.set_field_transform_expression_string(field_type_name, str_display_or_transform.c_str()+4);
-		}
-#endif
-		else if ((strncmp(str_display_or_transform.c_str(), "min=", 4) == 0) ||
-				 (strncmp(str_display_or_transform.c_str(), "max=", 4) == 0))
-		{
-			const string  & str_constraints = str_display_or_transform;
-			const string::size_type  idx_sep = str_constraints.find (':');
-			if (strncmp(str_display_or_transform.c_str(), "min=", 4) == 0)
-			{
-				const string    min_param = str_constraints.substr(4, idx_sep-4);
-				if (idx_sep == string::npos)
-				{
-					type_definitions.prepend_field_constraint_min(field_type_name, min_param);
+					if (idx_sep != string::npos)
+					{
+						M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "o=", 2), 0);
+						type_definitions.set_field_transform_offset(field_type_name, str_display_or_transform.c_str()+idx_sep+1+2);
+					}
 				}
 				else
 				{
-					M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "max=", 4), 0);
-					type_definitions.prepend_field_constraint_min_max(field_type_name, min_param, str_constraints.c_str()+idx_sep+1+4);
+					type_definitions.set_field_transform_offset(field_type_name, str_display_or_transform.substr(2, idx_sep));
+
+					if (idx_sep != string::npos)
+					{
+						M_FATAL_COMMENT("Bad transform specification (" << str_display_or_transform << ") : do NOT accept anything after offset");
+//							M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "q=", 2), 0);
+//							type_definitions.set_field_transform_quantum(field_type_name, str_display_or_transform.c_str()+idx_sep+1+2);
+					}
 				}
 			}
-			else
+#if 0
+			else if ((strncmp(str_display_or_transform.c_str(), "te=", 3) == 0))
 			{
-				const string    max_param = str_constraints.substr(4, idx_sep-4);
-				if (idx_sep == string::npos)
+				type_definitions.set_field_transform_expression(field_type_name, str_display_or_transform.c_str()+3);
+			}
+#endif
+			else if ((strncmp(str_display_or_transform.c_str(), "tei=", 4) == 0))
+			{
+				type_definitions.set_field_transform_expression_integer(field_type_name, str_display_or_transform.c_str()+4);
+			}
+			else if ((strncmp(str_display_or_transform.c_str(), "tef=", 4) == 0))
+			{
+				type_definitions.set_field_transform_expression_float(field_type_name, str_display_or_transform.c_str()+4);
+			}
+#if 0
+			else if ((strncmp(str_display_or_transform.c_str(), "tes=", 4) == 0))
+			{
+				type_definitions.set_field_transform_expression_string(field_type_name, str_display_or_transform.c_str()+4);
+			}
+#endif
+			else if ((strncmp(str_display_or_transform.c_str(), "min=", 4) == 0) ||
+					 (strncmp(str_display_or_transform.c_str(), "max=", 4) == 0))
+			{
+				const string  & str_constraints = str_display_or_transform;
+				const string::size_type  idx_sep = str_constraints.find (':');
+				if (strncmp(str_display_or_transform.c_str(), "min=", 4) == 0)
 				{
-					type_definitions.prepend_field_constraint_max(field_type_name, max_param);
+					const string    min_param = str_constraints.substr(4, idx_sep-4);
+					if (idx_sep == string::npos)
+					{
+						type_definitions.prepend_field_constraint_min(field_type_name, min_param);
+					}
+					else
+					{
+						M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "max=", 4), 0);
+						type_definitions.prepend_field_constraint_min_max(field_type_name, min_param, str_constraints.c_str()+idx_sep+1+4);
+					}
 				}
 				else
 				{
-					M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "min=", 4), 0);
-					type_definitions.prepend_field_constraint_min_max(field_type_name, str_constraints.c_str()+idx_sep+1+4, max_param);
+					const string    max_param = str_constraints.substr(4, idx_sep-4);
+					if (idx_sep == string::npos)
+					{
+						type_definitions.prepend_field_constraint_max(field_type_name, max_param);
+					}
+					else
+					{
+						M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "min=", 4), 0);
+						type_definitions.prepend_field_constraint_min_max(field_type_name, str_constraints.c_str()+idx_sep+1+4, max_param);
+					}
 				}
 			}
+			else if (strncmp(str_display_or_transform.c_str(), "d=", 2) == 0)
+			{
+				type_definitions.set_field_display(field_type_name, str_display_or_transform.c_str()+2);
+			}
+			else if (strncmp(str_display_or_transform.c_str(), "de=", 3) == 0)
+			{
+				type_definitions.set_field_display_expression(field_type_name, str_display_or_transform.c_str()+3);
+			}
+			else if (strncmp(str_display_or_transform.c_str(), "ns=", 3) == 0)
+			{
+				type_definitions.set_field_no_statement(field_type_name, str_display_or_transform.c_str()+3);
+			}
+			else if (strncmp(str_display_or_transform.c_str(), "dissector=", 10) == 0)
+			{
+				type_definitions.set_field_subdissector(field_type_name, str_display_or_transform.c_str()+10);
+			}
+			else if (strncmp(str_display_or_transform.c_str(), "decoder=", 8) == 0)
+			{
+				type_definitions.set_field_decoder(field_type_name, str_display_or_transform.c_str()+8);
+			}
+			else if (strncmp(str_display_or_transform.c_str(), "byte_order=", 11) == 0)
+			{
+				type_definitions.set_field_byte_order(field_type_name, str_display_or_transform.c_str()+11);
+			}
+			else
+			{
+				M_FATAL_COMMENT("Unexpected " << str_display_or_transform);
+			}
 		}
-		else if (strncmp(str_display_or_transform.c_str(), "d=", 2) == 0)
-		{
-			type_definitions.set_field_display(field_type_name, str_display_or_transform.c_str()+2);
-		}
-		else if (strncmp(str_display_or_transform.c_str(), "de=", 3) == 0)
-		{
-			type_definitions.set_field_display_expression(field_type_name, str_display_or_transform.c_str()+3);
-		}
-		else if (strncmp(str_display_or_transform.c_str(), "ns=", 3) == 0)
-		{
-			type_definitions.set_field_no_statement(field_type_name, str_display_or_transform.c_str()+3);
-		}
-		else if (strncmp(str_display_or_transform.c_str(), "dissector=", 10) == 0)
-		{
-			type_definitions.set_field_subdissector(field_type_name, str_display_or_transform.c_str()+10);
-		}
-		else if (strncmp(str_display_or_transform.c_str(), "decoder=", 8) == 0)
-		{
-			type_definitions.set_field_decoder(field_type_name, str_display_or_transform.c_str()+8);
-		}
-		else if (strncmp(str_display_or_transform.c_str(), "byte_order=", 11) == 0)
-		{
-			type_definitions.set_field_byte_order(field_type_name, str_display_or_transform.c_str()+11);
-		}
-		else
-		{
-		    M_FATAL_COMMENT("Unexpected " << str_display_or_transform);
-		}
-	}
 
-	// string/raw size or switch parameter
-	// done here for : string(50){d=%32.32s}, subproto(50){dissector=...}
-	{
-		string    str_size_or_parameter;
-		if (decompose_type_sep_value_sep (field_type_name.type,
-													  '(',
-													  ')',
-													  simple_type,
-													  str_size_or_parameter) == E_rc_ok)
+		// string/raw size or switch parameter
+		// Could be :
+		// string(50), string{decoder=decoder_utf8}(50)
+		// string(50){d=%32.32s}, subproto(50){dissector=...}
+		// string{decoder=decoder_utf8}(50){d=%32.32s}
 		{
-			M_STATE_DEBUG(str_size_or_parameter);
-			type_definitions.set_field_type(field_type_name, simple_type);
-			type_definitions.set_field_type_size_or_parameter(field_type_name, str_size_or_parameter);
+			string    str_size_or_parameter;
+			if (decompose_type_sep_value_sep (field_type_name.type,
+														  '(',
+														  ')',
+														  simple_type,
+														  str_size_or_parameter) == E_rc_ok)
+			{
+				M_STATE_DEBUG(str_size_or_parameter);
+				type_definitions.set_field_type(field_type_name, simple_type);
+				type_definitions.set_field_type_size_or_parameter(field_type_name, str_size_or_parameter);
+			}
+			else
+			{
+				// (...) not found at the end, so no more specifications to read/extract
+				break;
+			}
 		}
 	}
 
