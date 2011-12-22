@@ -41,6 +41,118 @@ function void  decode_stream_test16 (in frame  frame, in uint32   nb_of_bits_nee
 }
 
 ###############################################################################
+# stringUtf8, stringUtf16Le & stringUtf16Be using decoder
+###############################################################################
+
+function void  decoder_utf8 (in frame  frame, in uint32   nb_of_bits_needed)
+{
+  if ((nb_of_bits_needed % 8) != 0)
+  {
+    fatal "Only entire byte";
+    return;
+  }
+
+  while (nb_of_bits_needed > 0)
+  {
+    hide uint8  byte1;
+  
+    if ((byte1 & 0x80) != 0)
+    {
+      if ((byte1 & 0xF0) == 0xF0)
+      {
+        hide uint8  byte2;
+        hide uint8  byte3;
+        hide uint8  byte4;
+      }
+      else
+      {
+        if ((byte1 & 0xE0) == 0xE0)
+        {
+          hide uint8  byte2;
+          hide uint8  byte3;
+        }
+        else
+        {
+          hide uint8  byte2;
+        }
+      }
+  
+      set byte1 = 46; # means "." to say unknow char
+    }
+    
+    call frame_append_data (frame, byte1);
+    set nb_of_bits_needed = nb_of_bits_needed - 8;
+  }
+}
+
+alias stringUtf8  string{decoder=decoder_utf8};
+
+
+function void  decoder_utf16le (in frame  frame, in uint32   nb_of_bits_needed)
+{
+  if ((nb_of_bits_needed % 8) != 0)
+  {
+    fatal "Only entire byte";
+    return;
+  }
+
+  while (nb_of_bits_needed > 0)
+  {
+    hide uint8  byte1;
+    hide uint8  byte2;
+ 
+    if (byte2 != 0)
+    {
+      set byte1 = 46; # means "." to say unknow char
+
+      if ((byte2 & 0xfc) == 0xd8)
+      {
+        hide uint8  byte3;
+        hide uint8  byte4;        
+      }
+    }
+   
+    call frame_append_data (frame, byte1);
+    set nb_of_bits_needed = nb_of_bits_needed - 8;
+  }
+}
+
+alias stringUtf16Le  string{decoder=decoder_utf16le};
+
+
+function void  decoder_utf16be (in frame  frame, in uint32   nb_of_bits_needed)
+{
+  if ((nb_of_bits_needed % 8) != 0)
+  {
+    fatal "Only entire byte";
+    return;
+  }
+
+  while (nb_of_bits_needed > 0)
+  {
+    hide uint8  byte2;
+    hide uint8  byte1;
+ 
+    if (byte2 != 0)
+    {
+      set byte1 = 46; # means "." to say unknow char
+
+      if ((byte2 & 0xfc) == 0xd8)
+      {
+        hide uint8  byte3;
+        hide uint8  byte4;        
+      }
+    }
+   
+    call frame_append_data (frame, byte1);
+    set nb_of_bits_needed = nb_of_bits_needed - 8;
+  }
+}
+
+alias stringUtf16Be  string{decoder=decoder_utf16be};
+
+
+###############################################################################
 # Print ip
 ###############################################################################
 

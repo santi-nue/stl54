@@ -3319,6 +3319,19 @@ void    test_interpret_simple()
 	M_TEST_SIMPLE("3fc2", "uint16{decoder=decode_stream_test16}  val ;", "val = 767");
 	M_TEST_SIMPLE("3fc2", " int16{decoder=decode_stream_test16}  val ;", "val = 767");
 
+	// stringUtf8, stringUtf16Le & stringUtf16Be using decoder
+	// string original = abcde\r\n12345\r\n&é"'(-è_çà)=\r\n€\r\n^$ù*,;:!\r\n¨£%µ?./§
+	// Characters not directly transformable to ascii are replaced by "."
+	M_TEST_SIMPLE("61626364650D0A31323334350D0A26C3A92227282DC3A85FC3A7C3A0293D0D0AE282AC0D0A5E24C3B92A2C3B3A210D0AC2A8C2A325C2B53F2E2FC2A7",
+		" stringUtf8     val ;",
+		"val = abcde\r\n12345\r\n&.\"'(-._..)=\r\n.\r\n^$.*,;:!\r\n..%.?./.");
+	M_TEST_SIMPLE("610062006300640065000D000A00310032003300340035000D000A002600E9002200270028002D00E8005F00E700E00029003D000D000A00AC200D000A005E002400F9002A002C003B003A0021000D000A00A800A3002500B5003F002E002F00A700",
+		" stringUtf16Le  val ;",
+		"val = abcde\r\n12345\r\n&é\"'(-è_çà)=\r\n.\r\n^$ù*,;:!\r\n¨£%µ?./§");
+	M_TEST_SIMPLE("00610062006300640065000D000A00310032003300340035000D000A002600E9002200270028002D00E8005F00E700E00029003D000D000A20AC000D000A005E002400F9002A002C003B003A0021000D000A00A800A3002500B5003F002E002F00A7",
+		" stringUtf16Be  val ;",
+		"val = abcde\r\n12345\r\n&é\"'(-è_çà)=\r\n.\r\n^$ù*,;:!\r\n¨£%µ?./§");
+
 
 	// min/max ok
 	M_TEST_SIMPLE("3fc2", "uint16{q=2:o=13}{min=99000}    val ;", "val = 99467 (49727)");
