@@ -3228,6 +3228,12 @@ void    test_interpret_simple()
 	M_TEST_SIMPLE("e23f6a77", "uint32  val ;", "val = 3795806839");
 	M_TEST_SIMPLE("e23f6a77", " int32  val ;", "val = -499160457");
 
+	M_TEST_SIMPLE("e23f6a77cb", "uint40  val ;", "val = 971726550987");
+	M_TEST_SIMPLE("e23f6a77cb", " int40  val ;", "val = -127785076789");
+
+	M_TEST_SIMPLE("e23f6a77cbf3", "uint48  val ;", "val = 248761997052915");
+	M_TEST_SIMPLE("e23f6a77cbf3", " int48  val ;", "val = -32712979657741");
+
 	// 2010/08/16
 	// no decode time =  0 ms
 	//    decode time = 18 ms
@@ -3267,6 +3273,12 @@ void    test_interpret_simple()
 
 	M_TEST_SIMPLE("776a3fe2", "uint32  val ;", "val = 3795806839");
 	M_TEST_SIMPLE("776a3fe2", " int32  val ;", "val = -499160457");
+
+	M_TEST_SIMPLE("cb776a3fe2", "uint40  val ;", "val = 971726550987");
+	M_TEST_SIMPLE("cb776a3fe2", " int40  val ;", "val = -127785076789");
+
+	M_TEST_SIMPLE("f3cb776a3fe2", "uint48  val ;", "val = 248761997052915");
+	M_TEST_SIMPLE("f3cb776a3fe2", " int48  val ;", "val = -32712979657741");
 
 	M_TEST_SIMPLE("a967f3cb776a3fe2", "int64  val ;", "val = -2143877834849687639");
 

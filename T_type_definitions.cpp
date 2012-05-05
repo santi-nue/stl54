@@ -1221,6 +1221,10 @@ T_type_definitions::is_a_basic_type_name(const string   & type_name) const
 		(type_name == "uint24") ||
 		(type_name ==  "int32") ||
 		(type_name == "uint32") ||
+		(type_name ==  "int40") ||
+		(type_name == "uint40") ||
+		(type_name ==  "int48") ||
+		(type_name == "uint48") ||
 		(type_name ==  "int64") ||
 //		(type_name == "uint64") ||
 		(type_name == "float32") ||
