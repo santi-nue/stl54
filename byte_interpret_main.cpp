@@ -143,7 +143,7 @@ bool    is_frame_hexa_dump_file_name (const string  & file_name)
 
 void    wait_for_any_operator_input ()
 {
-	cout << "Tapez n'importe quoi pour sortir" << endl;
+	cout << "Enter to exit" << endl;
 	char    do_not_care;
 	cin.get (do_not_care);
 }
@@ -169,8 +169,17 @@ void  usage (const char  * prog_name)
 " [ options ] <type description> <what must be read> <binary data to interpret>\n"
 "\n";
     help_role (prog_name);
+
+	os <<
+"\n*** "
+"Options are : \n"
+"-help  : print this.\n"
+"-trace : output traces.\n"
+"-perf  : display execution times.\n"
+"\n";
+
     os <<
-"\n"
+"\n*** "
 "<type description> <what must be read> could be specified :\n"
 "- directly into the command line\n"
 "- from stdin  if you specify -fdesc -\n"
@@ -179,9 +188,9 @@ void  usage (const char  * prog_name)
     os <<
 "Look at http://wsgd.free.fr/fdesc_format.html for the type description syntax.\n"
 "Or " << prog_name << "  -help_syntax\n" 
-"\n"
 "\n";
     os <<
+"\n*** "
 "<binary data to interpret> could be specified :\n"
 "- directly into the command line if you specify --\n"
 "- from stdin                     if you specify -\n"
@@ -195,37 +204,30 @@ void  usage (const char  * prog_name)
 "Format command line, stdin or file -frame_hex :  02E3 B7 C24F112c b2 7C ...\n"
 "\n"
 "Format file -frame_hexd1 :\n"
-"<mot1>  02E3 B7 C2 435D6F112c b2 7C\n"
-"<mot1>  435D6F112 02E3 B7 C2 412c b2 7C\n"
+"<word1>  02E3 B7 C2 435D6F112c b2 7C\n"
+"<word1>  435D6F112 02E3 B7 C2 412c b2 7C\n"
 "\n"
 "Format file -frame_hexd2- :\n"
-"<mot1> <mot2>  02E3 B7 C2 435D6F112c b2 7C     - to ignore\n"
-"<mot1> <mot2>  435D6F112 02E3 B7 C2 412c b2 7C - to ignore\n"
+"<word1> <word2>  02E3 B7 C2 435D6F112c b2 7C     - to ignore\n"
+"<word1> <word2>  435D6F112 02E3 B7 C2 412c b2 7C - to ignore\n"
 "\n"
 "Format file -frame_hexd<num><end_of_hexa> :\n"
-"<mot1> ... <mot<num>> 02E3 B7 C2 43512c b2 7C     <end_of_hexa> to ignore\n"
-"<mot1> ... <mot<num>> 435D6F112 02E3 B7 C2 412c   <end_of_hexa> to ignore\n"
+"<word1> ... <word<num>> 02E3 B7 C2 43512c b2 7C     <end_of_hexa> to ignore\n"
+"<word1> ... <word<num>> 435D6F112 02E3 B7 C2 412c   <end_of_hexa> to ignore\n"
 "\n";
 
     os <<
-"\n"
-"Options are : \n"
-"-help  : print this.\n"
-"-trace : output traces.\n"
-"-perf  : display execution times.\n"
-"\n";
-    os <<
-"\n"
+"\n*** "
 "Very simple examples :\n"
 "\n"
 "> byte_interpret.exe  int32  toto ;  -- 00 01 02 03\n"
-"toto=> toto = 50462976\n"
+"toto = 50462976\n"
 "\n"
 "> byte_interpret.exe byte_order big_endian ; int32  toto ;  -- 00 01 02 03\n"
-"toto=> toto = 66051\n"
+"toto = 66051\n"
 "\n"
 "> byte_interpret.exe byte_order big_endian ; float32 toto ;  -- 00 01 02 03\n"
-"toto=> toto = 9.25572e-041\n"
+"toto = 9.25572e-041\n"
        << endl;
 
 #ifdef WIN32

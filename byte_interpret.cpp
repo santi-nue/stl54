@@ -2981,257 +2981,472 @@ C_value    T_expression_compute_function (const T_type_definitions    & type_def
 void    print_syntax (ostream       & os_out)
 {
     os_out <<
-"Rules\n"
-"\n"
-"- Define a type before using it\n"
-"- For type name and field name :\n"
-"--- Do not use keywords (struct, enum, if, while ...)\n"
-"--- Use only alphanumerics and _\n"
-"\n"
-"\n"
-"Basic types\n"
-"\n"
-"- spare                                     not displayed byte\n"
-"- char, schar, uchar\n"
-"- bool8, bool16, bool32\n"
-"-  int8,  int16,  int24,  int32,  int64     take care of byte order\n"
-"- uint8, uint16, uint24, uint32             take care of byte order\n"
-"- float32, float64                          take care of byte order\n"
-"- string, string(<nb_bytes>)                manage zero as end of string\n"
-"- string_nl, string_nl(<nb_bytes>)          idem string + manage \"\\n\" or \"\\r\\n\" as end of string\n"
-"- raw(<nb_bytes>)                           dump hexa (nb_bytes could be * in some cases)\n"
-"\n"
-"\n"
-"Transform specifications\n"
-"\n"
-"<int_or_float_type_name>{q=<quantum>:o=<offset>}        <field_name> ;\n"
-"<int_or_float_type_name>{q=<quantum>}                   <field_name> ;\n"
-"<int_or_float_type_name>{o=<offset>}                    <field_name> ;\n"
-"The resulting value = read_value * quantum + offset.\n"
-"Quantum and offset values could be specified with an expression, e.g : 3.1415927/180.0\n"
-"\n"
-"\n"
-"Display specifications\n"
-"\n"
-"<int_type_name>{d=hex}                                  <field_name> ;\n"
-"<int_type_name>{d=oct}                                  <field_name> ;\n"
-"<int_type_name>{d=bin}                                  <field_name> ;\n"
-"<any_type_name>{d=printf format %22.32s}                <field_name> ;\n"
-"NB: display specifications must always appears AFTER transform specifications (if any)\n"
-"\n"
-"\n"
-"Constraint specifications\n"
-"\n"
-"An error is displayed if the value does NOT match.\n"
-"For int or float only.\n"
-"\n"
-"<int_or_float_type_name>{min=<val_min>:max=<val_max>}   <field_name> ;\n"
-"<int_or_float_type_name>{min=<val_min>}                 <field_name> ;\n"
-"<int_or_float_type_name>{max=<val_max>}                 <field_name> ;\n"
-"NB: constraints specifications must always appears AFTER transform and display specifications (if any)\n"
-"Min and max values could be specified with an expression, e.g : -(3.0/4)*3.1415927\n"
-"\n"
-"\n"
-"Arrays\n"
-"\n"
-"<type_name>[12]                                <array_field_name> ;\n"
-"<type_name>[<field_name>]                      <array_field_name> ;\n"
-"<type_name>[<field_name> - 12]                 <array_field_name> ;\n"
-"<type_name>[<field_name> < 36 ? 0 : 16]        <array_field_name> ;\n"
-"<type_name>[*]                                 <array_field_name> ;          * means any number of element\n"
-"<type_name>[+]                                 <array_field_name> ;          + means any number of element, at least 1\n"
-"\n"
-"\n"
-"Alias\n"
-"\n"
-"alias  <new_type_name>    <already_existent_type_name> ;\n"
-"alias  <new_type_name>    <already_existent_type_name>{q=<quantum>}{min=<val_min>:max=<val_max>} ;\n"
-"alias  <new_type_name>    <already_existent_type_name>{d=hex}{min=<val_min>:max=<val_max>} ;\n"
-"\n"
-"\n"
-"Enum\n"
-"\n"
-"enum<nb_bits 8 16 24 or 32>  <enum_type_name>\n"
-"{\n"
-"    <symbolic_value_name>  <integer_value or - >                   # - means last value + 1 (zero if first value)\n"
-"    ...\n"
-"}\n"
-"\n"
-"# To define an identic enum with a different size.\n"
-"enum<nb_bits 8 16 24 or 32>  <enum_type_name>  as      <already_existent_enum_type_name> ;\n"
-"\n"
-"# To define a new enum starting from an existent one.\n"
-"enum<nb_bits 8 16 24 or 32>  <enum_type_name>  expand  <already_existent_enum_type_name>\n"
-"{\n"
-"    <other_symbolic_value_name>  <integer_value>\n"
-"    ...\n"
-"}\n"
-"\n"
-"\n"
-"Bit field\n"
-"\n"
-"bitfield<nb_bits 8 16 24 or 32>  <bitfield_type_name>\n"
-"{\n"
-"  uint3{d=bin}                             field1 ;             # lower level bits\n"
-"  hide uint2                               field2_unused ;\n"
-"  uint15{q=2.34:o=-117.35}{min=-105.17}    field3 ;\n"
-"  ...                                                           # higher level bits\n"
-"}\n"
-"\n"
-"Could also use var and set inside Bit field.\n"
-"\n"
-"\n"
-"Struct\n"
-"\n"
-"struct  <struct_type_name>\n"
-"{\n"
-"    <type_name>     <field_name> ;\n"
-"    <command_name>  <command_parameter> ;\n"
-"    if              ((<field_name> + 20 < 572) && (...) || (...))\n"
-"    {\n"
-"        <anything that could be specified in a struct>\n"
-"    }\n"
-"    else\n"
-"    {\n"
-"        <anything that could be specified in a struct>\n"
-"    }\n"
-"    while           ((<field_name> % 20 < 2**3) && (...) || (...))\n"
-"    {\n"
-"        <anything that could be specified in a struct>\n"
-"        continue ;\n"
-"        break ;\n"
-"    }\n"
-"    do\n"
-"    {\n"
-"        <anything that could be specified in a struct>\n"
-"        continue ;\n"
-"        break ;\n"
-"    } while           ((to_string(<field_name>) + \"20\" != print(\"%d\", 572)) && (...) || (...)) ;\n"
-"\n"
-"    # repeat until the given size have been effectively read    \n"
-"    # Use loop_size_bits if bit size is needed\n"
-"    loop_size_bytes    <field_name>+20\n"
-"    {\n"
-"        <anything that could be specified in a struct>\n"
-"        continue ;\n"
-"        break ;\n"
-"    }  \n"
-"    \n"
-"    # Inline struct and bitfield\n"
-"    struct\n"
-"    {\n"
-"        <anything that could be specified in a struct>\n"
-"    }   <field_name> ;\n"
-"\n"
-"    bitfield<nb_bits 8 16 24 or 32>\n"
-"    {\n"
-"        <anything that could be specified in a bitfield>\n"
-"    }   <field_name> ;\n"
-"    ...\n"
-"}\n"
-"\n"
-"Optionaly, you can put a print specification :\n"
-"struct  <struct_type_name>  print (<printf format and arguments>)\n"
-"{\n"
-"    ...\n"
-"}\n"
-"The printf arguments could be fields specified inside the struct.\n"
-"\n"
-"\n"
-"Switch\n"
-"\n"
-"switch  <switch_type_name>  <switched_type_name>\n"
-"{\n"
-"    case <value 1> :\n"
-"    <anything that could be specified in a struct>\n"
-"    ...\n"
-"    case <value n> :\n"
-"    <anything that could be specified in a struct>\n"
-"    default :\n"
-"    <anything that could be specified in a struct>\n"
-"}\n"
-"\n"
-"\n"
-"Commands\n"
-"\n"
-"- include     <file_name> ;\n"
-"  include the specified description file\n"
-"  Not available inside a struct, switch ...\n"
-"- byte_order  (big_endian | little_endian | as_host) ;\n"
-"  specify the data byte order for int (also enum and bitfield) and float\n"
-"\n"
-"\n"
-"Var command\n"
-"\n"
-"  var  <type>  <variable name> = <value or expression> ;\n"
-"   permits to declare, initialize and display a variable.\n"
-"   variable = field except it is initialized from expression and not from the captured packet.\n"
-"   <type> could be any int, float, string and enum\n"
-"  E.g:\n"
-"  var string                          str = \"Hello world!\";\n"
-"  var uint32{q=3}{d=the int=0x%04x}   integer = 23;\n"
-"  var float32                         flt = 136.234;\n"
-"  var string                          str2 = print(\"flt = %3f and integer = \", flt) + to_string(integer);    \n"
-"  var <an enum type>                  oper = 2;    # the value must be an integer value and NOT the symbolic value\n"
-"  var uint8{d=bin}                    integer_bit_1     =  integer & 0x01;\n"
-"  var uint8{d=bin}                    integer_bit_2_3   = (integer & 0x06) >> 1;\n"
-"\n"
-"The variable must NOT already exist.\n"
-"\n"
-"\n"
-"Set command\n"
-"\n"
-"  set  <variable name> = <expression> ;\n"
-"  E.g:\n"
-"  set    Size = 0xa * 3 + 3 ;\n"
-"  set    Size = Size-10 ;\n"
-"  set    Size_bit_part = (Size & 0xc) >> 2;\n"
-"\n"
-"The variable must already exist (not tested).\n"
-"The variable could be a field (but does NOT change the value seen by wireshark).\n"
-"\n"
-"\n"
-"Specific commands\n"
-"\n"
-"- output            -- or ++ ;\n"
-"  modify the output level\n"
-"\n"
-"- save_position          <position_name> ;\n"
-"  save the current data packet position\n"
-"- goto_position          <previously_saved_position_name> ;\n"
-"- move_position_bytes    <position_offset> ;\n"
-"- move_position_bits     <position_offset> ;\n"
-"\n"
-"- [debug_]print  \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n"
-"- error          \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n"
-"- fatal          \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n"
-"  print the specified string or the specified field value or printf\n"
-"  error and fatal will declare an error (red line)\n"
-"  fatal is supposed to stop the dissection\n"
-"  \n"
-"- [debug_]print  (byte_order|output|position) ;\n"
-"  print specified internal data\n"
-"\n"
-"\n"
-"Others commands\n"
-"\n"
-"WITHOUT any effect on wireshark at this time.\n"
-"\n"
-"- check_eof_distance_bytes  <number of bytes before end of data> ;\n"
-"- check_eof_distance_bits   <number of bits  before end of data> ;\n"
-"  verify the distance between the current position and the end of packet\n"
-"- [debug_]print  (alias|struct|enum|switch) ;\n"
-"  print specified internal data\n"
-"- [debug_]print  all ;\n"
-"  print all internal data specified above\n"
-"- [debug_]print  (help | syntax) ;\n"
-"\n"
-"\n"
-"Modifiers\n"
-"\n"
-"- hide   <any_type>       <any_field> ;\n"
-"  permits to hide the field/variable (NOT displayed and could NOT filter on it)\n"
-"\n"
+"\n\
+This help could be uncomplete or not up-to-date : please refer to http://wsgd.free.fr/fdesc_format.html\n\
+\n\
+*** Rules\n\
+\n\
+- Define a type before using it\n\
+- For type name and field name :\n\
+--- Do not use keywords (int8, string, void, any, this, struct, enum, if, while ...)\n\
+--- Use only alphanumerics and _\n\
+--- Do not start with number\n\
+\n\
+*** Basic types\n\
+\n\
+- spare                                     not displayed byte\n\
+- char, schar, uchar\n\
+- bool1, bool8, bool16, bool32              take care of byte order\n\
+-  int2 to int32,  int64                    take care of byte order\n\
+- uint1 to uint32                           take care of byte order\n\
+- float32, float64                          take care of byte order\n\
+- string, string(<nb_bytes>)                manage zero as end of string\n\
+- string_nl, string_nl(<nb_bytes>)          idem string + manage \"\\n\" or \"\\r\\n\" as end of string\n\
+- raw(<nb_bytes>)                           dump hexa (nb_bytes could be * in some cases)\n\
+                                            must start on an entire byte position\n\
+- padding_bits                              permits to move to the next entire byte position\n\
+\n\
+*** No Statement value\n\
+\n\
+<int_or_float_type_name>{ns=<No Statement value>}       <field_name> ;\n\
+If the read value is equal to the specified value :\n\
+- No_Statement will be displayed.\n\
+- Transform, Display and Constrains specifications are ignored\n\
+NB: must be specified before the Transform, Display and Constrains specifications.\n\
+\n\
+*** Transform specifications\n\
+\n\
+<int_or_float_type_name>{q=<quantum>:o=<offset>}        <field_name> ;\n\
+<int_or_float_type_name>{q=<quantum>}                   <field_name> ;\n\
+<int_or_float_type_name>{o=<offset>}                    <field_name> ;\n\
+The resulting value = read_value * quantum + offset.\n\
+Quantum and offset values could be specified with an expression, e.g : 3.1415927/180.0\n\
+\n\
+<type_name>{tei=integer expression (use \"this\")}        <field_name> ;\n\
+<type_name>{tef=float   expression (use \"this\")}        <field_name> ;\n\
+The specified expression must return the appropriate type.\n\
+E.g:\n\
+uint16{tei=2*this-47}          <field_name> ;    # since this is an integer, the expression gives an integer\n\
+uint16{tef=2*this-47.0}        <field_name> ;    # because of 47.0, the expression gives a float\n\
+float32{tef=2*this-47}         <field_name> ;    # since this is a float, the expression gives a float\n\
+\n\
+<type_name>{tei=a_previous_field > 0 ? this/another_field : 2*this-47}    <field_name> ;\n\
+<type_name>{tef=a_function_which_returns_a_float(this)}                   <field_name> ;\n\
+\n\
+*** Display specifications\n\
+\n\
+<int_type_name>{d=hex}                                  <field_name> ;\n\
+<int_type_name>{d=oct}                                  <field_name> ;\n\
+<int_type_name>{d=bin}                                  <field_name> ;\n\
+<any_type_name>{d=printf format %22.32s}                <field_name> ;\n\
+<any_type_name>{de=string expression (use \"this\")}      <field_name> ;\n\
+NB: display specifications must always appears AFTER transform specifications (if any)\n\
+\n\
+*** Constraint specifications\n\
+\n\
+An error is displayed if the value does NOT match.\n\
+For int or float only.\n\
+\n\
+<int_or_float_type_name>{min=<val_min>:max=<val_max>}   <field_name> ;\n\
+<int_or_float_type_name>{min=<val_min>}                 <field_name> ;\n\
+<int_or_float_type_name>{max=<val_max>}                 <field_name> ;\n\
+NB: constraints specifications must always appears AFTER transform and display specifications (if any)\n\
+Min and max values could be specified with an expression, e.g : -(3.0/4)*3.1415927\n\
+\n\
+Could use many constaints (specified in the good order), e.g:\n\
+uint6{min=2:max=9}{min=12:max=19}\n\
+\n\
+*** Local byte order specification\n\
+\n\
+The global byte order is specified with byte_order command.\n\
+This byte order specification apply only to the specified field.\n\
+\n\
+<type_name>{byte_order=big_endian}      <field_name> ;\n\
+<type_name>{byte_order=little_endian}   <field_name> ;\n\
+\n\
+*** Arrays\n\
+\n\
+<type_name>[12]                                <array_field_name> ;\n\
+<type_name>[<field_name>]                      <array_field_name> ;\n\
+<type_name>[<field_name> - 12]                 <array_field_name> ;\n\
+<type_name>[<field_name> < 36 ? 0 : 16]        <array_field_name> ;\n\
+\n\
+Only at the end of the message AND if Generic Dissector knows the size of the message :\n\
+<type_name>[*]                                 <array_field_name> ;          * means any number of element\n\
+<type_name>[+]                                 <array_field_name> ;          + means any number of element, at least 1\n\
+If the array is not at the end of the message, look at loop_size.\n\
+\n\
+*** Alias\n\
+\n\
+alias  <new_type_name>    <already_existent_type_name> ;\n\
+alias  <new_type_name>    <already_existent_type_name>{q=<quantum>}{min=<val_min>:max=<val_max>} ;\n\
+alias  <new_type_name>    <already_existent_type_name>{d=hex}{min=<val_min>:max=<val_max>} ;\n\
+\n\
+*** Enum\n\
+\n\
+Take care of byte order\n\
+\n\
+enum<nb_bits 1 to 32>  <enum_type_name>\n\
+{\n\
+    <symbolic_value_name>  <integer_value or - >                   # - means last value + 1 (zero if first value)\n\
+    ...\n\
+}\n\
+\n\
+# To define an identic enum with a different size.\n\
+enum<nb_bits 1 to 32>  <enum_type_name>  as      <already_existent_enum_type_name> ;\n\
+\n\
+# To define a new enum starting from an existent one.\n\
+enum<nb_bits 1 to 32>  <enum_type_name>  expand  <already_existent_enum_type_name>\n\
+{\n\
+    <other_symbolic_value_name>  <integer_value>\n\
+    ...\n\
+}\n\
+\n\
+# Could use <enum_type_name>::<symbolic_value_name> in any expression/condition.\n\
+\n\
+*** Bit field\n\
+\n\
+bitfield must be understood like a C bitfield (even there is no standard about its implementation).\n\
+Take care of byte order.\n\
+Fields could be unsigned integers, bool1 or enum (without signed values).\n\
+\n\
+bitfield<nb_bits 8 16 24 or 32>  <bitfield_type_name>\n\
+{\n\
+  uint3{d=bin}                             field1 ;             # lower level bits\n\
+  hide uint2                               field2_unused ;\n\
+  uint15{q=2.34:o=-117.35}{min=-105.17}    field3 ;\n\
+  <enum_type>                              field4;\n\
+  bool1                                    field5 ;\n\
+  ...                                                           # higher level bits\n\
+}\n\
+\n\
+Could also use var and set inside Bit field.\n\
+More info at http://wsgd.free.fr/bitfield_more.txt\n\
+\n\
+*** Bit stream (Deprecated)\n\
+\n\
+Absolutely identic to bitfield, except :\n\
+- use bitstream keyword instead of bitfield !\n\
+- read bits from left to right (does not take care of byte order)\n\
+\n\
+Deprecated: use struct instead.\n\
+\n\
+*** Struct\n\
+\n\
+struct  <struct_type_name>\n\
+{\n\
+    <type_name>     <field_name> ;\n\
+    <command_name>  <command_parameter> ;\n\
+    if              ((<field_name> + 20 < 572) && (...) || (...))\n\
+    {\n\
+        <anything that could be specified in a struct>\n\
+    }\n\
+    else\n\
+    {\n\
+        <anything that could be specified in a struct>\n\
+    }\n\
+    while           ((<field_name> % 20 < 2**3) && (...) || (...))\n\
+    {\n\
+        <anything that could be specified in a struct>\n\
+        continue ;\n\
+        break ;\n\
+    }\n\
+    do\n\
+    {\n\
+        <anything that could be specified in a struct>\n\
+        continue ;\n\
+        break ;\n\
+    } while           ((to_string(<field_name>) + \"20\" != print(\"%d\", 572)) && (...) || (...)) ;\n\
+\n\
+    # repeat until the given size have been effectively read    \n\
+    # Use loop_size_bits if bit size is needed\n\
+    loop_size_bytes    <field_name>+20\n\
+    {\n\
+        <anything that could be specified in a struct>\n\
+        continue ;\n\
+        break ;\n\
+    }  \n\
+    \n\
+    # Inline struct and bitfield\n\
+    struct\n\
+    {\n\
+        <anything that could be specified in a struct>\n\
+    }   <field_name> ;\n\
+\n\
+    bitfield<nb_bits 8 16 24 or 32>\n\
+    {\n\
+        <anything that could be specified in a bitfield>\n\
+    }   <field_name> ;\n\
+    ...\n\
+}\n\
+\n\
+Optionaly, you can put a print specification :\n\
+struct  <struct_type_name>  print (<printf format and arguments>)\n\
+{\n\
+    ...\n\
+}\n\
+The printf arguments could be fields specified inside the struct.\n\
+\n\
+*** Switch\n\
+\n\
+switch  <switch_type_name>  <switched_type_name>\n\
+{\n\
+    case <value 1> :\n\
+    <anything that could be specified in a struct>\n\
+    ...\n\
+    case <value n> :\n\
+    <anything that could be specified in a struct>\n\
+    default :\n\
+    <anything that could be specified in a struct>\n\
+}\n\
+\n\
+# Example :\n\
+enum16 T_Operation\n\
+{\n\
+  CREATION      0\n\
+  MODIFICATION  1\n\
+  DELETION      2\n\
+}\n\
+switch T_Operation_switch  T_Operation\n\
+{\n\
+case  T_Operation::MODIFICATION  : print (\"MODIFICATION value\");\n\
+case  T_Operation::DELETION      : print (\"DELETION value\");\n\
+case  T_Operation::CREATION      : print (\"CREATION value\");\n\
+default                          : print (\"default value\");\n\
+}\n\
+struct  xxx\n\
+{\n\
+  ...\n\
+  T_Operation                   operation;\n\
+  ...\n\
+  T_Operation_switch(operation)  oper_switch;\n\
+  # or\n\
+  T_Operation_switch(operation)  \"\";\n\
+  # or directly inline without previous definition/declaration\n\
+  switch(operation)\n\
+  {\n\
+  case  T_Operation::MODIFICATION  : print (\"MODIFICATION value\");\n\
+  case  T_Operation::DELETION      : print (\"DELETION value\");\n\
+  case  T_Operation::CREATION      : print (\"CREATION value\");\n\
+  default                          : print (\"default value\");\n\
+  }\n\
+}\n\
+\n\
+*** Forward declarations\n\
+\n\
+- enum<nb_bits 1 to 32>  <enum_type_name>;\n\
+- bitfield<nb_bits 8 16 24 or 32>  <bitfield_type_name>;\n\
+- bitstream<nb_bits 8 16 24 or 32>  <bitfield_type_name>;\n\
+- struct  <struct_type_name>;\n\
+- switch  <switch_type_name>;\n\
+\n\
+"
+      << endl;  // avoir too long string for compiler
+      os_out <<
+"*** Commands\n\
+\n\
+- include     <file_name> ;\n\
+  include the specified description file\n\
+  Not available inside a struct, switch ...\n\
+- byte_order  (little_endian | big_endian | as_host) ;\n\
+  specify the data byte order for int (also enum and bitfield) and float\n\
+  - big endian (also known as network, motorola) : the bytes are not inverted\n\
+  - little endian (also known as intel) : the bytes are inverted\n\
+\n\
+*** Var command\n\
+\n\
+var  <type>  <variable name> = <value or expression> ;\n\
+ permits to declare, initialize and display a variable.\n\
+ variable = field except it is initialized from expression and not from the captured packet.\n\
+ <type> could be any int, float, string and enum\n\
+E.g:\n\
+var string                          str = \"Hello world!\";\n\
+var string[2]                       str_array = \"Hello both world!\";\n\
+var uint32{q=3}{d=the int=0x%04x}   integer = 23;\n\
+var float32                         flt = 136.234;\n\
+var float32[2]                      flt_array = 136.136;\n\
+var string                          str2 = print(\"flt = %3f and integer = \", flt) + to_string(integer);    \n\
+var <an enum type>                  oper = <an enum type>::<symbolic name>;\n\
+var uint8{d=bin}                    integer_bit_1     =  integer & 0x01;\n\
+var uint8{d=bin}                    integer_bit_2_3   = (integer & 0x06) >> 1;\n\
+\n\
+The variable must NOT already exist.\n\
+\n\
+Set command\n\
+\n\
+set  <variable name> = <expression> ;\n\
+E.g:\n\
+set    Size = 0xa * 3 + 3 ;\n\
+set    Size = Size-10 ;\n\
+set    Size_bit_part = (Size & 0xc) >> 2;\n\
+\n\
+The variable must already exist.\n\
+The variable could be a field (but does NOT change the value seen by wireshark).\n\
+\n\
+*** Const command\n\
+\n\
+const  <type>  <variable name> = <value or expression> ;\n\
+ permits to declare and initialize a constant.\n\
+ <type> could be any int, float, string and enum\n\
+Constants must be named with \"::\".\n\
+Constants could NOT have/be :\n\
+- array,\n\
+- specifications no_statement, transform, display, constrains ...\n\
+- struct, switch, ...\n\
+E.g:\n\
+const uint16           konst::int = 2;\n\
+const string           konst::str = \"abcdefgh - abcdefgh\";\n\
+const T_Type_message   konst::enum = T_Type_message::cs_start;\n\
+const float64          Math::PI = 3.1415927;\n\
+const float64          Math::deg_to_rad = Math::PI / 180;\n\
+const string           konst::str_fct = string.replace_all (konst::str, \"bc\", \"xyz\");\n\
+\n\
+The constant must NOT already exist.\n\
+\n\
+*** Variable/field name usage\n\
+\n\
+When you want to use a variable or field inside an expression or set command, you simply use its name.\n\
+But it could happen that there is many variables/fields with the same name.\n\
+In these cases, you can use the full name or the partial ending name.\n\
+E.g. :\n\
+\n\
+struct time\n\
+{\n\
+  uint32  value;\n\
+  var uin16 sec = ...;\n\
+  var uin16 min = ...;\n\
+  ...\n\
+}\n\
+struct T_my_msg\n\
+{\n\
+  ...\n\
+  struct {\n\
+    ...\n\
+    time    expected_time;\n\
+  }  expected_data ;\n\
+  struct {\n\
+    ...\n\
+    time    time;\n\
+  }  measured_data ;\n\
+  # \"value\" means the last variable/field called \"value\", so it is \"measured_data.time.value\"\n\
+  if (value != expected_data.expected_time.value)  { ... }    # full name\n\
+  if (value !=               expected_time.value)  { ... }    # partial ending name\n\
+}\n\
+\n\
+*** Functions\n\
+\n\
+function  <return_type>  <function_name> (<direction> <type>  <name> [ = <default_value> ], ...)\n\
+{\n\
+  <anything that could be specified in a struct>\n\
+  ...\n\
+  return  <expression>;\n\
+}\n\
+  \n\
+<direction>      = in, out, in_out\n\
+<type>           = any existing simple type (numeric or enum or string) or any \n\
+<return_type>    = <type> or void\n\
+<default_value>  = default value used if parameter is not specified\n\
+NB: if a default value is specified on a parameter, then all following parameters must have a default value.\n\
+\n\
+E.g.:\n\
+function string  sec_to_dhms (in int64{min=0}  value)\n\
+{\n\
+  hide var int64    value_work = value;\n\
+  hide var uint16   sec = value_work % 60;\n\
+       set          value_work = (value_work - sec) / 60;\n\
+  hide var uint16   min = value_work % 60;\n\
+       set          value_work = (value_work - min) / 60;\n\
+  hide var uint16   hour = value_work % 24;\n\
+       set          value_work = (value_work - hour) / 24;\n\
+  hide var uint16   days = value_work;\n\
+  return  print(\"%d days %02d:%02d:%02d\", days, hour, min, sec);\n\
+}\n\
+function string   ms_to_dhms (in int64{min=0}  value)\n\
+{\n\
+  hide var int64    value_work = value;\n\
+  hide var uint16   ms = value_work % 1000;\n\
+       set          value_work = (value_work - sec) / 1000;\n\
+  hide var string   str = sec_to_dhms(value_work) + print(\".%03d\", ms);\n\
+  return  str;\n\
+}\n\
+...\n\
+  int64          milli_sec_time;\n\
+  var string     milli_sec_time_str = ms_to_dhms(milli_sec_time);\n\
+  # or\n\
+  int64{de=ms_to_dhms(this)}       milli_sec_time;\n\
+\n\
+NB: a function which returns void (ie nothing) must be called like this :\n\
+  call  <function_name> (<the parameters>);\n\
+\n\
+*** Built-in functions\n\
+\n\
+- string          to_string (<field_variable_value_expression>) ;\n\
+- <int_or_float>  to_numeric (in string  str_source) ;\n\
+  fatal if result is not numeric\n\
+- <float>         to_float (in string  str_source) ;\n\
+  fatal if result is not numeric\n\
+- <int>           to_integer (in string  str_source) ;\n\
+  fatal if result is not numeric\n\
+- string          getenv (in string  env_variable_name) ;\n\
+- uint            string.length (in string  str_source);\n\
+- uint            string.find   (in string  str_source, in string  str_to_find);\n\
+- string          string.substr (in string  str_source, in uint  index, in uint  count = string::npos);\n\
+- string          string.erase  (in string  str_source, in uint  index, in uint  count = string::npos);\n\
+- string          string.insert (in string  str_source, in uint  index, in string  str_to_insert);\n\
+- string          string.replace(in string  str_source, in uint  index, in uint  count, in string  str_to_insert);\n\
+- string          string.replace_all(in string  str_source, in string  str_old, in string  str_new);\n\
+\n\
+*** Decoder\n\
+\n\
+Sometimes, the input data is NOT directly usable (using int16, string ...) because it is encoded in a way that Generic dissector does NOT understand.\n\
+It is necessary to decode the input data before use it.\n\
+With decoder command, you can provide a function which decode the data following your rules.\n\
+Explanations at http://wsgd.free.fr/decoder_more.txt\n\
+\n\
+*** Specific commands\n\
+\n\
+- output            -- or ++ ;\n\
+  modify the output level\n\
+\n\
+- save_position          <position_name> ;\n\
+  save the current data packet position\n\
+- goto_position          <previously_saved_position_name> ;\n\
+- move_position_bytes    <position_offset> ;\n\
+- move_position_bits     <position_offset> ;\n\
+\n\
+- [debug_]print  \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n\
+- chat           \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n\
+- note           \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n\
+- warning        \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n\
+- error          \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n\
+- fatal          \"<string>\" or <field name> or (\"<printf format string>\", <expression>, <expression> ...) ;\n\
+  print the specified string or the specified field value or printf\n\
+  chat, note and warning will appear on gray, blue and yellow lines\n\
+  error and fatal will declare an error and appear on red line\n\
+  colored lines will appear into \"Analyze/Expert info composite\" menu\n\
+  fatal is supposed to stop the dissection\n\
+  \n\
+- [debug_]print  (byte_order|output|position) ;\n\
+  print specified internal data\n\
+\n\
+*** Others commands\n\
+\n\
+WITHOUT any effect on wireshark at this time.\n\
+\n\
+- check_eof_distance_bytes  <number of bytes before end of data> ;\n\
+- check_eof_distance_bits   <number of bits  before end of data> ;\n\
+  verify the distance between the current position and the end of packet\n\
+- [debug_]print  (alias|struct|enum|switch) ;\n\
+  print specified internal data\n\
+- [debug_]print  all ;\n\
+  print all internal data specified above\n\
+- [debug_]print  (help | syntax) ;\n\
+\n\
+*** Modifiers\n\
+\n\
+- hide   <any_type>       <any_field> ;\n\
+  permits to hide the field/variable (NOT displayed and could NOT filter on it)\n\
+"
       << endl;
 }
 
