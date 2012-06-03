@@ -228,6 +228,10 @@ void  usage (const char  * prog_name)
 "\n"
 "> byte_interpret.exe byte_order big_endian ; float32 toto ;  -- 00 01 02 03\n"
 "toto = 9.25572e-041\n"
+#ifndef WIN32
+"\n"
+"NB: for Linux/Unix systems, ; must be changed to \\; or \";\"\n"
+#endif
        << endl;
 
 #ifdef WIN32
