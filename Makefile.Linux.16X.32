@@ -621,18 +621,32 @@ clean-pluginLTLIBRARIES:
 generic.la: $(generic_la_OBJECTS) $(generic_la_DEPENDENCIES) 
 	$(LINK) -rpath $(plugindir) $(generic_la_LDFLAGS) $(generic_la_OBJECTS) $(generic_la_LIBADD) $(LIBS)
 
+# 2012 Olivier Aveline : add everything about byte_interpret
+# byte_interpret stand-alone
+DISSECTOR_CORE_OBJECTS = $(DISSECTOR_CORE_SRC:.cpp=.o) 
+
+byte_interpret_OBJECTS = byte_interpret_main.o $(DISSECTOR_CORE_OBJECTS)
+byte_interpret.x : $(byte_interpret_OBJECTS)
+	$(LINK)  $(conlibsdll)  $(byte_interpret_OBJECTS) $(LIBS)
+
+byte_interpret_clean:
+	rm -f $(byte_interpret_OBJECTS) byte_interpret.x
+
+byte_interpret_prod: byte_interpret.x
+
+
 # 2010 Olivier Aveline : add everything about unitary_tests
 # Unitary tests.
 unitary_tests_OBJECTS = unitary_tests.lo $(am__objects_CORE_UT) 
-unitary_tests.exe : $(unitary_tests_OBJECTS)
+unitary_tests.x : $(unitary_tests_OBJECTS)
 	$(LINK)  $(conlibsdll)  $(unitary_tests_OBJECTS) $(LIBS)
 
 unit_test_clean:
-	rm -f $(unitary_tests_OBJECTS) unitary_tests.exe unitary_tests.exe.traces.txt
+	rm -f $(unitary_tests_OBJECTS) unitary_tests.x unitary_tests.x.traces.txt
 
-unit_test_prod: unitary_tests.exe
+unit_test_prod: unitary_tests.x
 unit_test_exec: unit_test_prod
-	./unitary_tests.exe
+	./unitary_tests.x
   
 
 
