@@ -885,65 +885,8 @@ void    compute_wsgd_file_names (vector<string>  & wsgd_file_names)
 // prefs_apply_cb
 //*****************************************************************************
 #if 0
-// reload a protocol : Too much complicated !
-T_generic_protocol_data  * P_ICIOA_generic_protocol_data = NULL;
-
 void    prefs_apply_cb(void)
 {
-    C_debug_set_temporary  debug_register_proto_main(P_ICIOA_generic_protocol_data->DEBUG);
-
-	// ICIOA : big problem, how retrieve the good protocol ???
-	// Search for any pref_??load_protocol != FALSE
-
-    M_STATE_ENTER("prefs_apply_cb", "");
-	M_STATE_FATAL("prefs_apply_cb is called");
-
-	if (P_ICIOA_generic_protocol_data == NULL)
-	{
-		M_STATE_FATAL("prefs_apply_cb is called and P_ICIOA_generic_protocol_data == NULL !!!");
-		return;
-	}
-
-	M_STATE_FATAL("prefs_apply_cb unload = " << P_ICIOA_generic_protocol_data->ws_data.pref_unload_protocol);
-	M_STATE_FATAL("prefs_apply_cb reload = " << P_ICIOA_generic_protocol_data->ws_data.pref_reload_protocol);
-	M_STATE_FATAL("prefs_apply_cb unload_reload = " << P_ICIOA_generic_protocol_data->ws_data.pref_unload_reload_protocol);
-
-	if (P_ICIOA_generic_protocol_data->ws_data.pref_unload_protocol)
-	{
-		// Disable the protocol.
-		proto_set_decoding(P_ICIOA_generic_protocol_data->ws_data.proto_generic, FALSE);
-
-		// Cancel proto_register_field_array (proto.c) ?
-		protocol_t  * proto = find_protocol_by_id(P_ICIOA_generic_protocol_data->ws_data.proto_generic);
-		// -> effacer la liste proto->fields = g_list_append
-//		g_list_free(proto->fields);    DOES NOT COMPILE, protocol_t is hidden into ptoto.c.
-//		proto->fields = NULL;
-		// -> cancel proto_register_field_init
-		// ---> clean part of gpa_hfinfo
-		// ---> clean part of gpa_name_tree
-		//-> TOO COMPLICATE
-
-		// Cancel proto_register_subtree_array ?
-	}
-	else if (P_ICIOA_generic_protocol_data->ws_data.pref_reload_protocol)
-	{
-		// Enable the protocol.
-		proto_set_decoding(P_ICIOA_generic_protocol_data->ws_data.proto_generic, TRUE);
-	}
-	else if (P_ICIOA_generic_protocol_data->ws_data.pref_reload_protocol)
-	{
-		// Disable the protocol.
-		proto_set_decoding(P_ICIOA_generic_protocol_data->ws_data.proto_generic, FALSE);
-
-		// Disable the protocol.
-		proto_set_decoding(P_ICIOA_generic_protocol_data->ws_data.proto_generic, TRUE);
-	}
-
-	P_ICIOA_generic_protocol_data->ws_data.pref_unload_protocol = FALSE;
-	P_ICIOA_generic_protocol_data->ws_data.pref_reload_protocol = FALSE;
-	P_ICIOA_generic_protocol_data->ws_data.pref_unload_reload_protocol = FALSE;
-
-//	M_FATAL_COMMENT("prefs_apply_cb is called");
 }
 #endif
 
@@ -1027,22 +970,6 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 	    "Try heuristic sub-dissectors first",
 	    "Try to decode a packet using an heuristic sub-dissector before using a sub-dissector registered to a specific port",
 		&protocol_data.ws_data.subdissector_data.try_heuristic_first);
-#if 0
-	// reload a protocol : Too much complicated !
-	prefs_register_bool_preference(module, "unload_protocol",
-		"Do NOT use this : unload protocol",
-	    "No, do NOT do it !",
-		&protocol_data.ws_data.pref_unload_protocol);
-	prefs_register_bool_preference(module, "reload_protocol",
-		"Do NOT use this : reload protocol",
-	    "No, do NOT do it !",
-		&protocol_data.ws_data.pref_reload_protocol);
-	prefs_register_bool_preference(module, "unload_reload_protocol",
-		"Do NOT use this : unload_reload protocol",
-	    "No, do NOT do it !",
-		&protocol_data.ws_data.pref_unload_reload_protocol);
-P_ICIOA_generic_protocol_data = &protocol_data;
-#endif
 
 	M_STATE_DEBUG("new_register_dissector " <<
 				  protocol_data.PROTOABBREV << " " <<

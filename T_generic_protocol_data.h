@@ -129,11 +129,6 @@ struct T_generic_protocol_ws_data
   /* Wireshark ID of the protocol */
   int       proto_generic;
 
-  // Bidouille, trick, NOT even tested, NOT even coded !
-  gboolean               pref_unload_protocol;
-  gboolean               pref_reload_protocol;
-  gboolean               pref_unload_reload_protocol;
-
 //  void    ( * P_dissect_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree);
   gint      ( * P_dissect_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree);
   gboolean  ( * P_heuristic_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree);
@@ -151,9 +146,6 @@ struct T_generic_protocol_ws_data
 
   T_generic_protocol_ws_data()
 	  :proto_generic (-1),
-       pref_unload_protocol(FALSE),
-	   pref_reload_protocol(FALSE),
-	   pref_unload_reload_protocol(FALSE),
        P_dissect_fct (NULL),
        dissector_handle (NULL)
   { }
