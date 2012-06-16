@@ -3212,6 +3212,16 @@ void    test_interpret_simple()
 	interpret_data.set_big_endian();
 	M_TEST_EQ(interpret_data.is_little_endian(), false);
 
+	// char test
+M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
+	M_TEST_SIMPLE("41", "char  char ;", "char = A");
+	M_TEST_SIMPLE("81", "char  char ;", "char = ü");
+	M_TEST_SIMPLE("81", "uchar  char ;", "char = ü");
+}
+	M_TEST_SIMPLE("41", "char  char ;", "char = 65");
+	M_TEST_SIMPLE("81", "char  char ;", "char = -127");
+	M_TEST_SIMPLE("81", "uchar  char ;", "char = 129");
+
 	// 2010/08/16
 	// no decode time = 0 ms
 	//    decode time = 2 ms

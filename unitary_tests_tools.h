@@ -25,6 +25,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 #define wait_for_any_operator_input_if_necessary()
@@ -158,20 +159,33 @@ int   G_TEST_nb_errors_already_known = 0;
 // error_already_known flag 
 //*****************************************************************************
 
-bool   G_TEST_is_an_error_already_known = false;
+bool         G_TEST_is_an_error_already_known = false;
+std::string  G_TEST_error_already_known_explain;
 class C_TEST_error_already_known
 {
 public:
-	C_TEST_error_already_known()
-		:save_G_TEST_nb_errors_already_known(G_TEST_nb_errors_already_known)
+	C_TEST_error_already_known(long  bug_id, const std::string  & comment)
+		:A_save_G_TEST_nb_errors_already_known(G_TEST_nb_errors_already_known)
 	{
 		G_TEST_is_an_error_already_known = true;
+		G_TEST_error_already_known_explain = "";
+
+		{
+			std::ostringstream  oss;
+			if (bug_id > 0)
+			{
+				oss << "bug=" << bug_id << "  ";
+			}
+			oss << comment;
+			G_TEST_error_already_known_explain += oss.str();
+		}
 	}
 
     ~C_TEST_error_already_known()
     {
 		G_TEST_is_an_error_already_known = false;
-		if (G_TEST_nb_errors_already_known <= save_G_TEST_nb_errors_already_known)
+		G_TEST_error_already_known_explain = "";
+		if (G_TEST_nb_errors_already_known <= A_save_G_TEST_nb_errors_already_known)
 		{
 			++G_TEST_nb_errors;
 			cout << "NO MORE ERROR in test" << endl;
@@ -179,11 +193,11 @@ public:
 	}
 
 private:
-	int   save_G_TEST_nb_errors_already_known;
+	int          A_save_G_TEST_nb_errors_already_known;
 };
 
-#define M_TEST_ERROR_ALREADY_KNOWN__OPEN                                      \
-{ C_TEST_error_already_known  TEST_error_already_known;
+#define M_TEST_ERROR_ALREADY_KNOWN__OPEN(BUGID,COMMENT)                       \
+{ C_TEST_error_already_known  TEST_error_already_known(BUGID,COMMENT);
 
 #define M_TEST_EXCEPTION_ALREADY_KNOWN(instruction_that_calls_function)       \
 {                                                                             \
@@ -197,7 +211,8 @@ private:
   {                                                                           \
     is_exception_catched = true;                                              \
 	++G_TEST_nb_errors_already_known;                                         \
-    cout << "EXCEPTION (already known) "                                      \
+	cout << "EXCEPTION (already known: "                                      \
+         << G_TEST_error_already_known_explain << ") "                        \
          << " at " << __FILE__ << "[" << __LINE__ << "]"                      \
          << " test# " << G_TEST_nb_tests                                      \
          << endl;                                                             \
@@ -217,7 +232,9 @@ private:
 	    if (G_TEST_is_an_error_already_known == true)                         \
 		{                                                                     \
 			++G_TEST_nb_errors_already_known;                                 \
-			TEST_already_known_label = "(already known) ";                    \
+			TEST_already_known_label = "(already known: ";                    \
+            TEST_already_known_label += G_TEST_error_already_known_explain;   \
+            TEST_already_known_label += ") ";                                 \
 		}                                                                     \
 		else                                                                  \
 			++G_TEST_nb_errors;                                               \
