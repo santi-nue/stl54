@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,16 +30,23 @@
 using namespace std;
 
 //****************************************************************************
-// byte_interpret_get_include_file_name
-// byte_interpret_set_include_file_name
+// byte_interpret_set_include_directory
+// Sets the directory name where are the include files.
 //****************************************************************************
 
 void      byte_interpret_set_include_directory(const string  & dir_name);
+
+//****************************************************************************
+// byte_interpret_get_include_file_name
+// Returns <include dir>/<file_name>.
+//****************************************************************************
+
 string    byte_interpret_get_include_file_name(const string  & file_name);
 
 
 //****************************************************************************
 // build_types
+// Build types specified into <file_name>.
 //****************************************************************************
 
 void      build_types (const string              & file_name,
@@ -48,6 +55,7 @@ void      build_types (const string              & file_name,
 
 //****************************************************************************
 // build_types
+// Build types specified into <is>.
 // Returns the last extracted word (which has NOT been treated).
 //****************************************************************************
 
@@ -57,6 +65,7 @@ string    build_types (istream             & is,
 
 //****************************************************************************
 // build_field
+// Build field specified at the beginning of <is> starting with <first_word>.
 // Returns the last extracted word (which has NOT been treated).
 //****************************************************************************
 

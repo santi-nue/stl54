@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,11 +29,12 @@
 
 
 //****************************************************************************
-// build_types
+// build_feeling_types
+// Build types specified into <sub_directory>/<main_file_name>.
 // Returns the last extracted word (which has NOT been treated).
 //****************************************************************************
 
-bool      build_feeling_types (const std::string         & directory,
+bool      build_feeling_types (const std::string         & sub_directory,
 							   const std::string         & main_file_name,
                                      T_type_definitions  & type_definitions);
 
