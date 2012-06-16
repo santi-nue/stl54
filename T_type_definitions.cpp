@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,9 +56,9 @@ bool    is_a_valid_identifier_name (const string   & var_name,
 	// NB: "." is reserved to <name1>.<name2>
 	for (int  idx = 0; idx < var_name.size(); ++idx)
 	{
-		if ((isalnum(var_name[0]) == 0) &&
-			(var_name[0] != '_') &&
-			(var_name[0] != also_authorized))
+		if ((isalnum(var_name[idx]) == 0) &&
+			(var_name[idx] != '_') &&
+			(var_name[idx] != also_authorized))
 		{
 			return  false;
 		}

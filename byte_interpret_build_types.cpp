@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2011 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -148,10 +148,11 @@ C_value    string_to_numeric(const T_type_definitions  & type_definitions,
 // I refuse - (accepted by wireshark) because used into expression.
 //*****************************************************************************
 
-void    check_field_name(const string   & field_name)
+void    check_field_name(const string   & field_name,
+						 const char       also_authorized = '\0')
 {
 #if 1
-	if (is_a_valid_short_variable_name(field_name) == false)
+	if (is_a_valid_short_variable_name(field_name, also_authorized) == false)
 	{
 		M_FATAL_COMMENT("Unexpected field name (" << field_name << ") only alphanumeric and _ accepted. Must not start by a number.");
 	}
@@ -557,6 +558,14 @@ string    build_field (istream                           & is,
 	{
 		field_type_name.output_directive = T_field_type_name::E_output_directive_show;
 		M_FATAL_IF_FALSE (read_token_left_any (is, first_word));
+	}
+
+	// modifier: const
+	bool    is_const = false;
+	if (first_word == "const")
+	{
+		is_const = true;
+		first_word = "var";    // treated as var
 	}
 
 	// modifier: var
@@ -1015,7 +1024,10 @@ string    build_field (istream                           & is,
 
 		if (field_type_name.name != "")
 		{
-			check_field_name(field_type_name.name);
+			if (is_const == true)
+				check_field_name(field_type_name.name, ':');
+			else
+				check_field_name(field_type_name.name);
 		}
 
 		// Incomplete !!!
@@ -1298,7 +1310,7 @@ void    build_const (const E_override            must_override,
 	T_field_type_name    field_type_name;
 
 	string  last_word_read = build_field (is, type_definitions,
-										  "var",
+										  key_word,
 										  field_type_name,
 										  E_field_scope_other,
 										  "return_type_do_not_care",

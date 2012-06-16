@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,7 @@ bool    is_a_valid_identifier_name (const string   & var_name,
 #define is_a_valid_short_variable_name      is_a_valid_short_identifier_name
 #define is_a_valid_type_name                is_a_valid_short_identifier_name
 
+#define is_a_valid_const_variable_name(NAME)  is_a_valid_identifier_name(NAME, ':')
 #define is_a_valid_long_variable_name(NAME)   is_a_valid_identifier_name(NAME, '.')
 
 //****************************************************************************

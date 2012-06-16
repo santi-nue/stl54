@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2011 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1005,6 +1005,72 @@ void    test_build_field ()
 		M_TEST_EQ(field_type_name.str_arrays[0], " val + 2 ");
 		M_TEST_EQ(field_type_name.name, "toto");
 		M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+	}
+
+	// Invalid syntax field name []
+	{
+		string         first_word = "float32";
+		istringstream  iss(" x[6];");
+
+		T_field_type_name    field_type_name;
+		M_TEST_CATCH_EXCEPTION(
+			build_field(iss, type_definitions, first_word, field_type_name),
+			C_byte_interpret_exception);
+	}
+
+	// Invalid syntax field name {}
+	{
+		string         first_word = "uint32";
+		istringstream  iss(" x{ns=0};");
+
+		T_field_type_name    field_type_name;
+		M_TEST_CATCH_EXCEPTION(
+			build_field(iss, type_definitions, first_word, field_type_name),
+			C_byte_interpret_exception);
+	}
+
+	// Invalid syntax field name ()
+	{
+		string         first_word = "string";
+		istringstream  iss(" x(50);");
+
+		T_field_type_name    field_type_name;
+		M_TEST_CATCH_EXCEPTION(
+			build_field(iss, type_definitions, first_word, field_type_name),
+			C_byte_interpret_exception);
+	}
+
+	// Invalid syntax field name ::
+	{
+		string         first_word = "uint32";
+		istringstream  iss(" konst::one_hundred;");
+
+		T_field_type_name    field_type_name;
+		M_TEST_CATCH_EXCEPTION(
+			build_field(iss, type_definitions, first_word, field_type_name),
+			C_byte_interpret_exception);
+	}
+
+	// Invalid syntax field name ::
+	{
+		string         first_word = "var";
+		istringstream  iss("uint32 konst::one_hundred = 100;");
+
+		T_field_type_name    field_type_name;
+		M_TEST_CATCH_EXCEPTION(
+			build_field(iss, type_definitions, first_word, field_type_name),
+			C_byte_interpret_exception);
+	}
+
+	// Valid const syntax field name
+	{
+		string         first_word = "konst";
+		istringstream  iss("uint32 konst::one_hundred = 100;");
+
+		T_field_type_name    field_type_name;
+		M_TEST_CATCH_EXCEPTION(
+			build_field(iss, type_definitions, first_word, field_type_name),
+			C_byte_interpret_exception);
 	}
 }
 

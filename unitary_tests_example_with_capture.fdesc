@@ -510,11 +510,11 @@ struct  T_test_switch
 
 struct  T_test_frame
 {
-  save_position    position::outside_frame_begin;
+  save_position    position_outside_frame_begin;
 
   frame_old  size_bytes=12+4
   {
-    save_position    position::frame_begin;
+    save_position    position_frame_begin;
     uint16      val16;
     uint32      val32;
     string(4)   str4;
@@ -529,12 +529,12 @@ struct  T_test_frame
   var  int64  outside_var64 = val16 * val32;
   var string  outside_varstr4 = str4;
 
-  if (position::outside_frame_begin != position::frame_begin)
+  if (position_outside_frame_begin != position_frame_begin)
   {
     fatal "";
   }
 
-  goto_position    position::frame_begin;
+  goto_position    position_frame_begin;
   uint16           outside_val16;
   uint32           outside_val32;
   string(4)        outside_str4;

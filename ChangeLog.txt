@@ -1,4 +1,6 @@
 
+2012/06/16  Fix : bad check of field name. Only alphanum and _ accepted. Also : for const and enum.
+                   NB: "save_position  position::my_pos" is now rejected.
 2012/05/06  Upd : byte_interpret.exe help and -help_syntax
 2012/05/05  Add : int40, uint40, int48 and uint48 are now possible
 2011/12/11  Add : string{...}(43) and string{...}(43){...} are now possible
