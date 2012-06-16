@@ -1,4 +1,5 @@
 
+2012/06/16  Fix : 1.8.0 generation
 2012/06/16  Fix : bad check of field name. Only alphanum and _ accepted. Also : for const and enum.
                    NB: "save_position  position::my_pos" is now rejected.
 2012/05/06  Upd : byte_interpret.exe help and -help_syntax

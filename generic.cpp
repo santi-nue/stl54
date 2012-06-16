@@ -860,13 +860,13 @@ void    compute_wsgd_file_names (vector<string>  & wsgd_file_names)
 
 #define M_SEARCH_IN_DIR(DIR)                                                \
 {                                                                           \
-	const char  * env = DIR;                                                \
-	if (env != NULL)                                                        \
+	const char  * dir_name = DIR;                                           \
+	if (dir_name != NULL)                                                   \
 	{                                                                       \
-		get_wsgd_files_in_dir(env, wsgd_file_names);                        \
+		get_wsgd_files_in_dir(dir_name, wsgd_file_names);                   \
 		if (wsgd_file_names.empty() == false)                               \
 		{                                                                   \
-			byte_interpret_set_include_directory(env);                      \
+			byte_interpret_set_include_directory(dir_name);                 \
 			return;                                                         \
 		}                                                                   \
 	}                                                                       \
@@ -1703,7 +1703,9 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
 	  M_ADD_PINFO(circuit_id);
 	  M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
 	  M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
+#if WIRESHARK_VERSION_NUMBER < 10800
 	  M_ADD_PINFO(in_error_pkt);        /* TRUE if we're inside an {ICMP,CLNP,...} error packet */
+#endif
 	  M_ADD_PINFO(ptype);               /* type of the following two port numbers */
 	  M_ADD_PINFO(srcport);
 	  M_ADD_PINFO(destport);
@@ -1774,7 +1776,9 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
   M_ADD_PINFO(circuit_id);
   M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
   M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
+#if WIRESHARK_VERSION_NUMBER < 10800
   M_ADD_PINFO(in_error_pkt);        /* TRUE if we're inside an {ICMP,CLNP,...} error packet */
+#endif
   M_ADD_PINFO(ptype);               /* type of the following two port numbers */
   M_ADD_PINFO(srcport);
   M_ADD_PINFO(destport);
@@ -1845,6 +1849,20 @@ void   copy_global_values(T_interpret_read_values  & interpret_read_values_dst,
 }
 
 //*****************************************************************************
+// wsgd_debug
+//*****************************************************************************
+
+void    wsgd_debug()
+{
+#if 0
+  M_STATE_ENTER ("wsgd_debug", "nb_of_objects=" << C_debug_object_counter::get_nb_of_objects());
+  T_generic_protocol_saved_interpreted_data::debug();
+  T_interpret_data::debug();
+  T_interpret_value::debug();
+#endif
+}
+
+//*****************************************************************************
 // cpp_dissect_generic
 //*****************************************************************************
 
@@ -1862,6 +1880,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
      << length_raw_data << ", "
      << pinfo << ", "
      << msg_root_tree << ", "
+     << pinfo->fd->num << ", "
      << msg_number_inside_packet << ")");
 
   proto_tree   * tree = msg_root_tree;
@@ -1869,6 +1888,8 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
   const int                  proto_idx = protocol_data.proto_idx;
   M_STATE_DEBUG ("proto_idx = " << proto_idx);
   ostream                  & os = get_interpret_ostream();
+
+  wsgd_debug();
 
   // It could be mandatory to interpret the entire msg (even if msg_root_tree is NULL)
   bool      mandatory_to_interpret_the_entire_msg = false;
@@ -1879,7 +1900,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 
   // interpret data.
   // ATTENTION, we must NOT create a new interpret_data if it already exist into global data.
-  //  because it could be referenced by its memory address into other lobal data.
+  //  because it could be referenced by its memory address into other global data.
   // This is the current implementation of msg type. Not a good idea, but ...
   T_RCP_interpret_data              RCP_interpret_data;
 
@@ -1892,7 +1913,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 
 	  // Compute P_prev_saved_interpret_data
 	  // Compute P_where_to_save_interpret_data
-	  long                packet_number = pinfo->fd->num;
+	  const long                packet_number = pinfo->fd->num;
 	  for (vector<T_generic_protocol_saved_interpreted_data>::reverse_iterator
 			  rev_iter  = protocol_data.ws_data.global_data.saved_interpreted_datas.rbegin();
 			  rev_iter != protocol_data.ws_data.global_data.saved_interpreted_datas.rend();
@@ -1903,6 +1924,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 		  if ((saved_interpreted_data.packet_number == packet_number) &&
 			  (saved_interpreted_data.msg_number_inside_packet == msg_number_inside_packet))
 		  {
+			  // Found
 			  P_where_to_save_interpret_data = & saved_interpreted_data;
 
 			  ++rev_iter;
@@ -1915,12 +1937,14 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 		  }
 		  else if (saved_interpreted_data.packet_number < packet_number)
 		  {
+			  // Not found
 			  RCP_prev_saved_interpret_data = rev_iter->RCP_interpret_data;
 			  break;
 		  }
 		  else if ((saved_interpreted_data.packet_number == packet_number) &&
 				   (saved_interpreted_data.msg_number_inside_packet < msg_number_inside_packet))
 		  {
+			  // Not found
 			  RCP_prev_saved_interpret_data = rev_iter->RCP_interpret_data;
 			  break;
 		  }
@@ -1933,6 +1957,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  }
 	  else
 	  {
+		  M_STATE_DEBUG ("GLOBAL_DATA new T_interpret_data");
 		  RCP_interpret_data = new T_interpret_data;
 	  }
 
