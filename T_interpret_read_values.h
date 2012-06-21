@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,8 @@ using namespace std;
 // T_interpret_read_values
 //*****************************************************************************
 
-struct T_interpret_read_values : public C_reference_counter
+struct T_interpret_read_values : public C_reference_counter,
+                                 public C_debug_object_counter
 {
 	typedef int       T_id;
 
@@ -97,7 +98,7 @@ struct T_interpret_read_values : public C_reference_counter
 	void    reset();
 	void    reset_short_names();
 
-	struct T_var_name_P_value
+	struct T_var_name_P_value : public C_debug_object_counter
 	{
 		string               var_name;
 		const T_attribute_value  * P_value;

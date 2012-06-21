@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +38,8 @@ struct T_interpret_data : public T_interpret_read_values,
                           public T_interpret_output,
                           public T_interpret_byte_order,
 						  public T_interpret_decode,
-						  public T_interpret_chrono
+						  public T_interpret_chrono,
+						  public C_debug_object_counter
 {
 };
 

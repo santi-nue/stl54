@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -49,7 +49,7 @@ using namespace std;
  * T_generic_protocol_ws_data
  *****************************************************************************/
 
-struct T_generic_protocol_fields_data
+struct T_generic_protocol_fields_data : public C_debug_object_counter
 {
   vector<gint>                hf_id;
   vector<gint>                ett_id;
@@ -57,17 +57,17 @@ struct T_generic_protocol_fields_data
   vector<gint *>              ett;        // WARNING_ADDRESSES
 };
 
-struct T_generic_protocol_enum_value
+struct T_generic_protocol_enum_value : public C_debug_object_counter
 {
   vector<value_string>    value_strings;
 };
 
-struct T_generic_protocol_enum_values_data
+struct T_generic_protocol_enum_values_data : public C_debug_object_counter
 {
   vector<T_generic_protocol_enum_value>    enum_values;
 };
 
-struct T_generic_protocol_subdissector_data
+struct T_generic_protocol_subdissector_data : public C_debug_object_counter
 {
   dissector_table_t      dissector_table;
   heur_dissector_list_t  heur_dissector_list;
@@ -83,7 +83,7 @@ struct T_generic_protocol_subdissector_data
   { }
 };
 
-struct T_generic_protocol_tap_data
+struct T_generic_protocol_tap_data : public C_debug_object_counter
 {
   int                    proto_tap;
 
@@ -103,7 +103,7 @@ struct T_generic_protocol_tap_data
   { }
 };
 
-struct T_generic_protocol_saved_interpreted_data
+struct T_generic_protocol_saved_interpreted_data : public C_debug_object_counter
 {
   long                    packet_number;
   long                    msg_number_inside_packet;
@@ -115,7 +115,7 @@ struct T_generic_protocol_saved_interpreted_data
   { }
 };
 
-struct T_generic_protocol_global_data
+struct T_generic_protocol_global_data : public C_debug_object_counter
 {
   // Contains the initial values of global data
   T_interpret_data    initialized_data;
@@ -124,7 +124,7 @@ struct T_generic_protocol_global_data
   vector<T_generic_protocol_saved_interpreted_data>  saved_interpreted_datas;
 };
 
-struct T_generic_protocol_ws_data
+struct T_generic_protocol_ws_data : public C_debug_object_counter
 {
   /* Wireshark ID of the protocol */
   int       proto_generic;
@@ -156,7 +156,7 @@ struct T_generic_protocol_ws_data
 // T_generic_protocol_data
 //*****************************************************************************
 
-struct T_generic_protocol_data
+struct T_generic_protocol_data : public C_debug_object_counter
 {
   int       proto_idx;  // identify the proto
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,8 @@
 
 #include <string>
 
+#include "byte_interpret_common.h"
+
 //*****************************************************************************
 // NB: byte order     inverted : intel,    little endian
 //     byte order NOT inverted : motorola, big    endian, network
@@ -36,7 +38,7 @@ bool    is_host_byte_order_inverted ();
 // T_interpret_byte_order
 //*****************************************************************************
 
-struct T_interpret_byte_order
+struct T_interpret_byte_order : public C_debug_object_counter
 {
     bool    must_invert_bytes() const;
 

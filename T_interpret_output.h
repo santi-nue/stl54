@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,13 @@
 // Includes.
 //*****************************************************************************
 
+#include "byte_interpret_common.h"
 
 //*****************************************************************************
 // T_interpret_output
 //*****************************************************************************
 
-struct T_interpret_output
+struct T_interpret_output : public C_debug_object_counter
 {
     int     get_output_level  () const                { return  output_level; }
     void    set_output_level  (int   val)             { output_level = val; }

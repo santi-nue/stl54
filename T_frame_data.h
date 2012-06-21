@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@
 // Permits to read/write inside data.
 //*****************************************************************************
 
-struct T_frame_data
+struct T_frame_data : public C_debug_object_counter
 {
 	T_frame_data();
 

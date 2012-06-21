@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "T_attribute_value.h"
+#include "byte_interpret_common.h"
 
 
 //*****************************************************************************
@@ -38,7 +39,7 @@
 // - local               plus tard
 //*****************************************************************************
 
-struct T_interpret_value
+struct T_interpret_value : public C_debug_object_counter
 {
 	enum E_type
 	{

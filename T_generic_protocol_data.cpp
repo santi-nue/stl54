@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,7 +54,7 @@ expression could be :
 // T_expression
 //****************************************************************************
 
-struct T_expression
+struct T_expression : public C_debug_object_counter
 {
 	enum E_type
 	{

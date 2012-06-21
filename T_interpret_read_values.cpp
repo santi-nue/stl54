@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -770,6 +770,7 @@ T_interpret_read_values::reset()
 
 	A_msg.clear();
 	A_current_path = "";
+	A_this_msg_attribute_value = T_attribute_value();
 }
 
 //*****************************************************************************

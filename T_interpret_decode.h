@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,12 +26,13 @@
 #include <string>
 using namespace std;
 
+#include "byte_interpret_common.h"
 
 //*****************************************************************************
 // T_interpret_decode
 //*****************************************************************************
 
-struct T_interpret_decode
+struct T_interpret_decode : public C_debug_object_counter
 {
     void            set_decode_function (string  decode_function);
 	const string &  get_decode_function () const                    { return  A_decode_function; }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -280,6 +280,23 @@ struct C_trace
 
 	const char  * A_function_name;
 	bool          A_must_do_leave_trace;
+};
+
+//****************************************************************************
+// C_debug_object_counter
+//****************************************************************************
+
+class C_debug_object_counter
+{
+public:
+	C_debug_object_counter()                                  { ++A_debug_counter; }
+	C_debug_object_counter(const C_debug_object_counter  & )  { ++A_debug_counter; }
+	~C_debug_object_counter()                                 { --A_debug_counter; }
+
+	static int    get_nb_of_objects()                    { return A_debug_counter; }
+
+private:
+	static int    A_debug_counter;
 };
 
 //****************************************************************************

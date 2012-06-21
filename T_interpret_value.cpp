@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,16 +59,17 @@ T_interpret_value::T_interpret_value(
 }
 #if 0
 T_interpret_value::T_interpret_value(const T_interpret_value  & rhs)
-	:A_reference_counter(0),                        // reference_counter specific behavior NE fonctionne PAS
+	:A_reference_counter(rhs.A_reference_counter),   // reference_counter(0) specific behavior does NOT work
 	 A_type(rhs.A_type),
 	 A_name(rhs.A_name),
-	 A_attribute_value(rhs.A_attribute_value){
+	 A_attribute_value(rhs.A_attribute_value)
+{
 }
 
 T_interpret_value &
 T_interpret_value::operator=(const T_interpret_value  & rhs)
 {
-	// reference_counter specific behavior NE fonctionne PAS
+	A_reference_counter = rhs.A_reference_counter;  // reference_counter specific behavior does NOT work
 	A_type = rhs.A_type;
 	A_name = rhs.A_name;
 	A_attribute_value = rhs.A_attribute_value;

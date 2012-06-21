@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,13 +26,14 @@
 #include <string>
 
 #include "T_perf_time.h"
+#include "byte_interpret_common.h"
 
 
 //*****************************************************************************
 // T_interpret_chrono
 //*****************************************************************************
 
-struct T_interpret_chrono
+struct T_interpret_chrono : public C_debug_object_counter
 {
     std::string  compute_chrono_value_from_command(const std::string  & command);
 

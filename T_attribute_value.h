@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,12 +26,13 @@
 #include "C_value.h"
 #include <string>
 
+#include "byte_interpret_common.h"
 
 //*****************************************************************************
 // T_attribute_value
 //*****************************************************************************
 
-struct T_attribute_value
+struct T_attribute_value : public C_debug_object_counter
 {
 	// Size = 56 + 12 + 12 = 80 bytes
 
