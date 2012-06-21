@@ -2063,7 +2063,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  update_pinfo_ports(protocol_data, pinfo, interpret_data);
 
 
-	  if (tree == NULL)
+	  if ((tree == NULL) && (mandatory_to_interpret_the_entire_msg != true))
 	  {
 		  if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG &&
 			  protocol_data.PACKET_CONTAINS_ONLY_1_MSG)
@@ -2249,6 +2249,8 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 		if ((P_where_to_save_interpret_data == NULL) &&
 			(protocol_data.GLOBAL_DATA_TYPE != ""))
 		{
+		  M_STATE_DEBUG ("GLOBAL_DATA saved_interpreted_datas.push_back");
+
 		  protocol_data.ws_data.global_data.saved_interpreted_datas.push_back(T_generic_protocol_saved_interpreted_data());
 		  T_generic_protocol_saved_interpreted_data  & saved_interpreted_data = protocol_data.ws_data.global_data.saved_interpreted_datas.back();
 		  saved_interpreted_data.packet_number = pinfo->fd->num;
