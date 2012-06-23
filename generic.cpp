@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2011 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -1849,20 +1849,6 @@ void   copy_global_values(T_interpret_read_values  & interpret_read_values_dst,
 }
 
 //*****************************************************************************
-// wsgd_debug
-//*****************************************************************************
-
-void    wsgd_debug()
-{
-#if 0
-  M_STATE_ENTER ("wsgd_debug", "nb_of_objects=" << C_debug_object_counter::get_nb_of_objects());
-  T_generic_protocol_saved_interpreted_data::debug();
-  T_interpret_data::debug();
-  T_interpret_value::debug();
-#endif
-}
-
-//*****************************************************************************
 // cpp_dissect_generic
 //*****************************************************************************
 
@@ -1875,21 +1861,19 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 							const long           msg_number_inside_packet)
 {
   M_STATE_ENTER ("cpp_dissect_generic", protocol_data.PROTOABBREV << " ("
+     << pinfo->fd->num << "/"
+     << msg_number_inside_packet << ", "
      << tvb << ", "
      << ptr_raw_data << ", "
      << length_raw_data << ", "
      << pinfo << ", "
-     << msg_root_tree << ", "
-     << pinfo->fd->num << ", "
-     << msg_number_inside_packet << ")");
+     << msg_root_tree << ")");
 
   proto_tree   * tree = msg_root_tree;
 
   const int                  proto_idx = protocol_data.proto_idx;
   M_STATE_DEBUG ("proto_idx = " << proto_idx);
   ostream                  & os = get_interpret_ostream();
-
-  wsgd_debug();
 
   // It could be mandatory to interpret the entire msg (even if msg_root_tree is NULL)
   bool      mandatory_to_interpret_the_entire_msg = false;
@@ -2355,11 +2339,11 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
 							const long           msg_number_inside_packet)
 {
   M_STATE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
-                 << protocol_data.proto_idx << ", "
+			     << pinfo->fd->num << "/"
+                 << msg_number_inside_packet << ", "
                  << tvb << ", "
                  << pinfo << ", "
-                 << tree << ", "
-                 << msg_number_inside_packet << ")");
+                 << tree << ")");
 
   if ((protocol_data.MSG_HEADER_LENGTH > 0) &&
 	  (length_raw_data < protocol_data.MSG_HEADER_LENGTH))
@@ -2371,9 +2355,16 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
     return  0;
   }
 
+  gint  result = 0;
+
+  M_STATE_DEBUG ("wsgd_debug dissect+ " << protocol_data.PROTOABBREV << " ("
+			     << pinfo->fd->num << "/"
+                 << msg_number_inside_packet << ") "
+                 << "nb_of_objects=" << C_debug_object_counter::get_nb_of_objects());
+
   try
   {
-    return  cpp_dissect_generic(protocol_data,
+    result = cpp_dissect_generic(protocol_data,
                               tvb,
 							  ptr_raw_data,
 							  length_raw_data,
@@ -2384,8 +2375,14 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
   catch(...)
   {
     M_STATE_FATAL("Unexpected exception.");
-    return  0;
+    result = 0;
   }
+
+  M_STATE_DEBUG ("wsgd_debug dissect- " << protocol_data.PROTOABBREV << " ("
+			     << pinfo->fd->num << "/"
+                 << msg_number_inside_packet << ") "
+                 << "nb_of_objects=" << C_debug_object_counter::get_nb_of_objects());
+  return  result;
 }
 
 //*****************************************************************************
