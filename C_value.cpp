@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,7 +76,7 @@ ostream &  operator<< (ostream  & os, const C_value        & rhs)
     os << "str=" << rhs.A_str << "  ";
 	os << "bit_position_offset=" << rhs.A_bit_position_offset << "  ";
 	os << "bit_position_size=" << rhs.A_bit_position_size << "  ";
-	os << "external_type__cvtbd=" << rhs.A_external_type__cvtbd << "  ";
+//	os << "external_type__cvtbd=" << rhs.A_external_type__cvtbd << "  ";
 	os << "external_type_bit_size__cvtbd=" << rhs.A_external_type_bit_size__cvtbd << "  ";
 
 	return  os;
@@ -232,23 +232,9 @@ C_value::operator=(const C_value  & rhs)
 	// si la valeur de this n'est pas definie :
 	// - ne pas la modifier ? 
 	// voir M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS
-	if ((A_external_type__cvtbd == "") ||
-		(A_external_type__cvtbd == "any"))
+	if (A_external_type_bit_size__cvtbd == 0)
 	{
-		if (rhs.A_external_type__cvtbd != "")
-		{
-			A_external_type__cvtbd = rhs.A_external_type__cvtbd;
-			A_external_type_bit_size__cvtbd = rhs.A_external_type_bit_size__cvtbd;
-
-		}
-#if 0
-		// Big performance problem and no interest
-		else
-		{
-			A_external_type__cvtbd += " ";
-			A_external_type__cvtbd += rhs.A_external_type__cvtbd;
-		}
-#endif
+		A_external_type_bit_size__cvtbd = rhs.A_external_type_bit_size__cvtbd;
 	}
 
 	return  *this;
@@ -261,7 +247,7 @@ C_value::operator=(const C_value  & rhs)
 void
 C_value::set_external_type(const std::string  & final_type)
 {
-	A_external_type__cvtbd = final_type;
+//	A_external_type__cvtbd = final_type;
 	A_external_type_bit_size__cvtbd = 0;
 
 	long    bit_size = 0;
@@ -283,12 +269,6 @@ C_value::set_external_type(const std::string  & final_type)
 	// else string ???
 }
 	
-const std::string  &
-C_value::get_external_type ()  const
-{
-	return  A_external_type__cvtbd;
-}
-
 bool
 C_value::get_external_type_signed ()  const
 {
@@ -311,6 +291,12 @@ C_value::get_external_type_byte_size ()  const
 		return  - A_external_type_bit_size__cvtbd / 8;
 	else
 		return  A_external_type_bit_size__cvtbd / 8;
+}
+
+void
+C_value::set_external_type_bit_size(int    external_type_bit_size)
+{
+	A_external_type_bit_size__cvtbd = external_type_bit_size;
 }
 
 //*****************************************************************************
@@ -648,26 +634,26 @@ class C_value_set_position_offset
 	C_value  & A_value_to_set;
 	int        A_pos;
 	int        A_offset;
-	string     A_external_type__cvtbd;
-//	int        A_external_type_bit_size__cvtbd;
+//	string     A_external_type__cvtbd;
+	int        A_external_type_bit_size__cvtbd;
 
 public:
 	C_value_set_position_offset(C_value  & val, int pos, int offset,
-						  const string   & external_type__cvtbd)//,
-//								int        external_type_bit_size__cvtbd)
+//						  const string   & external_type__cvtbd)//,
+								int        external_type_bit_size__cvtbd)
 		:A_value_to_set(val),
 		 A_pos(pos),
 		 A_offset(offset),
-		 A_external_type__cvtbd(external_type__cvtbd)//,
-//		 A_external_type_bit_size__cvtbd(external_type_bit_size__cvtbd)
+//		 A_external_type__cvtbd(external_type__cvtbd)//,
+		 A_external_type_bit_size__cvtbd(external_type_bit_size__cvtbd)
 	{
 	}
 
 	~C_value_set_position_offset()
 	{
 		A_value_to_set.set_bit_position_offset_size(A_pos, A_offset);
-		A_value_to_set.set_external_type(A_external_type__cvtbd);
-//		A_value_to_set.set_external_type_bit_size(external_type_bit_size__cvtbd);
+//		A_value_to_set.set_external_type(A_external_type__cvtbd);
+		A_value_to_set.set_external_type_bit_size(A_external_type_bit_size__cvtbd);
 	}
 };
 
@@ -688,40 +674,16 @@ public:
 		}                                                                   \
 	}
 
-#if 0
-// Big performance problem
 #define M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS(RESULT,RHS)                  \
-    if (RHS A_external_type__cvtbd != "")                                   \
+    if (RESULT A_external_type_bit_size__cvtbd == 0)                        \
 	{                                                                       \
-        if ((RESULT A_external_type__cvtbd == "") ||                        \
-			(RESULT A_external_type__cvtbd == "any"))                       \
-		{                                                                   \
-			RESULT A_external_type__cvtbd = RHS A_external_type__cvtbd;     \
-			RESULT A_external_type_bit_size__cvtbd = RHS A_external_type_bit_size__cvtbd;     \
-		}                                                                   \
-		else                                                                \
-		{                                                                   \
-			RESULT A_external_type__cvtbd += " ";                           \
-			RESULT A_external_type__cvtbd += RHS A_external_type__cvtbd;    \
-		}                                                                   \
+		RESULT A_external_type_bit_size__cvtbd = RHS A_external_type_bit_size__cvtbd;     \
     }
-#else
-#define M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS(RESULT,RHS)                  \
-    if ((RESULT A_external_type__cvtbd == "") ||                            \
-		(RESULT A_external_type__cvtbd == "any"))                           \
-	{                                                                       \
-        if (RHS A_external_type__cvtbd != "")                               \
-		{                                                                   \
-			RESULT A_external_type__cvtbd = RHS A_external_type__cvtbd;     \
-			RESULT A_external_type_bit_size__cvtbd = RHS A_external_type_bit_size__cvtbd;     \
-		}                                                                   \
-    }
-#endif
 
 #define M_COMPUTE_NEW_POSITION_OFFSET()                                     \
 	M_COMPUTE_NEW_POSITION_OFFSET_RESULT_RHS(this-> ,rhs.);                 \
 	M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS(this-> ,rhs.);                   \
-	C_value_set_position_offset  vspo(*this, this->A_bit_position_offset, this->A_bit_position_size, this->A_external_type__cvtbd)
+	C_value_set_position_offset  vspo(*this, this->A_bit_position_offset, this->A_bit_position_size, this->A_external_type_bit_size__cvtbd)
 
 
 //*****************************************************************************

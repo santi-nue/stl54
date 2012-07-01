@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include "CT_debug_object_counter.h"
 
 // ****************************************************************************
 // C_value
@@ -35,7 +36,7 @@
 // - logical comparisons (when possible)
 // ****************************************************************************
 
-struct C_value
+struct C_value : public CT_debug_object_counter<C_value>
 {
     enum E_type
     {
@@ -86,10 +87,11 @@ struct C_value
 	// Only set the external basic type (uint3, float32, string(7) ...)
 	// The type itself is not modified
 	void                 set_external_type(const std::string  & external_type);
-	const std::string  & get_external_type ()  const;
+//	const std::string  & get_external_type ()  const;
 	bool                 get_external_type_signed ()  const;
 	int                  get_external_type_bit_size ()  const;
 	int                  get_external_type_byte_size ()  const;
+	void                 set_external_type_bit_size(int    external_type_bit_size);
 
 	// Fatal if internal type does not match.
 	long long            get_int ()  const;
@@ -181,12 +183,15 @@ private:
 	static
 	C_value    pow_internal(const C_value  & lhs, const C_value  & rhs);
 
-	// Size std::string = 12 bytes
-	// Size             = 4 + 12 + 4 + 8 + 8 + 12 + 4 + 4 = 56 bytes
+	// Sizeof std::string = 28 bytes  for VCEE2008 & 32bits
+	// Sizeof             = 4 + 4 + 8 + 8 + 28 + 4 + 4 = 60 bytes != 64
+
+	// Sizeof std::string = 40 bytes  for VCEE2008 & 64bits
+	// Sizeof             = 4 + 4 + 8 + 8 + 40 + 4 + 4 = 72 bytes
 
     E_type         A_type;
-	std::string    A_external_type__cvtbd;
 	int            A_external_type_bit_size__cvtbd;
+//	std::string    A_external_type__cvtbd;
     long long      A_integer;
     double         A_flt;
     std::string    A_str;
