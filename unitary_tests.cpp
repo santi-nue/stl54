@@ -121,6 +121,27 @@ void    test_bitfield_C()
 }
 
 //*****************************************************************************
+// test_size
+// Not a test.
+//*****************************************************************************
+
+void    test_size()
+{
+#define M_OUT_SIZEOF(PARAM)    \
+	cout << "sizeof(" << #PARAM << ") = " << sizeof(PARAM) << endl
+
+	M_OUT_SIZEOF(int);
+	M_OUT_SIZEOF(long);
+	M_OUT_SIZEOF(long long);
+	M_OUT_SIZEOF(double);
+	M_OUT_SIZEOF(string);
+	M_OUT_SIZEOF(C_value);
+	M_OUT_SIZEOF(T_attribute_value);
+	M_OUT_SIZEOF(T_interpret_value);
+
+}
+
+//*****************************************************************************
 // C_perf_chrono
 //*****************************************************************************
 
@@ -3798,6 +3819,7 @@ int   main(const int         argc,
 		M_TEST_FCT(test_interpret_simple);
 		M_TEST_FCT(test_interpret_msg);
 		M_TEST_FCT(test_build_types_and_interpret_bytes);
+		M_TEST_FCT(test_size);
 	}
 
 	C_perf_chrono::end();
