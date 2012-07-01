@@ -39,7 +39,7 @@
 // - local               plus tard
 //*****************************************************************************
 
-struct T_interpret_value : public C_debug_object_counter
+struct T_interpret_value : public CT_debug_object_counter<T_interpret_value>
 {
 	enum E_type
 	{
@@ -72,10 +72,14 @@ struct T_interpret_value : public C_debug_object_counter
 
 private:
 
-	// Size = 2 + 2 + 12 + 80 = 96 bytes
+	// VCEE2008 & 32bits
+	// Size = 2 + 2 +     28 + 120 = 152 bytes
+
+	// VCEE2008 & 64bits
+	// Size = 2 + 2 + 4 + 40 + 152 = 196 bytes
 
 	unsigned short       A_reference_counter;
-	/*E_type*/short      A_type;                 // short permits to save 4 bytes
+	/*E_type*/short      A_type;                 // short permits to save 4 bytes (32bits)
 	std::string          A_name;
     T_attribute_value    A_attribute_value;
 

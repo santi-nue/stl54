@@ -33,7 +33,7 @@
 // Permits to read/write inside data.
 //*****************************************************************************
 
-struct T_frame_data : public C_debug_object_counter
+struct T_frame_data : public CT_debug_object_counter<T_frame_data>
 {
 	T_frame_data();
 

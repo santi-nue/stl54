@@ -2360,7 +2360,7 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
   M_STATE_DEBUG ("wsgd_debug dissect+ " << protocol_data.PROTOABBREV << " ("
 			     << pinfo->fd->num << "/"
                  << msg_number_inside_packet << ") "
-                 << "nb_of_objects=" << C_debug_object_counter::get_nb_of_objects());
+                 << C_debug_object_counter::get_debug_string());
 
   try
   {
@@ -2381,7 +2381,7 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
   M_STATE_DEBUG ("wsgd_debug dissect- " << protocol_data.PROTOABBREV << " ("
 			     << pinfo->fd->num << "/"
                  << msg_number_inside_packet << ") "
-                 << "nb_of_objects=" << C_debug_object_counter::get_nb_of_objects());
+                 << C_debug_object_counter::get_debug_string());
   return  result;
 }
 

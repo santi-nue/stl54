@@ -41,7 +41,7 @@ using namespace std;
 //*****************************************************************************
 
 struct T_interpret_read_values : public C_reference_counter,
-                                 public C_debug_object_counter
+                                 public CT_debug_object_counter<T_interpret_read_values>
 {
 	typedef int       T_id;
 
@@ -98,7 +98,7 @@ struct T_interpret_read_values : public C_reference_counter,
 	void    reset();
 	void    reset_short_names();
 
-	struct T_var_name_P_value : public C_debug_object_counter
+	struct T_var_name_P_value : public CT_debug_object_counter<T_var_name_P_value>
 	{
 		string               var_name;
 		const T_attribute_value  * P_value;

@@ -32,7 +32,7 @@ using namespace std;
 // T_interpret_decode
 //*****************************************************************************
 
-struct T_interpret_decode : public C_debug_object_counter
+struct T_interpret_decode : public CT_debug_object_counter<T_interpret_decode>
 {
     void            set_decode_function (string  decode_function);
 	const string &  get_decode_function () const                    { return  A_decode_function; }

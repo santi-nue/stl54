@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -208,12 +208,6 @@ void    fatal_pb (const string  & lhs,
     M_STATE_FATAL(oss_str);
     throw  C_byte_interpret_exception(M_WHERE, E_byte_interpret_exception_fatal, oss_str);
 }
-
-//****************************************************************************
-// C_debug_object_counter
-//****************************************************************************
-
-int  C_debug_object_counter::A_debug_counter = 0;
 
 //*****************************************************************************
 // get_files_in_dir ***********************************************************

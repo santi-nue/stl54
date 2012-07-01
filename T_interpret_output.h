@@ -29,7 +29,7 @@
 // T_interpret_output
 //*****************************************************************************
 
-struct T_interpret_output : public C_debug_object_counter
+struct T_interpret_output : public CT_debug_object_counter<T_interpret_output>
 {
     int     get_output_level  () const                { return  output_level; }
     void    set_output_level  (int   val)             { output_level = val; }

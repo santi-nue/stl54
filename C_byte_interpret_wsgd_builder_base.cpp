@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -544,7 +544,7 @@ C_byte_interpret_wsgd_builder_base::missing_data(const T_type_definitions  & /* 
 			// Perhaps the header has not been entirely read ?
 			M_STATE_WARNING ("Did NOT find " << protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) ?");
 		}
-		else if (P_attr_MSG_ID_FIELD_NAME->error != "")
+		else if (P_attr_MSG_ID_FIELD_NAME->has_error() == true)
 		{
 			// I do not recognize the message ...
 			// I suppose it is not a 1st segment,

@@ -54,7 +54,7 @@ expression could be :
 // T_expression
 //****************************************************************************
 
-struct T_expression : public C_debug_object_counter
+struct T_expression : public CT_debug_object_counter<T_expression>
 {
 	enum E_type
 	{

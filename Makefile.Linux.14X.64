@@ -150,7 +150,8 @@ am__objects_CORE_UT = byte_interpret.lo byte_interpret_compute_expression.lo \
 	byte_interpret_build_types.lo \
 	byte_interpret_build_types_context.lo \
 	byte_interpret_build_types_read_token.lo \
-        byte_interpret_parse.lo byte_interpret_common.lo 
+	byte_interpret_parse.lo byte_interpret_common.lo \
+	CT_debug_object_counter.lo
 am__objects_2 = $(am__objects_CORE_UT) \
 	byte_interpret_build_types_feeling.lo \
 	byte_interpret_build_types_netpdl.lo \
@@ -482,7 +483,8 @@ DISSECTOR_CORE_UT_SRC = \
   byte_interpret_build_types.cpp \
   byte_interpret_build_types_context.cpp \
   byte_interpret_build_types_read_token.cpp \
-  byte_interpret_parse.cpp byte_interpret_common.cpp 
+  byte_interpret_parse.cpp byte_interpret_common.cpp \
+  CT_debug_object_counter.cpp
 
 DISSECTOR_CORE_OTHER_SRC = \
   byte_interpret_build_types_feeling.cpp \
@@ -669,6 +671,7 @@ distclean-compile:
 -include ./$(DEPDIR)/byte_interpret_common.Plo
 -include ./$(DEPDIR)/byte_interpret_compute_expression.Plo
 -include ./$(DEPDIR)/byte_interpret_parse.Plo
+-include ./$(DEPDIR)/CT_debug_object_counter.Plo
 -include ./$(DEPDIR)/generic.Plo
 -include ./$(DEPDIR)/packet-generic.Plo
 -include ./$(DEPDIR)/plugin.Plo

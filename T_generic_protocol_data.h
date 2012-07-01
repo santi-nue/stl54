@@ -49,7 +49,7 @@ using namespace std;
  * T_generic_protocol_ws_data
  *****************************************************************************/
 
-struct T_generic_protocol_fields_data : public C_debug_object_counter
+struct T_generic_protocol_fields_data : public CT_debug_object_counter<T_generic_protocol_fields_data>
 {
   vector<gint>                hf_id;
   vector<gint>                ett_id;
@@ -57,17 +57,17 @@ struct T_generic_protocol_fields_data : public C_debug_object_counter
   vector<gint *>              ett;        // WARNING_ADDRESSES
 };
 
-struct T_generic_protocol_enum_value : public C_debug_object_counter
+struct T_generic_protocol_enum_value : public CT_debug_object_counter<T_generic_protocol_enum_value>
 {
   vector<value_string>    value_strings;
 };
 
-struct T_generic_protocol_enum_values_data : public C_debug_object_counter
+struct T_generic_protocol_enum_values_data : public CT_debug_object_counter<T_generic_protocol_enum_values_data>
 {
   vector<T_generic_protocol_enum_value>    enum_values;
 };
 
-struct T_generic_protocol_subdissector_data : public C_debug_object_counter
+struct T_generic_protocol_subdissector_data : public CT_debug_object_counter<T_generic_protocol_subdissector_data>
 {
   dissector_table_t      dissector_table;
   heur_dissector_list_t  heur_dissector_list;
@@ -83,7 +83,7 @@ struct T_generic_protocol_subdissector_data : public C_debug_object_counter
   { }
 };
 
-struct T_generic_protocol_tap_data : public C_debug_object_counter
+struct T_generic_protocol_tap_data : public CT_debug_object_counter<T_generic_protocol_tap_data>
 {
   int                    proto_tap;
 
@@ -103,7 +103,7 @@ struct T_generic_protocol_tap_data : public C_debug_object_counter
   { }
 };
 
-struct T_generic_protocol_saved_interpreted_data : public C_debug_object_counter
+struct T_generic_protocol_saved_interpreted_data : public CT_debug_object_counter<T_generic_protocol_saved_interpreted_data>
 {
   long                    packet_number;
   long                    msg_number_inside_packet;
@@ -115,7 +115,7 @@ struct T_generic_protocol_saved_interpreted_data : public C_debug_object_counter
   { }
 };
 
-struct T_generic_protocol_global_data : public C_debug_object_counter
+struct T_generic_protocol_global_data : public CT_debug_object_counter<T_generic_protocol_global_data>
 {
   // Contains the initial values of global data
   T_interpret_data    initialized_data;
@@ -124,7 +124,7 @@ struct T_generic_protocol_global_data : public C_debug_object_counter
   vector<T_generic_protocol_saved_interpreted_data>  saved_interpreted_datas;
 };
 
-struct T_generic_protocol_ws_data : public C_debug_object_counter
+struct T_generic_protocol_ws_data : public CT_debug_object_counter<T_generic_protocol_ws_data>
 {
   /* Wireshark ID of the protocol */
   int       proto_generic;
@@ -149,14 +149,13 @@ struct T_generic_protocol_ws_data : public C_debug_object_counter
        P_dissect_fct (NULL),
        dissector_handle (NULL)
   { }
-
 };
 
 //*****************************************************************************
 // T_generic_protocol_data
 //*****************************************************************************
 
-struct T_generic_protocol_data : public C_debug_object_counter
+struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protocol_data>
 {
   int       proto_idx;  // identify the proto
 
@@ -220,7 +219,6 @@ struct T_generic_protocol_data : public C_debug_object_counter
 	   MANAGE_WIRESHARK_PINFO(false),
 	   MSG_HEADER_LENGTH(-1)
   { }
-
 };
 
 /******************************************************************************

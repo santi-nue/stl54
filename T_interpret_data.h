@@ -39,7 +39,7 @@ struct T_interpret_data : public T_interpret_read_values,
                           public T_interpret_byte_order,
 						  public T_interpret_decode,
 						  public T_interpret_chrono,
-						  public C_debug_object_counter
+						  public CT_debug_object_counter<T_interpret_data>
 {
 };
 

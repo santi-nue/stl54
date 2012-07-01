@@ -33,7 +33,7 @@
 // T_interpret_chrono
 //*****************************************************************************
 
-struct T_interpret_chrono : public C_debug_object_counter
+struct T_interpret_chrono : public CT_debug_object_counter<T_interpret_chrono>
 {
     std::string  compute_chrono_value_from_command(const std::string  & command);
 

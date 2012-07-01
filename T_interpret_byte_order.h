@@ -38,7 +38,7 @@ bool    is_host_byte_order_inverted ();
 // T_interpret_byte_order
 //*****************************************************************************
 
-struct T_interpret_byte_order : public C_debug_object_counter
+struct T_interpret_byte_order : public CT_debug_object_counter<T_interpret_byte_order>
 {
     bool    must_invert_bytes() const;
 

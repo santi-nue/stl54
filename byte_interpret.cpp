@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1124,7 +1124,7 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 								   data_name, data_simple_name, os_out, os_err);
 	if (obj_value.get_type() == C_value::E_type_integer)
 	{
-		M_STATE_DEBUG("obj_value.external_type=" << obj_value.get_external_type());
+//		M_STATE_DEBUG("obj_value.external_type=" << obj_value.get_external_type());
 		M_FATAL_IF_EQ(obj_value.get_external_type_bit_size(), 0);
 
 		frame_append_data(P_decode_stream_frame,
@@ -3688,10 +3688,16 @@ string    simple_value_to_attribute_value_main (
 	// normalize the string original
 	attribute_value.value_is_original_format_reset();
 
+	string  error_str;
     no_error = post_treatment_value(type_definitions, interpret_data,
 									field_type_name,
 									attribute_value.transformed,
-								    attribute_value.error);
+								    error_str);
+	if (no_error == false)
+	{
+		attribute_value.set_error(error_str);
+	}
+
 
     return  attribute_value_to_string(attribute_value);
 }
@@ -3725,7 +3731,7 @@ string    enum_value_to_attribute_value (
 
 	if (no_error == false)
 	{
-		attribute_value.error = "ERROR unknown enum value";
+		attribute_value.set_error("ERROR unknown enum value");
 	}
     return  attribute_value_to_string(attribute_value);
 }

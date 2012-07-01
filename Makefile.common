@@ -50,7 +50,8 @@ DISSECTOR_CORE_UT_SRC = \
   byte_interpret_build_types.cpp \
   byte_interpret_build_types_context.cpp \
   byte_interpret_build_types_read_token.cpp \
-  byte_interpret_parse.cpp byte_interpret_common.cpp 
+  byte_interpret_parse.cpp byte_interpret_common.cpp \
+  CT_debug_object_counter.cpp
 
 DISSECTOR_CORE_OTHER_SRC = \
   byte_interpret_build_types_feeling.cpp \
