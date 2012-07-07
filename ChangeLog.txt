@@ -1,4 +1,6 @@
 
+2012/07/01  Upd : less memory (24/32 bytes) per data on T_attribute_value when there is no error
+2012/07/01  Upd : less memory (28/40 bytes) per data on C_value
 2012/06/21  Fix : bad global data behavior on 1st pcap load - ID: 3535708
 2012/06/16  Fix : 1.8.0 generation
 2012/06/16  Fix : bad check of field name. Only alphanum and _ accepted. Also : for const and enum.

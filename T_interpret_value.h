@@ -73,10 +73,10 @@ struct T_interpret_value : public CT_debug_object_counter<T_interpret_value>
 private:
 
 	// VCEE2008 & 32bits
-	// Size = 2 + 2 +     28 + 120 = 152 bytes
+	// Size = 2 + 2 +     28 +  96 = 128 bytes
 
 	// VCEE2008 & 64bits
-	// Size = 2 + 2 + 4 + 40 + 152 = 196 bytes
+	// Size = 2 + 2 + 4 + 40 + 120 = 168 bytes
 
 	unsigned short       A_reference_counter;
 	/*E_type*/short      A_type;                 // short permits to save 4 bytes (32bits)

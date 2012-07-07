@@ -35,10 +35,10 @@
 struct T_attribute_value : public CT_debug_object_counter<T_attribute_value>
 {
 	// VCEE2008 & 32bits
-	// Sizeof = 64 + 28 + 28 = 120 bytes
+	// Sizeof = 64 + 4 + 28 =  96 bytes
 
 	// VCEE2008 & 64bits
-	// Sizeof = 72 + 40 + 40 = 152 bytes
+	// Sizeof = 72 + 8 + 40 = 120 bytes
 
 	// enum : symbolic name
 	// int  : after quantum,offset
@@ -46,8 +46,8 @@ struct T_attribute_value : public CT_debug_object_counter<T_attribute_value>
 	C_value    transformed;
 
 	// error text (unknow enum value, constraints ...)
-	void    set_error(const std::string  & in_error) { error = in_error; }
-	bool    has_error() const                        { return  (error != ""); }
+	void    set_error(const std::string  & in_error);
+	bool    has_error() const                        { return  (P_error != NULL); }
 
 	void    value_is_original();
 	void    value_is_original_format_reset();
@@ -55,9 +55,14 @@ struct T_attribute_value : public CT_debug_object_counter<T_attribute_value>
 	T_attribute_value();
 	T_attribute_value(const C_value  & value);
 
+	T_attribute_value(const T_attribute_value  & rhs);
+	T_attribute_value&  operator=(const T_attribute_value  & rhs);
+	~T_attribute_value();
+
 private:
 	// error text (unknow enum value, constraints ...)
-	std::string     error;
+	// Pointer permits to use less memory (when there is no error)
+	std::string   * P_error;
 
 	// the original value read
 	std::string     original;
