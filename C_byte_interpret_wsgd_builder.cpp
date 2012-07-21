@@ -320,18 +320,36 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 		}
 		else
 		{
-			M_STATE_DEBUG ("bsew PROMOTION wsgd add item uint32 = " << text);
-			cpp_dissect_generic_add_item_uint32(A_interpret_wsgd.proto_idx,
-										 A_interpret_wsgd.wsgd_tvb,
-										 A_interpret_wsgd.wsgd_pinfo,
-										 A_interpret_wsgd.wsgd_tree,
-										 field_type_name.wsgd_field_idx,
-										 in_out_frame_data.get_bit_offset_into_initial_frame() - type_bit_size,
-										 type_bit_size /* field_type_name.basic_type_bit_size */,
-										 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
-										 text.c_str(),
-										 error_code,
-										 attribute_value.transformed.get_int());
+			if (type_bit_size <= 32)
+			{
+				M_STATE_DEBUG ("bsew PROMOTION wsgd add item uint32 = " << text);
+				cpp_dissect_generic_add_item_uint32(A_interpret_wsgd.proto_idx,
+											 A_interpret_wsgd.wsgd_tvb,
+											 A_interpret_wsgd.wsgd_pinfo,
+											 A_interpret_wsgd.wsgd_tree,
+											 field_type_name.wsgd_field_idx,
+											 in_out_frame_data.get_bit_offset_into_initial_frame() - type_bit_size,
+											 type_bit_size /* field_type_name.basic_type_bit_size */,
+											 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
+											 text.c_str(),
+											 error_code,
+											 attribute_value.transformed.get_int());
+			}
+			else
+			{
+				M_STATE_DEBUG ("bsew PROMOTION wsgd add item uint64 = " << text);
+				cpp_dissect_generic_add_item_uint64(A_interpret_wsgd.proto_idx,
+											 A_interpret_wsgd.wsgd_tvb,
+											 A_interpret_wsgd.wsgd_pinfo,
+											 A_interpret_wsgd.wsgd_tree,
+											 field_type_name.wsgd_field_idx,
+											 in_out_frame_data.get_bit_offset_into_initial_frame() - type_bit_size,
+											 type_bit_size /* field_type_name.basic_type_bit_size */,
+											 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
+											 text.c_str(),
+											 error_code,
+											 attribute_value.transformed.get_int());
+			}
 		}
 	}
 	else if (attribute_value.transformed.get_type() == C_value::E_type_float)

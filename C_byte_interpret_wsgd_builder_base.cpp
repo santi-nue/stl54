@@ -234,7 +234,7 @@ proto_item  * cpp_dissect_generic_add_item_uint32(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item_int32",
+  M_STATE_ENTER("cpp_dissect_generic_add_item_uint32",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size <<
@@ -292,6 +292,57 @@ proto_item  * cpp_dissect_generic_add_item_int32(const int     proto_idx,
 				"  value=" << value);
 
   proto_item_1 = proto_tree_add_int_format(tree,
+		                           P_protocol_ws_data->fields_data.hf_id[field_idx],
+	           					   tvb,
+			           			   offset,
+					               field_byte_size,
+						           value,
+								   "%s", text);
+  if (error_code > 0)
+  {
+    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
+	// Permits filter on error_in_packet.
+	if ((error_code >= PI_ERROR) && (field_idx != K_ERROR_WSGD_FIELD_IDX))
+	{
+	  proto_item   * proto_item_error = proto_tree_add_item(tree,
+                                            P_protocol_ws_data->fields_data.hf_id[K_ERROR_WSGD_FIELD_IDX],
+											tvb,
+											offset,
+											field_byte_size,
+								            little_endian);
+	  PROTO_ITEM_SET_HIDDEN(proto_item_error);
+	}
+  }
+
+  return  proto_item_1;
+}
+
+proto_item  * cpp_dissect_generic_add_item_uint64(const int     proto_idx,
+											        tvbuff_t     * tvb,
+												    packet_info  * pinfo,
+										          proto_tree  * tree,
+										 const int     field_idx,
+										 const int     bit_offset,
+										 const int     field_bit_size,
+										 const int     little_endian,
+										 const char  * text,
+										 const int     error_code,
+										 const long long  value)
+{
+  T_generic_protocol_data    & protocol_data = get_protocol_data(proto_idx);
+  T_generic_protocol_ws_data        * P_protocol_ws_data = &protocol_data.ws_data;
+  proto_item                     * proto_item_1 = NULL;
+
+  M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
+
+  M_STATE_ENTER("cpp_dissect_generic_add_item_uint64",
+                "proto_idx=" << proto_idx <<
+				"  field_idx=" << field_idx <<
+				"  field_bit_size=" << field_bit_size <<
+				"  value=" << value);
+
+  proto_item_1 = proto_tree_add_uint64_format(tree,
 		                           P_protocol_ws_data->fields_data.hf_id[field_idx],
 	           					   tvb,
 			           			   offset,

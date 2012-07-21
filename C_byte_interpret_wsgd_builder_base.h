@@ -102,6 +102,18 @@ proto_item  * cpp_dissect_generic_add_item_int32(const int     proto_idx,
 										 const int     error,
 										 const long long  value);
 
+proto_item  * cpp_dissect_generic_add_item_uint64(const int     proto_idx,
+											        tvbuff_t     * tvb,
+												    packet_info  * pinfo,
+										          proto_tree  * tree,
+										 const int     field_idx,
+										 const int     offset,
+										 const int     field_byte_size,
+										 const int     little_endian,
+										 const char  * text,
+										 const int     error,
+										 const long long  value);
+
 proto_item  * cpp_dissect_generic_add_item_int64(const int     proto_idx,
 											        tvbuff_t     * tvb,
 												    packet_info  * pinfo,

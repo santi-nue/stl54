@@ -107,6 +107,24 @@ void    skip_blanks_and_comments (istream  & is)
 }
 
 //*****************************************************************************
+// skip_line
+//*****************************************************************************
+
+void    skip_line (istream  & is)
+{
+    // If istream is ok ...
+	if (is.good())
+	{
+		// Skip the end of the line.
+	    string  tmp;
+		getline (is, tmp);
+
+		// new line notification
+		build_types_context_line_new(is);
+	}
+}
+
+//*****************************************************************************
 // is_istream_empty
 //*****************************************************************************
 bool    is_istream_empty (istream &         is)

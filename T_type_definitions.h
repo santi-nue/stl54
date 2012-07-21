@@ -357,7 +357,8 @@ struct T_function_parameter : public T_field_type_name_base
 	void                   set_default_value(const C_value  & rhs); 
 
 	T_function_parameter()
-		:A_has_default_value(false)
+		:direction(E_parameter_in),
+		 A_has_default_value(false)
 	{
 	}
 

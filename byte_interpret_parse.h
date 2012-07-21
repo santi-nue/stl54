@@ -36,6 +36,7 @@ using namespace std;
 //*****************************************************************************
 
 void    skip_blanks_and_comments (istream  & is);
+void    skip_line (istream  & is);
 bool    is_istream_empty (istream &         is);
 
 //*****************************************************************************
