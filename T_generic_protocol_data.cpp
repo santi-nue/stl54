@@ -33,7 +33,6 @@
 #include "byte_interpret_build_types_context.h"
 #include "byte_interpret_build_types_feeling.h"
 #include "byte_interpret_build_types_netpdl.h"
-#include "byte_interpret_build_types_npl.h"
 
 #include <fstream>
 
@@ -724,14 +723,6 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
         string  file_name;
 	    ifs >> file_name;
 		build_netpdl_types (file_name, protocol_data.type_definitions);
-		must_ouput_types = true;
-		continue;
-	}
-	else if (result == "NPL")
-	{
-        string  file_name;
-	    ifs >> file_name;
-		build_npl_types (file_name, protocol_data.type_definitions);
 		must_ouput_types = true;
 		continue;
 	}
