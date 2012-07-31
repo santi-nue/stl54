@@ -3041,6 +3041,29 @@ void    test_builtin_functions()
 	M_TEST_EQ(compute_expression_static_int("string.find (\"abcdefgh\", \"fe\")"), string::npos);
 	interpret_data.set_read_variable("str", "abcdefgh");
 	M_TEST_EQ(compute_expression_no_io_int("string.find (str, \"ef\")"), 4);
+
+	// date.get_string_from_days
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012,   0)"), "2012/01/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012,   1)"), "2012/01/02");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012,  31)"), "2012/02/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012,  59)"), "2012/02/29");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012,  60)"), "2012/03/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012,  91)"), "2012/04/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 121)"), "2012/05/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 152)"), "2012/06/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 182)"), "2012/07/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 213)"), "2012/08/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 244)"), "2012/09/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 274)"), "2012/10/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 305)"), "2012/11/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 335)"), "2012/12/01");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012, 366)"), "2013/01/01");
+
+	// date.get_string_from_seconds
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_seconds (1970, 0)"), "1970/01/01 00:00:00");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_seconds (1970, 4133980800)"), "2101/01/01 00:00:00");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_seconds (1970, 4134067199)"), "2101/01/01 23:59:59");
+	M_TEST_EQ(compute_expression_static_str("date.get_string_from_seconds (1970, 13601174399)"), "2401/01/01 23:59:59");
 }
 
 //*****************************************************************************

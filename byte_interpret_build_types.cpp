@@ -2111,6 +2111,13 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 	M_DEFINE_BUILTIN_FUNCTION("string   string.replace_all (in string  str, in string  old, in string new)");
 	M_DEFINE_BUILTIN_FUNCTION("int64    string.find    (in string  str, in string  str_to_find)");
 
+//	M_DEFINE_BUILTIN_FUNCTION("void     date.get_year_from_days          (in uint16{min=1583} ref_year, in uint32 number_of_days   , out uint16 year, out uint16 number_of_days_in_year)");
+//	M_DEFINE_BUILTIN_FUNCTION("void     date.get_year_from_seconds       (in uint16{min=1583} ref_year, in uint40 number_of_seconds, out uint16 year, out uint32 number_of_seconds_in_year)");
+//	M_DEFINE_BUILTIN_FUNCTION("void     date.get_month_from_year_days    (in uint16{min=1583} year, in uint16 number_of_days_in_year   , out uint8 month, out uint8 day)");
+//	M_DEFINE_BUILTIN_FUNCTION("void     date.get_month_from_year_seconds (in uint16{min=1583} year, in uint32 number_of_seconds_in_year, out uint8 month, out uint8 day, out uint32 number_of_seconds_in_day)");
+	M_DEFINE_BUILTIN_FUNCTION("string   date.get_string_from_days    (in uint16{min=1583} ref_year, in uint32 number_of_days)");
+	M_DEFINE_BUILTIN_FUNCTION("string   date.get_string_from_seconds (in uint16{min=1583} ref_year, in uint40 number_of_seconds)");
+
 	// Decoder definitions
     build_types_no_include_str("alias     frame   int64 ;", type_definitions);
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_data (in frame  frame, in any  byte)");

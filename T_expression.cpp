@@ -40,6 +40,222 @@ E_return_code    get_complex_value (const T_type_definitions  & type_definitions
 									const string              & value_str,
                                           C_value             & value);
 
+#if 1
+// ICIOA put this into another file
+//*****************************************************************************
+// date
+//*****************************************************************************
+
+#if 0
+void     date_get_year_from_days(int    ref_year,
+								 int    number_of_days,
+								 int  & year,
+								 int  & number_of_days_in_year)
+{
+	year = -1;
+
+	if (ref_year < 1583)
+	{
+		return;  // ICIOA, exception
+	}
+	if (number_of_days < 0)
+	{
+		return;  // ICIOA, exception
+	}
+
+	year = ref_year;
+	number_of_days_in_year = number_of_days;
+	while (1)
+	{
+		const int  days_in_year = (year % 4) ? 365 : 366;  // ICIOA approximation
+		if (number_of_days_in_year < days_in_year)
+		{
+			break;
+		}
+
+		number_of_days_in_year -= days_in_year;
+		++year;
+	}
+}
+
+void     date_get_year_from_seconds(int          ref_year,
+									long long    number_of_seconds,
+									int        & year,
+									long long  & number_of_seconds_in_year)
+{
+	year = -1;
+
+	if (ref_year < 1583)
+	{
+		return;  // ICIOA, exception
+	}
+	if (number_of_seconds < 0)
+	{
+		return;  // ICIOA, exception
+	}
+
+	long long    sec = number_of_seconds % (3600 * 24);
+	int          number_of_days = (number_of_seconds - sec) / (3600 * 24);
+	int          number_of_days_in_year = 0;
+
+	date_get_year_from_days(ref_year, number_of_days, 
+							year, number_of_days_in_year);
+
+	number_of_seconds_in_year = sec + (number_of_days_in_year * (3600 * 24));
+}
+#endif
+//void     date.get_month_from_year_days    (in uint16{min=1583} year, in uint16 number_of_days_in_year   , out uint8 month, out uint8 day)");
+//void     date.get_month_from_year_seconds (in uint16{min=1583} year, in uint32 number_of_seconds_in_year, out uint8 month, out uint8 day, out uint32 number_of_seconds_in_day)");
+
+//*****************************************************************************
+// date_is_bissextile
+//*****************************************************************************
+
+bool  date_is_bissextile(int year)
+{
+	if (year < 1583)
+	{
+		return  "Year must be >= 1583";  // ICIOA, exception
+	}
+
+	// year must be :
+	// - multiple of 4       AND
+	// - not multiple of 100  OR multiple of 400
+	return  (((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0)));
+}
+
+//*****************************************************************************
+// date_get_string_from_days
+//*****************************************************************************
+
+string  date_get_string_from_days(int ref_year, int  number_of_days)
+{
+	if (ref_year < 1583)
+	{
+		return  "Reference year must be >= 1583";  // ICIOA, exception
+	}
+	if (number_of_days < 0)
+	{
+		return  "Number of days must be >= 0";  // ICIOA, exception
+	}
+
+	int  value_work = number_of_days;
+
+	int   year = ref_year;
+	while (1)
+	{
+		const int  days_in_year = date_is_bissextile(year) ? 366 : 365;
+		if (value_work < days_in_year)
+		{
+			break;
+		}
+
+		value_work -= days_in_year;
+		++year;
+	}
+
+	int   month = 1;
+	while (1)
+	{
+		if (value_work < 31)  { break; }
+		value_work -= 31;
+		++month;
+
+		if (date_is_bissextile(year) == true)
+		{
+			if (value_work < 29)  { break; }
+			value_work -= 29;
+			++month;
+		}
+		else
+		{
+		  if (value_work < 28)  { break; }
+		  value_work -= 28;
+			++month;
+		}
+		if (value_work < 31)  { break; }
+		value_work -= 31;
+		++month;
+
+		if (value_work < 30)  { break; }
+		value_work -= 30;
+		++month;
+
+		if (value_work < 31)  { break; }
+		value_work -= 31;
+		++month;
+
+		if (value_work < 30)  { break; }
+		value_work -= 30;
+		++month;
+
+		if (value_work < 31)  { break; }
+		value_work -= 31;
+		++month;
+
+		if (value_work < 31)  { break; }
+		value_work -= 31;
+		++month;
+
+		if (value_work < 30)  { break; }
+		value_work -= 30;
+		++month;
+
+		if (value_work < 31)  { break; }
+		value_work -= 31;
+		++month;
+
+		if (value_work < 30)  { break; }
+		value_work -= 30;
+		++month;
+
+		if (value_work < 31)  { break; }
+		value_work -= 31;
+		++month;
+	}
+
+	int  day = value_work + 1;
+
+	char  str[99+1];
+	sprintf(str, "%d/%02d/%02d", year, month, day);
+
+	return  str;
+}
+
+//*****************************************************************************
+// date_get_string_from_seconds
+//*****************************************************************************
+
+string  date_get_string_from_seconds(int ref_year, long long  number_of_seconds)
+{
+	if (number_of_seconds < 0)
+	{
+		return  "Number of seconds must be >= 0";  // ICIOA, exception
+	}
+
+	long long  value_work = number_of_seconds;
+
+	int  sec = value_work % 60;
+	value_work = (value_work - sec) / 60;
+
+	int  min = value_work % 60;
+	value_work = (value_work - min) / 60;
+
+	int  hour = value_work % 24;
+	value_work = (value_work - hour) / 24;
+
+	string  str = date_get_string_from_days(ref_year, value_work);
+
+	{
+		char  str_tmp[99+1];
+		sprintf(str_tmp, " %02d:%02d:%02d", hour, min, sec);
+		str += str_tmp;
+	}
+
+	return  str;
+}
+#endif
+
 //*****************************************************************************
 // Constructor
 //*****************************************************************************
@@ -912,6 +1128,24 @@ T_expression::compute_expression_function(
 		}
 
 		A_value = A_value.get_str().find(value_str.get_str(), value_idx.get_int());
+	}
+	else if (A_variable_or_function_name == "date.get_string_from_days")
+	{
+		A_value = * P_parameter_values[0];
+
+		C_value  number_of_days = * P_parameter_values[1];
+
+		const string  str_date = date_get_string_from_days(A_value.get_int(), number_of_days.get_int());
+		A_value = str_date;
+	}
+	else if (A_variable_or_function_name == "date.get_string_from_seconds")
+	{
+		A_value = * P_parameter_values[0];
+
+		C_value  number_of_seconds = * P_parameter_values[1];
+
+		const string  str_date = date_get_string_from_seconds(A_value.get_int(), number_of_seconds.get_int());
+		A_value = str_date;
 	}
 #if 0
 	else if (A_variable_or_function_name == "string.")

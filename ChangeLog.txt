@@ -1,4 +1,7 @@
 
+2012/07/31  Add : Built-in functions
+                   date.get_string_from_days
+                   date.get_string_from_seconds
 2012/07/21  Fix : uint40/48 does not work (except if not displayed)
 2012/07/14  Fix : generate generic.dll for wireshark 1.8 with VC++ 20100 EE
 2012/07/10  Fix : missing manifest (wireshark 1.8)
