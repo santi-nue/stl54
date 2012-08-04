@@ -85,6 +85,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+include Makefile.common
 
 pkgdatadir = $(datadir)/wireshark
 pkglibdir = $(libdir)/wireshark
@@ -127,34 +128,9 @@ am__installdirs = "$(DESTDIR)$(plugindir)"
 pluginLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 generic_la_DEPENDENCIES =
-am__objects_1 = packet-generic.lo
-am__objects_CORE_UT = byte_interpret.lo byte_interpret_compute_expression.lo \
-	T_expression.lo \
-	T_interpret_data.lo T_interpret_read_values.lo T_interpret_byte_order.lo \
-	T_interpret_output.lo T_interpret_decode.lo T_interpret_chrono.lo \
-	T_interpret_value.lo \
-	T_perf_time.lo \
-	T_attribute_value.lo T_frame_data.lo T_frame_data_write.lo \
-	T_type_definitions.lo \
-	C_value.lo \
-	byte_interpret_builder.lo \
-	byte_interpret_build_types.lo \
-	byte_interpret_build_types_context.lo \
-	byte_interpret_build_types_read_token.lo \
-	byte_interpret_parse.lo byte_interpret_common.lo \
-	CT_debug_object_counter.lo
-	
-am__objects_2 = $(am__objects_CORE_UT) \
-	byte_interpret_build_types_netpdl.lo \
-	tinystr.lo tinyxml.lo \
-	tinyxmlerror.lo tinyxmlparser.lo 
-am__objects_3 = $(am__objects_2) generic.lo T_generic_protocol_data.lo \
-	C_byte_interpret_wsgd_builder.lo \
-	C_byte_interpret_wsgd_builder_base.lo
-am__objects_4 =
-am_generic_la_OBJECTS = plugin.lo $(am__objects_1) $(am__objects_3) \
-	$(am__objects_4)
-generic_la_OBJECTS = $(am_generic_la_OBJECTS)
+
+include Makefile.common.Linux.objects
+
 generic_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(generic_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -408,51 +384,6 @@ wireshark_man = wireshark.1
 wiresharkfilter_man = wireshark-filter.4
 INCLUDES = -I$(top_srcdir) -I$(includedir)
 
-# the name of the plugin
-PLUGIN_NAME = generic
-
-# the dissector sources (without any helpers)
-DISSECTOR_SRC = \
-	packet-generic.c
-
-
-# corresponding headers
-DISSECTOR_INCLUDES = \
-	generic.h
-
-
-# Dissector core sources.
-# All files specified here do NOT depend of wireshark.
-DISSECTOR_CORE_UT_SRC = \
-	byte_interpret.cpp \
-	byte_interpret_compute_expression.cpp \
-  T_expression.cpp \
-  T_interpret_data.cpp T_interpret_read_values.cpp T_interpret_byte_order.cpp \
-  T_interpret_output.cpp T_interpret_decode.cpp T_interpret_chrono.cpp \
-  T_perf_time.cpp \
-  T_interpret_value.cpp \
-  T_attribute_value.cpp T_frame_data.cpp T_frame_data_write.cpp T_type_definitions.cpp \
-  C_value.cpp \
-  byte_interpret_builder.cpp \
-  byte_interpret_build_types.cpp \
-  byte_interpret_build_types_context.cpp \
-  byte_interpret_build_types_read_token.cpp \
-  byte_interpret_parse.cpp byte_interpret_common.cpp \
-  CT_debug_object_counter.cpp
-
-DISSECTOR_CORE_OTHER_SRC = \
-  byte_interpret_build_types_netpdl.cpp \
-  tinystr.cpp tinyxml.cpp tinyxmlerror.cpp tinyxmlparser.cpp
-
-DISSECTOR_CORE_SRC = $(DISSECTOR_CORE_UT_SRC) $(DISSECTOR_CORE_OTHER_SRC)
-
-
-# Dissector helpers.  They're included in the source files in this
-# directory, but they're not dissectors themselves, i.e. they're not
-# used to generate "register.c").
-DISSECTOR_SUPPORT_SRC = $(DISSECTOR_CORE_SRC) \
-	generic.cpp T_generic_protocol_data.cpp \
-  C_byte_interpret_wsgd_builder.cpp C_byte_interpret_wsgd_builder_base.cpp
 
 #AM_CFLAGS = -Werror
 plugin_LTLIBRARIES = generic.la
@@ -600,36 +531,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
--include ./$(DEPDIR)/C_byte_interpret_wsgd_builder.Plo
--include ./$(DEPDIR)/C_byte_interpret_wsgd_builder_base.Plo
--include ./$(DEPDIR)/C_value.Plo
--include ./$(DEPDIR)/T_attribute_value.Plo
--include ./$(DEPDIR)/T_expression.Plo
--include ./$(DEPDIR)/T_frame_data.Plo
--include ./$(DEPDIR)/T_generic_protocol_data.Plo
--include ./$(DEPDIR)/T_interpret_byte_order.Plo
--include ./$(DEPDIR)/T_interpret_data.Plo
--include ./$(DEPDIR)/T_interpret_output.Plo
--include ./$(DEPDIR)/T_interpret_read_values.Plo
--include ./$(DEPDIR)/T_interpret_value.Plo
--include ./$(DEPDIR)/T_type_definitions.Plo
--include ./$(DEPDIR)/byte_interpret.Plo
--include ./$(DEPDIR)/byte_interpret_build_types.Plo
--include ./$(DEPDIR)/byte_interpret_build_types_context.Plo
--include ./$(DEPDIR)/byte_interpret_build_types_read_token.Plo
--include ./$(DEPDIR)/byte_interpret_build_types_netpdl.Plo
--include ./$(DEPDIR)/byte_interpret_builder.Plo
--include ./$(DEPDIR)/byte_interpret_common.Plo
--include ./$(DEPDIR)/byte_interpret_compute_expression.Plo
--include ./$(DEPDIR)/byte_interpret_parse.Plo
--include ./$(DEPDIR)/CT_debug_object_counter.Plo
--include ./$(DEPDIR)/generic.Plo
--include ./$(DEPDIR)/packet-generic.Plo
--include ./$(DEPDIR)/plugin.Plo
--include ./$(DEPDIR)/tinystr.Plo
--include ./$(DEPDIR)/tinyxml.Plo
--include ./$(DEPDIR)/tinyxmlerror.Plo
--include ./$(DEPDIR)/tinyxmlparser.Plo
+include Makefile.common.Linux.include
 
 .c.o:
 	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

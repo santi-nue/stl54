@@ -1,0 +1,32 @@
+
+-include ./$(DEPDIR)/C_byte_interpret_wsgd_builder.Plo
+-include ./$(DEPDIR)/C_byte_interpret_wsgd_builder_base.Plo
+-include ./$(DEPDIR)/C_value.Plo
+-include ./$(DEPDIR)/T_attribute_value.Plo
+-include ./$(DEPDIR)/T_expression.Plo
+-include ./$(DEPDIR)/T_frame_data.Plo
+-include ./$(DEPDIR)/T_generic_protocol_data.Plo
+-include ./$(DEPDIR)/T_interpret_byte_order.Plo
+-include ./$(DEPDIR)/T_interpret_data.Plo
+-include ./$(DEPDIR)/T_interpret_output.Plo
+-include ./$(DEPDIR)/T_interpret_read_values.Plo
+-include ./$(DEPDIR)/T_interpret_value.Plo
+-include ./$(DEPDIR)/T_type_definitions.Plo
+-include ./$(DEPDIR)/byte_interpret.Plo
+-include ./$(DEPDIR)/byte_interpret_build_types.Plo
+-include ./$(DEPDIR)/byte_interpret_build_types_context.Plo
+-include ./$(DEPDIR)/byte_interpret_build_types_read_token.Plo
+-include ./$(DEPDIR)/byte_interpret_build_types_netpdl.Plo
+-include ./$(DEPDIR)/byte_interpret_builder.Plo
+-include ./$(DEPDIR)/byte_interpret_common.Plo
+-include ./$(DEPDIR)/byte_interpret_compute_expression.Plo
+-include ./$(DEPDIR)/byte_interpret_parse.Plo
+-include ./$(DEPDIR)/CT_debug_object_counter.Plo
+-include ./$(DEPDIR)/generic.Plo
+-include ./$(DEPDIR)/packet-generic.Plo
+-include ./$(DEPDIR)/plugin.Plo
+-include ./$(DEPDIR)/tinystr.Plo
+-include ./$(DEPDIR)/tinyxml.Plo
+-include ./$(DEPDIR)/tinyxmlerror.Plo
+-include ./$(DEPDIR)/tinyxmlparser.Plo
+

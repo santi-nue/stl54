@@ -1,0 +1,29 @@
+
+am__objects_1 = packet-generic.lo
+am__objects_CORE_UT = byte_interpret.lo byte_interpret_compute_expression.lo \
+	T_expression.lo \
+	T_interpret_data.lo T_interpret_read_values.lo T_interpret_byte_order.lo \
+	T_interpret_output.lo T_interpret_decode.lo T_interpret_chrono.lo \
+	T_interpret_value.lo \
+	T_perf_time.lo \
+	T_attribute_value.lo T_frame_data.lo T_frame_data_write.lo \
+	T_type_definitions.lo \
+	C_value.lo \
+	byte_interpret_builder.lo \
+	byte_interpret_build_types.lo \
+	byte_interpret_build_types_context.lo \
+	byte_interpret_build_types_read_token.lo \
+	byte_interpret_parse.lo byte_interpret_common.lo \
+	CT_debug_object_counter.lo
+am__objects_2 = $(am__objects_CORE_UT) \
+	byte_interpret_build_types_netpdl.lo \
+	tinystr.lo tinyxml.lo \
+	tinyxmlerror.lo tinyxmlparser.lo 
+am__objects_3 = $(am__objects_2) generic.lo T_generic_protocol_data.lo \
+	C_byte_interpret_wsgd_builder.lo \
+	C_byte_interpret_wsgd_builder_base.lo
+am__objects_4 =
+am_generic_la_OBJECTS = plugin.lo $(am__objects_1) $(am__objects_3) \
+	$(am__objects_4)
+generic_la_OBJECTS = $(am_generic_la_OBJECTS)
+
