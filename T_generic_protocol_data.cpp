@@ -31,7 +31,6 @@
 #include "byte_interpret_parse.h"
 #include "byte_interpret.h"
 #include "byte_interpret_build_types_context.h"
-#include "byte_interpret_build_types_feeling.h"
 #include "byte_interpret_build_types_netpdl.h"
 
 #include <fstream>
@@ -706,16 +705,6 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 	if (result == "DEBUG")
 	{
 		debug_type_definitions.set(true);
-		continue;
-	}
-	else if (result == "FEELING")
-	{
-        string  directory;
-        string  file_name;
-	    ifs >> directory;
-	    ifs >> file_name;
-		build_feeling_types (directory, file_name, protocol_data.type_definitions);
-		must_ouput_types = true;
 		continue;
 	}
 	else if (result == "NETPDL")

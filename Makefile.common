@@ -54,7 +54,6 @@ DISSECTOR_CORE_UT_SRC = \
   CT_debug_object_counter.cpp
 
 DISSECTOR_CORE_OTHER_SRC = \
-  byte_interpret_build_types_feeling.cpp \
   byte_interpret_build_types_netpdl.cpp \
   tinystr.cpp tinyxml.cpp tinyxmlerror.cpp tinyxmlparser.cpp
 

@@ -145,7 +145,6 @@ am__objects_CORE_UT = byte_interpret.lo byte_interpret_compute_expression.lo \
 	CT_debug_object_counter.lo
 
 am__objects_2 = $(am__objects_CORE_UT) \
-	byte_interpret_build_types_feeling.lo \
 	byte_interpret_build_types_netpdl.lo \
 	tinystr.lo tinyxml.lo \
 	tinyxmlerror.lo tinyxmlparser.lo 
@@ -442,7 +441,6 @@ DISSECTOR_CORE_UT_SRC = \
   CT_debug_object_counter.cpp
 
 DISSECTOR_CORE_OTHER_SRC = \
-  byte_interpret_build_types_feeling.cpp \
   byte_interpret_build_types_netpdl.cpp \
   tinystr.cpp tinyxml.cpp tinyxmlerror.cpp tinyxmlparser.cpp
 
@@ -619,7 +617,6 @@ distclean-compile:
 -include ./$(DEPDIR)/byte_interpret_build_types.Plo
 -include ./$(DEPDIR)/byte_interpret_build_types_context.Plo
 -include ./$(DEPDIR)/byte_interpret_build_types_read_token.Plo
--include ./$(DEPDIR)/byte_interpret_build_types_feeling.Plo
 -include ./$(DEPDIR)/byte_interpret_build_types_netpdl.Plo
 -include ./$(DEPDIR)/byte_interpret_builder.Plo
 -include ./$(DEPDIR)/byte_interpret_common.Plo
