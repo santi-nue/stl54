@@ -199,6 +199,30 @@ bool    is_an_array (const string   & orig_type,
 }
 
 //*****************************************************************************
+// Find an isolated character into a string
+//*****************************************************************************
+
+string::size_type  find_isolated(const string  & str, char  to_find)
+{
+	string::size_type  idx_sep = str.find (to_find);
+
+	while (idx_sep != string::npos)
+	{
+		if (str[idx_sep+1] != to_find)
+		{
+			break;
+		}
+
+		idx_sep += 2;
+		while (str[idx_sep] == to_find)
+			++idx_sep;
+
+		idx_sep = str.find (to_find, idx_sep);
+	}
+	return  idx_sep;
+}
+
+//*****************************************************************************
 // post_build_field_base
 // Manage Display, transform and constraints specifications.
 //*****************************************************************************
@@ -242,7 +266,7 @@ void    post_build_field_base (
 			if ((strncmp(str_display_or_transform.c_str(), "q=", 2) == 0) ||
 				(strncmp(str_display_or_transform.c_str(), "o=", 2) == 0))
 			{
-				const string::size_type  idx_sep = str_display_or_transform.find (':');
+				const string::size_type  idx_sep = find_isolated(str_display_or_transform, ':');
 				if (strncmp(str_display_or_transform.c_str(), "q=", 2) == 0)
 				{
 					type_definitions.set_field_transform_quantum(field_type_name, str_display_or_transform.substr(2, idx_sep-2));
@@ -289,7 +313,7 @@ void    post_build_field_base (
 					 (strncmp(str_display_or_transform.c_str(), "max=", 4) == 0))
 			{
 				const string  & str_constraints = str_display_or_transform;
-				const string::size_type  idx_sep = str_constraints.find (':');
+				const string::size_type  idx_sep = find_isolated(str_constraints, ':');
 				if (strncmp(str_display_or_transform.c_str(), "min=", 4) == 0)
 				{
 					const string    min_param = str_constraints.substr(4, idx_sep-4);
@@ -2150,9 +2174,9 @@ string    build_types2 (istream             & is,
             return  last_extracted_word;
         }
 
-        // include a file.
         if (last_extracted_word == "include")
         {
+	        // include a file.
             string    file_name;
             M_FATAL_IF_FALSE (read_token_include_name (is, file_name));
 
