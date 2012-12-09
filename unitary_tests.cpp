@@ -2376,6 +2376,17 @@ void    test_expression()
 		string    last_word_not_treated = build_types (iss, type_definitions);
 		M_FATAL_IF_NE(last_word_not_treated, "");
 	}
+	{
+		istrstream  iss(
+			"const int32    k::int = -17;" "\n"
+			"const float32  k::flt = -234.9;" "\n"
+			"const string   k::str = \"hello world\";" "\n"
+
+			"" "\n");
+
+		string    last_word_not_treated = build_types (iss, type_definitions);
+		M_FATAL_IF_NE(last_word_not_treated, "");
+	}
 
 	//-------------------------------------------------------------------------
 	// integer static expression
@@ -2414,6 +2425,8 @@ void    test_expression()
 			{ "007 / 0x7", 1 },
 			{ "03456/1838", 1 },
 			{ "007 % 0x5", 2 },
+			// const
+			{ "136 + k::int", 119 },
 			// bit operations
 			{ "007 & 0x5", 5 },
 			{ "007 & 0x9", 1 },
@@ -2545,6 +2558,7 @@ void    test_expression()
 			{ "-0Xdf / 1.0", -223.0 },
 			{ "007 * 1.0", 7.0 },
 			{ "03456 - 1.0", 1837.0 },
+			{ "235.9 + k::flt", 1 },			// const
 			{ " addition (3.0, 7) ", 10}
 		};
 		for (int  idx = 0; idx < sizeof(expressions)/sizeof(expressions[0]); ++idx)
@@ -2598,6 +2612,7 @@ void    test_expression()
 			{ "(\"Hello \" +\"world!\")", "Hello world!" },
 			{ "(\"Hello \"+\"world!\")", "Hello world!" },
 			{ "\"last test\"", "last test" },
+			{ "\"136\" + k::str", "136hello world" },			// const
 			{ " addition (\"3.0\", \"7\") ", "3.07"}
 		};
 		for (int  idx = 0; idx < sizeof(expressions)/sizeof(expressions[0]); ++idx)
@@ -3433,6 +3448,8 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("3fc2", "uint16{q=2:o=13}    val ;", "val = 99467 (49727)");
 	M_TEST_SIMPLE("3fc2", " int16{q=2:o=13.0}  val ;", "val = -31605 (-15809)");
 	M_TEST_SIMPLE("3fc2", " int16{q=2:o=13.1}  val ;", "val = -31604.9 (-15809)");
+	M_TEST_SIMPLE("3fc2", " int16{q=1+1:o=10.1+1*3}  val ;", "val = -31604.9 (-15809)");
+	M_TEST_SIMPLE("3fc2", " int16{q=konst::int+0:o=konst::flt+15.7}  val ;", "val = -31604.9 (-15809)");
 
 	// transform expression
 	M_TEST_SIMPLE("3fc2", "uint16{tei=2*this+13}    val ;", "val = 99467 (49727)");
