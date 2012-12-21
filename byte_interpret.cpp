@@ -3868,17 +3868,22 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 	// Compute and verify size
 	//***************************************************************
 	const string  & str_string_size = field_type_name.str_size_or_parameter;
-	long                string_size = size_expression_to_int(type_definitions, interpret_data, str_string_size);
+	long                string_size = -1;
+	
+	if (str_string_size != "")
+	{
+		string_size = size_expression_to_int(type_definitions, interpret_data, str_string_size);
 
-    if (string_size < 0)
-    {
-        os_err << "Error string size= " << str_string_size
-               << " data= " << data_name << endl;
-        interpret_builder_error(type_definitions, in_out_frame_data_param,
-			                    field_type_name, data_name, data_simple_name,
-								"Not valid size for " + data_simple_name);
-        return  false;
-    }
+		if (string_size < 0)
+		{
+			os_err << "Error string size= " << str_string_size
+				   << " data= " << data_name << endl;
+			interpret_builder_error(type_definitions, in_out_frame_data_param,
+									field_type_name, data_name, data_simple_name,
+									"Not valid size for " + data_simple_name);
+			return  false;
+		}
+	}
 
 	//***************************************************************
 	// Decode
@@ -3890,7 +3895,7 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 		(field_type_name.is_a_variable() == false))
 	{
 		M_STATE_ENTER ("must_decode_now", string_size);
-        if (string_size > 0)
+        if (string_size >= 0)
 		{
 			decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
 					  field_type_name, data_name, data_simple_name,
@@ -3919,7 +3924,7 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 	// NB: following code NOT optimized after decode implementation
 
     {
-        if ((string_size > 0) &&
+        if ((string_size >= 0) &&
 			(in_out_frame_data.get_remaining_bits() < string_size*8) &&
 			(field_type_name.is_a_variable() == false))
         {
@@ -3977,6 +3982,10 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 						value.resize(idx_sep-1);
 					}
 				}
+			}
+			else if (string_size == 0)
+			{
+				value = "";
 			}
 			else
 			{
@@ -4036,7 +4045,7 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 
 			value = obj_value.get_str();
 
-			if (string_size > 0)
+			if (string_size >= 0)
 			{
 				M_FATAL_IF_GT(value.size(), string_size);
 			}
@@ -4104,17 +4113,22 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 	// Compute and verify size
 	//***************************************************************
 	const string  & str_string_size = field_type_name.str_size_or_parameter;
-	long                string_size = size_expression_to_int(type_definitions, interpret_data, str_string_size);
+	long                string_size = -1;
+	
+	if (str_string_size != "*")
+	{
+		string_size = size_expression_to_int(type_definitions, interpret_data, str_string_size);
 
-	if (string_size < 0)
-    {
-        os_err << "Error raw size= " << str_string_size
-               << " data= " << data_name << endl;
-        interpret_builder_error(type_definitions, in_out_frame_data_param,
-			                    field_type_name, data_name, data_simple_name,
-								"Not valid size for " + data_simple_name);
-        return  false;
-    }
+		if (string_size < 0)
+		{
+			os_err << "Error raw size= " << str_string_size
+				   << " data= " << data_name << endl;
+			interpret_builder_error(type_definitions, in_out_frame_data_param,
+									field_type_name, data_name, data_simple_name,
+									"Not valid size for " + data_simple_name);
+			return  false;
+		}
+	}
 
 	if (in_out_frame_data_param.is_physically_at_beginning_of_byte() != true)
 	{
@@ -4131,7 +4145,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 		(final_type == "raw"))
 	{
 		M_STATE_ENTER ("must_decode_now", string_size);
-        if (string_size > 0)
+        if (string_size >= 0)
 		{
 			decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
 					  field_type_name, data_name, data_simple_name,

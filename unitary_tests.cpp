@@ -3287,6 +3287,12 @@ void ut_interpret_bytes (const T_type_definitions  & type_definitions,
 			// Compare to expected output.
 			if (output_expected != NULL)
 			{
+				if (output_str_normal != output_expected)
+				{
+					string  output_expected_str = output_expected;
+					string  put_a_breakpoint_here;
+				}
+
 				M_TEST_EQ(output_str_normal, output_expected);
 			}
 		}
@@ -3429,6 +3435,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	// string
 	M_TEST_SIMPLE("4249472d5245515545535453", "string(12)  val ;", "val = BIG-REQUESTS");
 	M_TEST_SIMPLE("424947005245515545535453", "string(12)  val ;", "val = BIG");
+	M_TEST_SIMPLE(""                        , "string(0)   val ;", "val = ");
 	M_TEST_SIMPLE("42494700"                , "string      val ;", "val = BIG");
 	M_TEST_SIMPLE("424947005245515545535453",
 				  "string      val ; string(8)  val2 ;",
@@ -3436,12 +3443,30 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("424947005245515545535400",
 				  "string()    val ; string()  val2 ;",
 				  "val = BIG" K_eol "val2 = REQUEST");
-#if 0
+	M_TEST_SIMPLE("424947005245515545535400",
+				  "string()    val ; string(0)  val2 ; string()  val3 ;",
+				  "val = BIG" K_eol "val2 = " K_eol "val3 = REQUEST");
+
+	// raw
 	M_TEST_SIMPLE("4249472d5245515545535453",
 				  "raw(12)  val ;",
-				  "val =" K_eol
-				  "00000000 : 42 49 47 2d 52 45 51 55 45 53 54 53              - BIG-REQUESTS");
-#endif
+				  "val = " K_eol
+				  "00000000 : 42 49 47 2d 52 45 51 55 45 53 54 53              - BIG-REQUESTS    ");
+	M_TEST_SIMPLE("4249472d5245515545535453",
+				  "raw(*)  val ;",
+				  "val = " K_eol
+				  "00000000 : 42 49 47 2d 52 45 51 55 45 53 54 53              - BIG-REQUESTS    ");
+	M_TEST_SIMPLE("4249472d5245515545535453",
+				  "raw(2)  val ; raw(*)  val2 ;",
+				  "val = " K_eol
+				  "00000000 : 42 49                                            - BI              " K_eol
+  				  "val2 = " K_eol
+				  "00000000 : 47 2d 52 45 51 55 45 53 54 53                    - G-REQUESTS      ");
+	M_TEST_SIMPLE("4249472d5245515545535453",
+				  "raw(0)  val ; raw(*)  val2 ;",
+				  "val2 = " K_eol
+				  "00000000 : 42 49 47 2d 52 45 51 55 45 53 54 53              - BIG-REQUESTS    ");
+
 	// ICIOA a continuer  enum int2 ...
 
 	// transform quantum/offset
