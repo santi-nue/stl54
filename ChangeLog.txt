@@ -1,4 +1,5 @@
 
+2012/12/21  Fix : string(0) and raw/subproto/insproto
 2012/10/12  Fix : konst::xxx (const name) rejected into quantum, offset, min & max
 2012/07/31  Add : Built-in functions
                    date.get_string_from_days

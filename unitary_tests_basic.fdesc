@@ -238,3 +238,46 @@ const float64  Math::PI = 3.1415927;
 const float64  Math::deg_to_rad = Math::PI / 180;
 
 const string   konst::str_fct = string.replace_all (konst::str, "bc", "xyz");
+
+###############################################################################
+# Enum
+###############################################################################
+
+enum1 T_enum1
+{
+  value0  0
+  value1  -
+}
+
+enum2 T_enum2 expand T_enum1
+{
+  enu2  2
+  enu3  -
+}
+
+enum3 T_enum3 expand T_enum2
+{
+  val4  4
+  val5  -
+}
+
+enum4 T_enum4 expand T_enum3
+{
+  Val8  8
+  Val9  -
+  Val10  -
+  Val11  -
+  Val12  -
+  Val13  -
+  Val14  -
+  Val15  -
+}
+
+enum5 T_enum5 as T_enum3;
+
+enum6 T_enum6 as T_enum5;
+
+enum24 T_enum24 expand T_enum5
+{
+  val12730334  12730334
+}

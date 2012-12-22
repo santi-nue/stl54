@@ -3467,7 +3467,37 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 				  "val2 = " K_eol
 				  "00000000 : 42 49 47 2d 52 45 51 55 45 53 54 53              - BIG-REQUESTS    ");
 
-	// ICIOA a continuer  enum int2 ...
+	// int2 ...
+	M_TEST_SIMPLE("f3", "uint4  val ; uint4  val2 ;",
+				  "val = 15" K_eol
+				  "val2 = 3");
+	M_TEST_SIMPLE("f3", "int4  val ; int4  val2 ;",
+				  "val = -1" K_eol
+				  "val2 = 3");
+	M_TEST_SIMPLE("f3cb",
+				  "uint1  val ; uint2  val2; uint3  val3; uint4  val4; uint5  val5; uint1  val6;",
+				  "val = 1" K_eol
+				  "val2 = 3" K_eol
+				  "val3 = 4" K_eol
+				  "val4 = 15" K_eol
+				  "val5 = 5" K_eol
+				  "val6 = 1");
+//	M_TEST_SIMPLE("f3cb776a3fe2", "uint48  val ;", "val = 248761997052915");
+
+	// enum
+	M_TEST_SIMPLE("de3fc2", "T_enum24                         val ;", "val = val12730334 (12730334)");
+	M_TEST_SIMPLE("c23fde", "T_enum24{byte_order=big_endian}  val ;", "val = val12730334 (12730334)");
+
+	M_TEST_SIMPLE("f3cb",
+				  "T_enum1  val ; T_enum2  val2; T_enum3  val3; T_enum4  val4; T_enum5  val5; T_enum1  val6;",
+				  "val = value1 (1)" K_eol
+				  "val2 = enu3 (3)" K_eol
+				  "val3 = val4 (4)" K_eol
+				  "val4 = Val15 (15)" K_eol
+				  "val5 = val5 (5)" K_eol
+				  "val6 = value1 (1)");
+
+	// ICIOA ...
 
 	// transform quantum/offset
 	M_TEST_SIMPLE("3fc2", "uint16{q=2:o=13}    val ;", "val = 99467 (49727)");
@@ -3528,6 +3558,9 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("3fc2", "uint16{d=%7d}  val ;", "val =   49727 (49727)");
 	M_TEST_SIMPLE("3fc2", "uint16{d=%03d} val ;", "val = 49727");
 	M_TEST_SIMPLE("3fc2", "uint16{d=%3d}  val ;", "val = 49727");
+M_TEST_ERROR_ALREADY_KNOWN__OPEN(0, "display does not apply to enum")
+	M_TEST_SIMPLE("de3fc2", "T_enum24{d=%d and ...}  val ;", "val = 12730334 and ... (12730334)");
+}
 
 	// display expression
 	M_TEST_SIMPLE("3fc2", "uint16{de=\"123\"}  val ;", "val = 123 (49727)");
@@ -3536,6 +3569,10 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("3fc2", "uint16{de=to_string(this)}  val ;", "val = 49727");
 	M_TEST_SIMPLE("3fc2", "uint16{de=print_ip(this)}  val ;", "val = 0.0.194.63 (49727)");
 	M_TEST_SIMPLE("776a3fe2", "uint32{de=print_ip(this)}  val ;", "val = 226.63.106.119 (3795806839)");
+M_TEST_ERROR_ALREADY_KNOWN__OPEN(0, "display expression does not apply to enum")
+	M_TEST_SIMPLE("de3fc2", "T_enum24{de=\"hello world\"}        val ;", "val = hello world (12730334)");
+	M_TEST_SIMPLE("de3fc2", "T_enum24{de=print(\"%s 0x%x %d\")}  val ;", "val = val12730334 0xc23fde 12730334");
+}
 
 	// struct
 	M_TEST_SIMPLE("3fc2", "struct { uint8  val1; uint8 val2; }  str ;", "str.val1 = 63" K_eol "str.val2 = 194");
