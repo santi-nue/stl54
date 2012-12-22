@@ -3707,10 +3707,13 @@ string    simple_value_to_attribute_value_main (
 //*****************************************************************************
 
 string    enum_value_to_attribute_value (
-						  const C_value            & obj_value,
-                          const T_enum_definition  & enum_definition,
-								T_attribute_value  & attribute_value,
-						        bool               & no_error)
+						 const T_type_definitions  & type_definitions,
+						       T_interpret_data    & interpret_data,
+						 const C_value             & obj_value,
+                         const T_enum_definition   & enum_definition,
+						 const T_field_type_name   & field_type_name,
+							   T_attribute_value   & attribute_value,
+						       bool                & no_error)
 {
 	no_error = false;
 	attribute_value.transformed = obj_value;
@@ -3733,6 +3736,20 @@ string    enum_value_to_attribute_value (
 	{
 		attribute_value.set_error("ERROR unknown enum value");
 	}
+	else
+	{
+		// apply display expressions ...
+		string  error_str;
+		no_error = post_treatment_value(type_definitions, interpret_data,
+										field_type_name,
+										attribute_value.transformed,
+										error_str);
+		if (no_error == false)
+		{
+			attribute_value.set_error(error_str);
+		}
+	}
+
     return  attribute_value_to_string(attribute_value);
 }
 
@@ -4480,14 +4497,17 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
 		T_attribute_value    attribute_value;                                 \
 		string  str_value;                                                    \
         if (is_enum)                                                          \
-            str_value = enum_value_to_attribute_value (obj_value,             \
-                                    P_enum_def->definition, attribute_value, no_error);     \
-        else                                                                                \
+            str_value = enum_value_to_attribute_value (                       \
+								type_definitions, interpret_data,             \
+                                obj_value,                                    \
+                                P_enum_def->definition,                       \
+                                field_type_name, attribute_value, no_error);  \
+        else                                                                  \
             str_value = simple_value_to_attribute_value_main (                \
 								type_definitions, interpret_data,             \
 								obj_value, final_type,                        \
                                 field_type_name, attribute_value, no_error);  \
-                                                                                            \
+                                                                              \
         interpret_data.add_read_variable (data_name, data_simple_name, attribute_value);    \
                                                                               \
         if (interpret_data.must_NOT_output ())                                \

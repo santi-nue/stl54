@@ -3558,9 +3558,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("3fc2", "uint16{d=%7d}  val ;", "val =   49727 (49727)");
 	M_TEST_SIMPLE("3fc2", "uint16{d=%03d} val ;", "val = 49727");
 	M_TEST_SIMPLE("3fc2", "uint16{d=%3d}  val ;", "val = 49727");
-M_TEST_ERROR_ALREADY_KNOWN__OPEN(0, "display does not apply to enum")
 	M_TEST_SIMPLE("de3fc2", "T_enum24{d=%d and ...}  val ;", "val = 12730334 and ... (12730334)");
-}
 
 	// display expression
 	M_TEST_SIMPLE("3fc2", "uint16{de=\"123\"}  val ;", "val = 123 (49727)");
@@ -3569,10 +3567,8 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(0, "display does not apply to enum")
 	M_TEST_SIMPLE("3fc2", "uint16{de=to_string(this)}  val ;", "val = 49727");
 	M_TEST_SIMPLE("3fc2", "uint16{de=print_ip(this)}  val ;", "val = 0.0.194.63 (49727)");
 	M_TEST_SIMPLE("776a3fe2", "uint32{de=print_ip(this)}  val ;", "val = 226.63.106.119 (3795806839)");
-M_TEST_ERROR_ALREADY_KNOWN__OPEN(0, "display expression does not apply to enum")
 	M_TEST_SIMPLE("de3fc2", "T_enum24{de=\"hello world\"}        val ;", "val = hello world (12730334)");
-	M_TEST_SIMPLE("de3fc2", "T_enum24{de=print(\"%s 0x%x %d\")}  val ;", "val = val12730334 0xc23fde 12730334");
-}
+	M_TEST_SIMPLE("de3fc2", "T_enum24{de=print(\"%s 0x%x %d\", this, this, this)}  val ;", "val = val12730334 0xc23fde 12730334 (12730334)");
 
 	// struct
 	M_TEST_SIMPLE("3fc2", "struct { uint8  val1; uint8 val2; }  str ;", "str.val1 = 63" K_eol "str.val2 = 194");
