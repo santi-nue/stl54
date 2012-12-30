@@ -135,12 +135,12 @@ int   compute_int_TiXmlElement(TiXmlElement  * root, const char  * name)
 //*****************************************************************************
 // generate_type_name
 //*****************************************************************************
-
+static
 string  generate_type_name(string    base_type_name)
 {
 	static int     S_automatically_generated_type_name_counter = 0;
 
-	base_type_name += "_generated_";
+	base_type_name += "_generated_feeling_";
 	base_type_name += get_string(++S_automatically_generated_type_name_counter);
 
 	return  normalize_type_name(base_type_name);
