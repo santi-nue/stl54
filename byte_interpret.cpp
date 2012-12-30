@@ -2335,26 +2335,15 @@ bool    frame_to_switch (const T_type_definitions      & type_definitions,
 }
 
 //*****************************************************************************
-// post_treatment_value *******************************************************
+// post_treatment_value_transform *********************************************
 //*****************************************************************************
 
-bool    post_treatment_value (
+void    post_treatment_value_transform (
 						 const T_type_definitions      & type_definitions,
 						       T_interpret_data        & interpret_data,
 						 const T_field_type_name_base  & field_type_name,
-							   C_value                 & value,
-							   std::string             & error)
+							   C_value                 & value)
 {
-	// No statement value
-	if (field_type_name.no_statement.as_string() != "")
-	{
-		if (value == field_type_name.no_statement)
-		{
-			value.set_str("No_Statement");
-			return  true;
-		}
-	}
-
 	// Transform
 	if (field_type_name.transform_expression.is_defined())
 	{
@@ -2377,7 +2366,18 @@ bool    post_treatment_value (
 	{
 		value += field_type_name.transform_offset;
 	}
+}
 
+//*****************************************************************************
+// post_treatment_value_display ***********************************************
+//*****************************************************************************
+
+void    post_treatment_value_display (
+						 const T_type_definitions      & type_definitions,
+						       T_interpret_data        & interpret_data,
+						 const T_field_type_name_base  & field_type_name,
+							   C_value                 & value)
+{
 	// Display
 	if (field_type_name.str_display != "")
 	{
@@ -2399,7 +2399,19 @@ bool    post_treatment_value (
 		// Suppress this variable
 		interpret_data.sup_read_variable(this_id);
 	}
+}
 
+//*****************************************************************************
+// post_treatment_value_check *************************************************
+//*****************************************************************************
+
+bool    post_treatment_value_check (
+						 const T_type_definitions      & type_definitions,
+						       T_interpret_data        & interpret_data,
+						 const T_field_type_name_base  & field_type_name,
+							   C_value                 & value,
+							   std::string             & error)
+{
 	// Check constraints (the order is revelant)
 	for (vector<T_field_constraint>::const_iterator  iter  = field_type_name.constraints.begin();
 													 iter != field_type_name.constraints.end();
@@ -2485,6 +2497,37 @@ bool    post_treatment_value (
 	}
 
     return  true;
+}
+
+//*****************************************************************************
+// post_treatment_value *******************************************************
+//*****************************************************************************
+
+bool    post_treatment_value (
+						 const T_type_definitions      & type_definitions,
+						       T_interpret_data        & interpret_data,
+						 const T_field_type_name_base  & field_type_name,
+							   C_value                 & value,
+							   std::string             & error)
+{
+	// No statement value
+	if (field_type_name.no_statement.as_string() != "")
+	{
+		if (value == field_type_name.no_statement)
+		{
+			value.set_str("No_Statement");
+			return  true;
+		}
+	}
+
+	// Transform
+	post_treatment_value_transform(type_definitions, interpret_data, field_type_name, value);
+
+	// Display
+	post_treatment_value_display(type_definitions, interpret_data, field_type_name, value);
+
+	// Check
+	return  post_treatment_value_check(type_definitions, interpret_data, field_type_name, value, error);
 }
 
 //*****************************************************************************
@@ -3719,7 +3762,12 @@ string    enum_value_to_attribute_value (
 	attribute_value.transformed = obj_value;
 	attribute_value.value_is_original();
 
-	const long long    value = obj_value.get_int();
+	post_treatment_value_transform(type_definitions, interpret_data,
+									field_type_name,
+									attribute_value.transformed);
+
+	// Search symbolic value
+	const long long    value = attribute_value.transformed.get_int();
 
     for (uint  idx = 0; idx < enum_definition.size (); ++idx)
     {
@@ -3739,8 +3787,13 @@ string    enum_value_to_attribute_value (
 	else
 	{
 		// apply display expressions ...
+		post_treatment_value_display(type_definitions, interpret_data,
+										field_type_name,
+										attribute_value.transformed);
+
+		// apply checks ...
 		string  error_str;
-		no_error = post_treatment_value(type_definitions, interpret_data,
+		no_error = post_treatment_value_check(type_definitions, interpret_data,
 										field_type_name,
 										attribute_value.transformed,
 										error_str);

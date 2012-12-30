@@ -277,6 +277,8 @@ enum5 T_enum5 as T_enum3;
 
 enum6 T_enum6 as T_enum5;
 
+enum8 T_enum8 as T_enum4;
+
 enum24 T_enum24 expand T_enum5
 {
   val12730334  12730334

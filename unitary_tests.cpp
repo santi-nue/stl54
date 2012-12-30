@@ -3505,12 +3505,14 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("3fc2", " int16{q=2:o=13.1}  val ;", "val = -31604.9 (-15809)");
 	M_TEST_SIMPLE("3fc2", " int16{q=1+1:o=10.1+1*3}  val ;", "val = -31604.9 (-15809)");
 	M_TEST_SIMPLE("3fc2", " int16{q=konst::int+0:o=konst::flt+15.7}  val ;", "val = -31604.9 (-15809)");
+	M_TEST_SIMPLE("02"  , "T_enum8{q=2:o=11}    val ;", "val = Val15 (2)");
 
 	// transform expression
 	M_TEST_SIMPLE("3fc2", "uint16{tei=2*this+13}    val ;", "val = 99467 (49727)");
 	M_TEST_SIMPLE("3fc2", " int16{tef=2*this+13.0}  val ;", "val = -31605 (-15809)");
 	M_TEST_SIMPLE("3fc2", " int16{tef=2*this+13.1}  val ;", "val = -31604.9 (-15809)");
 	M_TEST_SIMPLE("3fc2", " int16{tef=addition(2*this,13.1)}  val ;", "val = -31604.9 (-15809)");
+	M_TEST_SIMPLE("02"  , "T_enum8{tei=2*this+11}    val ;", "val = Val15 (2)");
 
 	// decoder
 	M_TEST_SIMPLE("3fc2", "uint16{decoder=nil}  val ;", "val = 49727");
