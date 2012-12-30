@@ -220,6 +220,9 @@ void  usage (const char  * prog_name)
 "\n*** "
 "Very simple examples :\n"
 "\n"
+"> byte_interpret.exe  my_file.fdesc  -frame_bin  file_which_contains_binary_data\n"
+"...\n"
+"\n"
 "> byte_interpret.exe  int32  toto ;  -- 00 01 02 03\n"
 "toto = 50462976\n"
 "\n"
@@ -230,7 +233,7 @@ void  usage (const char  * prog_name)
 "toto = 9.25572e-041\n"
 #ifndef WIN32
 "\n"
-"NB: for Linux/Unix systems, ; must be changed to \\; or \";\"\n"
+"NB: for Linux/Unix systems, ; must be changed to \\; or \";\" or \"int32  toto ;\"\n"
 #endif
        << endl;
 
