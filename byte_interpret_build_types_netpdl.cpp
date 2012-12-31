@@ -87,7 +87,6 @@ using namespace std;
 
 string    byte_interpret_get_include_directory();
 
-string    generate_type_name(string    base_type_name);
 
 //*****************************************************************************
 // normalize_type_name
