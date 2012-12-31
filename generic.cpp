@@ -1190,7 +1190,6 @@ static int    generic_stats_tree_packet(stats_tree      * st,
   M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), NULL);
   T_interpret_data  & last_msg_interpret_data = * tap_data.RCP_last_msg_interpret_data;
 
-//#ifdef WIRESHARK_10X
 #if WIRESHARK_VERSION_NUMBER < 10200
 // until revision 25084
 #define NEEDED_CAST_FOR_10X  (const guint8*)
@@ -1238,7 +1237,6 @@ static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_
 	stats_tree_register(NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
 						NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
 						NEEDED_CAST_FOR_10X (protocol_data.PROTOABBREV + "/Msg").c_str(),
-//#if defined(WIRESHARK_13X) || defined(WIRESHARK_14X) || defined(WIRESHARK_15X)
 #if WIRESHARK_VERSION_NUMBER < 10300
 						// until revision 27407
 #else
@@ -1406,42 +1404,46 @@ ostream &  get_interpret_ostream()
 
 void    proto_init_routine(T_generic_protocol_data  & protocol_data)
 {
-	if (protocol_data.GLOBAL_DATA_TYPE == "")
-		return;
-
 	C_debug_set_temporary      debug_dissect_main(protocol_data.DEBUG);
 	M_STATE_ENTER ("proto_init_routine", protocol_data.PROTOABBREV);
 
+
+	// Begin/load a new capture/file or ...
+	interpret_builder_begin(protocol_data.type_definitions);
+
+
 	// remove all global.*
-
-	// reset global data
-	protocol_data.ws_data.global_data = T_generic_protocol_global_data();
-
-	// init global data
-	C_interpret_builder_set_temporary  interpret_builder_set_temporary(NULL);
-	T_interpret_data   & interpret_data = protocol_data.ws_data.global_data.initialized_data;
-	const T_byte       * in_out_P_bytes = NULL_PTR;
-	size_t               in_out_sizeof_bytes = 0;
-	const string         str_interpret = protocol_data.GLOBAL_DATA_TYPE + " global ;";
-	istrstream           iss(str_interpret.c_str());
-	ostream            & os = get_interpret_ostream();
-	bool    result = interpret_bytes (protocol_data.type_definitions,
-														in_out_P_bytes,
-														in_out_sizeof_bytes,
-														iss,
-														os,
-														os,
-														interpret_data);
-	if (result == false)
+	if (protocol_data.GLOBAL_DATA_TYPE != "")
 	{
-		// must report
-		string    str_report = protocol_data.PROTOABBREV + " : Generic dissector is not able to interpret the global data";
-		M_STATE_FATAL (str_report);
-		wsgd_report_failure(str_report.c_str());
-	}
+		// reset global data
+		protocol_data.ws_data.global_data = T_generic_protocol_global_data();
 
-	// global data only usable with full name.
-	protocol_data.ws_data.global_data.initialized_data.reset_short_names();
+		// init global data
+		C_interpret_builder_set_temporary  interpret_builder_set_temporary(NULL);
+		T_interpret_data   & interpret_data = protocol_data.ws_data.global_data.initialized_data;
+		const T_byte       * in_out_P_bytes = NULL_PTR;
+		size_t               in_out_sizeof_bytes = 0;
+		const string         str_interpret = protocol_data.GLOBAL_DATA_TYPE + " global ;";
+		istrstream           iss(str_interpret.c_str());
+		ostream            & os = get_interpret_ostream();
+		bool    result = interpret_bytes (protocol_data.type_definitions,
+															in_out_P_bytes,
+															in_out_sizeof_bytes,
+															iss,
+															os,
+															os,
+															interpret_data);
+		if (result == false)
+		{
+			// must report
+			string    str_report = protocol_data.PROTOABBREV + " : Generic dissector is not able to interpret the global data";
+			M_STATE_FATAL (str_report);
+			wsgd_report_failure(str_report.c_str());
+		}
+
+		// global data only usable with full name.
+		protocol_data.ws_data.global_data.initialized_data.reset_short_names();
+	}
 }
 
 //*****************************************************************************

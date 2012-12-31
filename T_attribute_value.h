@@ -48,6 +48,7 @@ struct T_attribute_value : public CT_debug_object_counter<T_attribute_value>
 	// error text (unknow enum value, constraints ...)
 	void    set_error(const std::string  & in_error);
 	bool    has_error() const                        { return  (P_error != NULL); }
+	const std::string *  get_P_error() const         { return  P_error; }
 
 	void    value_is_original();
 	void    value_is_original_format_reset();

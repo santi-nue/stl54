@@ -45,6 +45,13 @@ using namespace std;
 #include "byte_interpret_build_types_context.h"
 #include "byte_interpret_build_types_read_token.h"
 
+// plugin needs gmodule/glib
+#define BYTE_INTERPRET_USE_PLUGIN
+#ifdef FRHED
+// FRHED do not find gmodule lib
+#undef  BYTE_INTERPRET_USE_PLUGIN
+#endif
+
 //*****************************************************************************
 // byte_interpret_get_include_file_name
 //*****************************************************************************
@@ -1945,6 +1952,148 @@ void    build_function (const E_override            must_override,
 }
 
 //*****************************************************************************
+// build_plugin_output
+// ----------------------------------------------------------------------------
+// Format :
+// plugin{output}{user_data="..."}  <library_name>;
+//*****************************************************************************
+#ifdef BYTE_INTERPRET_USE_PLUGIN
+#include <gmodule.h>
+
+void    build_plugin_output (const E_override            must_override,
+                        const string              & key_word,
+                              istream             & is,
+                              T_type_definitions  & type_definitions)
+{
+	M_STATE_ENTER ("build_plugin_output", "");
+
+	M_ASSERT_EQ (key_word.compare(0, 14, "plugin{output}"), 0);
+
+
+	T_plugin_output_definition  plugin_def;
+
+	M_FATAL_IF_FALSE (read_token_type_simple (is, plugin_def.library_name));
+
+	build_types_context_type_begin(plugin_def.library_name);
+
+	{
+		string    key_word_base = key_word;
+		string    key_word_extend;
+		if (decompose_type_sep_value_sep (key_word_base,
+											  '{',
+											  '}',
+											  key_word_base,
+											  key_word_extend) == E_rc_ok)
+		{
+			M_STATE_DEBUG(key_word_extend);
+
+			if (strncmp(key_word_extend.c_str(), "user_data=", 10) == 0)
+			{
+				key_word_extend = key_word_extend.substr(10);
+				remove_string_limits(key_word_extend);
+				plugin_def.user_data = key_word_extend;
+				plugin_def.context.P_user_data = strdup(plugin_def.user_data.c_str());
+			}
+		}
+	}
+
+
+	const string  & filename = plugin_def.library_name;
+
+	GModule   *handle = g_module_open(filename.c_str(), (GModuleFlags)G_MODULE_BIND_LAZY);
+
+	if (handle == NULL)
+    {
+		const char  * error = g_module_error ();
+		M_FATAL_COMMENT(filename << " not found or not a readable libray : " << error);
+    }
+	M_STATE_DEBUG(filename << " found");
+
+    gpointer       gp;
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_begin", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_begin_cb = (T_byte_interpret_plugin_output_begin_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_begin found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_value_integer", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_value_integer_cb = (T_byte_interpret_plugin_output_value_integer_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_value_integer found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_value_float", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_value_float_cb = (T_byte_interpret_plugin_output_value_float_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_value_float found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_value_string", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_value_string_cb = (T_byte_interpret_plugin_output_value_string_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_value_string found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_raw_data", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_raw_data_cb = (T_byte_interpret_plugin_output_raw_data_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_raw_data found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_group_begin", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_group_begin_cb = (T_byte_interpret_plugin_output_group_begin_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_group_begin found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_group_append_text", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_group_append_text_cb = (T_byte_interpret_plugin_output_group_append_text_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_group_append_text found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_group_end", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_group_end_cb = (T_byte_interpret_plugin_output_group_end_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_group_end found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_error", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_error_cb = (T_byte_interpret_plugin_output_error_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_error found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_missing_data", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_missing_data_cb = (T_byte_interpret_plugin_output_missing_data_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_missing_data found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_cmd_error", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_cmd_error_cb = (T_byte_interpret_plugin_output_cmd_error_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_cmd_error found");
+    }
+
+    if (g_module_symbol(handle, "byte_interpret_plugin_output_cmd_print", &gp))
+    {
+		plugin_def.byte_interpret_plugin_output_cmd_print_cb = (T_byte_interpret_plugin_output_cmd_print_cb)gp;
+		M_STATE_DEBUG("byte_interpret_plugin_output_cmd_print found");
+    }
+
+
+
+	type_definitions.vector_plugin_output_definition.push_back(plugin_def);
+
+	build_types_context_type_end(plugin_def.library_name);
+
+	skip_line(is);
+}
+#endif
+
+//*****************************************************************************
 // use_non_portable_types
 // Completely deprecated function.
 // Not supposed to be called (since nobody knows the command which permits
@@ -2069,6 +2218,12 @@ string    build_types_no_include (istream             & is,
         {
             build_bitfield (must_override, key_word, is, type_definitions);
         }
+#ifdef BYTE_INTERPRET_USE_PLUGIN
+		else if (strncmp(key_word.c_str(), "plugin{output}", 14) == 0)
+		{
+            build_plugin_output (must_override, key_word, is, type_definitions);
+		}
+#endif
         else
         {
 			build_types_context_type_kind_end(key_word);

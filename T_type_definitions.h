@@ -404,6 +404,38 @@ ostream &  operator<< (ostream                & os,
 typedef map<string,T_function_definition>    T_map_function_definition;
 
 //****************************************************************************
+// Plugin output
+//****************************************************************************
+
+#include "byte_interpret_plugin_output.h"
+
+struct T_plugin_output_definition
+{
+	std::string    library_name;
+	std::string    user_data;
+
+	T_byte_interpret_plugin_output_begin_cb              byte_interpret_plugin_output_begin_cb;
+	T_byte_interpret_plugin_output_value_integer_cb      byte_interpret_plugin_output_value_integer_cb;
+	T_byte_interpret_plugin_output_value_float_cb        byte_interpret_plugin_output_value_float_cb;
+	T_byte_interpret_plugin_output_value_string_cb       byte_interpret_plugin_output_value_string_cb;
+	T_byte_interpret_plugin_output_raw_data_cb           byte_interpret_plugin_output_raw_data_cb;
+	T_byte_interpret_plugin_output_group_begin_cb        byte_interpret_plugin_output_group_begin_cb;
+	T_byte_interpret_plugin_output_group_append_text_cb  byte_interpret_plugin_output_group_append_text_cb;
+	T_byte_interpret_plugin_output_group_end_cb          byte_interpret_plugin_output_group_end_cb;
+	T_byte_interpret_plugin_output_error_cb              byte_interpret_plugin_output_error_cb;
+	T_byte_interpret_plugin_output_missing_data_cb       byte_interpret_plugin_output_missing_data_cb;
+	T_byte_interpret_plugin_output_cmd_error_cb          byte_interpret_plugin_output_cmd_error_cb;
+	T_byte_interpret_plugin_output_cmd_print_cb          byte_interpret_plugin_output_cmd_print_cb;
+
+	T_byte_interpret_plugin_output_context               context;
+};
+
+ostream &  operator<< (ostream                     & os,
+                 const T_plugin_output_definition  & rhs);
+
+typedef vector<T_plugin_output_definition>    T_vector_plugin_output_definition;
+
+//****************************************************************************
 // T_type_definitions
 //****************************************************************************
 
@@ -431,6 +463,8 @@ struct T_type_definitions
     T_map_enum_definition_representation  map_enum_definition_representation;
     T_map_switch_definition               map_switch_definition;
 	T_map_function_definition             map_function_definition;
+
+	T_vector_plugin_output_definition     vector_plugin_output_definition;
 
 	typedef vector<string>              T_vector_dissector_name;
 	T_vector_dissector_name               vector_subdissector_name;
