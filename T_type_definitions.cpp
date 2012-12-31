@@ -745,7 +745,15 @@ T_type_definitions::set_field_type_size_or_parameter(T_field_type_name_base  & f
 		(field.type != "string") &&
 		(field.type != "string_nl"))
 	{
-		M_FATAL_COMMENT("Empty () for " << field.type);
+		M_FATAL_COMMENT("() forbidden for " << field.type);
+	}
+
+	if ((field.str_size_or_parameter == "*") &&
+		(field.type != "raw") &&
+		(field.type != "subproto") &&
+		(field.type != "insproto"))
+	{
+		M_FATAL_COMMENT("(*) forbidden for " << field.type);
 	}
 }
 
