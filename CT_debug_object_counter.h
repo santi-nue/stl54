@@ -32,7 +32,8 @@
 // C_debug_object_counter
 //****************************************************************************
 
-#define USE_C_debug_object_counter
+// Set this for debug ONLY : big performance issue.
+//#define USE_C_debug_object_counter
 
 #ifdef USE_C_debug_object_counter
 
