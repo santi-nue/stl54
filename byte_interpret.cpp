@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1018,6 +1018,7 @@ bool    frame_to_function_base (const T_type_definitions    & type_definitions,
 							   E_return_value_indicator  return_value_indicator,
 							   C_value                 & returned_value);
 
+#if 1
 //*****************************************************************************
 // T_decode_stream_frame ******************************************************
 //*****************************************************************************
@@ -1026,12 +1027,63 @@ struct T_decode_stream_frame
 {
 	unsigned char    decoded_data[10000];       // ICIOA hard coded magic number
 	int              decoded_data_bit_size;
+	T_frame_data     frame_data;
 
 	T_decode_stream_frame()
-		:decoded_data_bit_size(0)
+		:decoded_data_bit_size(0),
+		 frame_data(decoded_data, 0, 0)
 	{
 	}
+
+	// Permits to reset frame_data & decoded_data_size when all data has been read.
+	// To avoid decoded_data_bit_size grows indefinitely.
+	void            synchronize();
+
+	void            write_1_byte(T_byte  byte);
+	void            write_less_1_byte(T_byte  byte, short  n_bits);
 };
+
+
+void
+T_decode_stream_frame::synchronize()
+{
+	if (frame_data.get_remaining_bits() == 0)
+	{
+		decoded_data_bit_size = 0;
+		frame_data = T_frame_data(decoded_data, 0, 0);
+	}
+}
+
+void
+T_decode_stream_frame::write_1_byte(T_byte  byte)
+{
+	T_frame_data_write  frame_data_write(decoded_data, 0, sizeof(decoded_data) * 8);
+	frame_data_write.set_bit_offset(decoded_data_bit_size);
+
+	frame_data_write.write_1_byte(byte);
+	decoded_data_bit_size = frame_data_write.get_bit_offset();
+
+	frame_data.n_bits_data_appended(8);
+}
+
+void
+T_decode_stream_frame::write_less_1_byte(T_byte  data, short  data_bit_size)
+{
+	T_frame_data_write  frame_data_write(decoded_data, 0, sizeof(decoded_data) * 8);
+	frame_data_write.set_bit_offset(decoded_data_bit_size);
+
+	if (data_bit_size <= 8)
+	{
+		frame_data_write.write_less_1_byte(data, data_bit_size);		// ICIOA signed !
+		decoded_data_bit_size = frame_data_write.get_bit_offset();
+
+		frame_data.n_bits_data_appended(data_bit_size);
+		return;
+	}
+
+	M_FATAL_COMMENT("write_less_1_byte  data_bit_size=" << data_bit_size << " must be <= 8");
+}
+#endif
 
 //*****************************************************************************
 // frame_append_byte **********************************************************
@@ -1045,8 +1097,7 @@ void    frame_append_byte(T_decode_stream_frame  * P_decode_stream_frame,
 		M_FATAL_COMMENT("frame_append_byte no data");
 	}
 
-	P_decode_stream_frame->decoded_data[P_decode_stream_frame->decoded_data_bit_size/8] = byte;
-	P_decode_stream_frame->decoded_data_bit_size += 8;
+	P_decode_stream_frame->write_1_byte(byte);
 }
 
 //*****************************************************************************
@@ -1064,17 +1115,7 @@ void    frame_append_data(T_decode_stream_frame  * P_decode_stream_frame,
 		M_FATAL_COMMENT("frame_append_data no data");
 	}
 
-	T_frame_data_write  frame_data_write(P_decode_stream_frame->decoded_data, 0, sizeof(P_decode_stream_frame->decoded_data) * 8);
-	frame_data_write.set_bit_offset(P_decode_stream_frame->decoded_data_bit_size);
-
-	if (data_bit_size <= 8)
-	{
-		frame_data_write.write_less_1_byte(data, data_bit_size);		// ICIOA signed !
-		P_decode_stream_frame->decoded_data_bit_size = frame_data_write.get_bit_offset();
-		return;
-	}
-
-	M_FATAL_COMMENT("frame_append_data  data_bit_size=" << data_bit_size << " must be <= 8");
+	P_decode_stream_frame->write_less_1_byte(data, data_bit_size);		// ICIOA signed !
 }
 
 //*****************************************************************************
@@ -1112,7 +1153,7 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 		}
 		else
 		{
-			M_FATAL_COMMENT("frame_append_byte expect param1 = int");
+			M_FATAL_COMMENT("frame_append_data expect param1 = int");
 			return  false;
 		}
 	}
@@ -1161,7 +1202,6 @@ void    decode_data_size (
                          ostream                & os_out,
                          ostream                & os_err,
                          T_decode_stream_frame  & decode_stream_frame,
-						 T_frame_data           & decode_frame_data,
                    const char                   * TYPE_NAME,
                    const int                      TYPE_BIT_SIZE)
 {
@@ -1208,9 +1248,7 @@ void    decode_data_size (
 			TYPE_BIT_SIZE << ")");
 	}
 
-	decode_frame_data = T_frame_data(decode_stream_frame.decoded_data, 0,
-									 decode_stream_frame.decoded_data_bit_size);
-	decode_frame_data.set_initial_frame_starting_bit_offset(bit_offset_into_initial_frame);
+	decode_stream_frame.frame_data.set_initial_frame_starting_bit_offset(bit_offset_into_initial_frame);
 }
 
 //*****************************************************************************
@@ -1227,7 +1265,6 @@ void    decode_data_bytes_until (
                          ostream                & os_out,
                          ostream                & os_err,
                          T_decode_stream_frame  & decode_stream_frame,
-						 T_frame_data           & decode_frame_data,
                    const char                   * TYPE_NAME,
                    const char                   * p_ending_char_1,
 				   const char                   * p_ending_char_2)
@@ -1298,9 +1335,7 @@ void    decode_data_bytes_until (
 		}
 	}
 
-	decode_frame_data = T_frame_data(decode_stream_frame.decoded_data, 0,
-									 decode_stream_frame.decoded_data_bit_size);
-	decode_frame_data.set_initial_frame_starting_bit_offset(bit_offset_into_initial_frame);
+	decode_stream_frame.frame_data.set_initial_frame_starting_bit_offset(bit_offset_into_initial_frame);
 }
 
 //*****************************************************************************
@@ -1330,20 +1365,19 @@ void    read_decode_data (
 		M_STATE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
 
 		T_decode_stream_frame    decode_stream_frame;
-		T_frame_data             frame_data_decoded;
 		decode_data_size (type_definitions, in_out_frame_data, interpret_data,
 						  field_type_name, data_name, data_simple_name,
 						  os_out, os_err,
 						  decode_stream_frame,
-						  frame_data_decoded,
 						  TYPE_NAME, TYPE_BIT_SIZE);
 
-		read_data (    type_definitions, frame_data_decoded, interpret_data,
+		read_data (    type_definitions, decode_stream_frame.frame_data, interpret_data,
 					   field_type_name, data_name, data_simple_name,
 					   P_value_param, TYPE_NAME, TYPE_BIT_SIZE,
 					   TYPE_IMPL_STR, TYPE_IMPL_BIT_SIZE,
 					   must_invert_bytes,
 					   is_signed_integer);
+		decode_stream_frame.synchronize();  // mandatory each time something has been read into its frame_data
 		return;
 	}
 #endif
@@ -3960,7 +3994,6 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 	//***************************************************************
 	T_frame_data           * P_in_out_frame_data = & in_out_frame_data_param;
 	T_decode_stream_frame    decode_stream_frame;
-	T_frame_data             decode_frame_data;
 	if (interpret_data.must_decode_now() &&
 		(field_type_name.is_a_variable() == false))
 	{
@@ -3971,9 +4004,8 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 					  field_type_name, data_name, data_simple_name,
 					  os_out, os_err,
 					  decode_stream_frame,
-					  decode_frame_data,
 					  final_type.c_str(), string_size * 8);
-			P_in_out_frame_data = & decode_frame_data;
+			P_in_out_frame_data = & decode_stream_frame.frame_data;
 		}
 		else
 		{
@@ -3982,10 +4014,9 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 					  field_type_name, data_name, data_simple_name,
 					  os_out, os_err,
 					  decode_stream_frame,
-					  decode_frame_data,
 					  final_type.c_str(),
 					  "\0", (final_type == "string_nl") ? "\n" : NULL);
-			P_in_out_frame_data = & decode_frame_data;
+			P_in_out_frame_data = & decode_stream_frame.frame_data;
 		}
 	}
 
@@ -4155,6 +4186,7 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 									interpret_data.is_little_endian(), false);  // no error
         }
 
+		decode_stream_frame.synchronize();  // mandatory each time something has been read into its frame_data
         return  true;
     }
 }
@@ -4210,7 +4242,6 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 	//***************************************************************
 	T_frame_data           * P_in_out_frame_data = & in_out_frame_data_param;
 	T_decode_stream_frame    decode_stream_frame;
-	T_frame_data             decode_frame_data;
 	if ((interpret_data.must_decode_now()) &&
 		(final_type == "raw"))
 	{
@@ -4221,9 +4252,8 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 					  field_type_name, data_name, data_simple_name,
 					  os_out, os_err,
 					  decode_stream_frame,
-					  decode_frame_data,
 					  final_type.c_str(), string_size * 8);
-			P_in_out_frame_data = & decode_frame_data;
+			P_in_out_frame_data = & decode_stream_frame.frame_data;
 		}
 		else
 		{
@@ -4232,10 +4262,9 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 					  field_type_name, data_name, data_simple_name,
 					  os_out, os_err,
 					  decode_stream_frame,
-					  decode_frame_data,
 					  final_type.c_str(),
 					  NULL, NULL);
-			P_in_out_frame_data = & decode_frame_data;
+			P_in_out_frame_data = & decode_stream_frame.frame_data;
 		}
 	}
 
@@ -4293,6 +4322,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 									raw_data_type);
         }
 
+		decode_stream_frame.synchronize();  // mandatory each time something has been read into its frame_data
         return  true;
     }
 }
