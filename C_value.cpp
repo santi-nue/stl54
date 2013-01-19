@@ -133,8 +133,7 @@ C_value::C_value (const E_type               type,
 }
 
 
-// long long cast is mandatory for char ctor
-#define CTOR_INT(TYPE)                                                        \
+#define CTOR_INT_LL(TYPE)                                                     \
 C_value::C_value (TYPE    integer)                                            \
     :A_type (E_type_integer),                                                 \
 	 A_external_type_bit_size__cvtbd(0),                                      \
@@ -146,18 +145,24 @@ C_value::C_value (TYPE    integer)                                            \
 {                                                                             \
 }
 
+// long long cast is mandatory for char ctor
+#define CTOR_INT_CHAR(TYPE)    CTOR_INT_LL(TYPE)
+
+// long long cast gives better performance (see get_string implementation)
+#define CTOR_INT(TYPE)         CTOR_INT_LL(TYPE)
+
 CTOR_INT(bool)
-CTOR_INT(         char)
-CTOR_INT(  signed char)
-CTOR_INT(unsigned char)
+CTOR_INT_CHAR(         char)
+CTOR_INT_CHAR(  signed char)
+CTOR_INT_CHAR(unsigned char)
 CTOR_INT(  signed short)
 CTOR_INT(unsigned short)
 CTOR_INT(  signed int)
 CTOR_INT(unsigned int)
 CTOR_INT(  signed long)
-CTOR_INT(unsigned long)
-CTOR_INT(  signed long long)
-CTOR_INT(unsigned long long)
+CTOR_INT_LL(unsigned long)
+CTOR_INT_LL(  signed long long)
+CTOR_INT_LL(unsigned long long)
 
 
 C_value::C_value (float        flt)
