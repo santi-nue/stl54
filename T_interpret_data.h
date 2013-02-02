@@ -27,6 +27,7 @@
 #include "T_interpret_output.h"
 #include "T_interpret_byte_order.h"
 #include "T_interpret_decode.h"
+#include "T_interpret_inside_frame.h"
 #include "T_interpret_chrono.h"
 
 
@@ -38,6 +39,7 @@ struct T_interpret_data : public T_interpret_read_values,
                           public T_interpret_output,
                           public T_interpret_byte_order,
 						  public T_interpret_decode,
+						  public T_interpret_inside_frame,
 						  public T_interpret_chrono,
 						  public CT_debug_object_counter<T_interpret_data>
 {

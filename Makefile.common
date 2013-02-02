@@ -41,7 +41,7 @@ DISSECTOR_CORE_UT_SRC = \
 	byte_interpret.cpp \
 	byte_interpret_compute_expression.cpp T_expression.cpp \
   T_interpret_data.cpp T_interpret_read_values.cpp T_interpret_byte_order.cpp \
-  T_interpret_output.cpp T_interpret_decode.cpp T_interpret_chrono.cpp \
+  T_interpret_output.cpp T_interpret_decode.cpp T_interpret_inside_frame.cpp T_interpret_chrono.cpp \
   T_perf_time.cpp \
   T_interpret_value.cpp \
   T_attribute_value.cpp T_frame_data.cpp T_frame_data_write.cpp T_type_definitions.cpp \

@@ -627,7 +627,7 @@ void    test_read_token_word_cplx()
 
 	// ;
 	{
-		istringstream  iss("word + type( al;lo ) debut;fin type[idx ;- 3] type{d=bi;n} ");
+		istringstream  iss("word + type( al;lo ) begin;end type[idx ;- 3] type{d=bi;n} ");
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_normal), true);
@@ -643,7 +643,7 @@ void    test_read_token_word_cplx()
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_normal), true);
-		M_TEST_EQ(str_result, "debut");
+		M_TEST_EQ(str_result, "begin");
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_normal), true);
@@ -651,7 +651,7 @@ void    test_read_token_word_cplx()
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_normal), true);
-		M_TEST_EQ(str_result, "fin");
+		M_TEST_EQ(str_result, "end");
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_normal), true);
@@ -669,7 +669,7 @@ void    test_read_token_word_cplx()
 	// K_parser_cfg_parameters permits to extract function parameters
 	// E.g: <param1> , <param2> , ...
 	{
-		istringstream  iss("wo\"r,d\" + type,( al;lo ) debut,fin type[idx ,;- 3] t,ype{d=b,i;n} ");
+		istringstream  iss("wo\"r,d\" + type,( al;lo ) begin,end type[idx ,;- 3] t,ype{d=b,i;n} ");
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_parameters), true);
@@ -677,11 +677,11 @@ void    test_read_token_word_cplx()
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_parameters), true);
-		M_TEST_EQ(str_result, "( al;lo ) debut");
+		M_TEST_EQ(str_result, "( al;lo ) begin");
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_parameters), true);
-		M_TEST_EQ(str_result, "fin type[idx ,;- 3] t");
+		M_TEST_EQ(str_result, "end type[idx ,;- 3] t");
 
 		str_result = "";
 		M_TEST_EQ(read_token_word_cplx(iss, str_result, K_parser_cfg_parameters), true);
@@ -3312,11 +3312,17 @@ void ut_interpret_bytes (const T_type_definitions  & type_definitions,
 //*****************************************************************************
 
 void ut_interpret_bytes (const T_type_definitions  & type_definitions,
-                         const char                * in_hexa_str,
+                         const char                * in_hexa_str_param,
                          const string              & in_input_string,
 							   T_interpret_data    & interpret_data,
 						 const char                * output_expected = NULL)
 {
+	string           in_hexa_str = in_hexa_str_param;
+	if (in_hexa_str.find(' ') != string::npos)
+	{
+		mod_replace_all(in_hexa_str, " ", "");
+	}
+
 	T_byte_vector    byte_vector;
 	string_hexa_to_frame(in_hexa_str, byte_vector);
 
@@ -3446,6 +3452,12 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("424947005245515545535400",
 				  "string()    val ; string(0)  val2 ; string()  val3 ;",
 				  "val = BIG" K_eol "val2 = " K_eol "val3 = REQUEST");
+	// string at bit position
+	M_TEST_SIMPLE("b4249472d5245515545535453e",
+				  "uint4  begin; string(12)  val ; uint4  end;",
+				  "begin = 11" K_eol
+				  "val = BIG-REQUESTS" K_eol
+				  "end = 14");
 
 	// raw
 	M_TEST_SIMPLE("4249472d5245515545535453",
@@ -3748,6 +3760,131 @@ void    test_interpret_simple_uint8_array(const int  max_iter)
 }
 
 //*****************************************************************************
+// test_interpret_simple_inside_frame
+//*****************************************************************************
+
+void    test_interpret_simple_inside_frame()
+{
+	T_type_definitions    type_definitions;
+    build_types ("unitary_tests_basic.fdesc",
+                 type_definitions);
+
+	T_interpret_data      interpret_data;
+	interpret_data.set_big_endian();
+	interpret_data.set_decode_function("decode_invert_4_bytes");  // read 4 bytes and invert them
+
+	const bool  save_S_ut_interpret_bytes_decode_nothing = S_ut_interpret_bytes_decode_nothing;
+	S_ut_interpret_bytes_decode_nothing = false;
+
+	// Bytes inverted by decoder
+	M_TEST_SIMPLE("776a3fe2",    // e23f6a77
+				  "uint8{d=hex}  val1 ; uint8{d=hex}  val2 ; uint8{d=hex}  val3 ; uint8{d=hex}  val4 ;",
+				  "val1 = 0xe2 (226)" K_eol
+				  "val2 = 0x3f (63)" K_eol
+				  "val3 = 0x6a (106)" K_eol
+				  "val4 = 0x77 (119)");
+
+	// Bytes inverted by decoder
+	M_TEST_SIMPLE("776a3fe2", "uint32  val ;", "val = 3795806839");
+	M_TEST_SIMPLE("776a3fe2", " int32  val ;", "val = -499160457");
+
+	// val2 is over first 4 bytes and second 4 bytes
+	M_TEST_SIMPLE("776a3fe2 01020304",    // e23f6a77 04030201
+				  "uint24{d=hex}  val1 ; uint16{d=hex}  val2 ; uint8{d=hex}  val3 ; uint16{d=hex}  val4 ;",
+				  "val1 = 0xe23f6a (14827370)" K_eol
+				  "val2 = 0x7704 (30468)" K_eol
+				  "val3 = 0x3 (3)" K_eol
+				  "val4 = 0x201 (513)");
+
+	// bits
+	M_TEST_SIMPLE("776a3fe2 01020304",    // e23f6a77 04030201
+		"uint16{d=hex}  val1 ; uint4{d=hex}  val2; uint8{d=hex}  val3; uint16{d=hex}  val4 ; uint8{d=hex}  val5 ; uint12{d=hex}  val6 ;",
+				  "val1 = 0xe23f (57919)" K_eol
+				  "val2 = 0x6 (6)" K_eol
+				  "val3 = 0xa7 (167)" K_eol
+				  "val4 = 0x7040 (28736)" K_eol
+				  "val5 = 0x30 (48)" K_eol
+				  "val6 = 0x201 (513)");
+
+	// string fixed size
+	M_TEST_SIMPLE("4249472d 52455155 45535453",    // 2d474942 55514552 53545345    -GIB UQER STSE
+				  "string(12)  val ;",
+				  "val = -GIBUQERSTSE");  // BIG-REQUESTS if not inverted
+	M_TEST_SIMPLE("4249472d 52455155 45535453",
+				  "string(3)  val1; string(3)  val2; string(3)  val3; string(3)  val4; ",
+				  "val1 = -GI" K_eol
+				  "val2 = BUQ" K_eol
+				  "val3 = ERS" K_eol
+				  "val4 = TSE");
+	// string fixed size at bit position
+	M_TEST_SIMPLE("94 74 d4 b2    55 14 55 25    34 45 35 25      56 34 12 5e",  // b 4249472d 52455155 45535453 e ...
+				  "uint4  begin; string(12)  val ; uint4  end; uint24{d=hex}  end2;",
+				  "begin = 11" K_eol
+				  "val = -GIBUQERSTSE" K_eol
+				  "end = 14" K_eol
+				  "end2 = 0x123456 (1193046)");
+
+	// string unknow size
+	M_TEST_SIMPLE("4249472d 52455155 45535453",
+				  "string  val ;",
+				  "val = -GIBUQERSTSE");  // BIG-REQUESTS if not inverted
+	M_TEST_SIMPLE("4249472d 52455155 45535453",
+				  "string(3)  val1; string  val2; ",
+				  "val1 = -GI" K_eol
+				  "val2 = BUQERSTSE");
+	M_TEST_SIMPLE("4249472d 52005155 45535453",
+				  "string(3)  val1; string  val2; string  val3; ",
+				  "val1 = -GI" K_eol
+				  "val2 = BUQ" K_eol
+				  "val3 = RSTSE");
+	// string unknow size at bit position
+	M_TEST_SIMPLE("94 74 d4 b2  55 14 55 25  30 45 35 25  56 34 12 0e",  // b2 d4 74 94   25 55 14 55   25 35 45 30  0e 12 34 56
+				  "uint4  begin; string  val ; uint4  end; uint24{d=hex}  end2;",
+				  "begin = 11" K_eol
+				  "val = -GIBUQERSTS" K_eol
+				  "end = 14" K_eol
+				  "end2 = 0x123456 (1193046)");
+	M_TEST_SIMPLE("94 74 d4 b2  55 04 50 25  30 45 35 25  56 34 12 0e",  // b2 d4 74 94   25 50 04 55   25 35 45 30  0e 12 34 56
+				  "uint4  begin; string  val1 ; string  val2 ; uint4  end; uint24{d=hex}  end2;",
+				  "begin = 11" K_eol
+				  "val1 = -GIBU" K_eol
+				  "val2 = ERSTS" K_eol
+				  "end = 14" K_eol
+				  "end2 = 0x123456 (1193046)");
+
+	// raw fixed size
+	M_TEST_SIMPLE("4249472d 52455155 45535453",
+				  "raw(12)  val ;",
+				  "val = " K_eol
+				  "00000000 : 2d 47 49 42 55 51 45 52 53 54 53 45              - -GIBUQERSTSE    ");
+	M_TEST_SIMPLE("4249472d 52455155 45535453",
+				  "raw(3)  val1; raw(3)  val2; raw(3)  val3; raw(3)  val4; ",
+				  "val1 = " K_eol
+				  "00000000 : 2d 47 49                                         - -GI             " K_eol
+				  "val2 = " K_eol
+				  "00000000 : 42 55 51                                         - BUQ             " K_eol
+				  "val3 = " K_eol
+				  "00000000 : 45 52 53                                         - ERS             " K_eol
+				  "val4 = " K_eol
+				  "00000000 : 54 53 45                                         - TSE             ");
+
+	// raw unknow size
+	M_TEST_SIMPLE("4249472d 52455155 45535453",
+				  "raw(*)  val ;",
+				  "val = " K_eol
+				  "00000000 : 2d 47 49 42 55 51 45 52 53 54 53 45              - -GIBUQERSTSE    ");
+	M_TEST_SIMPLE("4249472d 52455155 45535453",
+				  "raw(3)  val1; raw(*)  val2;",
+				  "val1 = " K_eol
+				  "00000000 : 2d 47 49                                         - -GI             " K_eol
+				  "val2 = " K_eol
+				  "00000000 : 42 55 51 45 52 53 54 53 45                       - BUQERSTSE       ");
+
+
+	S_ut_interpret_bytes_decode_nothing = save_S_ut_interpret_bytes_decode_nothing;
+}
+
+//*****************************************************************************
 // test_interpret_msg
 //*****************************************************************************
 
@@ -3917,6 +4054,7 @@ int   main(const int         argc,
 		M_TEST_FCT(test_value_format);
 		M_TEST_FCT(test_value_printf);
 		M_TEST_FCT(test_interpret_simple);
+		M_TEST_FCT(test_interpret_simple_inside_frame);
 		M_TEST_FCT(test_interpret_msg);
 		M_TEST_FCT(test_build_types_and_interpret_bytes);
 		M_TEST_FCT(test_size);

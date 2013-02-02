@@ -3,7 +3,7 @@ am__objects_1 = packet-generic.lo
 am__objects_CORE_UT = byte_interpret.lo byte_interpret_compute_expression.lo \
 	T_expression.lo \
 	T_interpret_data.lo T_interpret_read_values.lo T_interpret_byte_order.lo \
-	T_interpret_output.lo T_interpret_decode.lo T_interpret_chrono.lo \
+	T_interpret_output.lo T_interpret_decode.lo T_interpret_inside_frame.lo T_interpret_chrono.lo \
 	T_interpret_value.lo \
 	T_perf_time.lo \
 	T_attribute_value.lo T_frame_data.lo T_frame_data_write.lo \

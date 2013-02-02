@@ -4,6 +4,7 @@
 # Function for decoder
 ###############################################################################
 
+# It is silly but it is just a test
 function void  decode_stream_nothing (in frame  frame, in uint32   nb_of_bits_needed)
 {
   while (nb_of_bits_needed > 0)
@@ -14,6 +15,7 @@ function void  decode_stream_nothing (in frame  frame, in uint32   nb_of_bits_ne
   }
 }
 
+# It is silly but it is just a test
 function void  decode_stream_nothing_byte (in frame  frame, in uint32   nb_of_bits_needed)
 {
   hide var uint32   nb_of_bytes_needed = nb_of_bits_needed / 8;
@@ -35,9 +37,27 @@ function void  decode_stream_test16 (in frame  frame, in uint32   nb_of_bits_nee
 
   hide uint8  byte1;
   hide uint8  byte2;
-  # That's silly but it is just a test
+  # It is silly but it is just a test
   call frame_append_data (frame, byte1 | byte2);
   call frame_append_data (frame, byte1 & byte2);
+}
+
+# This decoder append more data than asked (except when nb_of_bits_needed%32 == 0).
+function void  decode_invert_4_bytes (in frame  frame, in uint32   nb_of_bits_needed)
+{
+  while (nb_of_bits_needed > 0)
+  {
+    hide uint8   byte1;
+    hide uint8   byte2;
+    hide uint8   byte3;
+    hide uint8   byte4;
+	# simply invert the 4 bytes read
+    call frame_append_data (frame, byte4);
+    call frame_append_data (frame, byte3);
+    call frame_append_data (frame, byte2);
+    call frame_append_data (frame, byte1);
+    set nb_of_bits_needed = nb_of_bits_needed - 32;
+  }
 }
 
 ###############################################################################

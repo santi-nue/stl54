@@ -993,8 +993,7 @@ void    read_data (const T_type_definitions  & type_definitions,
 	}
 }
 
-#define ICIOA_decode_stream
-#ifdef  ICIOA_decode_stream
+
 //*****************************************************************************
 // frame_to_function_base *****************************************************
 //*****************************************************************************
@@ -1018,72 +1017,6 @@ bool    frame_to_function_base (const T_type_definitions    & type_definitions,
 							   E_return_value_indicator  return_value_indicator,
 							   C_value                 & returned_value);
 
-#if 1
-//*****************************************************************************
-// T_decode_stream_frame ******************************************************
-//*****************************************************************************
-
-struct T_decode_stream_frame
-{
-	unsigned char    decoded_data[10000];       // ICIOA hard coded magic number
-	int              decoded_data_bit_size;
-	T_frame_data     frame_data;
-
-	T_decode_stream_frame()
-		:decoded_data_bit_size(0),
-		 frame_data(decoded_data, 0, 0)
-	{
-	}
-
-	// Permits to reset frame_data & decoded_data_size when all data has been read.
-	// To avoid decoded_data_bit_size grows indefinitely.
-	void            synchronize();
-
-	void            write_1_byte(T_byte  byte);
-	void            write_less_1_byte(T_byte  byte, short  n_bits);
-};
-
-
-void
-T_decode_stream_frame::synchronize()
-{
-	if (frame_data.get_remaining_bits() == 0)
-	{
-		decoded_data_bit_size = 0;
-		frame_data = T_frame_data(decoded_data, 0, 0);
-	}
-}
-
-void
-T_decode_stream_frame::write_1_byte(T_byte  byte)
-{
-	T_frame_data_write  frame_data_write(decoded_data, 0, sizeof(decoded_data) * 8);
-	frame_data_write.set_bit_offset(decoded_data_bit_size);
-
-	frame_data_write.write_1_byte(byte);
-	decoded_data_bit_size = frame_data_write.get_bit_offset();
-
-	frame_data.n_bits_data_appended(8);
-}
-
-void
-T_decode_stream_frame::write_less_1_byte(T_byte  data, short  data_bit_size)
-{
-	T_frame_data_write  frame_data_write(decoded_data, 0, sizeof(decoded_data) * 8);
-	frame_data_write.set_bit_offset(decoded_data_bit_size);
-
-	if (data_bit_size <= 8)
-	{
-		frame_data_write.write_less_1_byte(data, data_bit_size);		// ICIOA signed !
-		decoded_data_bit_size = frame_data_write.get_bit_offset();
-
-		frame_data.n_bits_data_appended(data_bit_size);
-		return;
-	}
-
-	M_FATAL_COMMENT("write_less_1_byte  data_bit_size=" << data_bit_size << " must be <= 8");
-}
-#endif
 
 //*****************************************************************************
 // frame_append_byte **********************************************************
@@ -1186,8 +1119,6 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 	return  true;
 }
 
-#endif
-
 //*****************************************************************************
 // decode_data_size
 //*****************************************************************************
@@ -1203,13 +1134,14 @@ void    decode_data_size (
                          ostream                & os_err,
                          T_decode_stream_frame  & decode_stream_frame,
                    const char                   * TYPE_NAME,
-                   const int                      TYPE_BIT_SIZE)
+                   const int                      TYPE_BIT_SIZE)  // could be decorelated of TYPE_NAME
 {
 	M_STATE_ENTER ("decode_data_size", interpret_data.get_decode_function() << " " << TYPE_BIT_SIZE);
 
 	C_interpret_decode_in_progress  idip(interpret_data);
 
-	long    bit_offset_into_initial_frame = in_out_frame_data.get_bit_offset_into_initial_frame();
+	const long    bit_offset_into_initial_frame = in_out_frame_data.get_bit_offset_into_initial_frame();
+	const long    remaining_bits = decode_stream_frame.frame_data.get_remaining_bits();
 
 	const T_function_definition  & fct_def = type_definitions.get_function(interpret_data.get_decode_function());
 	vector<string>     fct_parameters;
@@ -1240,11 +1172,12 @@ void    decode_data_size (
 		M_FATAL_COMMENT("frame_to_function_base");
 	}
 
-	// Verification que la taille decodee est bien celle attendue
-	if (decode_stream_frame.decoded_data_bit_size != TYPE_BIT_SIZE)
+	// Check that the decoded size is >= at the asked size
+	const long	decoded_bits = decode_stream_frame.frame_data.get_remaining_bits() - remaining_bits;
+	if (decoded_bits < TYPE_BIT_SIZE)
 	{
-		M_FATAL_COMMENT("decode_stream_frame.decoded_data_bit_size(" <<
-			decode_stream_frame.decoded_data_bit_size << ") != TYPE_BIT_SIZE(" <<
+		M_FATAL_COMMENT("decoded_bits(" <<
+			decode_stream_frame.decoded_data_bit_size << ") < TYPE_BIT_SIZE(" <<
 			TYPE_BIT_SIZE << ")");
 	}
 
@@ -1291,7 +1224,7 @@ void    decode_data_bytes_until (
 
 	while (in_out_frame_data.get_remaining_bits() >= 8)
 	{
-		long  current_decoded_data_bit_size = decode_stream_frame.decoded_data_bit_size;
+		const long  current_decoded_data_bit_size = decode_stream_frame.decoded_data_bit_size;
 
 		bool  result = frame_to_function_base (type_definitions,
 								   interpret_data,
@@ -1309,19 +1242,19 @@ void    decode_data_bytes_until (
 			M_FATAL_COMMENT("frame_to_function_base");
 		}
 
-		// Verification que la taille decodee est bien celle attendue
-		if ((decode_stream_frame.decoded_data_bit_size -
-			 current_decoded_data_bit_size) != 8)
+		// Check that the decoded size is >= at the asked size
+		const long	decoded_bits = decode_stream_frame.decoded_data_bit_size - current_decoded_data_bit_size;
+		if (decoded_bits < 8)
 		{
-			M_FATAL_COMMENT("decode_stream_frame.decoded_data_bit_size(" <<
-				decode_stream_frame.decoded_data_bit_size << ") != 8");
+			M_FATAL_COMMENT("decoded_bits(" <<
+				decoded_bits << ") < 8");
 		}
 
 		if (p_ending_char_1 != NULL)
 		{
 			if (decode_stream_frame.decoded_data[(decode_stream_frame.decoded_data_bit_size / 8) - 1] == *p_ending_char_1)
 			{
-				// Le caractere de fin est trouve.
+				// Final character is found.
 				break;
 			}
 		}
@@ -1329,7 +1262,7 @@ void    decode_data_bytes_until (
 		{
 			if (decode_stream_frame.decoded_data[(decode_stream_frame.decoded_data_bit_size / 8) - 1] == *p_ending_char_2)
 			{
-				// Le caractere de fin est trouve.
+				// Final character is found.
 				break;
 			}
 		}
@@ -1344,7 +1277,7 @@ void    decode_data_bytes_until (
 
 void    read_decode_data (
 				   const T_type_definitions  & type_definitions,
-					     T_frame_data        & in_out_frame_data,
+					     T_frame_data        & in_out_frame_data_param,
 				         T_interpret_data    & interpret_data,
 				   const T_field_type_name   & field_type_name,
 				   const string              & data_name,
@@ -1359,29 +1292,53 @@ void    read_decode_data (
 				   const bool            must_invert_bytes,
 				   const bool            is_signed_integer)
 {
-#ifdef  ICIOA_decode_stream
-	if (interpret_data.must_decode_now())
+	T_frame_data           * P_in_out_frame_data = & in_out_frame_data_param;
+
+	if (interpret_data.is_decode_in_progress() == false)
 	{
-		M_STATE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
+		T_decode_stream_frame  & decode_stream_frame = interpret_data.get_decode_stream_frame();
+		T_frame_data           & inside_frame = decode_stream_frame.frame_data;
+		if (inside_frame.get_remaining_bits() >= TYPE_BIT_SIZE)
+		{
+			// Enough data into inside_frame, so simply use it (decoder is useless for now)
+			P_in_out_frame_data = & inside_frame;
+		}
+		else if (interpret_data.must_decode_now() == false)
+		{
+			if (inside_frame.get_remaining_bits() > 0)
+			{
+				// For code simplification, do not manage this case.
+				// And seems non-sense : 1st part of data is decoded and 2nd part no.
+				M_FATAL_COMMENT("Not enough data into inside_frame (%d bits < %d) and no decoder to fill it",
+								inside_frame.get_remaining_bits(),
+								TYPE_BIT_SIZE);
+			}
+			else
+			{
+				// No data into inside_frame and no decoder, so simply use normal frame
+			}
+		}
+		else
+		{
+			// Not enough data into inside_frame, so use decoder to fill it
+			M_STATE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
 
-		T_decode_stream_frame    decode_stream_frame;
-		decode_data_size (type_definitions, in_out_frame_data, interpret_data,
-						  field_type_name, data_name, data_simple_name,
-						  os_out, os_err,
-						  decode_stream_frame,
-						  TYPE_NAME, TYPE_BIT_SIZE);
+			decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
+							  field_type_name, data_name, data_simple_name,
+							  os_out, os_err,
+							  decode_stream_frame,
+							  TYPE_NAME, TYPE_BIT_SIZE - inside_frame.get_remaining_bits());
 
-		read_data (    type_definitions, decode_stream_frame.frame_data, interpret_data,
-					   field_type_name, data_name, data_simple_name,
-					   P_value_param, TYPE_NAME, TYPE_BIT_SIZE,
-					   TYPE_IMPL_STR, TYPE_IMPL_BIT_SIZE,
-					   must_invert_bytes,
-					   is_signed_integer);
-		decode_stream_frame.synchronize();  // mandatory each time something has been read into its frame_data
-		return;
+			P_in_out_frame_data = & inside_frame;
+		}
 	}
-#endif
+	else
+	{
+		// inside_frame and decoder not used during decoding
+	}
 
+
+	T_frame_data          & in_out_frame_data = * P_in_out_frame_data;
 
 	read_data (    type_definitions, in_out_frame_data, interpret_data,
                    field_type_name, data_name, data_simple_name,
@@ -1389,6 +1346,8 @@ void    read_decode_data (
                    TYPE_IMPL_STR, TYPE_IMPL_BIT_SIZE,
 				   must_invert_bytes,
 				   is_signed_integer);
+
+	interpret_data.get_decode_stream_frame().synchronize();  // mandatory each time something has been read into its frame_data
 }
 
 //*****************************************************************************
@@ -3993,32 +3952,75 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 	// Decode
 	//***************************************************************
 	T_frame_data           * P_in_out_frame_data = & in_out_frame_data_param;
-	T_decode_stream_frame    decode_stream_frame;
-	if (interpret_data.must_decode_now() &&
+	T_decode_stream_frame  & decode_stream_frame = interpret_data.get_decode_stream_frame();
+
+	if ((interpret_data.is_decode_in_progress() == false) &&
 		(field_type_name.is_a_variable() == false))
 	{
-		M_STATE_ENTER ("must_decode_now", string_size);
-        if (string_size >= 0)
+		T_frame_data           & inside_frame = decode_stream_frame.frame_data;
+
+		if (string_size >= 0)
 		{
-			decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
-					  field_type_name, data_name, data_simple_name,
-					  os_out, os_err,
-					  decode_stream_frame,
-					  final_type.c_str(), string_size * 8);
-			P_in_out_frame_data = & decode_stream_frame.frame_data;
+			const long               TYPE_BIT_SIZE = string_size * 8;
+			if (inside_frame.get_remaining_bits() >= TYPE_BIT_SIZE)
+			{
+				// Enough data into inside_frame, so simply use it (decoder is useless for now)
+				P_in_out_frame_data = & inside_frame;
+			}
+			else if (interpret_data.must_decode_now() == false)
+			{
+				if (inside_frame.get_remaining_bits() > 0)
+				{
+					// For code simplification, do not manage this case.
+					// And seems non-sense : 1st part of data is decoded and 2nd part no.
+					M_FATAL_COMMENT("Not enough data into inside_frame (%d bits < %d) and no decoder to fill it",
+									inside_frame.get_remaining_bits(),
+									TYPE_BIT_SIZE);
+				}
+				else
+				{
+					// No data into inside_frame and no decoder, so simply use normal frame
+				}
+			}
+			else
+			{
+				// Not enough data into inside_frame, so use decoder to fill it
+				M_STATE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
+
+				decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
+								  field_type_name, data_name, data_simple_name,
+								  os_out, os_err,
+								  decode_stream_frame,
+								  final_type.c_str(), TYPE_BIT_SIZE - inside_frame.get_remaining_bits());
+
+				P_in_out_frame_data = & inside_frame;
+			}
 		}
 		else
 		{
-			decode_data_bytes_until (
-					  type_definitions, in_out_frame_data_param, interpret_data,
-					  field_type_name, data_name, data_simple_name,
-					  os_out, os_err,
-					  decode_stream_frame,
-					  final_type.c_str(),
-					  "\0", (final_type == "string_nl") ? "\n" : NULL);
-			P_in_out_frame_data = & decode_stream_frame.frame_data;
+			// ICIOA incomplet ?
+			if (interpret_data.must_decode_now())
+			{
+				decode_data_bytes_until (
+						  type_definitions, in_out_frame_data_param, interpret_data,
+						  field_type_name, data_name, data_simple_name,
+						  os_out, os_err,
+						  decode_stream_frame,
+						  final_type.c_str(),
+						  "\0", (final_type == "string_nl") ? "\n" : NULL);
+				P_in_out_frame_data = & decode_stream_frame.frame_data;
+			}
+			else if (inside_frame.get_remaining_bits() > 0)
+			{
+				P_in_out_frame_data = & inside_frame;
+			}
 		}
 	}
+	else
+	{
+		// inside_frame and decoder not used during decoding
+	}
+
 
 	T_frame_data          & in_out_frame_data = * P_in_out_frame_data;
 
@@ -4055,6 +4057,7 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 			{
 				if (in_out_frame_data.is_physically_at_beginning_of_byte() != true)
 				{
+					value.reserve(string_size);
 					for (int   idx_str = 0; idx_str < string_size; ++idx_str)
 					{
 						const char    current_char = in_out_frame_data.read_1_byte();
@@ -4241,32 +4244,83 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 	// Decode
 	//***************************************************************
 	T_frame_data           * P_in_out_frame_data = & in_out_frame_data_param;
-	T_decode_stream_frame    decode_stream_frame;
-	if ((interpret_data.must_decode_now()) &&
+	T_decode_stream_frame  & decode_stream_frame = interpret_data.get_decode_stream_frame();
+
+	if ((interpret_data.is_decode_in_progress() == false) &&
 		(final_type == "raw"))
 	{
-		M_STATE_ENTER ("must_decode_now", string_size);
-        if (string_size >= 0)
+		T_frame_data           & inside_frame = decode_stream_frame.frame_data;
+
+		if (string_size >= 0)
 		{
-			decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
-					  field_type_name, data_name, data_simple_name,
-					  os_out, os_err,
-					  decode_stream_frame,
-					  final_type.c_str(), string_size * 8);
-			P_in_out_frame_data = & decode_stream_frame.frame_data;
+			const long               TYPE_BIT_SIZE = string_size * 8;
+			if (inside_frame.get_remaining_bits() >= TYPE_BIT_SIZE)
+			{
+				// Enough data into inside_frame, so simply use it (decoder is useless for now)
+				P_in_out_frame_data = & inside_frame;
+			}
+			else if (interpret_data.must_decode_now() == false)
+			{
+				if (inside_frame.get_remaining_bits() > 0)
+				{
+					// For code simplification, do not manage this case.
+					// And seems non-sense : 1st part of data is decoded and 2nd part no.
+					M_FATAL_COMMENT("Not enough data into inside_frame (%d bits < %d) and no decoder to fill it",
+									inside_frame.get_remaining_bits(),
+									TYPE_BIT_SIZE);
+				}
+				else
+				{
+					// No data into inside_frame and no decoder, so simply use normal frame
+				}
+			}
+			else
+			{
+				// Not enough data into inside_frame, so use decoder to fill it
+				M_STATE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
+
+				decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
+								  field_type_name, data_name, data_simple_name,
+								  os_out, os_err,
+								  decode_stream_frame,
+								  final_type.c_str(), TYPE_BIT_SIZE - inside_frame.get_remaining_bits());
+
+				P_in_out_frame_data = & inside_frame;
+			}
 		}
 		else
 		{
-			decode_data_bytes_until (
-					  type_definitions, in_out_frame_data_param, interpret_data,
-					  field_type_name, data_name, data_simple_name,
-					  os_out, os_err,
-					  decode_stream_frame,
-					  final_type.c_str(),
-					  NULL, NULL);
-			P_in_out_frame_data = & decode_stream_frame.frame_data;
+			// ICIOA complet, non ?
+			if (interpret_data.must_decode_now())
+			{
+				decode_data_bytes_until (
+						  type_definitions, in_out_frame_data_param, interpret_data,
+						  field_type_name, data_name, data_simple_name,
+						  os_out, os_err,
+						  decode_stream_frame,
+						  final_type.c_str(),
+						  NULL, NULL);
+				P_in_out_frame_data = & decode_stream_frame.frame_data;
+			}
+			else if (inside_frame.get_remaining_bits() > 0)
+			{
+				if (in_out_frame_data_param.get_remaining_bits() > 0)
+				{
+					// For code simplification, do not manage this case.
+					// And seems non-sense : 1st part of data is decoded and 2nd part no.
+					M_FATAL_COMMENT("Still data into inside_frame (%d bits) and data into packet (%d°",
+									inside_frame.get_remaining_bits(),
+									in_out_frame_data_param.get_remaining_bits());
+				}
+				P_in_out_frame_data = & inside_frame;
+			}
 		}
 	}
+	else
+	{
+		// inside_frame and decoder not used during decoding
+	}
+
 
 	T_frame_data          & in_out_frame_data = * P_in_out_frame_data;
 
@@ -5072,7 +5126,9 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
 
 //	C_interpret_data_set_temporary  interpret_data_set_temporary(interpret_data);  // ICIOA
 
-	T_frame_data    frame_data(in_out_P_bytes, 0, in_out_sizeof_bytes * 8);
+	T_frame_data           frame_data(in_out_P_bytes, 0, in_out_sizeof_bytes * 8);
+	T_decode_stream_frame  decode_stream_frame;
+	interpret_data.set_decode_stream_frame(&decode_stream_frame);
 
 	bool    result = false;
 
@@ -5221,6 +5277,8 @@ bool    build_types_and_interpret_bytes (
 	// Set the interpret_data.
 	T_interpret_data    interpret_data;
 //	C_interpret_data_set_temporary    idst(interpret_data);
+	T_decode_stream_frame  decode_stream_frame;
+	interpret_data.set_decode_stream_frame(&decode_stream_frame);
 
 	// Reads type definitions.
 	// Returns the 1st not understood word (i.e. a word which is NOT a type definition).

@@ -59,11 +59,12 @@ static T_interpret_data  * S_P_interpret_data = NULL;    // recursive call ok
 void    swap(T_interpret_data  & lhs,
 			 T_interpret_data  & rhs)
 {
-	swap( (T_interpret_byte_order&)lhs,  (T_interpret_byte_order&)rhs);
-	swap(     (T_interpret_output&)lhs,      (T_interpret_output&)rhs);
-	swap((T_interpret_read_values&)lhs, (T_interpret_read_values&)rhs);
-	swap(     (T_interpret_decode&)lhs,      (T_interpret_decode&)rhs);
-	swap(     (T_interpret_chrono&)lhs,      (T_interpret_chrono&)rhs);
+	swap(  (T_interpret_byte_order&)lhs,   (T_interpret_byte_order&)rhs);
+	swap(      (T_interpret_output&)lhs,       (T_interpret_output&)rhs);
+	swap( (T_interpret_read_values&)lhs,  (T_interpret_read_values&)rhs);
+	swap(      (T_interpret_decode&)lhs,       (T_interpret_decode&)rhs);
+	swap((T_interpret_inside_frame&)lhs, (T_interpret_inside_frame&)rhs);
+	swap(      (T_interpret_chrono&)lhs,       (T_interpret_chrono&)rhs);
 	
 }
 
