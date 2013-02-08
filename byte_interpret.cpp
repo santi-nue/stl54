@@ -1086,7 +1086,7 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 		}
 		else
 		{
-			M_FATAL_COMMENT("frame_append_data expect param1 = int");
+			M_FATAL_COMMENT("frame_append_data expect param1 = frame (= int)");
 			return  false;
 		}
 	}
@@ -1113,6 +1113,79 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 	else
 	{
 		M_FATAL_COMMENT("frame_append_byte expect param2 = int (or string(1))");
+		return  false;
+	}
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_append_hexa_data *****************************************************
+//*****************************************************************************
+
+bool    frame_append_hexa_data (
+						 const T_type_definitions      & type_definitions,
+					           T_frame_data            & in_out_frame_data,
+					           T_interpret_data        & interpret_data,
+                         const T_function_definition   & fct_def,
+						 const T_field_type_name       & field_type_name,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err)
+{
+	M_STATE_ENTER ("frame_append_hexa_data", "");
+
+	if (field_type_name.fct_parameters.size() != 2)
+	{
+		M_FATAL_COMMENT("frame_append_hexa_data expect 2 parameters");
+		return  false;
+	}
+
+	// Compute frame address.
+	T_decode_stream_frame  * P_decode_stream_frame = NULL;
+	{
+		C_value	   frame_value =
+					compute_expression(type_definitions, interpret_data, in_out_frame_data,
+									   field_type_name.fct_parameters[0],
+									   data_name, data_simple_name, os_out, os_err);
+		if (frame_value.get_type() == C_value::E_type_integer)
+		{
+			P_decode_stream_frame = (T_decode_stream_frame*)frame_value.get_int();
+		}
+		else
+		{
+			M_FATAL_COMMENT("frame_append_hexa_data expect param1 = frame (= int)");
+			return  false;
+		}
+	}
+
+	// Compute value of byte.
+	C_value	   obj_value =
+	            compute_expression(type_definitions, interpret_data, in_out_frame_data,
+								   field_type_name.fct_parameters[1],
+								   data_name, data_simple_name, os_out, os_err);
+	if (obj_value.get_type() == C_value::E_type_string)
+	{
+		string    hexa_str = obj_value.get_str();
+		if (hexa_str.find(' ') != string::npos)
+		{
+			mod_replace_all(hexa_str, " ", "");
+		}
+
+		T_byte_vector    byte_vector;
+		string_hexa_to_frame(hexa_str, byte_vector);
+
+		for (T_byte_vector::const_iterator  iter  = byte_vector.begin();
+											iter != byte_vector.end();
+										  ++iter)
+		{
+			frame_append_byte(P_decode_stream_frame, *iter);
+		}
+	}
+	else
+	{
+		M_FATAL_COMMENT("frame_append_hexa_data expect param2 = string with hexadecimal data");
 		return  false;
 	}
 
@@ -2700,6 +2773,13 @@ bool    frame_to_function (const T_type_definitions    & type_definitions,
 	if (field_type_name.name == "frame_append_data")
 	{
 		result = frame_append_data (type_definitions, in_out_frame_data, interpret_data,
+							   fct_def,
+							   field_type_name, data_name, data_simple_name,
+							   os_out, os_err);
+	}
+	else if (field_type_name.name == "frame_append_hexa_data")
+	{
+		result = frame_append_hexa_data (type_definitions, in_out_frame_data, interpret_data,
 							   fct_def,
 							   field_type_name, data_name, data_simple_name,
 							   os_out, os_err);
@@ -5129,6 +5209,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
 	T_frame_data           frame_data(in_out_P_bytes, 0, in_out_sizeof_bytes * 8);
 	T_decode_stream_frame  decode_stream_frame;
 	interpret_data.set_decode_stream_frame(&decode_stream_frame);
+	interpret_data.add_read_variable("internal_frame", "internal_frame", (long long)&decode_stream_frame);
 
 	bool    result = false;
 
@@ -5279,6 +5360,7 @@ bool    build_types_and_interpret_bytes (
 //	C_interpret_data_set_temporary    idst(interpret_data);
 	T_decode_stream_frame  decode_stream_frame;
 	interpret_data.set_decode_stream_frame(&decode_stream_frame);
+	interpret_data.add_read_variable("internal_frame", "internal_frame", get_string((long long)&decode_stream_frame));
 
 	// Reads type definitions.
 	// Returns the 1st not understood word (i.e. a word which is NOT a type definition).

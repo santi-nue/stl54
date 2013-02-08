@@ -2300,6 +2300,7 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 	// Decoder definitions
     build_types_no_include_str("alias     frame   int64 ;", type_definitions);
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_data (in frame  frame, in any  byte)");
+	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_hexa_data (in frame  frame, in string  str_hexa)");
 }
 
 //*****************************************************************************

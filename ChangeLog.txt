@@ -1,4 +1,5 @@
 
+2013/02/08  Add : internal_frame and frame_append_hexa_data
 2013/02/02  Add : decoder can append more data than asked
 2013/01/05  Fix : performance issue (due to debug code)
 2012/12/30  Fix : enum ignore transform expression 

@@ -3760,10 +3760,10 @@ void    test_interpret_simple_uint8_array(const int  max_iter)
 }
 
 //*****************************************************************************
-// test_interpret_simple_inside_frame
+// test_interpret_simple_internal_frame
 //*****************************************************************************
 
-void    test_interpret_simple_inside_frame()
+void    test_interpret_simple_internal_frame()
 {
 	T_type_definitions    type_definitions;
     build_types ("unitary_tests_basic.fdesc",
@@ -3771,6 +3771,35 @@ void    test_interpret_simple_inside_frame()
 
 	T_interpret_data      interpret_data;
 	interpret_data.set_big_endian();
+
+	//*************************************************************************
+	// internal_frame
+	//*************************************************************************
+
+	// No real data, data is read from internal_frame.
+	M_TEST_SIMPLE("",
+				  "call frame_append_hexa_data (internal_frame, \" e2 3f 6a 77 \") ; "
+				  "uint32{d=hex}  val ;",
+				  "val = 0xe23f6a77 (3795806839)");
+
+	// First, data is read from internal_frame, then from real data.
+	M_TEST_SIMPLE("de",
+				  "call frame_append_hexa_data (internal_frame, \" e2 3f 6a 77 \") ; "
+				  "uint16{d=hex}  val1 ; "
+				  "uint4{d=hex}   val2 ; "
+				  "uint4{d=hex}   val3 ; "
+				  "uint8{d=hex}   val4 ; "
+				  "uint8{d=hex}   val5 ; ",
+				  "val1 = 0xe23f (57919)" K_eol
+				  "val2 = 0x6 (6)" K_eol
+				  "val3 = 0xa (10)" K_eol
+				  "val4 = 0x77 (119)" K_eol
+				  "val5 = 0xde (222)");
+
+	//*************************************************************************
+	// Decoder which append more data than asked.
+	// Data goes into internal_frame.
+	//*************************************************************************
 	interpret_data.set_decode_function("decode_invert_4_bytes");  // read 4 bytes and invert them
 
 	const bool  save_S_ut_interpret_bytes_decode_nothing = S_ut_interpret_bytes_decode_nothing;
@@ -4054,7 +4083,7 @@ int   main(const int         argc,
 		M_TEST_FCT(test_value_format);
 		M_TEST_FCT(test_value_printf);
 		M_TEST_FCT(test_interpret_simple);
-		M_TEST_FCT(test_interpret_simple_inside_frame);
+		M_TEST_FCT(test_interpret_simple_internal_frame);
 		M_TEST_FCT(test_interpret_msg);
 		M_TEST_FCT(test_build_types_and_interpret_bytes);
 		M_TEST_FCT(test_size);
