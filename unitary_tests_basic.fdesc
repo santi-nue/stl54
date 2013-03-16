@@ -43,8 +43,9 @@ function void  decode_stream_test16 (in frame  frame, in uint32   nb_of_bits_nee
 }
 
 # This decoder append more data than asked (except when nb_of_bits_needed%32 == 0).
-function void  decode_invert_4_bytes (in frame  frame, in uint32   nb_of_bits_needed)
+function void  decode_invert_4_bytes (in frame  frame, in uint32   nb_of_bits_needed_uint)
 {
+  hide var int32   nb_of_bits_needed = nb_of_bits_needed_uint;
   while (nb_of_bits_needed > 0)
   {
     hide uint8   byte1;
