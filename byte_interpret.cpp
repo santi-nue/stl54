@@ -838,7 +838,7 @@ bool    read_data_bits (      T_frame_data  & in_out_frame_data,
 				 * sign_mask-1 gives 00000111                                 \
 				 * ^ 0xff      gives 11111000                                 \
 				 */                                                           \
-				const TYPE_IMPL    move_sign_mask = (sign_mask-1) ^ 0xffffffffffffffff;     \
+				const TYPE_IMPL    move_sign_mask = (sign_mask-1) ^ 0xffffffffffffffffLL;     \
 				*P_value_sign |= move_sign_mask;                              \
 			}                                                                 \
 		}
@@ -1382,9 +1382,8 @@ void    read_decode_data (
 			{
 				// For code simplification, do not manage this case.
 				// And seems non-sense : 1st part of data is decoded and 2nd part no.
-				M_FATAL_COMMENT("Not enough data into inside_frame (%d bits < %d) and no decoder to fill it",
-								inside_frame.get_remaining_bits(),
-								TYPE_BIT_SIZE);
+				M_FATAL_COMMENT("Not enough data into inside_frame (" << inside_frame.get_remaining_bits() << " bits < " <<
+								TYPE_BIT_SIZE << ") and no decoder to fill it");
 			}
 			else
 			{
@@ -4053,9 +4052,8 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 				{
 					// For code simplification, do not manage this case.
 					// And seems non-sense : 1st part of data is decoded and 2nd part no.
-					M_FATAL_COMMENT("Not enough data into inside_frame (%d bits < %d) and no decoder to fill it",
-									inside_frame.get_remaining_bits(),
-									TYPE_BIT_SIZE);
+					M_FATAL_COMMENT("Not enough data into inside_frame (" << inside_frame.get_remaining_bits() << " bits < " <<
+									TYPE_BIT_SIZE << ") and no decoder to fill it");
 				}
 				else
 				{
@@ -4345,9 +4343,8 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 				{
 					// For code simplification, do not manage this case.
 					// And seems non-sense : 1st part of data is decoded and 2nd part no.
-					M_FATAL_COMMENT("Not enough data into inside_frame (%d bits < %d) and no decoder to fill it",
-									inside_frame.get_remaining_bits(),
-									TYPE_BIT_SIZE);
+					M_FATAL_COMMENT("Not enough data into inside_frame (" << inside_frame.get_remaining_bits() << " bits < " <<
+									TYPE_BIT_SIZE << ") and no decoder to fill it");
 				}
 				else
 				{
@@ -4388,9 +4385,8 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 				{
 					// For code simplification, do not manage this case.
 					// And seems non-sense : 1st part of data is decoded and 2nd part no.
-					M_FATAL_COMMENT("Still data into inside_frame (%d bits) and data into packet (%d°",
-									inside_frame.get_remaining_bits(),
-									in_out_frame_data_param.get_remaining_bits());
+					M_FATAL_COMMENT("Still data into inside_frame (" << inside_frame.get_remaining_bits() <<
+									" bits) and data into packet (" << in_out_frame_data_param.get_remaining_bits() << ")");
 				}
 				P_in_out_frame_data = & inside_frame;
 			}
