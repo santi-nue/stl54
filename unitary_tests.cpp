@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2413,6 +2413,9 @@ void    test_expression()
 			{ "(2**31)-1", 2147483647LL },
 			{ "31*(2**27)+24*3600*1000", 4247149568LL },
 			{ "2**32-1", 4294967295LL },
+			{ "3*2**2", 12 },
+			{ "36/2**2", 9 },
+			{ "7%2**2", 3 },
 			{ "0x045", 69 },
 			{ "-0Xdf", -223 },
 			{ "0x045 * 1", 69 },

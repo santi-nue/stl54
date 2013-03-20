@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -172,10 +172,10 @@ C_value    compute_expression (
         ((iter =  find (iter_begin, iter_end,  ">")) != iter_end) ||
         ((iter =  find (iter_begin, iter_end,  "+")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "-")) != iter_end) ||
-        ((iter =  find (iter_begin, iter_end, "**")) != iter_end) ||
         ((iter =  find (iter_begin, iter_end,  "*")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "/")) != iter_end) ||
-        ((iter = rfind (iter_begin, iter_end,  "%")) != iter_end))
+        ((iter = rfind (iter_begin, iter_end,  "%")) != iter_end) ||
+        ((iter =  find (iter_begin, iter_end, "**")) != iter_end))
     {
         const string  & operation = *iter;
 
@@ -449,10 +449,10 @@ C_value    compute_expression (
         ((iter =  find (iter_begin, iter_end,  ">")) != iter_end) ||
         ((iter =  find (iter_begin, iter_end,  "+")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "-")) != iter_end) ||
-        ((iter =  find (iter_begin, iter_end, "**")) != iter_end) ||
         ((iter =  find (iter_begin, iter_end,  "*")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "/")) != iter_end) ||
-        ((iter = rfind (iter_begin, iter_end,  "%")) != iter_end))
+        ((iter = rfind (iter_begin, iter_end,  "%")) != iter_end) ||
+        ((iter =  find (iter_begin, iter_end, "**")) != iter_end))
     {
         const string  & operation = *iter;
 

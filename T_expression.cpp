@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -314,10 +314,10 @@ T_expression::build_expression_words(
         ((iter =  find (iter_begin, iter_end,  ">")) != iter_end) ||
         ((iter =  find (iter_begin, iter_end,  "+")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "-")) != iter_end) ||
-        ((iter =  find (iter_begin, iter_end, "**")) != iter_end) ||
         ((iter =  find (iter_begin, iter_end,  "*")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "/")) != iter_end) ||
-        ((iter = rfind (iter_begin, iter_end,  "%")) != iter_end))
+        ((iter = rfind (iter_begin, iter_end,  "%")) != iter_end) ||
+        ((iter =  find (iter_begin, iter_end, "**")) != iter_end))
     {
 		A_type = E_type_operation;
 
