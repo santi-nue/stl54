@@ -1,5 +1,5 @@
 /* packet-generic.c
- * Copyright 2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2013 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -30,12 +30,12 @@
 
 
 
-void    proto_register_generic (void)
+void proto_register_generic (void)
 {
   cpp_proto_register_generic();
 }
 
-void    proto_reg_handoff_generic(void)
+void proto_reg_handoff_generic(void)
 {
   cpp_proto_reg_handoff_generic();
 }
