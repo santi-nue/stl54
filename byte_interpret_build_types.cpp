@@ -273,19 +273,19 @@ void    post_build_field_base (
 			if ((strncmp(str_display_or_transform.c_str(), "q=", 2) == 0) ||
 				(strncmp(str_display_or_transform.c_str(), "o=", 2) == 0))
 			{
-				const string::size_type  idx_sep = find_isolated(str_display_or_transform, ':');
 				if (strncmp(str_display_or_transform.c_str(), "q=", 2) == 0)
 				{
+					const string::size_type  idx_sep = str_display_or_transform.find(":o=");
 					type_definitions.set_field_transform_quantum(field_type_name, str_display_or_transform.substr(2, idx_sep-2));
 
 					if (idx_sep != string::npos)
 					{
-						M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "o=", 2), 0);
 						type_definitions.set_field_transform_offset(field_type_name, str_display_or_transform.c_str()+idx_sep+1+2);
 					}
 				}
 				else
 				{
+					const string::size_type  idx_sep = str_display_or_transform.find(":q=");
 					type_definitions.set_field_transform_offset(field_type_name, str_display_or_transform.substr(2, idx_sep));
 
 					if (idx_sep != string::npos)
@@ -320,30 +320,29 @@ void    post_build_field_base (
 					 (strncmp(str_display_or_transform.c_str(), "max=", 4) == 0))
 			{
 				const string  & str_constraints = str_display_or_transform;
-				const string::size_type  idx_sep = find_isolated(str_constraints, ':');
 				if (strncmp(str_display_or_transform.c_str(), "min=", 4) == 0)
 				{
-					const string    min_param = str_constraints.substr(4, idx_sep-4);
+					const string::size_type  idx_sep = str_constraints.find(":max=");
+					const string             min_param = str_constraints.substr(4, idx_sep-4);
 					if (idx_sep == string::npos)
 					{
 						type_definitions.prepend_field_constraint_min(field_type_name, min_param);
 					}
 					else
 					{
-						M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "max=", 4), 0);
 						type_definitions.prepend_field_constraint_min_max(field_type_name, min_param, str_constraints.c_str()+idx_sep+1+4);
 					}
 				}
 				else
 				{
-					const string    max_param = str_constraints.substr(4, idx_sep-4);
+					const string::size_type  idx_sep = str_constraints.find(":min=");
+					const string             max_param = str_constraints.substr(4, idx_sep-4);
 					if (idx_sep == string::npos)
 					{
 						type_definitions.prepend_field_constraint_max(field_type_name, max_param);
 					}
 					else
 					{
-						M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "min=", 4), 0);
 						type_definitions.prepend_field_constraint_min_max(field_type_name, str_constraints.c_str()+idx_sep+1+4, max_param);
 					}
 				}
