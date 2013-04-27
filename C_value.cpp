@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1308,7 +1308,10 @@ C_value::operator/= (const C_value  & rhs)
     }
 
 	M_COMPUTE_NEW_POSITION_OFFSET();
-
+#if 0
+    // All divide must give float ?
+    *this = C_value (A_flt / rhs.A_flt);
+#else
     if (A_type == E_type_integer)
     {
         if (rhs.A_type == E_type_integer)
@@ -1323,7 +1326,7 @@ C_value::operator/= (const C_value  & rhs)
         else
             *this = C_value (A_flt / rhs.A_flt);
     }
-
+#endif
 	return  *this;
 }
 
