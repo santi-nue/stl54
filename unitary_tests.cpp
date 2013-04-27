@@ -925,6 +925,84 @@ void    test_build_field ()
 		M_TEST_EQ(field_type_name.get_var_expression().get_original_string_expression(), "");
 	}
 
+	// Field var float
+	{
+		string         first_word = "var";
+		istringstream  iss("float32  val = 12;");
+
+		T_field_type_name    field_type_name;
+
+		M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+
+		M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+		M_TEST_EQ(field_type_name.must_show(), false);                      // show
+		M_TEST_EQ(field_type_name.is_a_variable(), true);                   // var
+		M_TEST_EQ(field_type_name.type, "float32");                         // type
+		M_TEST_EQ(field_type_name.no_statement.as_string(), "");            // ns
+		M_TEST_EQ(field_type_name.transform_quantum.as_string(), "");       // q
+		M_TEST_EQ(field_type_name.transform_offset.as_string(), "");        // o
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), true);
+		M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+		M_TEST_EQ(field_type_name.str_display_expression, "");
+		M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+		M_TEST_EQ(field_type_name.name, "val");
+		M_TEST_EQ(field_type_name.get_var_expression().get_original_string_expression(), "12");
+		M_TEST_EQ(field_type_name.get_var_expression().compute_expression_static(type_definitions).get_int(), 12);
+	}
+
+	// Field var float
+	{
+		string         first_word = "var";
+		istringstream  iss("float32  val = 12.3;");
+
+		T_field_type_name    field_type_name;
+
+		M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+
+		M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+		M_TEST_EQ(field_type_name.must_show(), false);                      // show
+		M_TEST_EQ(field_type_name.is_a_variable(), true);                   // var
+		M_TEST_EQ(field_type_name.type, "float32");                         // type
+		M_TEST_EQ(field_type_name.no_statement.as_string(), "");            // ns
+		M_TEST_EQ(field_type_name.transform_quantum.as_string(), "");       // q
+		M_TEST_EQ(field_type_name.transform_offset.as_string(), "");        // o
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), true);
+		M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+		M_TEST_EQ(field_type_name.str_display_expression, "");
+		M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+		M_TEST_EQ(field_type_name.name, "val");
+		M_TEST_EQ(field_type_name.get_var_expression().get_original_string_expression(), "12.3");
+		M_TEST_EQ(field_type_name.get_var_expression().compute_expression_static(type_definitions).get_flt(), 12.3);
+	}
+
+	// Field var float
+	{
+		string         first_word = "var";
+		istringstream  iss("float32  val = 12.3e2;");
+
+		T_field_type_name    field_type_name;
+
+		M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+
+		M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+		M_TEST_EQ(field_type_name.must_show(), false);                      // show
+		M_TEST_EQ(field_type_name.is_a_variable(), true);                   // var
+		M_TEST_EQ(field_type_name.type, "float32");                         // type
+		M_TEST_EQ(field_type_name.no_statement.as_string(), "");            // ns
+		M_TEST_EQ(field_type_name.transform_quantum.as_string(), "");       // q
+		M_TEST_EQ(field_type_name.transform_offset.as_string(), "");        // o
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), true);
+		M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+		M_TEST_EQ(field_type_name.str_display_expression, "");
+		M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+		M_TEST_EQ(field_type_name.name, "val");
+		M_TEST_EQ(field_type_name.get_var_expression().get_original_string_expression(), "12.3e2");
+		M_TEST_EQ(field_type_name.get_var_expression().compute_expression_static(type_definitions).get_flt(), 1230.0);
+	}
+
 	// Field with {...} and spaces
 	{
 		string         first_word = "hide";
@@ -1208,6 +1286,7 @@ void    test_get_number()
 	M_TEST_FLT(  " 32.56",   32.56);
 	M_TEST_FLT(" -132.56", -132.56);
 	M_TEST_FLT( " 3.56e3", 3.56e3);
+	M_TEST_FLT( " 3.56e+3", 3.56e3);
 	M_TEST_FLT(" -3.56e-13", -3.56e-13);
 
 	M_TEST_INT_FLT(  "32",   32,   32.0);
@@ -1221,7 +1300,7 @@ void    test_get_number()
 	M_TEST_INT( " 0Xa32",  0xa32);
 	M_TEST_INT("-0Xfa32",  -0xfa32);
 #else
-	// VC++ strtod accept hexadecimal
+	// gcc strtod accept hexadecimal
 	M_TEST_INT_FLT(  "0xa32",  0xa32, 2610.0);
 	M_TEST_INT_FLT( " 0Xa32",  0xa32, 2610.0);
 	M_TEST_INT_FLT("-0Xfa32",  -0xfa32, -64050.0);
@@ -2486,7 +2565,9 @@ void    test_expression()
 			{ "-2**31", -2147483648LL },
 			{ "-2**2", 4 },
 			{ "(2**31)-1", 2147483647LL },
+			{ "2**31-1", 2147483647LL },
 			{ "31*(2**27)+24*3600*1000", 4247149568LL },
+			{ "31*2**27+24*3600*1000", 4247149568LL },
 			{ "2**32-1", 4294967295LL },
 			{ "3*2**2", 12 },
 			{ "36/2**2", 9 },
@@ -2629,6 +2710,9 @@ void    test_expression()
 		const T_test_expr_flt_result    expressions[] = {
 			{ "27.1", 27.1 },
 			{ "-234.9", -234.9 },
+			{ "-234.9E3", -234900.0 },
+			{ "-234.9E-1", -23.49 },     // exception
+			{ "-234.9E+1", -2349.0 },    // exception
 			{ "23+4.0", 27.0 },
 			{ "-1345.0-65", -1410.0 },
 			{ "234 * 2.003 - 5 + 1", 464.702 },
@@ -2647,6 +2731,11 @@ void    test_expression()
 			cout << "flt expression : ";
 			cout.width(25);
 			cout << expr;
+			if ((idx == 3) || (idx == 4)) 
+			{
+				M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static (type_definitions, expr));
+				continue;
+			}
 			C_value    value = compute_expression_static (type_definitions, expr);
 			cout << "    gives " << value.as_string();
 			M_TEST_EQ(value.get_flt(), expected_result);
