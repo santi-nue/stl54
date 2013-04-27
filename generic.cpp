@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2013 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -1116,13 +1116,26 @@ void    cpp_proto_register_generic2(void)
 }
 
 //*****************************************************************************
+// get_traces_file_name
+//*****************************************************************************
+string    get_traces_file_name()
+{
+    string  traces_file_name = "";
+//	traces_file_name += get_persdatafile_dir();
+//	traces_file_name += G_DIR_SEPARATOR_S;
+	traces_file_name += "wireshark_generic_dissector_traces.txt";
+
+	return  traces_file_name;
+}
+
+//*****************************************************************************
 // cpp_proto_register_generic
 //*****************************************************************************
 extern "C"
 void    cpp_proto_register_generic(void)
 {
   {
-    static ofstream              ofs ("wireshark_generic_dissector_traces.txt");
+	static ofstream    ofs (get_traces_file_name());
     set_state_ostream (ofs);
   }
 
