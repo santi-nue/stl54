@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2012-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,9 @@
 
 #include "byte_interpret_plugin.h"
 
+#ifndef NULL
+#define NULL 0
+#endif
 
 //*****************************************************************************
 // T_byte_interpret_plugin_output_context
@@ -39,7 +42,9 @@ struct T_byte_interpret_plugin_output_context
 
 #ifdef __cplusplus
 	T_byte_interpret_plugin_output_context()
-		:P_library_name(NULL),
+		:P_null1(NULL),
+		 P_null2(NULL),
+		 P_library_name(NULL),
 		 P_user_data(NULL)
 	{
 	}
