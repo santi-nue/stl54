@@ -26,6 +26,9 @@
 #include "C_byte_interpret_wsgd_builder.h"
 #include "T_generic_protocol_data.h"
 
+#if WIRESHARK_VERSION_NUMBER < 10600
+#define dissector_try_uint  dissector_try_port
+#endif
 
 
 /******************************************************************************
@@ -88,7 +91,11 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
   if (subdissector_data.try_heuristic_first) {
     M_STATE_DEBUG ("subdissector try heuristic");
     /* do lookup with the heuristic subdissector table */
+#if WIRESHARK_VERSION_NUMBER >= 11000
+    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, NULL))
+#else
     if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree))
+#endif
       return;
   }
 
@@ -104,7 +111,7 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
 	}
 	else
 	{
-      if (dissector_try_port(subdissector_data.dissector_table, P_value_1->get_int(), next_tvb, pinfo, tree))
+      if (dissector_try_uint(subdissector_data.dissector_table, P_value_1->get_int(), next_tvb, pinfo, tree))
         return;
 	}
   }
@@ -119,7 +126,7 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
 	}
 	else
 	{
-      if (dissector_try_port(subdissector_data.dissector_table, P_value_2->get_int(), next_tvb, pinfo, tree))
+      if (dissector_try_uint(subdissector_data.dissector_table, P_value_2->get_int(), next_tvb, pinfo, tree))
         return;
 	}
   }
@@ -134,7 +141,7 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
 	}
 	else
 	{
-      if (dissector_try_port(subdissector_data.dissector_table, P_value_3->get_int(), next_tvb, pinfo, tree))
+      if (dissector_try_uint(subdissector_data.dissector_table, P_value_3->get_int(), next_tvb, pinfo, tree))
         return;
 	}
   }
@@ -142,7 +149,11 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
   if (!subdissector_data.try_heuristic_first) {
     M_STATE_DEBUG ("subdissector try heuristic");
     /* do lookup with the heuristic subdissector table */
+#if WIRESHARK_VERSION_NUMBER >= 11000
+    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, NULL))
+#else
     if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree))
+#endif
       return;
   }
 
