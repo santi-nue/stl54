@@ -134,6 +134,8 @@ void    test_size()
 	M_OUT_SIZEOF(long);
 	M_OUT_SIZEOF(long long);
 	M_OUT_SIZEOF(double);
+	M_OUT_SIZEOF(size_t);
+	M_OUT_SIZEOF(string::size_type);
 	M_OUT_SIZEOF(string);
 	M_OUT_SIZEOF(C_value);
 	M_OUT_SIZEOF(T_attribute_value);
