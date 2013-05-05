@@ -43,6 +43,13 @@
 #include "C_byte_interpret_wsgd_builder_base.h"
 #include <fstream>
 
+#ifdef WIN32
+#include <process.h>
+#define getpid  _getpid
+#else
+#include <unistd.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -1120,10 +1127,36 @@ void    cpp_proto_register_generic2(void)
 //*****************************************************************************
 string    get_traces_file_name()
 {
+
     string  traces_file_name = "";
-//	traces_file_name += get_persdatafile_dir();
-//	traces_file_name += G_DIR_SEPARATOR_S;
-	traces_file_name += "wireshark_generic_dissector_traces.txt";
+
+	const char *  dir = getenv("WIRESHARK_GENERIC_DISSECTOR_TRACES_DIR");
+	if (dir != NULL)
+	{
+		traces_file_name += dir;
+		traces_file_name += G_DIR_SEPARATOR_S;
+	}
+	else
+	{
+//		traces_file_name += get_persdatafile_dir();
+//		traces_file_name += G_DIR_SEPARATOR_S;
+	}
+
+	const char *  file = getenv("WIRESHARK_GENERIC_DISSECTOR_TRACES_FILE");
+	if (file != NULL)
+	{
+		traces_file_name += file;
+	}
+	else
+	{
+		traces_file_name += "wireshark_generic_dissector_traces.txt";
+	}
+
+
+	mod_replace_all(traces_file_name, "{pid}", get_string(getpid()));
+//	mod_replace_all(traces_file_name, "{date}", );
+//	mod_replace_all(traces_file_name, "{time}", );
+
 
 	return  traces_file_name;
 }
@@ -1135,7 +1168,7 @@ extern "C"
 void    cpp_proto_register_generic(void)
 {
   {
-	static ofstream    ofs (get_traces_file_name());
+	static ofstream    ofs (get_traces_file_name().c_str());
     set_state_ostream (ofs);
   }
 
