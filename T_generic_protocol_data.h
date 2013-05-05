@@ -129,9 +129,13 @@ struct T_generic_protocol_ws_data : public CT_debug_object_counter<T_generic_pro
   /* Wireshark ID of the protocol */
   int       proto_generic;
 
-//  void    ( * P_dissect_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree);
+#if WIRESHARK_VERSION_NUMBER >= 11000
+  gint      ( * P_dissect_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *);
+  gboolean  ( * P_heuristic_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *);
+#else
   gint      ( * P_dissect_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree);
   gboolean  ( * P_heuristic_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree);
+#endif
 
   dissector_handle_t                    dissector_handle;
 

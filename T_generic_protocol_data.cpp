@@ -255,6 +255,39 @@ T_generic_protocol_data::check_config_parameters_initialized() const
 
 int   S_proto_idx_dissect_in_progress = -1;
 
+#if WIRESHARK_VERSION_NUMBER >= 11000
+#define M_DEFINE_DISSECT_FCT(PROTO_IDX)                                                   \
+static gint                                                                               \
+dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *)       \
+{                                                                                         \
+	M_STATE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
+                                                                                          \
+	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
+	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
+                                                                                          \
+	const int   result = dissect_generic_proto(PROTO_IDX, tvb, pinfo, tree);              \
+                                                                                          \
+	S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
+                                                                                          \
+    return  result;                                                                       \
+}
+
+#define M_DEFINE_HEURISTIC_FCT(PROTO_IDX)                                                 \
+static gboolean                                                                           \
+heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *)     \
+{                                                                                         \
+	M_STATE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
+                                                                                          \
+	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
+	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
+                                                                                          \
+	const int   result = heuristic_generic_proto(PROTO_IDX, tvb, pinfo, tree);            \
+                                                                                          \
+	S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
+                                                                                          \
+    return  result;                                                                       \
+}
+#else
 #define M_DEFINE_DISSECT_FCT(PROTO_IDX)                                                   \
 static gint                                                                               \
 dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)       \
@@ -286,6 +319,7 @@ heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *
                                                                                           \
     return  result;                                                                       \
 }
+#endif
 
 #define M_DEFINE_PROTO_FCT(PROTO_IDX)                                                     \
 		M_DEFINE_DISSECT_FCT(PROTO_IDX)                                                   \

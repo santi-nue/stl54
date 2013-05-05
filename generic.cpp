@@ -71,6 +71,11 @@ extern "C" {
 #error you must define WIRESHARK_VERSION_NUMBER as <major><minor_on_2_digits><micro_on_2_digits>
 #endif
 
+#if WIRESHARK_VERSION_NUMBER < 10600
+#define dissector_add_uint(abbrev, pattern, handle) \
+	dissector_add(abbrev, pattern, handle)
+#endif
+
 //*****************************************************************************
 // register_enum_values
 //*****************************************************************************
@@ -1339,7 +1344,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 	  {
 		M_STATE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_int[idx]);
 
-		dissector_add(parent.PARENT_SUBFIELD.c_str(),
+		dissector_add_uint(parent.PARENT_SUBFIELD.c_str(),
 					  parent.PARENT_SUBFIELD_VALUES_int[idx],
 					  P_protocol_ws_data->dissector_handle);
 	  }
@@ -1352,7 +1357,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 
 		for (int  value = value_low; value <= value_high; ++value)
 		{
-		  dissector_add(parent.PARENT_SUBFIELD.c_str(),
+		  dissector_add_uint(parent.PARENT_SUBFIELD.c_str(),
 					  value,
 					  P_protocol_ws_data->dissector_handle);
 		}
@@ -1793,8 +1798,10 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
 	M_ADD_PINFO_FD(cum_bytes);   /* Cumulative bytes into the capture */
     M_ADD_PINFO_FD_NSTIME(abs_ts);      /* Absolute timestamp */
     M_ADD_PINFO_FD_NSTIME(rel_ts);      /* Relative timestamp (yes, it can be negative) */
+#if WIRESHARK_VERSION_NUMBER < 11000
     M_ADD_PINFO_FD_NSTIME(del_dis_ts);  /* Delta timestamp to previous displayed frame (yes, it can be negative) */
     M_ADD_PINFO_FD_NSTIME(del_cap_ts);  /* Delta timestamp to previous captured frame (yes, it can be negative) */
+#endif
 	M_ADD_PINFO_FD(file_off);    /* File offset */
   }
 //  M_ADD_PINFO();  // union wtap_pseudo_header *pseudo_header;
