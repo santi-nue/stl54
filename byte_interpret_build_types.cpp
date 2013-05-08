@@ -2251,6 +2251,7 @@ void    build_types_no_include_str (const string              & str,
 //*****************************************************************************
 // build_types_begin **********************************************************
 //*****************************************************************************
+C_value  string_count_cpp_to_fdesc(const string::size_type  cpp_count);
 
 void    build_types_begin (T_type_definitions  & type_definitions)
 {
@@ -2266,7 +2267,7 @@ void    build_types_begin (T_type_definitions  & type_definitions)
     build_types_no_include_str("enum1     bool1   as  bool8 ;", type_definitions);
 
 	// string type definitions
-	type_definitions.map_const_value["string::npos"] = C_value(string::npos);
+	type_definitions.map_const_value["string::npos"] = string_count_cpp_to_fdesc(string::npos);
 
 #define M_DEFINE_BUILTIN_FUNCTION(PROTOTYPE)                                    \
     build_types_no_include_str("function " PROTOTYPE " \n"                      \
@@ -2284,7 +2285,7 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 	M_DEFINE_BUILTIN_FUNCTION("int64    string.length  (in string  rhs)");
 	M_DEFINE_BUILTIN_FUNCTION("string   string.substr  (in string  str, in int64  idx, in int64  count = string::npos)");
 	M_DEFINE_BUILTIN_FUNCTION("string   string.erase   (in string  str, in int64  idx, in int64  count = string::npos)");
-	M_DEFINE_BUILTIN_FUNCTION("string   string.insert  (in string  str, in int64  idx, in string str_to_insert)");
+	M_DEFINE_BUILTIN_FUNCTION("string   string.insert  (in string  str, in int64  idx, in string  str_to_insert)");
 	M_DEFINE_BUILTIN_FUNCTION("string   string.replace (in string  str, in int64  idx, in int64  count, in string str_to_insert)");
 	M_DEFINE_BUILTIN_FUNCTION("string   string.replace_all (in string  str, in string  old, in string new)");
 	M_DEFINE_BUILTIN_FUNCTION("int64    string.find    (in string  str, in string  str_to_find)");

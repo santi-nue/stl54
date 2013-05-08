@@ -3504,11 +3504,11 @@ NB: a function which returns void (ie nothing) must be called like this :\n\
   fatal if result is not numeric\n\
 - string          getenv (in string  env_variable_name) ;\n\
 - uint            string.length (in string  str_source);\n\
-- uint            string.find   (in string  str_source, in string  str_to_find);\n\
-- string          string.substr (in string  str_source, in uint  index, in uint  count = string::npos);\n\
-- string          string.erase  (in string  str_source, in uint  index, in uint  count = string::npos);\n\
+-  int64          string.find   (in string  str_source, in string  str_to_find);\n\
+- string          string.substr (in string  str_source, in uint  index, in int64  count = string::npos);\n\
+- string          string.erase  (in string  str_source, in uint  index, in int64  count = string::npos);\n\
 - string          string.insert (in string  str_source, in uint  index, in string  str_to_insert);\n\
-- string          string.replace(in string  str_source, in uint  index, in uint  count, in string  str_to_insert);\n\
+- string          string.replace(in string  str_source, in uint  index, in int64  count, in string  str_to_insert);\n\
 - string          string.replace_all(in string  str_source, in string  str_old, in string  str_new);\n\
 \n\
 *** Decoder\n\

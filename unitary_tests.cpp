@@ -124,6 +124,7 @@ void    test_bitfield_C()
 // test_size
 // Not a test.
 //*****************************************************************************
+C_value  string_count_cpp_to_fdesc(const string::size_type  cpp_count);
 
 void    test_size()
 {
@@ -141,6 +142,11 @@ void    test_size()
 	M_OUT_SIZEOF(T_attribute_value);
 	M_OUT_SIZEOF(T_interpret_value);
 
+#define M_OUT_VAL(PARAM)    \
+	cout << "value(" << #PARAM << ") = " << PARAM << endl
+
+	M_OUT_VAL(string::npos);
+	M_OUT_VAL(string_count_cpp_to_fdesc(string::npos));
 }
 
 //*****************************************************************************
@@ -3151,7 +3157,8 @@ string  compute_expression_no_io_str(
 void    test_builtin_functions()
 {
 	T_type_definitions    type_definitions;
-	build_types_begin(type_definitions);
+    build_types ("unitary_tests_basic.fdesc",
+                 type_definitions);
 	SP_type_definitions = &type_definitions;
 
 	T_interpret_data      interpret_data;
@@ -3222,9 +3229,14 @@ void    test_builtin_functions()
     // string.find
 	M_TEST_EQ(compute_expression_static_int("string.find (\"12345678\", \"2\")"), 1);
 	M_TEST_EQ(compute_expression_static_int("string.find (\"abcdefgh\", \"ef\")"), 4);
-	M_TEST_EQ(compute_expression_static_int("string.find (\"abcdefgh\", \"fe\")"), string::npos);
+	M_TEST_EQ(compute_expression_static_int("string_find (\"abcdefgh\", \"ef\")"), 4);
+	M_TEST_EQ(compute_expression_static_int("string_found(\"abcdefgh\", \"ef\")"), true);
+	M_TEST_EQ(compute_expression_static_int("string.find (\"abcdefgh\", \"fe\")"), compute_expression_static_int("string::npos"));
+	M_TEST_EQ(compute_expression_static_int("string_find (\"abcdefgh\", \"fe\")"), compute_expression_static_int("string::npos"));
+	M_TEST_EQ(compute_expression_static_int("string_found(\"abcdefgh\", \"fe\")"), false);
 	interpret_data.set_read_variable("str", "abcdefgh");
 	M_TEST_EQ(compute_expression_no_io_int("string.find (str, \"ef\")"), 4);
+
 
 	// date.get_string_from_days
 	M_TEST_EQ(compute_expression_static_str("date.get_string_from_days (2012,   0)"), "2012/01/01");

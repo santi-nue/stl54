@@ -953,6 +953,38 @@ T_expression::compute_expression_variable_array(
 }
 
 //*****************************************************************************
+// 
+//*****************************************************************************
+
+#ifndef UINT32_MAX
+#define UINT32_MAX  4294967295
+#endif
+
+string::size_type  string_count_fdesc_to_cpp(const C_value  & fdesc_count)
+{
+	const long long        count = fdesc_count.get_int();
+	string::size_type  cpp_count = ((count < 0) || (count >= UINT32_MAX)) ? string::npos : count;
+
+	return  cpp_count;
+}
+
+C_value  string_count_cpp_to_fdesc(const string::size_type  cpp_count)
+{
+	// string::npos value on 64 bits could not save into C_value(int64).
+	// So use -1 instead.
+	// - good : can     use  string.find(...) < 0
+	// - bad  : can NOT use  uint = string.find(...)  -> behavior modifications
+	// So use UINT32_MAX instead.
+	// - good : can     use  uint32 = string.find(...) 
+	// - bad  : can NOT use  string.find(...) < 0
+//	const long long        count = (cpp_count == string::npos) ? -1LL : cpp_count;
+	const long long        count = (cpp_count == string::npos) ? UINT32_MAX : cpp_count;
+	C_value          fdesc_count(count);
+
+	return  fdesc_count;
+}
+
+//*****************************************************************************
 // compute_expression_function
 //*****************************************************************************
 C_value    T_expression_compute_function (const T_type_definitions    & type_definitions,
@@ -1059,13 +1091,13 @@ T_expression::compute_expression_function(
 		A_value = * P_parameter_values[0];
 		C_value  value_idx = * P_parameter_values[1];
 
-		C_value  value_count = string::npos;
+		string::size_type  cpp_count = string::npos;
 		if (A_expressions.size() > 2)
 		{
-			value_count = * P_parameter_values[2];
+			cpp_count = string_count_fdesc_to_cpp(* P_parameter_values[2]);
 		}
 
-		A_value = A_value.get_str().substr(value_idx.get_int(),value_count.get_int());
+		A_value = A_value.get_str().substr(value_idx.get_int(),cpp_count);
 	}
 	else if (A_variable_or_function_name == "string.erase")
 	{
@@ -1073,14 +1105,14 @@ T_expression::compute_expression_function(
 
 		C_value  value_idx = * P_parameter_values[1];
 
-		C_value  value_count = string::npos;
+		string::size_type  cpp_count = string::npos;
 		if (A_expressions.size() > 2)
 		{
-			value_count = * P_parameter_values[2];
+			cpp_count = string_count_fdesc_to_cpp(* P_parameter_values[2]);
 		}
 
 		string  str_copy = A_value.get_str();
-		str_copy.erase(value_idx.get_int(),value_count.get_int());
+		str_copy.erase(value_idx.get_int(),cpp_count);
 		A_value = str_copy;
 	}
 	else if (A_variable_or_function_name == "string.insert")
@@ -1098,12 +1130,12 @@ T_expression::compute_expression_function(
 	{
 		A_value = * P_parameter_values[0];
 
-		C_value  value_idx = * P_parameter_values[1];
-		C_value  value_count = * P_parameter_values[2];
-		C_value  value_str = * P_parameter_values[3];
+		C_value            value_idx = * P_parameter_values[1];
+		string::size_type  cpp_count = string_count_fdesc_to_cpp(* P_parameter_values[2]);
+		C_value            value_str = * P_parameter_values[3];
 
 		string  str_copy = A_value.get_str();
-		str_copy.replace(value_idx.get_int(),value_count.get_int(),value_str.get_str());
+		str_copy.replace(value_idx.get_int(),cpp_count,value_str.get_str());
 		A_value = str_copy;
 	}
 	else if (A_variable_or_function_name == "string.replace_all")
@@ -1127,7 +1159,7 @@ T_expression::compute_expression_function(
 			value_idx = * P_parameter_values[2];
 		}
 
-		A_value = A_value.get_str().find(value_str.get_str(), value_idx.get_int());
+		A_value = string_count_cpp_to_fdesc(A_value.get_str().find(value_str.get_str(), value_idx.get_int()));
 	}
 	else if (A_variable_or_function_name == "date.get_string_from_days")
 	{

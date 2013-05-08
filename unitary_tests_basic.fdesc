@@ -304,3 +304,39 @@ enum24 T_enum24 expand T_enum5
 {
   val12730334  12730334
 }
+
+###############################################################################
+# string::npos
+###############################################################################
+
+function int64  string_find (in string  value, in string  to_find)
+{
+  hide var  int64  posi = string.find(value, to_find);
+  hide var uint32  posu = string.find(value, to_find);
+  
+  if (posi != posu)
+  {
+    set do_not_exist_to_triger_exception = 0;
+  }
+  
+  return  posi;
+}
+
+function bool8  string_found (in string  value, in string  to_find)
+{
+  hide var  int64  posi = string.find(value, to_find);
+  hide var uint32  posu = string.find(value, to_find);
+  hide var bool8   reti = (posi != string::npos);
+  hide var bool8   retu = (posu != string::npos);
+
+  if (posi != posu)
+  {
+    set do_not_exist_to_triger_exception = 0;
+  }
+  if (reti != retu)
+  {
+    set do_not_exist_to_triger_exception = 0;
+  }
+  
+  return  reti;
+}
