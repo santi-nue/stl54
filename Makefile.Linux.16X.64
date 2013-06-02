@@ -175,7 +175,7 @@ CFLAGS = -DINET6 -D_U_="__attribute__((unused))" -g -O2 -Wall -W -Wextra -Wdecla
 CORESERVICES_FRAMEWORKS = 
 CPP = gcc -E
 # 2011/01/22 Add -DWIRESHARK_VERSION_NUMBER=<major><minor_on_2_digits><micro_on_2_digits>
-CPPFLAGS =  -I/usr/local/include -I/usr/include '-DPLUGIN_DIR="$(plugindir)"' -DWIRESHARK_VERSION_NUMBER=10402
+CPPFLAGS =  -I/usr/local/include -I/usr/include '-DPLUGIN_DIR="$(plugindir)"' -DWIRESHARK_VERSION_NUMBER=10608
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
@@ -305,10 +305,10 @@ OTOOL64 =
 PACKAGE = wireshark
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = wireshark
-PACKAGE_STRING = wireshark 1.4.2
+PACKAGE_STRING = wireshark 1.6.8
 PACKAGE_TARNAME = wireshark
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.4.2
+PACKAGE_VERSION = 1.6.8
 PATH_SEPARATOR = :
 PCAP_CONFIG = /usr/bin/pcap-config
 PCAP_LIBS = -L/usr/lib  -lpcap
@@ -343,7 +343,7 @@ USE_PROFILE_BUILD_FALSE =
 USE_PROFILE_BUILD_TRUE = #
 USE_THREADS_FALSE = 
 USE_THREADS_TRUE = #
-VERSION = 1.4.2
+VERSION = 1.6.8
 XMLLINT = /usr/bin/xmllint
 XSLTPROC = /usr/bin/xsltproc
 YACC = bison -y
