@@ -292,7 +292,10 @@ bool       read_token_field_name (
                             istream       & is,
                             string        & str_result)
 {
-	bool    result = read_token_simple_word(is, str_result);
+//	bool    result = read_token_simple_word(is, str_result);   // NOT ok on ID{ext=a c};  or   ID{ext="a c"};
+//	bool    result = read_token_type_complex(is, str_result);  // NOT ok on ID{ext=a c};  or   ID{ext="a c"};
+	bool    result = read_token_left_any(is, str_result);
+	
 	if (result == true)
 	{
 		if (str_result == "\"\"")

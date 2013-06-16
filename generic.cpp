@@ -149,18 +149,39 @@ void    register_enum_values(T_generic_protocol_data  & protocol_data)
 void    register_fields_add_field_none(
 								         T_generic_protocol_data  & protocol_data,
 								   const int                            field_idx,
-                                   const char                         * field_name_param)
+                                   const char                         * field_name,
+                                   const char                         * field_filter_name_param,
+                                   const char                         * field_extended_name)
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
   M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
 
-  const char                   * field_name = strdup(field_name_param);
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name;
+  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_filter_name_param;
   hf_register_info               hf = 
 		{ NULL,    // initialized later
-  		{ field_name, strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
-		  field_name, HFILL }};
+		{ strdup(field_name),
+		  strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
+		  strdup(field_extended_name), HFILL }};
+
+  P_protocol_ws_data->fields_data.hf.push_back(hf);
+}
+
+void    register_fields_add_field_none(
+								         T_generic_protocol_data  & protocol_data,
+								   const int                            field_idx,
+                                   const T_field_type_name            & field_name)
+{
+  T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
+
+  M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
+
+  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
+  hf_register_info               hf = 
+		{ NULL,    // initialized later
+		{ strdup(field_name.get_display_name().c_str()),
+		  strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
+		  strdup(field_name.get_extended_name().c_str()), HFILL }};
 
   P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
@@ -168,18 +189,18 @@ void    register_fields_add_field_none(
 void    register_fields_add_field_bytes(
 								         T_generic_protocol_data  & protocol_data,
 								   const int                            field_idx,
-                                   const char                         * field_name_param)
+                                   const T_field_type_name            & field_name)
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
   M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
 
-  const char                   * field_name = strdup(field_name_param);
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name;
+  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
   hf_register_info               hf = 
 		{ NULL,    // initialized later
-  		{ field_name, strdup(filter_field_name.c_str()), FT_BYTES, BASE_NONE, NULL, 0x0,
-		  field_name, HFILL }};
+  		{ strdup(field_name.get_display_name().c_str()),
+		  strdup(filter_field_name.c_str()), FT_BYTES, BASE_NONE, NULL, 0x0,
+		  strdup(field_name.get_extended_name().c_str()), HFILL }};
 
   P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
@@ -187,18 +208,18 @@ void    register_fields_add_field_bytes(
 void    register_fields_add_field_string(
 								         T_generic_protocol_data  & protocol_data,
 								   const int                            field_idx,
-                                   const char                         * field_name_param)
+                                   const T_field_type_name            & field_name)
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
   M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
 
-  const char                   * field_name = strdup(field_name_param);
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name;
+  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
   hf_register_info               hf = 
 		{ NULL,    // initialized later
-  		{ field_name, strdup(filter_field_name.c_str()), FT_STRING, BASE_NONE, NULL, 0x0,
-		  field_name, HFILL }};
+  		{ strdup(field_name.get_display_name().c_str()),
+		  strdup(filter_field_name.c_str()), FT_STRING, BASE_NONE, NULL, 0x0,
+		  strdup(field_name.get_extended_name().c_str()), HFILL }};
 
   P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
@@ -206,20 +227,20 @@ void    register_fields_add_field_string(
 void    register_fields_add_field_float(
 								         T_generic_protocol_data  & protocol_data,
 								   const int                            field_idx,
-                                   const char                         * field_name_param,
+                                   const T_field_type_name            & field_name,
 								   const int                            field_bit_size)
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
   M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
 
-  const char                   * field_name = strdup(field_name_param);
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name;
+  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
   ftenum                         ws_size = field_bit_size<=32 ? FT_FLOAT : FT_DOUBLE;
   hf_register_info               hf = 
 		{ NULL,    // initialized later
-  		{ field_name, strdup(filter_field_name.c_str()), ws_size, BASE_NONE, NULL, 0x0,
-		  field_name, HFILL }};
+  		{ strdup(field_name.get_display_name().c_str()),
+		  strdup(filter_field_name.c_str()), ws_size, BASE_NONE, NULL, 0x0,
+		  strdup(field_name.get_extended_name().c_str()), HFILL }};
 
   P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
@@ -227,7 +248,7 @@ void    register_fields_add_field_float(
 void    register_fields_add_field_int(
 								         T_generic_protocol_data  & protocol_data,
 								   const int                            field_idx,
-                                   const char                         * field_name_param,
+                                   const T_field_type_name            & field_name,
 								   const int                            field_bit_size,
 								   const bool                           is_signed,
 								   const int                            enum_idx)
@@ -236,8 +257,7 @@ void    register_fields_add_field_int(
 
   M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
 
-  const char                   * field_name = strdup(field_name_param);
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name;
+  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
 
   const ftenum    ws_size_unsign[] = { FT_UINT8, FT_UINT16, FT_UINT24, FT_UINT32, FT_NONE, FT_NONE, FT_NONE, FT_UINT64 };
   const ftenum    ws_size_signed[] = {  FT_INT8,  FT_INT16,  FT_INT24,  FT_INT32, FT_NONE, FT_NONE, FT_NONE,  FT_INT64 };
@@ -267,8 +287,9 @@ void    register_fields_add_field_int(
 
   hf_register_info               hf = 
 		{ NULL,    // initialized later
-  		{ field_name, strdup(filter_field_name.c_str()), ws_size, BASE_DEC, NULL, 0x0,
-		  field_name, HFILL }};
+  		{ strdup(field_name.get_display_name().c_str()),
+		  strdup(filter_field_name.c_str()), ws_size, BASE_DEC, NULL, 0x0,
+		  strdup(field_name.get_extended_name().c_str()), HFILL }};
 
   if (enum_idx >= 0)
   {
@@ -362,7 +383,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 
 			register_fields_add_field_none(protocol_data,
 											   field_idx,
-											   field_type_name.name.c_str());
+											   field_type_name);
 			++field_idx;
 		}
 		if (final_type == "switch")
@@ -405,7 +426,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 
 				register_fields_add_field_none(protocol_data,
 											   field_idx,
-											   field_type_name.name.c_str());
+											   field_type_name);
 				++field_idx;
 
 				if (P_struct->is_a_field_struct())
@@ -445,7 +466,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 
 				register_fields_add_field_none(protocol_data,
 												   field_idx,
-												   field_type_name.name.c_str());
+												   field_type_name);
 				++field_idx;
 			}
 			if (final_type == "bitfield")
@@ -501,7 +522,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
             register_fields_add_field_float(                                  \
                                                protocol_data,                 \
                                                field_idx,                     \
-											   field_type_name.name.c_str(),  \
+											   field_type_name,               \
 											   64);                           \
 		}                                                                     \
 		else if (strncmp(TYPE_NAME, "float", 5) == 0)                         \
@@ -514,7 +535,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
             register_fields_add_field_float(                                  \
                                                protocol_data,                 \
                                                field_idx,                     \
-											   field_type_name.name.c_str(),  \
+											   field_type_name,               \
 							                   TYPE_IMPL_BIT_SIZE);           \
 		}                                                                     \
 		else if (field_type_name.must_force_manage_as_biggest_int())          \
@@ -525,12 +546,12 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			   << field_type_name.name << ", "                                \
 			   << TYPE_IMPL_BIT_SIZE << ")");                                 \
             register_fields_add_field_int(                                    \
-                                               protocol_data,                 \
-                                               field_idx,                     \
-											   field_type_name.name.c_str(),  \
-											   64,                            \
-											   true,                          \
-											   wsgd_enum_values_idx);         \
+                                       protocol_data,                         \
+                                       field_idx,                             \
+									   field_type_name,                       \
+									   64,                                    \
+									   true,                                  \
+									   wsgd_enum_values_idx);                 \
 		}                                                                     \
 		else                                                                  \
 		{                                                                     \
@@ -540,12 +561,12 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			   << field_type_name.name << ", "                                \
 			   << TYPE_IMPL_BIT_SIZE << ")");                                 \
             register_fields_add_field_int(                                    \
-                                               protocol_data,                 \
-                                               field_idx,                     \
-											   field_type_name.name.c_str(),  \
-											   TYPE_IMPL_BIT_SIZE,            \
-											   final_type[0] != 'u',          \
-											   wsgd_enum_values_idx);         \
+                                       protocol_data,                         \
+                                       field_idx,                             \
+									   field_type_name,                       \
+									   TYPE_IMPL_BIT_SIZE,                    \
+									   final_type[0] != 'u',                  \
+									   wsgd_enum_values_idx);                 \
 		}                                                                     \
 	}
 
@@ -592,7 +613,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 		   << field_type_name.name << ")");
 		register_fields_add_field_string(protocol_data,
                                                field_idx,
-											   field_type_name.name.c_str());
+											   field_type_name);
 	}
     else if (final_type == "raw")
     {
@@ -606,7 +627,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 		   << field_type_name.name << ") " << final_type);
         register_fields_add_field_bytes(protocol_data,
                                            field_idx,
-										   field_type_name.name.c_str());
+										   field_type_name);
 	}
     else if ((final_type == "subproto") ||
              (final_type == "insproto"))
@@ -657,7 +678,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			   << bit_size << ")");
             register_fields_add_field_int(     protocol_data,
                                                field_idx,
-											   field_type_name.name.c_str(),
+											   field_type_name,
 											   32,
 											   final_type[0] != 'u',
 											   wsgd_enum_values_idx);
@@ -770,14 +791,14 @@ void    register_fields(T_generic_protocol_data  & protocol_data)
   // whole or any data
   M_FATAL_IF_NE(field_idx, K_WHOLE_WSGD_FIELD_IDX);
   M_FATAL_IF_NE(field_idx, K_ANY_WSGD_FIELD_IDX);
-  register_fields_add_field_none(protocol_data, field_idx, "data");
+  register_fields_add_field_none(protocol_data, field_idx, "data", "data", "data");
   ++field_idx;
 
   // pseudo field to do a coloring rule or a display filter on it
   // I do not know how to code a coloring rule.
   // -> must do it manually at this time.
   M_FATAL_IF_NE(field_idx, K_ERROR_WSGD_FIELD_IDX);
-  register_fields_add_field_none(protocol_data, field_idx, "error_in_packet");
+  register_fields_add_field_none(protocol_data, field_idx, "error_in_packet", "error_in_packet", "error_in_packet");
   ++field_idx;
 
   {

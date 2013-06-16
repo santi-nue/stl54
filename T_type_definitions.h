@@ -95,6 +95,14 @@ struct T_field_type_name_base
 	string         type;
     string         name;
 
+    string         display_name;
+    string         filter_name;
+    string         extended_name;
+
+	const string &  get_display_name()  const  { return  display_name.empty()  ? name : display_name; }
+	const string &  get_filter_name()   const  { return  filter_name.empty()   ? name : filter_name; }
+	const string &  get_extended_name() const  { return  extended_name.empty() ? name : extended_name; }
+
 	// only for basic types (int, float, char) and enum
 	// NOT for struct ...
 	int            basic_type_bit_size;
