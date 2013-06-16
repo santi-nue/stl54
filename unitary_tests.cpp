@@ -3151,6 +3151,37 @@ string  compute_expression_no_io_str(
 }
 
 //*****************************************************************************
+// test_function_call
+//*****************************************************************************
+
+void    test_function_call()
+{
+	T_type_definitions    type_definitions;
+    build_types ("unitary_tests_basic.fdesc",
+                 type_definitions);
+	SP_type_definitions = &type_definitions;
+
+	T_interpret_data      interpret_data;
+    SP_interpret_data = &interpret_data;
+
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u32(1234)"), 32);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u24(1234)"), 24);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u16(1234)"), 16);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u8 ( 234)"),  8);
+
+	// 1234 gives u8 overflow
+    M_TEST_CATCH_EXCEPTION(compute_expression_static_int("call_me_maybe_u8 (1234)"), C_byte_interpret_exception);
+
+	// Currently, parameter must be an entire byte size
+	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u48(1234)"));
+	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u30(1234)"));
+	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u20(1234)"));
+	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u10( 934)"));
+	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u2 (   3)"));
+	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u1 (   1)"));
+}
+
+//*****************************************************************************
 // test_builtin_functions
 //*****************************************************************************
 
@@ -4256,6 +4287,7 @@ int   main(const int         argc,
 		M_TEST_FCT(test_get_before_separator_after);
 		M_TEST_FCT(test_decompose_type_sep_value_sep);
 		M_TEST_FCT(test_expression);
+		M_TEST_FCT(test_function_call);
 		M_TEST_FCT(test_builtin_functions);
 		M_TEST_FCT(test_frame_data);
 		M_TEST_FCT(test_frame_data_write);
