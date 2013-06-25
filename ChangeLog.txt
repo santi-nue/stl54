@@ -1,5 +1,5 @@
 
-2013/06/16  Add : var_name{f=var_filter_name}{ext=var_extended_name}
+2013/06/25  Add : {filter=var_filter_name}{desc=var_extended_name}
 2013/05/08  Fix : uint32 pos = string.find... fail when nothing found on 64 bits version
 2013/05/05  Add : Could set WIRESHARK_GENERIC_DISSECTOR_TRACES_DIR env variable to specify traces directory.
 2013/03/24  Fix : cond ? x : y does not work into min and quantum

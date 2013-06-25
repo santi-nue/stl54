@@ -203,23 +203,23 @@ void    check_field_name(      T_field_type_name  & field_type_name,
 		field_type_name.name = simple_name;
 		M_STATE_DEBUG(str_parameter);
 
-		if (strncmp(str_parameter.c_str(), "d=", 2) == 0)         // display name
+		if (strncmp(str_parameter.c_str(), "name=", 5) == 0)         // display name
 		{
-			field_type_name.display_name = str_parameter.substr(2);
+			field_type_name.display_name = str_parameter.substr(5);
 			remove_string_limits(field_type_name.display_name);
 		}
-		else if (strncmp(str_parameter.c_str(), "f=", 2) == 0)    // filter name
+		else if (strncmp(str_parameter.c_str(), "filter=", 7) == 0)    // filter name
 		{
-			field_type_name.filter_name = str_parameter.substr(2);
+			field_type_name.filter_name = str_parameter.substr(7);
 			if ((field_type_name.filter_name[0] == '\"') ||
 				(field_type_name.filter_name[0] == '\''))
 			{
 				M_FATAL_COMMENT("Unexpected blank/space/'/\" inside field filter name (" << field_type_name.filter_name << ").");
 			}
 		}
-		else if (strncmp(str_parameter.c_str(), "ext=", 4) == 0)  // extended name
+		else if (strncmp(str_parameter.c_str(), "desc=", 5) == 0)  // extended name
 		{
-			field_type_name.extended_name = str_parameter.substr(4);
+			field_type_name.extended_name = str_parameter.substr(5);
 			remove_string_limits(field_type_name.extended_name);
 		}
 		else
@@ -431,6 +431,25 @@ void    post_build_field_base (
 			else if (strncmp(str_display_or_transform.c_str(), "byte_order=", 11) == 0)
 			{
 				type_definitions.set_field_byte_order(field_type_name, str_display_or_transform.c_str()+11);
+			}
+			else if (strncmp(str_display_or_transform.c_str(), "name=", 5) == 0)  // name display
+			{
+				field_type_name.display_name = str_display_or_transform.substr(5);
+				remove_string_limits(field_type_name.display_name);
+			}
+			else if (strncmp(str_display_or_transform.c_str(), "filter=", 7) == 0)  // name filter
+			{
+				field_type_name.filter_name = str_display_or_transform.substr(7);
+				if ((field_type_name.filter_name[0] == '\"') ||
+					(field_type_name.filter_name[0] == '\''))
+				{
+					M_FATAL_COMMENT("Unexpected blank/space/'/\" inside field filter name (" << field_type_name.filter_name << ").");
+				}
+			}
+			else if (strncmp(str_display_or_transform.c_str(), "desc=", 5) == 0)  // name extended
+			{
+				field_type_name.extended_name = str_display_or_transform.substr(5);
+				remove_string_limits(field_type_name.extended_name);
 			}
 			else
 			{
@@ -1116,14 +1135,6 @@ string    build_field (istream                           & is,
 	{
 	    M_FATAL_IF_FALSE (read_token_field_name (is, field_type_name.name));
 
-		if (field_type_name.name != "")
-		{
-			if (is_const == true)
-				check_field_name(field_type_name, ':');
-			else
-				check_field_name(field_type_name);
-		}
-
 		// Incomplete !!!
 		// So a field/variable name could be identic to a type or a keyword.
 		// type : Use is_a_type_name ? Is it interesting to forbid this ?
@@ -1181,8 +1192,18 @@ string    build_field (istream                           & is,
 		// int/float           : Display, transform, constraints and basic_type_bit_size
 		// string/raw/subproto : size
 		// switch              : parameter
+		// decoder, byte_order, nameDisplay, nameFilter, nameExtended ...
 		// Check that type is defined.
+		// Must be called before check_field_name.
 		post_build_field_base(type_definitions, field_type_name, field_scope);
+
+		if (field_type_name.name != "")
+		{
+			if (is_const == true)
+				check_field_name(field_type_name, ':');
+			else
+				check_field_name(field_type_name);
+		}
 	}
 
 
