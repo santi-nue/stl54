@@ -315,6 +315,7 @@ T_expression::build_expression_words(
         ((iter =  find (iter_begin, iter_end,  "+")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "-")) != iter_end) ||
         ((iter =  find (iter_begin, iter_end,  "*")) != iter_end) ||
+        ((iter = rfind (iter_begin, iter_end, "//")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "/")) != iter_end) ||
         ((iter = rfind (iter_begin, iter_end,  "%")) != iter_end) ||
         ((iter =  find (iter_begin, iter_end, "**")) != iter_end))
@@ -367,6 +368,7 @@ T_expression::build_expression_words(
 				(str_prev ==  "-") ||
 				(str_prev == "**") ||
 				(str_prev ==  "*") ||
+				(str_prev == "//") ||
 				(str_prev ==  "/") ||
 				(str_prev ==  "%"))
 			{
@@ -467,8 +469,10 @@ T_expression::build_expression_words(
 			A_operation = E_operation_greater;
         else if (operation == "*")
 			A_operation = E_operation_multiply;
+        else if (operation == "//")
+			A_operation = E_operation_divide_float;
         else if (operation == "/")
-			A_operation = E_operation_divide;
+			A_operation = E_operation_divide_c;
         else if (operation == "%")
 			A_operation = E_operation_modulo;
         else if (operation == "+")
@@ -1387,8 +1391,10 @@ T_expression::compute_expression_operation(
 				A_value = C_value::pow(value_left, value_right);
 			else if (A_operation == E_operation_multiply)
 				A_value = value_left *  value_right;
-			else if (A_operation == E_operation_divide)
-				A_value = value_left /  value_right;
+			else if (A_operation == E_operation_divide_float)
+				A_value = C_value::divide_float(value_left, value_right);
+			else if (A_operation == E_operation_divide_c)
+				A_value = C_value::divide_c(value_left, value_right);
 			else if (A_operation == E_operation_modulo)
 				A_value = value_left %  value_right;
 			else

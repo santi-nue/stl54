@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,7 +86,8 @@ struct T_expression : public CT_debug_object_counter<T_expression>
         E_operation_subtraction,
         E_operation_pow,
         E_operation_multiply,
-        E_operation_divide,
+        E_operation_divide_float,
+        E_operation_divide_c,
         E_operation_modulo
 	};
 

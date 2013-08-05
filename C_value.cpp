@@ -1287,7 +1287,7 @@ C_value::operator*= (const C_value  & rhs)
 
 	return  *this;
 }
-
+#if 0
 C_value &
 C_value::operator/= (const C_value  & rhs)
 {
@@ -1329,6 +1329,7 @@ C_value::operator/= (const C_value  & rhs)
 #endif
 	return  *this;
 }
+#endif
 
 C_value &
 C_value::operator%= (const C_value  & rhs)
@@ -1346,8 +1347,91 @@ C_value::operator%= (const C_value  & rhs)
 M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(+)
 M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(-)
 M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(*)
-M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(/)
+//M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(/)
 M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(%)
+
+C_value &
+C_value::this_divide_float (const C_value  & rhs)
+{
+    if ((    A_type == E_type_string) ||
+        (rhs.A_type == E_type_string))
+    {
+        M_FATAL_COMMENT("operator /= could NOT be used for string");
+    }
+    if ((    A_type == E_type_msg) ||
+        (rhs.A_type == E_type_msg))
+    {
+		M_FATAL_COMMENT("operator /= could NOT be used for msg");
+    }
+    if ((    A_type == E_type_struct) ||
+        (rhs.A_type == E_type_struct))
+    {
+        M_FATAL_COMMENT("operator /= could NOT be used for struct");
+    }
+
+	M_COMPUTE_NEW_POSITION_OFFSET();
+
+	// All divide must give float ?
+    *this = C_value (A_flt / rhs.A_flt);
+
+	return  *this;
+}
+
+C_value &
+C_value::this_divide_c (const C_value  & rhs)
+{
+    if ((    A_type == E_type_string) ||
+        (rhs.A_type == E_type_string))
+    {
+        M_FATAL_COMMENT("operator /= could NOT be used for string");
+    }
+    if ((    A_type == E_type_msg) ||
+        (rhs.A_type == E_type_msg))
+    {
+		M_FATAL_COMMENT("operator /= could NOT be used for msg");
+    }
+    if ((    A_type == E_type_struct) ||
+        (rhs.A_type == E_type_struct))
+    {
+        M_FATAL_COMMENT("operator /= could NOT be used for struct");
+    }
+
+	M_COMPUTE_NEW_POSITION_OFFSET();
+
+	if (A_type == E_type_integer)
+    {
+        if (rhs.A_type == E_type_integer)
+            *this = C_value (A_integer / rhs.A_integer);
+        else
+            *this = C_value (A_integer / rhs.A_flt);
+    }
+    else
+    {
+        if (rhs.A_type == E_type_integer)
+            *this = C_value (A_flt / rhs.A_integer);
+        else
+            *this = C_value (A_flt / rhs.A_flt);
+    }
+
+	return  *this;
+}
+
+C_value
+C_value::divide_float (const C_value  & lhs, const C_value  & rhs)
+{
+	C_value  value = lhs;
+	value.this_divide_float(rhs);
+
+	return  value;
+}
+C_value
+C_value::divide_c (const C_value  & lhs, const C_value  & rhs)
+{
+	C_value  value = lhs;
+	value.this_divide_c(rhs);
+
+	return  value;
+}
 
 //*****************************************************************************
 // Pow.

@@ -215,7 +215,19 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 		return;
 
 //	const string    text = field_type_name.name + ": " + data_value;
+#if 0
 	const string    text = data_simple_name + ": " + data_value;    // new array management
+#else
+	string    text = data_simple_name + ": " + data_value;    // new array management
+	{
+		const string &  field_name = field_type_name.name;
+		const string &  field_display_name = field_type_name.get_display_name();
+		if (field_name != field_display_name)
+		{
+			text.replace(0, field_name.size(), field_display_name);
+		}
+	}
+#endif
 	const int       error_code = error ? PI_ERROR : 0;
 
 	M_STATE_DEBUG ("wsgd add item = " << text);
@@ -561,6 +573,18 @@ C_byte_interpret_wsgd_builder::group_begin(const T_type_definitions  & /* type_d
 
 	T_wsgd_group_data  & group_data = A_wsgd_group_data.back();
 
+#if 1
+	string    text = data_simple_name;    // new array management
+	{
+		const string &  field_name = field_type_name.name;
+		const string &  field_display_name = field_type_name.get_display_name();
+		if (field_name != field_display_name)
+		{
+			text.replace(0, field_name.size(), field_display_name);
+		}
+	}
+#endif
+
 	// Ajout d'un item.
 	// La taille est re-specifiee apres.
 	// La taille specifiee ici est :
@@ -575,7 +599,11 @@ C_byte_interpret_wsgd_builder::group_begin(const T_type_definitions  & /* type_d
 									 field_type_name.basic_type_bit_size,   // ICIOA -1 ou 0
 									 false,                             // little_endian
 //									 field_type_name.name.c_str(),
+#if 0
 									 data_simple_name.c_str(),          // new array management
+#else
+									 text.c_str(),          // new array management
+#endif
 									 0);                                // no error_code
 
 	A_interpret_wsgd.wsgd_tree = cpp_dissect_generic_add_tree(A_interpret_wsgd.proto_idx, group_data.item);

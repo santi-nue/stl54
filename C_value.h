@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -160,9 +160,13 @@ struct C_value : public CT_debug_object_counter<C_value>
     C_value    operator+  (const C_value  & rhs) const;
     C_value    operator-  (const C_value  & rhs) const;
     C_value    operator*  (const C_value  & rhs) const;
-    C_value    operator/  (const C_value  & rhs) const;
+//    C_value    operator/  (const C_value  & rhs) const;
     C_value    operator%  (const C_value  & rhs) const;
 
+	static
+	C_value    divide_float(const C_value  & lhs, const C_value  & rhs);
+	static
+	C_value    divide_c(const C_value  & lhs, const C_value  & rhs);
 	static
 	C_value    pow(const C_value  & lhs, const C_value  & rhs);
 
@@ -175,8 +179,11 @@ struct C_value : public CT_debug_object_counter<C_value>
     C_value &  operator+= (const C_value  & rhs);
     C_value &  operator-= (const C_value  & rhs);
     C_value &  operator*= (const C_value  & rhs);
-    C_value &  operator/= (const C_value  & rhs);
+//    C_value &  operator/= (const C_value  & rhs);
     C_value &  operator%= (const C_value  & rhs);
+
+	C_value &  this_divide_float(const C_value  & rhs);
+	C_value &  this_divide_c(const C_value  & rhs);
 
 
 private:
