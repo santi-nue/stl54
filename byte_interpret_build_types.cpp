@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -872,8 +872,8 @@ string    build_field (istream                           & is,
 		(field_type_name.type == "bitstream24") ||
 		(field_type_name.type == "bitstream32"))
 	{
-		field_type_name.P_bitfield.reset(new T_bitfield_definition);
-		build_bitfield_unnamed (field_type_name.type, is, type_definitions, *field_type_name.P_bitfield);
+		field_type_name.P_bitfield_inline.reset(new T_bitfield_definition);
+		build_bitfield_unnamed (field_type_name.type, is, type_definitions, *field_type_name.P_bitfield_inline);
 		field_type_name.type = "bitfield";    // simplification (for register and dissect) 
 
 		M_FATAL_IF_FALSE (read_token_field_name (is, field_type_name.name));
@@ -926,8 +926,8 @@ string    build_field (istream                           & is,
 			field_type_name.str_size_or_parameter = inline_switch_parameter;
 			field_type_name.type = "switch";
 			
-			field_type_name.P_switch.reset(new T_switch_definition);
-			build_switch_unnamed (field_type_name.type, is, type_definitions, *field_type_name.P_switch, return_type);
+			field_type_name.P_switch_inline.reset(new T_switch_definition);
+			build_switch_unnamed (field_type_name.type, is, type_definitions, *field_type_name.P_switch_inline, return_type);
 
 #if 1
 			// Inline switch is a command control bloc (like if and loops)
@@ -2388,6 +2388,171 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_hexa_data (in frame  frame, in string  str_hexa)");
 }
 
+
+
+//*****************************************************************************
+// build_types_finalize struct_fields *****************************************
+//*****************************************************************************
+void    build_types_finalize(T_type_definitions  & type_definitions,
+							 T_field_type_name   & field_type_name);
+
+void    build_types_finalize(T_type_definitions  & type_definitions,
+							 T_struct_fields     & fields)
+{
+    for (T_struct_fields::iterator
+	                         iter  = fields.begin();
+	                         iter != fields.end();
+	                       ++iter)
+    {
+		T_field_type_name   & field = *iter;
+
+		build_types_finalize(type_definitions, field);
+    }
+}
+
+//*****************************************************************************
+// build_types_finalize struct_def ********************************************
+//*****************************************************************************
+
+void    build_types_finalize(T_type_definitions   & type_definitions,
+							 T_struct_definition  & struct_def)
+{
+	build_types_finalize(type_definitions, struct_def.fields);
+}
+
+//*****************************************************************************
+// build_types_finalize bitfield_def ******************************************
+//*****************************************************************************
+
+void    build_types_finalize(T_type_definitions     & type_definitions,
+							 T_bitfield_definition  & bitfield_def)
+{
+    build_types_finalize(type_definitions, bitfield_def.master_field);
+    build_types_finalize(type_definitions, bitfield_def.fields_definition);
+}
+
+//*****************************************************************************
+// build_types_finalize switch_def ********************************************
+//*****************************************************************************
+
+void    build_types_finalize(T_type_definitions   & type_definitions,
+							 T_switch_definition  & switch_def)
+{
+    for (T_switch_case::iterator
+                             iter  = switch_def.switch_case.begin();
+	                         iter != switch_def.switch_case.end();
+	                       ++iter)
+    {
+		T_switch_case_value   & case_val = *iter;
+
+		build_types_finalize(type_definitions, case_val.fields);
+    }
+}
+
+//*****************************************************************************
+// build_types_finalize field *************************************************
+//*****************************************************************************
+
+void    build_types_finalize(T_type_definitions  & type_definitions,
+							 T_field_type_name   & field_type_name)
+{
+	const string  & final_type = field_type_name.type;
+
+	if (field_type_name.P_sub_struct)
+	{
+		build_types_finalize(type_definitions, *field_type_name.P_sub_struct);
+	}
+
+	build_types_finalize(type_definitions, field_type_name.sub_struct_2);
+
+	if (field_type_name.P_bitfield_inline)
+	{
+		build_types_finalize(type_definitions, *field_type_name.P_bitfield_inline);
+	}
+
+	if (field_type_name.P_switch_inline)
+	{
+		build_types_finalize(type_definitions, *field_type_name.P_switch_inline);
+	}
+}
+
+
+
+//*****************************************************************************
+// build_types_finalize *******************************************************
+//*****************************************************************************
+void    build_types_finalize_itself(T_type_definitions  & type_definitions,
+							        T_field_type_name   & field_type_name);
+
+void    build_types_finalize(T_type_definitions  & type_definitions)
+{
+  {
+    T_map_struct_definition  & map_struct_definition = type_definitions.map_struct_definition;
+    for (T_map_struct_definition::iterator
+	                         iter  = map_struct_definition.begin();
+	                         iter != map_struct_definition.end();
+	                       ++iter)
+    {
+      T_struct_definition  & struct_definition = iter->second;
+
+	  build_types_finalize(type_definitions, struct_definition);
+    }
+  }
+
+  {
+    T_map_bitfield_definition  & map_bitfield_definition = type_definitions.map_bitfield_definition;
+    for (T_map_bitfield_definition::iterator
+	                         iter  = map_bitfield_definition.begin();
+	                         iter != map_bitfield_definition.end();
+	                       ++iter)
+    {
+      T_bitfield_definition  & bitfield_definition = iter->second;
+
+	  build_types_finalize(type_definitions, bitfield_definition);
+    }
+  }
+#if 0
+  // Nothing to do
+  {
+    T_map_enum_definition_representation  & map_enum_definition_representation = type_definitions.map_enum_definition_representation;
+    for (T_map_enum_definition_representation::iterator
+	                         iter  = map_enum_definition_representation.begin();
+	                         iter != map_enum_definition_representation.end();
+	                       ++iter)
+    {
+	  T_enum_definition_representation  & enum_definition = iter->second;
+
+	  build_types_finalize(type_definitions, enum_definition);
+    }
+  }
+#endif
+  {
+    T_map_switch_definition  & map_switch_definition = type_definitions.map_switch_definition;
+    for (T_map_switch_definition::iterator
+	                         iter  = map_switch_definition.begin();
+	                         iter != map_switch_definition.end();
+	                       ++iter)
+    {
+	  T_switch_definition  & switch_definition = iter->second;
+
+	  build_types_finalize(type_definitions, switch_definition);
+    }
+  }
+
+  {
+    T_map_function_definition  & map_function_definition = type_definitions.map_function_definition;
+    for (T_map_function_definition::iterator
+	                         iter  = map_function_definition.begin();
+	                         iter != map_function_definition.end();
+	                       ++iter)
+    {
+      T_function_definition  & function_definition = iter->second;
+
+	  build_types_finalize(type_definitions, function_definition.fields);
+    }
+  }
+}
+
 //*****************************************************************************
 // build_types ****************************************************************
 //*****************************************************************************
@@ -2468,10 +2633,12 @@ string    build_types (istream             & is,
   // change the locale for LC_NUMERIC (so 0.236 is a valid number)
   const char  * locale_save = setlocale(LC_NUMERIC, "C");
 
-	const string  NOT_understood_word = build_types2 (is, type_definitions);
+  const string  NOT_understood_word = build_types2 (is, type_definitions);
 
   // restore the saved locale
   setlocale(LC_NUMERIC, locale_save);
+
+  build_types_finalize(type_definitions);
 
 
   return  NOT_understood_word;

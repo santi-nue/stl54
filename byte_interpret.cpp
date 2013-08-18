@@ -1696,8 +1696,6 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
         }
 
 		// Compute all arrays size and total size.
-#define ARRAY_INSIDE
-#ifdef ARRAY_INSIDE
 #define K_ARRAY_MAGIC_NUMBER  50
 		long    array_sizes[K_ARRAY_MAGIC_NUMBER];
 		long    array_indexes[K_ARRAY_MAGIC_NUMBER];
@@ -1961,7 +1959,7 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
 					if (frame_to_bitfield_inline (type_definitions,
 										 in_out_frame_data,
 										 interpret_data,
-										*field_type_name.P_bitfield,
+										*field_type_name.P_bitfield_inline,
 										 new_data_array_name /*new_data_name*/,
 										 data_simple_array_name /*field_type_name.name*/,
 										 os_out,
@@ -1977,7 +1975,7 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
 					if (frame_to_switch (type_definitions,
 										 in_out_frame_data,
 										 interpret_data,
-										*field_type_name.P_switch,
+										*field_type_name.P_switch_inline,
 										 field_type_name.str_size_or_parameter,
 										 field_type_name,
 										 new_data_array_name /*new_data_name*/,
@@ -2045,7 +2043,6 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
 				array_indexes[array_idx] = 0;
 			}
 		}
-#endif
     }
 
     return  true;
@@ -3998,9 +3995,10 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
                       const string                & data_name,
                       const string                & data_simple_name,
                             ostream               & os_out,
-                            ostream               & os_err,
-					  const string                & final_type)
+                            ostream               & os_err)
 {
+	const string   & final_type = field_type_name.type;
+
 	M_STATE_ENTER ("frame_to_string", final_type);
 
 	M_FATAL_IF_FALSE ((final_type == "string") ||
@@ -4283,9 +4281,10 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
                       const string                & data_name,
                       const string                & data_simple_name,
                             ostream               & os_out,
-                            ostream               & os_err,
-					  const string                & final_type)
+                            ostream               & os_err)
 {
+	const string   & final_type = field_type_name.type;
+
 	M_STATE_ENTER ("frame_to_raw", final_type);
 
 	M_FATAL_IF_FALSE ((final_type == "raw") ||
@@ -4463,153 +4462,29 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 
 bool    G_is_a_variable_ICIOA = false;
 
-bool    frame_to_any (const T_type_definitions    & type_definitions,
+typedef bool    (*T_pf_frame_to_any)
+                     (const T_type_definitions    & type_definitions,
 					        T_frame_data          & in_out_frame_data,
 					        T_interpret_data      & interpret_data,
                       const T_field_type_name     & field_type_name,
                       const string                & data_name,
                       const string                & data_simple_name,
                             ostream               & os_out,
-                            ostream               & os_err)
-{
-	M_STATE_ENTER ("frame_to_any",
-                   "data_type= " << field_type_name.type << " data_name= " << data_name);
+                            ostream               & os_err);
 
-	// Hide the field if asked.
-	const int   output_level_offset = field_type_name.get_output_level_offset();
-	C_interpret_output_level_move_temporary    iolmt(interpret_data, output_level_offset);
-
-	// Set temporary the decoder function
-	C_interpret_decode_set_temporary    idst(interpret_data, field_type_name.str_decoder_function);
-
-	// Set temporary the byte order
-	C_interpret_byte_order_set_temporary  ibost(interpret_data, field_type_name.str_byte_order);
-
-
-	string    final_type = field_type_name.type;
-
-    //-------------------------------------------------------------------------
-    // Set a variable.
-    //-------------------------------------------------------------------------
-    if (final_type == "set")
-    {
-		// ICIOA must verify resulting value is compatible with already recorded value ?
-		const C_value    value = field_type_name.get_set_expression().
-			compute_expression(type_definitions, interpret_data, in_out_frame_data,
-								    data_name, data_simple_name, os_out, os_err);
-		// Manage expressions inside arrays
-		if (data_simple_name.rfind(']') != string::npos)
-		{
-			const string  new_name = compute_expressions_in_array(type_definitions, interpret_data, in_out_frame_data, data_simple_name, data_name, data_simple_name, os_out, os_err);
-			interpret_data.set_read_variable (new_name, value);
-		}
-		else
-		{
-			interpret_data.set_read_variable (data_simple_name, value);
-		}
-
-		return  true;
-	}
-
-    //-------------------------------------------------------------------------
-    // Function call.
-    //-------------------------------------------------------------------------
-    if (final_type == "call")
-    {
-		const T_function_definition  & fct_def = type_definitions.get_function(field_type_name.name);
-
-		if (frame_to_function (type_definitions,
-			                 interpret_data,
-			                 in_out_frame_data,
-                             fct_def,
-							 field_type_name,
-                             data_name,
-                             data_simple_name,
-                             os_out, os_err) != true)
-        {
-            os_err << "Error function call "
-                   << " data= " << data_name << endl;
-            return  false;
-        }
-
-		return  true;
-	}
-
-    //-------------------------------------------------------------------------
-    // Array ?   managed inside frame_to_field
-    //-------------------------------------------------------------------------
-
-    //-------------------------------------------------------------------------
-    // Struct ?
-    //-------------------------------------------------------------------------
-    {
-		const T_struct_definition  * P_struct_def = type_definitions.get_P_struct(final_type);
-
-		if (P_struct_def != NULL)
-        {
-			if ((field_type_name.is_a_variable() == true) &&
-				(field_type_name.get_var_expression().get_original_string_expression() != "zero"))
-			{
-				// Compute expression -> name of the original struct
-				C_value  obj_value = field_type_name.get_var_expression().
-					compute_expression(
-										type_definitions, interpret_data, in_out_frame_data,
-										data_name, data_simple_name, os_out, os_err);
-
-				// Duplicate with new name (which already specified into name group)
-				interpret_data.duplicate_multiple_values(obj_value.get_str(), "");
-
-				// ICIOA affichage !
-
-				return  true;
-			}
-
-			bool    save_G_is_a_variable_ICIOA = G_is_a_variable_ICIOA;
-			if (field_type_name.is_a_variable() == true)
-			{
-				// Behavior with commands, loops, conditional ...
-				//  is absolutely not guaranteed.
-				G_is_a_variable_ICIOA = true;
-			}
-
-            if (frame_to_struct (type_definitions,
-				                 in_out_frame_data,
-								 interpret_data,
-                                *P_struct_def,
-                                 data_name,
-                                 data_simple_name,
-                                 os_out, os_err) != true)
-            {
-				G_is_a_variable_ICIOA = save_G_is_a_variable_ICIOA;
-                os_err << "Error struct "
-                       << " data= " << data_name << endl;
-                return  false;
-            }
-			G_is_a_variable_ICIOA = save_G_is_a_variable_ICIOA;
-
-			return  true;
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    // Enum ?
-    //-------------------------------------------------------------------------
-    bool    is_enum = false;
-
-	const T_enum_definition_representation  * P_enum_def = type_definitions.get_P_enum(final_type);
-	if (P_enum_def != NULL)
-	{
-		is_enum = true;
-
-		final_type = P_enum_def->representation_type;
-	}
+//*****************************************************************************
+// frame_to_any simple type ***************************************************
+//*****************************************************************************
 
     //-------------------------------------------------------------------------
     // Macro for read a simple type ...
+	// NB: will NOT work if, for example, sizeof(unsigned int) != 32
     //-------------------------------------------------------------------------
-#define M_READ_SIMPLE_TYPE_BASE(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)    \
-    if (final_type == TYPE_NAME)                                              \
-    {                                                                         \
+
+#define M_READ_SIMPLE_TYPE_BASE_BEGIN(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)    \
+    {
+
+#define M_READ_SIMPLE_TYPE_BASE_COMPUTE(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)    \
         M_FATAL_IF_GT (TYPE_BIT_SIZE, TYPE_IMPL_BIT_SIZE);                    \
                                                                               \
 	    int   type_bit_size_for_builder = TYPE_BIT_SIZE;                      \
@@ -4701,11 +4576,9 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
 				bit_position_offset_into_initial_frame,                       \
 				in_out_frame_data.get_bit_offset() - in_out_frame_data_for_builder.get_bit_offset());  \
 			in_out_frame_data_for_builder = in_out_frame_data;                \
-		}                                                                     \
-                                                                              \
-        if (strncmp (final_type.c_str (), "spare", 5) == 0)                   \
-            return  true;                                                     \
-                                                                              \
+		}
+
+#define M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)    \
 		bool    no_error = true;                                              \
 		T_attribute_value    attribute_value;                                 \
 		string  str_value;                                                    \
@@ -4733,416 +4606,1059 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
                                 field_type_name, data_name, data_simple_name, \
 								attribute_value, str_value,                   \
 						        final_type, type_bit_size_for_builder,        \
-						        interpret_data.is_little_endian(), ! no_error);           \
-                                                                              \
+						        interpret_data.is_little_endian(), ! no_error);
+
+#define M_READ_SIMPLE_TYPE_BASE_END(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)    \
         return  true;                                                         \
     }
 
-#define M_READ_SIMPLE_TYPE(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL)                 \
-        M_READ_SIMPLE_TYPE_BASE(TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)
 
-	// NB: will NOT work if, for example, sizeof(unsigned int) != 32
-    M_READ_SIMPLE_TYPE ( "int8",    8,    signed char)
-    M_READ_SIMPLE_TYPE ("uint8",    8,  unsigned char)
-    M_READ_SIMPLE_TYPE ( "int16",  16,    signed short)
-    M_READ_SIMPLE_TYPE ("uint16",  16,  unsigned short)
-    M_READ_SIMPLE_TYPE ( "int24",  24,    signed int)
-    M_READ_SIMPLE_TYPE ("uint24",  24,  unsigned int)
-    M_READ_SIMPLE_TYPE ( "int32",  32,    signed int)
-    M_READ_SIMPLE_TYPE ("uint32",  32,  unsigned int)
-    M_READ_SIMPLE_TYPE ( "int40",  40,    signed long long)
-    M_READ_SIMPLE_TYPE ("uint40",  40,  unsigned long long)
-    M_READ_SIMPLE_TYPE ( "int48",  48,    signed long long)
-    M_READ_SIMPLE_TYPE ("uint48",  48,  unsigned long long)
-    M_READ_SIMPLE_TYPE ( "int64",  64,    signed long long)
-    M_READ_SIMPLE_TYPE ("uint64",  64,  unsigned long long)
-    M_READ_SIMPLE_TYPE ("float32", 32, float)
-    M_READ_SIMPLE_TYPE ("float64", 64, double)
-// alias    M_READ_SIMPLE_TYPE ("bool",      sizeof(bool)*8,  bool)
-// enum     M_READ_SIMPLE_TYPE ("bool8",    8, unsigned char)
-// enum     M_READ_SIMPLE_TYPE ("bool16",  16, unsigned short)
-// enum     M_READ_SIMPLE_TYPE ("bool32",  32, unsigned int)
-    M_READ_SIMPLE_TYPE ("spare",    8, unsigned char)
-    M_READ_SIMPLE_TYPE ( "char",    8,          char)
-    M_READ_SIMPLE_TYPE ("schar",    8,   signed char)
-    M_READ_SIMPLE_TYPE ("uchar",    8, unsigned char)
-    M_READ_SIMPLE_TYPE ("msg",      1, unsigned char)
 
-    //-------------------------------------------------------------------------
-	// string
-    //-------------------------------------------------------------------------
-	if ((final_type == "string") ||
-		(final_type == "string_nl"))
-    {
-		if (frame_to_string (type_definitions, in_out_frame_data, interpret_data,
-							  field_type_name, data_name, data_simple_name,
-							  os_out, os_err,
-							  final_type) != true)
-		{
-            return  false;
-		}
+#define M_FCT_READ_SIMPLE_TYPE(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL)             \
+bool    frame_to_any_ ## TYPE_NAME                                            \
+                     (const T_type_definitions    & type_definitions,         \
+					        T_frame_data          & in_out_frame_data,        \
+					        T_interpret_data      & interpret_data,           \
+                      const T_field_type_name     & field_type_name,          \
+                      const string                & data_name,                \
+                      const string                & data_simple_name,         \
+                            ostream               & os_out,                   \
+                            ostream               & os_err)                   \
+{                                                                             \
+	const string                            & final_type = field_type_name.type;        \
+    bool                                      is_enum = false;        \
+	const T_enum_definition_representation  * P_enum_def = NULL;        \
+	M_READ_SIMPLE_TYPE_BASE_BEGIN(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)       \
+	M_READ_SIMPLE_TYPE_BASE_COMPUTE(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)     \
+	M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)  \
+	M_READ_SIMPLE_TYPE_BASE_END(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)         \
+}                                                                             \
+bool    frame_to_any_ ## TYPE_NAME ## _enum                                           \
+                     (const T_type_definitions    & type_definitions,         \
+					        T_frame_data          & in_out_frame_data,        \
+					        T_interpret_data      & interpret_data,           \
+                      const T_field_type_name     & field_type_name,          \
+                      const string                & data_name,                \
+                      const string                & data_simple_name,         \
+                            ostream               & os_out,                   \
+                            ostream               & os_err)                   \
+{                                                                             \
+    bool                                      is_enum = true;        \
+	const T_enum_definition_representation  * P_enum_def = field_type_name.P_type_enum_def;        \
+	const string                            & final_type = P_enum_def->representation_type;        \
+	M_READ_SIMPLE_TYPE_BASE_BEGIN(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)       \
+	M_READ_SIMPLE_TYPE_BASE_COMPUTE(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)     \
+	M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)  \
+	M_READ_SIMPLE_TYPE_BASE_END(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)         \
+}
 
-		return  true;
-    }
 
-    //-------------------------------------------------------------------------
-	// raw ...
-    //-------------------------------------------------------------------------
-    if ((final_type == "raw") ||
-		(final_type == "subproto") ||
-		(final_type == "insproto"))
-    {
-		if (frame_to_raw (type_definitions, in_out_frame_data, interpret_data,
-							  field_type_name, data_name, data_simple_name,
-							  os_out, os_err,
-							  final_type) != true)
-		{
-            return  false;
-		}
 
-		return  true;
-    }
+M_FCT_READ_SIMPLE_TYPE (uint1,    1,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int2,    2,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint2,    2,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int3,    3,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint3,    3,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int4,    4,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint4,    4,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int5,    5,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint5,    5,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int6,    6,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint6,    6,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int7,    7,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint7,    7,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int8,    8,    signed char)
+M_FCT_READ_SIMPLE_TYPE (uint8,    8,  unsigned char)
+M_FCT_READ_SIMPLE_TYPE ( int9,    9,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint9,    9,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int10,  10,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint10,  10,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int11,  11,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint11,  11,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int12,  12,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint12,  12,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int13,  13,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint13,  13,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int14,  14,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint14,  14,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int15,  15,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint15,  15,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int16,  16,    signed short)
+M_FCT_READ_SIMPLE_TYPE (uint16,  16,  unsigned short)
+M_FCT_READ_SIMPLE_TYPE ( int17,  17,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint17,  17,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int18,  18,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint18,  18,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int19,  19,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint19,  19,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int20,  20,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint20,  20,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int21,  21,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint21,  21,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int22,  22,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint22,  22,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int23,  23,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint23,  23,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int24,  24,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint24,  24,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int25,  25,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint25,  25,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int26,  26,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint26,  26,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int27,  27,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint27,  27,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int28,  28,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint28,  28,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int29,  29,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint29,  29,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int30,  30,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint30,  30,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int31,  31,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint31,  31,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int32,  32,    signed int)
+M_FCT_READ_SIMPLE_TYPE (uint32,  32,  unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( int40,  40,    signed long long)
+M_FCT_READ_SIMPLE_TYPE (uint40,  40,  unsigned long long)
+M_FCT_READ_SIMPLE_TYPE ( int48,  48,    signed long long)
+M_FCT_READ_SIMPLE_TYPE (uint48,  48,  unsigned long long)
+M_FCT_READ_SIMPLE_TYPE ( int64,  64,    signed long long)
+M_FCT_READ_SIMPLE_TYPE (uint64,  64,  unsigned long long)
+M_FCT_READ_SIMPLE_TYPE (float32, 32, float)
+M_FCT_READ_SIMPLE_TYPE (float64, 64, double)
+// alias M_FCT_READ_SIMPLE_TYPE (bool,      sizeof(bool)*8,  bool)
+// enum  M_FCT_READ_SIMPLE_TYPE (bool8,    8, unsigned char)
+// enum  M_FCT_READ_SIMPLE_TYPE (bool16,  16, unsigned short)
+// enum  M_FCT_READ_SIMPLE_TYPE (bool32,  32, unsigned int)
+M_FCT_READ_SIMPLE_TYPE ( char,    8,          char)
+M_FCT_READ_SIMPLE_TYPE (schar,    8,   signed char)
+M_FCT_READ_SIMPLE_TYPE (uchar,    8, unsigned char)
+M_FCT_READ_SIMPLE_TYPE (msg,      1, unsigned char)
 
-    //-------------------------------------------------------------------------
-	// bit integers
-    //-------------------------------------------------------------------------
+#define M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)
+M_FCT_READ_SIMPLE_TYPE (spare,    8, unsigned char)
+
+//*****************************************************************************
+// frame_to_any_set ***********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_set (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	// ICIOA must verify resulting value is compatible with already recorded value ?
+	const C_value    value = field_type_name.get_set_expression().
+		compute_expression(type_definitions, interpret_data, in_out_frame_data,
+							    data_name, data_simple_name, os_out, os_err);
+	// Manage expressions inside arrays
+	if (data_simple_name.rfind(']') != string::npos)
 	{
-		long    bit_size = 0;
-		if ((strncmp(final_type.c_str(), "uint", 4) == 0) &&
-			(get_number(final_type.c_str()+4, &bit_size) == true) &&
-			(bit_size >=  1) &&
-			(bit_size <= 31))
+		const string  new_name = compute_expressions_in_array(type_definitions, interpret_data, in_out_frame_data, data_simple_name, data_name, data_simple_name, os_out, os_err);
+		interpret_data.set_read_variable (new_name, value);
+	}
+	else
+	{
+		interpret_data.set_read_variable (data_simple_name, value);
+	}
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_call **********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_call (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const T_function_definition  & fct_def = type_definitions.get_function(field_type_name.name);
+
+	if (frame_to_function (type_definitions,
+		                 interpret_data,
+		                 in_out_frame_data,
+                         fct_def,
+						 field_type_name,
+                         data_name,
+                         data_simple_name,
+                         os_out, os_err) != true)
+    {
+        os_err << "Error function call "
+               << " data= " << data_name << endl;
+        return  false;
+    }
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_struct ********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_struct (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const T_struct_definition  * P_struct_def = field_type_name.P_type_struct_def;
+
+	if ((field_type_name.is_a_variable() == true) &&
+		(field_type_name.get_var_expression().get_original_string_expression() != "zero"))
+	{
+		// Compute expression -> name of the original struct
+		C_value  obj_value = field_type_name.get_var_expression().
+			compute_expression(
+								type_definitions, interpret_data, in_out_frame_data,
+								data_name, data_simple_name, os_out, os_err);
+
+		// Duplicate with new name (which already specified into name group)
+		interpret_data.duplicate_multiple_values(obj_value.get_str(), "");
+
+		// ICIOA affichage !
+
+		return  true;
+	}
+
+	bool    save_G_is_a_variable_ICIOA = G_is_a_variable_ICIOA;
+	if (field_type_name.is_a_variable() == true)
+	{
+		// Behavior with commands, loops, conditional ...
+		//  is absolutely not guaranteed.
+		G_is_a_variable_ICIOA = true;
+	}
+
+    if (frame_to_struct (type_definitions,
+		                 in_out_frame_data,
+						 interpret_data,
+                        *P_struct_def,
+                         data_name,
+                         data_simple_name,
+                         os_out, os_err) != true)
+    {
+		G_is_a_variable_ICIOA = save_G_is_a_variable_ICIOA;
+        os_err << "Error struct "
+               << " data= " << data_name << endl;
+        return  false;
+    }
+	G_is_a_variable_ICIOA = save_G_is_a_variable_ICIOA;
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_switch ********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_switch (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const T_switch_definition  * P_switch = field_type_name.P_type_switch_def;
+
+	if (frame_to_switch (type_definitions,
+					 in_out_frame_data,
+					 interpret_data,
+					*P_switch,
+					 field_type_name.str_size_or_parameter,
+					 field_type_name,
+					 data_name,
+					 data_simple_name,
+					 os_out, os_err) != true)
+	{
+		// Error notification done into the function.
+		return  false;
+	}
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_bitfield ******************************************************
+//*****************************************************************************
+
+bool    frame_to_any_bitfield (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const T_bitfield_definition  * P_bitfield_def = field_type_name.P_type_bitfield_def;
+
+	if (frame_to_bitfield (type_definitions,
+		                 in_out_frame_data,
+						 interpret_data,
+						*P_bitfield_def,
+                         data_name,
+                         data_simple_name,
+                         os_out, os_err) != true)
+    {
+        os_err << "Error bitfield fields_definition"
+               << " data= " << data_name << endl;
+        return  false;
+    }
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_padding_bits **************************************************
+//*****************************************************************************
+
+bool    frame_to_any_padding_bits (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const short   remaining_bits_in_byte = in_out_frame_data.get_remaining_bits() % 8;
+	in_out_frame_data.move_bit_forward(remaining_bits_in_byte);
+    return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_print *********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_print (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const string  & final_type = field_type_name.type;
+
+	return  frame_to_print (type_definitions,
+							in_out_frame_data,
+							interpret_data,
+							field_type_name,
+							final_type, data_name, data_simple_name,
+							os_out, os_err);
+}
+
+//*****************************************************************************
+// frame_to_any_error *********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_error (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const string  & final_type = field_type_name.type;
+
+	return  frame_to_print_any(type_definitions, in_out_frame_data,
+					   interpret_data,
+					   field_type_name, final_type, data_name, data_simple_name,
+					   os_out, os_err,
+					   interpret_builder_cmd_error);
+}
+
+//*****************************************************************************
+// frame_to_any_fatal *********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_fatal (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const string  & final_type = field_type_name.type;
+
+	frame_to_print_any(type_definitions, in_out_frame_data,
+					   interpret_data,
+					   field_type_name, final_type, data_name, data_simple_name,
+					   os_out, os_err,
+					   interpret_builder_cmd_fatal);
+    return  false;
+}
+
+//*****************************************************************************
+// frame_to_any_output ********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_output (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+    //-------------------------------------------------------------------------
+    // Output (of data read) control.
+    //-------------------------------------------------------------------------
+
+    if (data_simple_name == "--")
+        interpret_data.decr_output_level ();
+    else if (data_simple_name == "++")
+        interpret_data.incr_output_level ();
+    else
+    {
+        os_err << "Error output  " << data_name << endl;
+        interpret_builder_error(type_definitions, in_out_frame_data,
+			                    field_type_name, data_name, data_simple_name,
+								"Error unknow output value " + data_simple_name);
+        return  false;
+    }
+
+    return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_byte_order ****************************************************
+//*****************************************************************************
+
+bool    frame_to_any_byte_order (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const string  & final_type = field_type_name.type;
+
+    //-------------------------------------------------------------------------
+    // Byte order (of data read) control.
+    //-------------------------------------------------------------------------
+    if (data_simple_name == "big_endian")
+    {
+        interpret_data.set_big_endian();
+    }
+    else if (data_simple_name == "little_endian")
+    {
+        interpret_data.set_little_endian();
+    }
+    else if (data_simple_name == "as_host")
+    {
+        interpret_data.set_as_host();
+    }
+    else
+    {
+        os_err << "Error " <<  final_type << " " << data_name << endl;
+        interpret_builder_error(type_definitions, in_out_frame_data,
+			                    field_type_name, data_name, data_simple_name,
+								"Error unknow byte_order " + data_simple_name);
+        return  false;
+    }
+
+    return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_decoder *******************************************************
+//*****************************************************************************
+
+bool    frame_to_any_decoder (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	interpret_data.set_decode_function(data_simple_name);
+    return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_save_position *************************************************
+//*****************************************************************************
+
+bool    frame_to_any_save_position (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+    //-------------------------------------------------------------------------
+    // Position into data to read.
+    //-------------------------------------------------------------------------
+    const string  & pos_name = data_simple_name;
+    interpret_data.add_read_variable (data_name, pos_name,
+									  in_out_frame_data.get_bit_offset_into_initial_frame());
+    return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_position ******************************************************
+//*****************************************************************************
+
+bool    frame_to_any_position (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const string  & final_type = field_type_name.type;
+
+    //-------------------------------------------------------------------------
+    // Position into data to read.
+    //-------------------------------------------------------------------------
+    long                  bit_offset_pos = 0;
+
+	if (final_type == "goto_position")
+	{
+		const string  & pos_name = data_simple_name;
+		long long       value_int_ll;
+		if (get_complex_variable_integer_value (interpret_data,
+												pos_name,
+												value_int_ll) != E_rc_ok)
 		{
-			/* bsew uintXX */
-		    M_READ_SIMPLE_TYPE (final_type.c_str(),  bit_size,  unsigned int) 
-			return  true;
+			os_err << "Error unknow position " << data_name << endl;
+			interpret_builder_error(type_definitions, in_out_frame_data,
+									field_type_name, data_name, data_simple_name,
+									"Error unknow position " + data_simple_name);
+			return  false;
 		}
-		if ((strncmp(final_type.c_str(), "int", 3) == 0) &&
-			(get_number(final_type.c_str()+3, &bit_size) == true) &&
-			(bit_size >=  2) &&
-			(bit_size <= 31))
+
+		bit_offset_pos = static_cast<long>(value_int_ll) - in_out_frame_data.get_bit_offset_into_initial_frame();
+	}
+	else
+	{
+		const string  & offset_pos_name = data_simple_name;
+		long long       value_int_ll;
+		if (get_complex_variable_integer_value (interpret_data,
+												offset_pos_name,
+												value_int_ll) != E_rc_ok)
 		{
-			/* bsew intXX */
-		    M_READ_SIMPLE_TYPE (final_type.c_str(),  bit_size,    signed int)
-			return  true;
+			os_err << "Error unknow position " << data_name << endl;
+			interpret_builder_error(type_definitions, in_out_frame_data,
+									field_type_name, data_name, data_simple_name,
+									"Error unknow position " + data_simple_name);
+			return  false;
+		}
+
+		bit_offset_pos = static_cast<long>(value_int_ll);
+		if (final_type == "move_position_bytes")
+		{
+			bit_offset_pos *= 8;
+		}
+	}
+
+    const long    bit_offset_pos_after_end = bit_offset_pos - in_out_frame_data.get_remaining_bits();
+    if (bit_offset_pos_after_end > 0)
+    {
+        os_err << "Error " << final_type << " " << data_name
+               << " goes " << bit_offset_pos_after_end
+               << " bits after end of data." << endl;
+        interpret_builder_error(type_definitions, in_out_frame_data,
+			                    field_type_name, data_name, data_simple_name,
+								"Error " + final_type + " " + data_simple_name +
+								" goes " + get_string(bit_offset_pos_after_end) +
+								" bits after end of data.");
+        return  false;
+    }
+
+	const long    bit_offset_pos_before_begin = -bit_offset_pos - in_out_frame_data.get_bit_offset();
+    if (bit_offset_pos_before_begin > 0)
+    {
+        os_err << "Error " << final_type << " " << data_name
+               << " goes " << bit_offset_pos_before_begin
+               << " bits before beginning of data." << endl;
+        interpret_builder_error(type_definitions, in_out_frame_data,
+			                    field_type_name, data_name, data_simple_name,
+								"Error " + final_type + " " + data_simple_name +
+								" goes " + get_string(bit_offset_pos_before_begin) +
+								" bits before beginning of data.");
+        return  false;
+    }
+
+	in_out_frame_data.move_bit(bit_offset_pos);
+
+    return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_check_eof_distance ********************************************
+//*****************************************************************************
+
+bool    frame_to_any_check_eof_distance (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	const string  & final_type = field_type_name.type;
+
+	//-------------------------------------------------------------------------
+	// Check End Of Frame distance.
+	// I.e. check the number of bytes not already read.
+	//-------------------------------------------------------------------------
+
+	long    distance = -1;
+
+    if (get_number (data_simple_name.c_str (), &distance) == false)
+    {
+        os_err << "Error " << final_type << " " << data_name
+               << " is NOT a number." << endl;
+        interpret_builder_error(type_definitions, in_out_frame_data,
+			                    field_type_name, data_name, data_simple_name,
+								"Error " + final_type + " " + data_simple_name + " is not a number");
+        return  false;
+    }
+	if (final_type == "check_eof_distance_bytes")
+	{
+		distance *= 8;
+	}
+
+    if (distance != in_out_frame_data.get_remaining_bits())
+    {
+        os_err << "Error " << final_type << " " << distance
+               << " bits != " << in_out_frame_data.get_remaining_bits()
+			   << " bits"
+               << endl;
+        interpret_builder_error(type_definitions, in_out_frame_data,
+			                    field_type_name, data_name, data_simple_name,
+								"Error " + final_type + " " + get_string(distance) + " bits != " +
+								 get_string(in_out_frame_data.get_remaining_bits()) + " bits");
+        return  false;
+    }
+
+    return  true;
+}
+
+//*****************************************************************************
+// frame_to_any_chrono ********************************************************
+//*****************************************************************************
+
+bool    frame_to_any_chrono (
+				      const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+    //-------------------------------------------------------------------------
+    // Chrono.
+	// Display some performance measure.
+    // For integration only.
+    //-------------------------------------------------------------------------
+	const string  & chrono_cmd = field_type_name.name;
+	const string    chrono_val = interpret_data.compute_chrono_value_from_command(chrono_cmd);
+	if (chrono_val != "")
+	{
+		return  frame_to_print (type_definitions,
+								in_out_frame_data,
+								interpret_data,
+								field_type_name,
+								"print", chrono_val, chrono_val,
+								os_out, os_err);
+	}
+
+    return  true;
+}
+
+//*****************************************************************************
+// build_types_finalize field *************************************************
+//*****************************************************************************
+
+void    build_types_finalize_itself(T_type_definitions  & type_definitions,
+							        T_field_type_name   & field_type_name)
+{
+	string    final_type = field_type_name.type;
+
+    if (final_type == "set")
+    {
+		T_pf_frame_to_any  pf = frame_to_any_set;
+		field_type_name.pf_frame_to_any = pf;
+		return;
+	}
+
+    if (final_type == "call")
+    {
+		T_pf_frame_to_any  pf = frame_to_any_call;
+		field_type_name.pf_frame_to_any = pf;
+		return;
+	}
+
+    {
+		const T_struct_definition  * P_struct_def = type_definitions.get_P_struct(final_type);
+		if (P_struct_def != NULL)
+        {
+			T_pf_frame_to_any  pf = frame_to_any_struct;
+			field_type_name.pf_frame_to_any = pf;
+			field_type_name.P_type_struct_def = P_struct_def;
+			return;
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // Enum ?
+    //-------------------------------------------------------------------------
+    bool    is_enum = false;
+	{
+		const T_enum_definition_representation  * P_enum_def = type_definitions.get_P_enum(final_type);
+		if (P_enum_def != NULL)
+		{
+			field_type_name.P_type_enum_def = P_enum_def;
+			is_enum = true;
+
+			final_type = P_enum_def->representation_type;
 		}
 	}
 
     //-------------------------------------------------------------------------
-	// padding_bits
+    // Macro for read a simple type ...
     //-------------------------------------------------------------------------
-    if (final_type == "padding_bits")
+#undef  M_READ_SIMPLE_TYPE
+#define M_READ_SIMPLE_TYPE(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL)                 \
+	if (final_type == #TYPE_NAME)                                             \
+	{                                                                         \
+		T_pf_frame_to_any  pf = frame_to_any_ ##  TYPE_NAME;                  \
+		if (is_enum == true)                                                  \
+		{                                                                     \
+			pf = frame_to_any_ ##  TYPE_NAME ## _enum;                        \
+		}                                                                     \
+		field_type_name.pf_frame_to_any = pf;                                 \
+		return;                                                               \
+	}
+
+
+    M_READ_SIMPLE_TYPE (uint1,    1,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int2,    2,    signed int)
+    M_READ_SIMPLE_TYPE (uint2,    2,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int3,    3,    signed int)
+    M_READ_SIMPLE_TYPE (uint3,    3,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int4,    4,    signed int)
+    M_READ_SIMPLE_TYPE (uint4,    4,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int5,    5,    signed int)
+    M_READ_SIMPLE_TYPE (uint5,    5,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int6,    6,    signed int)
+    M_READ_SIMPLE_TYPE (uint6,    6,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int7,    7,    signed int)
+    M_READ_SIMPLE_TYPE (uint7,    7,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int8,    8,    signed char)
+    M_READ_SIMPLE_TYPE (uint8,    8,  unsigned char)
+
+    M_READ_SIMPLE_TYPE ( int9,    9,    signed int)
+    M_READ_SIMPLE_TYPE (uint9,    9,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int10,  10,    signed int)
+    M_READ_SIMPLE_TYPE (uint10,  10,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int11,  11,    signed int)
+    M_READ_SIMPLE_TYPE (uint11,  11,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int12,  12,    signed int)
+    M_READ_SIMPLE_TYPE (uint12,  12,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int13,  13,    signed int)
+    M_READ_SIMPLE_TYPE (uint13,  13,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int14,  14,    signed int)
+    M_READ_SIMPLE_TYPE (uint14,  14,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int15,  15,    signed int)
+    M_READ_SIMPLE_TYPE (uint15,  15,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int16,  16,    signed short)
+    M_READ_SIMPLE_TYPE (uint16,  16,  unsigned short)
+
+    M_READ_SIMPLE_TYPE ( int17,  17,    signed int)
+    M_READ_SIMPLE_TYPE (uint17,  17,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int18,  18,    signed int)
+    M_READ_SIMPLE_TYPE (uint18,  18,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int19,  19,    signed int)
+    M_READ_SIMPLE_TYPE (uint19,  19,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int20,  20,    signed int)
+    M_READ_SIMPLE_TYPE (uint20,  20,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int21,  21,    signed int)
+    M_READ_SIMPLE_TYPE (uint21,  21,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int22,  22,    signed int)
+    M_READ_SIMPLE_TYPE (uint22,  22,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int23,  23,    signed int)
+    M_READ_SIMPLE_TYPE (uint23,  23,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int24,  24,    signed int)
+    M_READ_SIMPLE_TYPE (uint24,  24,  unsigned int)
+
+    M_READ_SIMPLE_TYPE ( int25,  25,    signed int)
+    M_READ_SIMPLE_TYPE (uint25,  25,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int26,  26,    signed int)
+    M_READ_SIMPLE_TYPE (uint26,  26,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int27,  27,    signed int)
+    M_READ_SIMPLE_TYPE (uint27,  27,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int28,  28,    signed int)
+    M_READ_SIMPLE_TYPE (uint28,  28,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int29,  29,    signed int)
+    M_READ_SIMPLE_TYPE (uint29,  29,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int30,  30,    signed int)
+    M_READ_SIMPLE_TYPE (uint30,  30,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int31,  31,    signed int)
+    M_READ_SIMPLE_TYPE (uint31,  31,  unsigned int)
+    M_READ_SIMPLE_TYPE ( int32,  32,    signed int)
+    M_READ_SIMPLE_TYPE (uint32,  32,  unsigned int)
+
+    M_READ_SIMPLE_TYPE ( int40,  40,    signed long long)
+    M_READ_SIMPLE_TYPE (uint40,  40,  unsigned long long)
+    M_READ_SIMPLE_TYPE ( int48,  48,    signed long long)
+    M_READ_SIMPLE_TYPE (uint48,  48,  unsigned long long)
+    M_READ_SIMPLE_TYPE ( int64,  64,    signed long long)
+    M_READ_SIMPLE_TYPE (uint64,  64,  unsigned long long)
+    M_READ_SIMPLE_TYPE (float32, 32, float)
+    M_READ_SIMPLE_TYPE (float64, 64, double)
+// alias    M_READ_SIMPLE_TYPE ("bool",      sizeof(bool)*8,  bool)
+// enum     M_READ_SIMPLE_TYPE ("bool8",    8, unsigned char)
+// enum     M_READ_SIMPLE_TYPE ("bool16",  16, unsigned short)
+// enum     M_READ_SIMPLE_TYPE ("bool32",  32, unsigned int)
+    M_READ_SIMPLE_TYPE (spare,    8, unsigned char)
+    M_READ_SIMPLE_TYPE ( char,    8,          char)
+    M_READ_SIMPLE_TYPE (schar,    8,   signed char)
+    M_READ_SIMPLE_TYPE (uchar,    8, unsigned char)
+    M_READ_SIMPLE_TYPE (msg,      1, unsigned char)
+
+
+	if ((final_type == "string") ||
+		(final_type == "string_nl"))
     {
-		const short   remaining_bits_in_byte = in_out_frame_data.get_remaining_bits() % 8;
-		in_out_frame_data.move_bit_forward(remaining_bits_in_byte);
-        return  true;
+		T_pf_frame_to_any  pf = frame_to_string;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // Switch ?
-    //-------------------------------------------------------------------------
+	if ((final_type == "raw") ||
+		(final_type == "subproto") ||
+		(final_type == "insproto"))
+    {
+		T_pf_frame_to_any  pf = frame_to_raw;
+		field_type_name.pf_frame_to_any = pf;
+		return;
+    }
+
     {
 		const T_switch_definition  * P_switch = type_definitions.get_P_switch(final_type);
 		if (P_switch != NULL_PTR)
 		{
-			if (frame_to_switch (type_definitions,
-			                 in_out_frame_data,
-							 interpret_data,
-                            *P_switch,
-							 field_type_name.str_size_or_parameter,
-							 field_type_name,
-                             data_name,
-                             data_simple_name,
-                             os_out, os_err) != true)
-			{
-				// Error notification done into the function.
-				return  false;
-			}
-
-			return  true;
+			T_pf_frame_to_any  pf = frame_to_any_switch;
+			field_type_name.pf_frame_to_any = pf;
+			field_type_name.P_type_switch_def = P_switch;
+			return;
         }
     }
 
-    //-------------------------------------------------------------------------
-    // Bitfield ?
-    //-------------------------------------------------------------------------
-    {
+	{
 		const T_bitfield_definition  * P_bitfield_def = type_definitions.get_P_bitfield(final_type);
-
 		if (P_bitfield_def != NULL)
-        {
-			if (frame_to_bitfield (type_definitions,
-				                 in_out_frame_data,
-								 interpret_data,
-								*P_bitfield_def,
-                                 data_name,
-                                 data_simple_name,
-                                 os_out, os_err) != true)
-            {
-                os_err << "Error bitfield fields_definition"
-                       << " data= " << data_name << endl;
-                return  false;
-            }
+		{
+			T_pf_frame_to_any  pf = frame_to_any_bitfield;
+			field_type_name.pf_frame_to_any = pf;
+			field_type_name.P_type_bitfield_def = P_bitfield_def;
+			return;
+		}
+	}
 
-			return  true;
-        }
+    if (final_type == "padding_bits")
+    {
+		T_pf_frame_to_any  pf = frame_to_any_padding_bits;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // [debug_]print
-    //-------------------------------------------------------------------------
     if ((final_type == "debug_print") || (final_type == "print"))
     {
-        return  frame_to_print (type_definitions,
-			                    in_out_frame_data,
-								interpret_data,
-								field_type_name,
-                                final_type, data_name, data_simple_name,
-                                os_out, os_err);
+		T_pf_frame_to_any  pf = frame_to_any_print;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // error, warn ...
-    //-------------------------------------------------------------------------
     if ((final_type == "chat") ||
 		(final_type == "note") ||
 		(final_type == "warning") ||
 		(final_type == "error"))
     {
-		return  frame_to_print_any(type_definitions, in_out_frame_data,
-						   interpret_data,
-						   field_type_name, final_type, data_name, data_simple_name,
-						   os_out, os_err,
-						   interpret_builder_cmd_error);
+		T_pf_frame_to_any  pf = frame_to_any_error;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // fatal
-    //-------------------------------------------------------------------------
     if (final_type == "fatal")
     {
-		frame_to_print_any(type_definitions, in_out_frame_data,
-						   interpret_data,
-						   field_type_name, final_type, data_name, data_simple_name,
-						   os_out, os_err,
-						   interpret_builder_cmd_fatal);
-        return  false;
+		T_pf_frame_to_any  pf = frame_to_any_fatal;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // Output (of data read) control.
-    //-------------------------------------------------------------------------
     if (final_type == "output")
     {
-        if (data_simple_name == "--")
-            interpret_data.decr_output_level ();
-        else if (data_simple_name == "++")
-            interpret_data.incr_output_level ();
-        else
-        {
-            os_err << "Error output  " << data_name << endl;
-            interpret_builder_error(type_definitions, in_out_frame_data,
-				                    field_type_name, data_name, data_simple_name,
-									"Error unknow output value " + data_simple_name);
-            return  false;
-        }
-
-        return  true;
+		T_pf_frame_to_any  pf = frame_to_any_output;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // Byte order (of data read) control.
-    //-------------------------------------------------------------------------
     if (final_type == "byte_order")
     {
-        if (data_simple_name == "big_endian")
-        {
-            interpret_data.set_big_endian();
-        }
-        else if (data_simple_name == "little_endian")
-        {
-            interpret_data.set_little_endian();
-        }
-        else if (data_simple_name == "as_host")
-        {
-            interpret_data.set_as_host();
-        }
-        else
-        {
-            os_err << "Error " <<  final_type << " " << data_name << endl;
-            interpret_builder_error(type_definitions, in_out_frame_data,
-				                    field_type_name, data_name, data_simple_name,
-									"Error unknow byte_order " + data_simple_name);
-            return  false;
-        }
-
-        return  true;
+		T_pf_frame_to_any  pf = frame_to_any_byte_order;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // Decoder control.
-    //-------------------------------------------------------------------------
     if (final_type == "decoder")
     {
-		interpret_data.set_decode_function(data_simple_name);
-        return  true;
+		T_pf_frame_to_any  pf = frame_to_any_decoder;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // Position into data to read.
-    //-------------------------------------------------------------------------
     if (final_type == "save_position")
     {
-        const string  & pos_name = data_simple_name;
-        interpret_data.add_read_variable (data_name, pos_name,
-										  in_out_frame_data.get_bit_offset_into_initial_frame());
-        return  true;
+		T_pf_frame_to_any  pf = frame_to_any_save_position;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
     if ((final_type == "goto_position") ||
 		(final_type == "move_position_bytes") ||
 		(final_type == "move_position_bits"))
 	{
-        long                  bit_offset_pos = 0;
-
-		if (final_type == "goto_position")
-		{
-			const string  & pos_name = data_simple_name;
-			long long       value_int_ll;
-			if (get_complex_variable_integer_value (interpret_data,
-													pos_name,
-													value_int_ll) != E_rc_ok)
-			{
-				os_err << "Error unknow position " << data_name << endl;
-				interpret_builder_error(type_definitions, in_out_frame_data,
-										field_type_name, data_name, data_simple_name,
-										"Error unknow position " + data_simple_name);
-				return  false;
-			}
-
-			bit_offset_pos = static_cast<long>(value_int_ll) - in_out_frame_data.get_bit_offset_into_initial_frame();
-		}
-		else
-		{
-			const string  & offset_pos_name = data_simple_name;
-			long long       value_int_ll;
-			if (get_complex_variable_integer_value (interpret_data,
-													offset_pos_name,
-													value_int_ll) != E_rc_ok)
-			{
-				os_err << "Error unknow position " << data_name << endl;
-				interpret_builder_error(type_definitions, in_out_frame_data,
-										field_type_name, data_name, data_simple_name,
-										"Error unknow position " + data_simple_name);
-				return  false;
-			}
-
-			bit_offset_pos = static_cast<long>(value_int_ll);
-			if (final_type == "move_position_bytes")
-			{
-				bit_offset_pos *= 8;
-			}
-		}
-
-        const long    bit_offset_pos_after_end = bit_offset_pos - in_out_frame_data.get_remaining_bits();
-        if (bit_offset_pos_after_end > 0)
-        {
-            os_err << "Error " << final_type << " " << data_name
-                   << " goes " << bit_offset_pos_after_end
-                   << " bits after end of data." << endl;
-            interpret_builder_error(type_definitions, in_out_frame_data,
-				                    field_type_name, data_name, data_simple_name,
-									"Error " + final_type + " " + data_simple_name +
-									" goes " + get_string(bit_offset_pos_after_end) +
-									" bits after end of data.");
-            return  false;
-        }
-
-		const long    bit_offset_pos_before_begin = -bit_offset_pos - in_out_frame_data.get_bit_offset();
-        if (bit_offset_pos_before_begin > 0)
-        {
-            os_err << "Error " << final_type << " " << data_name
-                   << " goes " << bit_offset_pos_before_begin
-                   << " bits before beginning of data." << endl;
-            interpret_builder_error(type_definitions, in_out_frame_data,
-				                    field_type_name, data_name, data_simple_name,
-									"Error " + final_type + " " + data_simple_name +
-									" goes " + get_string(bit_offset_pos_before_begin) +
-									" bits before beginning of data.");
-            return  false;
-        }
-
-		in_out_frame_data.move_bit(bit_offset_pos);
-
-        return  true;
+		T_pf_frame_to_any  pf = frame_to_any_position;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // Check End Of Frame distance.
-    // I.e. check the number of bytes not already read.
-    //-------------------------------------------------------------------------
     if ((final_type == "check_eof_distance_bytes") ||
 		(final_type == "check_eof_distance_bits"))
     {
-        long    distance = -1;
-
-        if (get_number (data_simple_name.c_str (), &distance) == false)
-        {
-            os_err << "Error " << final_type << " " << data_name
-                   << " is NOT a number." << endl;
-            interpret_builder_error(type_definitions, in_out_frame_data,
-				                    field_type_name, data_name, data_simple_name,
-									"Error " + final_type + " " + data_simple_name + " is not a number");
-            return  false;
-        }
-		if (final_type == "check_eof_distance_bytes")
-		{
-			distance *= 8;
-		}
-
-        if (distance != in_out_frame_data.get_remaining_bits())
-        {
-            os_err << "Error " << final_type << " " << distance
-                   << " bits != " << in_out_frame_data.get_remaining_bits()
-				   << " bits"
-                   << endl;
-            interpret_builder_error(type_definitions, in_out_frame_data,
-				                    field_type_name, data_name, data_simple_name,
-									"Error " + final_type + " " + get_string(distance) + " bits != " +
-									 get_string(in_out_frame_data.get_remaining_bits()) + " bits");
-            return  false;
-        }
-
-        return  true;
+		T_pf_frame_to_any  pf = frame_to_any_check_eof_distance;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
 
-    //-------------------------------------------------------------------------
-    // Chrono.
-	// Display some performance measure.
-    // For integration only.
-    //-------------------------------------------------------------------------
     if (final_type == "chrono")
     {
-		const string  & chrono_cmd = field_type_name.name;
-		const string    chrono_val = interpret_data.compute_chrono_value_from_command(chrono_cmd);
-		if (chrono_val != "")
-		{
-			return  frame_to_print (type_definitions,
-									in_out_frame_data,
-									interpret_data,
-									field_type_name,
-									"print", chrono_val, chrono_val,
-									os_out, os_err);
-		}
-
-        return  true;
+		T_pf_frame_to_any  pf = frame_to_any_chrono;
+		field_type_name.pf_frame_to_any = pf;
+		return;
     }
+}
+
+void    build_types_finalize_itself(const T_type_definitions  & type_definitions,
+							        const T_field_type_name   & field_type_name)
+{
+	build_types_finalize_itself(const_cast<T_type_definitions &>(type_definitions),
+		                        const_cast<T_field_type_name &>(field_type_name));
+}
+
+//*****************************************************************************
+// frame_to_any ***************************************************************
+//*****************************************************************************
+
+bool    frame_to_any (const T_type_definitions    & type_definitions,
+					        T_frame_data          & in_out_frame_data,
+					        T_interpret_data      & interpret_data,
+                      const T_field_type_name     & field_type_name,
+                      const string                & data_name,
+                      const string                & data_simple_name,
+                            ostream               & os_out,
+                            ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_any",
+                   "data_type= " << field_type_name.type << " data_name= " << data_name);
+
+	// Hide the field if asked.
+	const int   output_level_offset = field_type_name.get_output_level_offset();
+	C_interpret_output_level_move_temporary    iolmt(interpret_data, output_level_offset);
+
+	// Set temporary the decoder function
+	C_interpret_decode_set_temporary    idst(interpret_data, field_type_name.str_decoder_function);
+
+	// Set temporary the byte order
+	C_interpret_byte_order_set_temporary  ibost(interpret_data, field_type_name.str_byte_order);
 
 
-    interpret_builder_error(type_definitions, in_out_frame_data,
-		                    field_type_name, data_name, data_simple_name,
-							"Not valid type " + final_type);
-    return  false;
+    //-------------------------------------------------------------------------
+    // Array ?   managed inside frame_to_field
+    //-------------------------------------------------------------------------
+
+
+	if (field_type_name.pf_frame_to_any == NULL)
+	{
+//crash		M_FATAL_COMMENT("bug pf_frame_to_any set");
+//249		M_FATAL_COMMENT("bug pf_frame_to_any call");
+//14		M_FATAL_COMMENT("bug pf_frame_to_any struct");
+//39		M_FATAL_COMMENT("bug pf_frame_to_any string");
+//18		M_FATAL_COMMENT("bug pf_frame_to_any raw");
+//2			M_FATAL_COMMENT("bug pf_frame_to_any switch");
+//2			M_FATAL_COMMENT("bug pf_frame_to_any bitfield");
+		build_types_finalize_itself(type_definitions, field_type_name);
+
+		if (field_type_name.pf_frame_to_any == NULL)
+		{
+			//-------------------------------------------------------------------------
+			// Error
+			//-------------------------------------------------------------------------
+			interpret_builder_error(type_definitions, in_out_frame_data,
+									field_type_name, data_name, data_simple_name,
+									"Not valid type " + field_type_name.type);
+			return  false;
+		}
+	}
+
+	T_pf_frame_to_any  pf = (T_pf_frame_to_any)field_type_name.pf_frame_to_any;
+	return  pf(type_definitions,
+			   in_out_frame_data,
+			   interpret_data,
+               field_type_name,
+               data_name,
+               data_simple_name,
+               os_out, os_err);
 }
 
 //*****************************************************************************

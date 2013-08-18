@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -152,7 +152,12 @@ T_field_type_name_base::has_post_treatment() const
 T_field_type_name::T_field_type_name()
 	:output_directive(E_output_directive_none),
 	 A_is_a_variable(false),
-	 wsgd_field_idx (-1)
+	 wsgd_field_idx (-1),
+	 pf_frame_to_any(NULL),
+	 P_type_enum_def(NULL),
+	 P_type_struct_def(NULL),
+	 P_type_switch_def(NULL),
+	 P_type_bitfield_def(NULL)
 {
 }
 
@@ -302,11 +307,11 @@ ostream &  operator<< (ostream & os, const T_field_type_name  & rhs)
 		os << " = " << rhs.new_expression.get_original_string_expression();
 	}
 
-	if (rhs.P_bitfield)
+	if (rhs.P_bitfield_inline)
     {
         os << "bitfield";
 	}
-	else if (rhs.P_switch)
+	else if (rhs.P_switch_inline)
     {
         os << "switch";
 	}

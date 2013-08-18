@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -331,9 +331,9 @@ void  netpdl_manage_format_fields_field_bit(T_type_definitions  & type_definitio
 	type_definitions.set_field_type(field_type_name, "bitfield");    // bitstream also ok
 	type_definitions.set_field_name(field_type_name, "");
 
-	field_type_name.P_bitfield.reset(new T_bitfield_definition);
+	field_type_name.P_bitfield_inline.reset(new T_bitfield_definition);
 
-	T_bitfield_definition  & bitfield_definition = *field_type_name.P_bitfield;
+	T_bitfield_definition  & bitfield_definition = *field_type_name.P_bitfield_inline;
 	bitfield_definition.is_a_bitstream = true;
 	type_definitions.set_field_type(bitfield_definition.master_field, "uint" + get_string(bit_size_1st));
 	type_definitions.set_field_name(bitfield_definition.master_field, "last_bitfield_value");

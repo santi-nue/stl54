@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -164,9 +164,10 @@ struct T_field_type_name_base
 //****************************************************************************
 
 #include "scoped_copyable_ptr.h"
+struct T_enum_definition_representation;
 struct T_struct_definition;
-struct T_bitfield_definition;
 struct T_switch_definition;
+struct T_bitfield_definition;
 
 struct T_field_type_name : public T_field_type_name_base
 {
@@ -189,8 +190,8 @@ struct T_field_type_name : public T_field_type_name_base
 	scoped_copyable_ptr<T_struct_definition>     P_sub_struct;      // struct fields or if/while bloc  
 //    vector<T_field_type_name>    sub_struct;      // struct fields or if/while bloc
     vector<T_field_type_name>    sub_struct_2;    // else bloc
-	scoped_copyable_ptr<T_bitfield_definition>   P_bitfield;    // inline bitfield
-	scoped_copyable_ptr<T_switch_definition>     P_switch;      // inline switch
+	scoped_copyable_ptr<T_bitfield_definition>   P_bitfield_inline;    // inline bitfield
+	scoped_copyable_ptr<T_switch_definition>     P_switch_inline;      // inline switch
 
 	//
 	bool    is_an_array() const          { return  str_arrays.empty() == false; }
@@ -214,6 +215,13 @@ struct T_field_type_name : public T_field_type_name_base
 
 	// Field external data.
     int                          wsgd_field_idx;
+	// Should be intialized at the end of init.
+	// But can also be initialized during interpretation.
+    void                                    * pf_frame_to_any;
+    const T_enum_definition_representation  * P_type_enum_def;
+    const T_struct_definition               * P_type_struct_def;
+	const T_switch_definition               * P_type_switch_def;
+	const T_bitfield_definition             * P_type_bitfield_def;
 
 	T_field_type_name();
 };

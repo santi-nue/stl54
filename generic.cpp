@@ -389,8 +389,8 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 		if (final_type == "switch")
 		{
 			// must manage inline switch
-			M_FATAL_IF_EQ (field_type_name.P_switch.get(), NULL);
-			register_fields_switch_definition(protocol_data, field_idx, *field_type_name.P_switch);
+			M_FATAL_IF_EQ (field_type_name.P_switch_inline.get(), NULL);
+			register_fields_switch_definition(protocol_data, field_idx, *field_type_name.P_switch_inline);
 		}
 		return;
 	}
@@ -472,8 +472,8 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			if (final_type == "bitfield")
 			{
 				// must manage inline bitfield
-				M_FATAL_IF_EQ (field_type_name.P_bitfield.get(), NULL);
-				register_fields_bitfield_definition(protocol_data, field_idx, *field_type_name.P_bitfield);
+				M_FATAL_IF_EQ (field_type_name.P_bitfield_inline.get(), NULL);
+				register_fields_bitfield_definition(protocol_data, field_idx, *field_type_name.P_bitfield_inline);
 			}
 			return;
 		}
