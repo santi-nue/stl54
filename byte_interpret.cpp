@@ -5630,13 +5630,8 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
 
 	if (field_type_name.pf_frame_to_any == NULL)
 	{
-//crash		M_FATAL_COMMENT("bug pf_frame_to_any set");
-//249		M_FATAL_COMMENT("bug pf_frame_to_any call");
-//14		M_FATAL_COMMENT("bug pf_frame_to_any struct");
-//39		M_FATAL_COMMENT("bug pf_frame_to_any string");
-//18		M_FATAL_COMMENT("bug pf_frame_to_any raw");
-//2			M_FATAL_COMMENT("bug pf_frame_to_any switch");
-//2			M_FATAL_COMMENT("bug pf_frame_to_any bitfield");
+		// Normally set at initialisation time for all types into type_definitions.
+		// But some field_type_name could be created on the fly.
 		build_types_finalize_itself(type_definitions, field_type_name);
 
 		if (field_type_name.pf_frame_to_any == NULL)

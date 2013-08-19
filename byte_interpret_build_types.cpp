@@ -2452,12 +2452,12 @@ void    build_types_finalize(T_type_definitions   & type_definitions,
 //*****************************************************************************
 // build_types_finalize field *************************************************
 //*****************************************************************************
+void    build_types_finalize_itself(T_type_definitions  & type_definitions,
+							        T_field_type_name   & field_type_name);
 
 void    build_types_finalize(T_type_definitions  & type_definitions,
 							 T_field_type_name   & field_type_name)
 {
-	const string  & final_type = field_type_name.type;
-
 	if (field_type_name.P_sub_struct)
 	{
 		build_types_finalize(type_definitions, *field_type_name.P_sub_struct);
@@ -2474,6 +2474,8 @@ void    build_types_finalize(T_type_definitions  & type_definitions,
 	{
 		build_types_finalize(type_definitions, *field_type_name.P_switch_inline);
 	}
+
+	build_types_finalize_itself(type_definitions, field_type_name);
 }
 
 
@@ -2481,11 +2483,11 @@ void    build_types_finalize(T_type_definitions  & type_definitions,
 //*****************************************************************************
 // build_types_finalize *******************************************************
 //*****************************************************************************
-void    build_types_finalize_itself(T_type_definitions  & type_definitions,
-							        T_field_type_name   & field_type_name);
 
 void    build_types_finalize(T_type_definitions  & type_definitions)
 {
+	M_STATE_ENTER("build_types_finalize", "");
+
   {
     T_map_struct_definition  & map_struct_definition = type_definitions.map_struct_definition;
     for (T_map_struct_definition::iterator
