@@ -1477,9 +1477,25 @@ bool    frame_to_switch (const T_type_definitions      & type_definitions,
 // frame_to_field *************************************************************
 //*****************************************************************************
 
-//enum E_loop { E_loop_none, E_loop_break, E_loop_continue };
+void    build_types_finalize_itself(const T_type_definitions  & type_definitions,
+							        const T_field_type_name   & field_type_name);
 
-bool    frame_to_field  (const T_type_definitions    & type_definitions,
+typedef bool    (*T_pf_frame_to_field)(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err);
+
+//*****************************************************************************
+// frame_to_field_deep_break **************************************************
+//*****************************************************************************
+
+bool    frame_to_field_deep_break(
+						 const T_type_definitions    & type_definitions,
 					           T_frame_data          & in_out_frame_data,
 					           T_interpret_data      & interpret_data,
                          const T_field_type_name     & field_type_name,
@@ -1488,206 +1504,365 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_field", "data_name=" << data_name);
+	M_STATE_ENTER ("frame_to_field_deep_break", "");
+
+	throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_deep_break, "deep_break called outside any loop");
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_deep_continue ***********************************************
+//*****************************************************************************
+
+bool    frame_to_field_deep_continue(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_deep_continue", "");
+
+	throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_deep_continue, "deep_continue called outside any loop");
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_break *******************************************************
+//*****************************************************************************
+
+bool    frame_to_field_break(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_break", "");
+
+	throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_break, "break called outside a loop");
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_continue ****************************************************
+//*****************************************************************************
+
+bool    frame_to_field_continue(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_continue", "");
+
+	throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_continue, "continue called outside a loop");
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_return ******************************************************
+//*****************************************************************************
+
+bool    frame_to_field_return(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_return", "data_name=" << data_name);
+
+	const T_expression  & return_expression = field_type_name.get_return_expression();
+
+	if (return_expression.is_defined() == false)
+	{
+		// No return value.
+		throw  C_byte_interpret_exception_return(M_WHERE, E_byte_interpret_exception_return, "return called outside a struct");
+	}
+
+	// Return value.
+	throw  C_byte_interpret_exception_return(M_WHERE,
+											 E_byte_interpret_exception_return,
+											 "return called outside a struct",
+											 return_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
+																data_name, data_simple_name, os_out, os_err));
+
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_while *******************************************************
+//*****************************************************************************
+
+bool    frame_to_field_while(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_while", "data_name=" << data_name);
+
+    const string  & type = field_type_name.type;
+
+	const T_expression  & condition_expression = field_type_name.get_condition_expression();
+
+	string    new_data_name = data_name;
+	if (new_data_name != "")
+        new_data_name += K_ATTRIBUTE_SEPARATOR;
+
+	bool      must_not_test_1st_time = (type == "do_while");
+    size_t    idx_while = 0;
+    while (must_not_test_1st_time ||
+		   condition_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
+							  data_name, data_simple_name, os_out, os_err).get_bool ())
+    {
+		must_not_test_1st_time = false;
+
+		try {
+			if (frame_to_struct_inline (type_definitions,
+								 in_out_frame_data,
+								 interpret_data,
+								*field_type_name.P_sub_struct,
+								 get_array_idx_name (new_data_name,
+													 idx_while),
+								 "",
+								 os_out,
+								 os_err) != true)
+			{
+				os_err << "Error field data= " << data_name << endl;
+			}
+		}
+		catch(C_byte_interpret_exception_loop  & val)
+		{
+			if ((val.get_cause() == E_byte_interpret_exception_loop_break) ||
+				(val.get_cause() == E_byte_interpret_exception_loop_deep_break))
+				break;
+			// nothing to do on continue
+		}
+        ++idx_while;
+    }
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_loop_size ***************************************************
+//*****************************************************************************
+
+bool    frame_to_field_loop_size(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_loop_size", "data_name=" << data_name);
+
+    const string  & type = field_type_name.type;
+
+	const T_expression  & condition_expression = field_type_name.get_condition_expression();
+
+	string    new_data_name = data_name;
+	if (new_data_name != "")
+        new_data_name += K_ATTRIBUTE_SEPARATOR;
+
+	long long   bit_size_to_reach = condition_expression.compute_expression(type_definitions, interpret_data,
+													   in_out_frame_data,
+													   data_name, data_simple_name,
+													   os_out, os_err).get_int ();
+	if (type == "loop_size_bytes")
+	{
+		bit_size_to_reach *= 8;
+	}
+
+	T_frame_data    orig_frame_data = in_out_frame_data;
+    size_t          idx_while = 0;
+    while ((in_out_frame_data.get_bit_offset() - orig_frame_data.get_bit_offset()) < bit_size_to_reach)
+    {
+		try {
+			if (frame_to_struct_inline (type_definitions,
+								 in_out_frame_data,
+								 interpret_data,
+								*field_type_name.P_sub_struct,
+								 get_array_idx_name (new_data_name,
+													 idx_while),
+								 "",
+								 os_out,
+								 os_err) != true)
+			{
+				os_err << "Error field data= " << data_name << endl;
+			}
+		}
+		catch(C_byte_interpret_exception_loop  & val)
+		{
+			if ((val.get_cause() == E_byte_interpret_exception_loop_break) ||
+				(val.get_cause() == E_byte_interpret_exception_loop_deep_break))
+				break;
+			// nothing to do on continue
+		}
+        ++idx_while;
+    }
+
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_loop_nb_times ***********************************************
+//*****************************************************************************
+
+bool    frame_to_field_loop_nb_times(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_loop_nb_times", "data_name=" << data_name);
+
+	const T_expression  & condition_expression = field_type_name.get_condition_expression();
+
+	string    new_data_name = data_name;
+	if (new_data_name != "")
+		new_data_name += K_ATTRIBUTE_SEPARATOR;
+
+	long long       nb_times = condition_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
+												  data_name, data_simple_name, os_out, os_err).get_int ();
+	size_t          idx_while = 0;
+	while (idx_while < nb_times)
+	{
+		try {
+			if (frame_to_struct_inline (type_definitions,
+								 in_out_frame_data,
+								 interpret_data,
+								*field_type_name.P_sub_struct,
+								 get_array_idx_name (new_data_name,
+													 idx_while),
+								 "",
+								 os_out,
+								 os_err) != true)
+			{
+				os_err << "Error field data= " << data_name << endl;
+			}
+		}
+		catch(C_byte_interpret_exception_loop  & val)
+		{
+			if ((val.get_cause() == E_byte_interpret_exception_loop_break) ||
+				(val.get_cause() == E_byte_interpret_exception_loop_deep_break))
+				break;
+			// nothing to do on continue
+		}
+		++idx_while;
+	}
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_if **********************************************************
+//*****************************************************************************
+
+bool    frame_to_field_if(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_if", "data_name=" << data_name);
+
+	const T_expression  & condition_expression = field_type_name.get_condition_expression();
+
+    if (condition_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
+						   data_name, data_simple_name, os_out, os_err).get_bool ())
+    {
+        if (frame_to_struct_inline (type_definitions,
+                             in_out_frame_data,
+							 interpret_data,
+                            *field_type_name.P_sub_struct,
+                             data_name,
+                             "",
+                             os_out,
+                             os_err) != true)
+        {
+            os_err << "Error field data= " << data_name << endl;
+        }
+    }
+    else if (field_type_name.sub_struct_2.empty () == false)
+    {
+        if (frame_to_fields (type_definitions,
+                             in_out_frame_data,
+							 interpret_data,
+                             field_type_name.sub_struct_2,
+                             data_name,
+                             "",
+                             os_out,
+                             os_err) != true)
+        {
+            os_err << "Error field data= " << data_name << endl;
+        }
+    }
+
+
+	return  true;
+}
+
+//*****************************************************************************
+// frame_to_field_other *******************************************************
+//*****************************************************************************
+
+bool    frame_to_field_other(
+						 const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field_other", "data_name=" << data_name);
 
     const string  & type = field_type_name.type;
     const string  & name = field_type_name.name;
-
-	if (type == "deep_break")
-	{
-		throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_deep_break, "deep_break called outside any loop");
-	}
-	if (type == "deep_continue")
-	{
-		throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_deep_continue, "deep_continue called outside any loop");
-	}
-	if (type == "break")
-	{
-		throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_break, "break called outside a loop");
-	}
-	if (type == "continue")
-	{
-		throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_continue, "continue called outside a loop");
-	}
-	if (type == "return")
-	{
-		const T_expression  & return_expression = field_type_name.get_return_expression();
-
-		if (return_expression.is_defined() == false)
-		{
-			// No return value.
-			throw  C_byte_interpret_exception_return(M_WHERE, E_byte_interpret_exception_return, "return called outside a struct");
-		}
-
-		// Return value.
-		throw  C_byte_interpret_exception_return(M_WHERE,
-												 E_byte_interpret_exception_return,
-												 "return called outside a struct",
-												 return_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
-																	data_name, data_simple_name, os_out, os_err));
-	}
 
 	M_STATE_DEBUG ("type=" << type << "  name=" << name);
 
 	string    new_data_name = data_name;
 
-    if ((type == "while") ||
-		(type == "do_while"))
-    {
-		const T_expression  & condition_expression = field_type_name.get_condition_expression();
-
-		if (new_data_name != "")
-            new_data_name += K_ATTRIBUTE_SEPARATOR;
-
-		bool      must_not_test_1st_time = (type == "do_while");
-        size_t    idx_while = 0;
-        while (must_not_test_1st_time ||
-			   condition_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
-								  data_name, data_simple_name, os_out, os_err).get_bool ())
-        {
-			must_not_test_1st_time = false;
-
-			try {
-				if (frame_to_struct_inline (type_definitions,
-									 in_out_frame_data,
-									 interpret_data,
-									*field_type_name.P_sub_struct,
-									 get_array_idx_name (new_data_name,
-														 idx_while),
-									 "",
-									 os_out,
-									 os_err) != true)
-				{
-					os_err << "Error field data= " << data_name << endl;
-				}
-			}
-			catch(C_byte_interpret_exception_loop  & val)
-			{
-				if ((val.get_cause() == E_byte_interpret_exception_loop_break) ||
-					(val.get_cause() == E_byte_interpret_exception_loop_deep_break))
-					break;
-				// nothing to do on continue
-			}
-            ++idx_while;
-        }
-    }
-    else if ((type == "loop_size_bytes") ||
-			 (type == "loop_size_bits"))
-    {
-		const T_expression  & condition_expression = field_type_name.get_condition_expression();
-
-		if (new_data_name != "")
-            new_data_name += K_ATTRIBUTE_SEPARATOR;
-
-		long long   bit_size_to_reach = condition_expression.compute_expression(type_definitions, interpret_data,
-														   in_out_frame_data,
-														   data_name, data_simple_name,
-														   os_out, os_err).get_int ();
-		if (type == "loop_size_bytes")
-		{
-			bit_size_to_reach *= 8;
-		}
-
-		T_frame_data    orig_frame_data = in_out_frame_data;
-        size_t          idx_while = 0;
-        while ((in_out_frame_data.get_bit_offset() - orig_frame_data.get_bit_offset()) < bit_size_to_reach)
-        {
-			try {
-				if (frame_to_struct_inline (type_definitions,
-									 in_out_frame_data,
-									 interpret_data,
-									*field_type_name.P_sub_struct,
-									 get_array_idx_name (new_data_name,
-														 idx_while),
-									 "",
-									 os_out,
-									 os_err) != true)
-				{
-					os_err << "Error field data= " << data_name << endl;
-				}
-			}
-			catch(C_byte_interpret_exception_loop  & val)
-			{
-				if ((val.get_cause() == E_byte_interpret_exception_loop_break) ||
-					(val.get_cause() == E_byte_interpret_exception_loop_deep_break))
-					break;
-				// nothing to do on continue
-			}
-            ++idx_while;
-        }
-    }
-    else if (type == "loop_nb_times")
-    {
-		const T_expression  & condition_expression = field_type_name.get_condition_expression();
-
-        if (new_data_name != "")
-            new_data_name += K_ATTRIBUTE_SEPARATOR;
-
-		long long       nb_times = condition_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
-													  data_name, data_simple_name, os_out, os_err).get_int ();
-        size_t          idx_while = 0;
-        while (idx_while < nb_times)
-        {
-			try {
-				if (frame_to_struct_inline (type_definitions,
-									 in_out_frame_data,
-									 interpret_data,
-									*field_type_name.P_sub_struct,
-									 get_array_idx_name (new_data_name,
-														 idx_while),
-									 "",
-									 os_out,
-									 os_err) != true)
-				{
-					os_err << "Error field data= " << data_name << endl;
-				}
-			}
-			catch(C_byte_interpret_exception_loop  & val)
-			{
-				if ((val.get_cause() == E_byte_interpret_exception_loop_break) ||
-					(val.get_cause() == E_byte_interpret_exception_loop_deep_break))
-					break;
-				// nothing to do on continue
-			}
-            ++idx_while;
-        }
-    }
-    else if (type == "if")
-    {
-		const T_expression  & condition_expression = field_type_name.get_condition_expression();
-
-        if (condition_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
-							   data_name, data_simple_name, os_out, os_err).get_bool ())
-        {
-            if (frame_to_struct_inline (type_definitions,
-                                 in_out_frame_data,
-								 interpret_data,
-                                *field_type_name.P_sub_struct,
-                                 new_data_name,
-                                 "",
-                                 os_out,
-                                 os_err) != true)
-            {
-                os_err << "Error field data= " << data_name << endl;
-            }
-        }
-        else if (field_type_name.sub_struct_2.empty () == false)
-        {
-            if (frame_to_fields (type_definitions,
-                                 in_out_frame_data,
-								 interpret_data,
-                                 field_type_name.sub_struct_2,
-                                 new_data_name,
-                                 "",
-                                 os_out,
-                                 os_err) != true)
-            {
-                os_err << "Error field data= " << data_name << endl;
-            }
-        }
-    }
-    else
-    {
+	{
         if (name != "")
         {
             if (new_data_name != "")
@@ -1832,12 +2007,13 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
 				// Blocks which are not VISUALLY groups
 				(field_type_name.name == "") ||                      // inline
 				(field_type_name.type == "call") ||                  // function (ie inline)
-				(field_type_name.type == "if") ||
-				(field_type_name.type == "while") ||
-				(field_type_name.type == "do") ||
-				(field_type_name.type == "do_while") ||
-				(field_type_name.type == "loop_size_bytes") ||
-				(field_type_name.type == "loop_size_bits") ||
+//				(field_type_name.type == "if") ||
+//				(field_type_name.type == "while") ||
+//				(field_type_name.type == "do") ||
+//				(field_type_name.type == "do_while") ||
+//				(field_type_name.type == "loop_size_bytes") ||
+//				(field_type_name.type == "loop_size_bits") ||
+//				(field_type_name.type == "loop_nb_items") ||
 
 				(field_type_name.type == "msg") ||
 
@@ -2046,6 +2222,49 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
     }
 
     return  true;
+}
+
+//*****************************************************************************
+// frame_to_field *************************************************************
+//*****************************************************************************
+
+bool    frame_to_field  (const T_type_definitions    & type_definitions,
+					           T_frame_data          & in_out_frame_data,
+					           T_interpret_data      & interpret_data,
+                         const T_field_type_name     & field_type_name,
+                         const string                & data_name,
+                         const string                & data_simple_name,
+                               ostream               & os_out,
+                               ostream               & os_err)
+{
+	M_STATE_ENTER ("frame_to_field", "data_name=" << data_name);
+
+	if (field_type_name.pf_frame_to_field == NULL)
+	{
+		// Normally set at initialisation time for all types into type_definitions.
+		// But some field_type_name could be created on the fly.
+		build_types_finalize_itself(type_definitions, field_type_name);
+
+		if (field_type_name.pf_frame_to_field == NULL)
+		{
+			//-------------------------------------------------------------------------
+			// Error
+			//-------------------------------------------------------------------------
+			interpret_builder_error(type_definitions, in_out_frame_data,
+									field_type_name, data_name, data_simple_name,
+									"Not valid type " + field_type_name.type);
+			return  false;
+		}
+	}
+
+	T_pf_frame_to_field  pf = (T_pf_frame_to_field)field_type_name.pf_frame_to_field;
+	return  pf(type_definitions,
+			   in_out_frame_data,
+			   interpret_data,
+			   field_type_name,
+			   data_name,
+			   data_simple_name,
+			   os_out, os_err);
 }
 
 //*****************************************************************************
@@ -5322,6 +5541,83 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 							        T_field_type_name   & field_type_name)
 {
 	string    final_type = field_type_name.type;
+
+	// frame_to_field 1st
+
+	if (final_type == "deep_break")
+    {
+		T_pf_frame_to_field  pf = frame_to_field_deep_break;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+    if (final_type == "deep_continue")
+    {
+		T_pf_frame_to_field  pf = frame_to_field_deep_continue;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+    if (final_type == "break")
+    {
+		T_pf_frame_to_field  pf = frame_to_field_break;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+    if (final_type == "continue")
+    {
+		T_pf_frame_to_field  pf = frame_to_field_continue;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+    if (final_type == "return")
+    {
+		T_pf_frame_to_field  pf = frame_to_field_return;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+    if ((final_type == "while") ||
+		(final_type == "do_while"))
+    {
+		T_pf_frame_to_field  pf = frame_to_field_while;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+    if ((final_type == "loop_size_bytes") ||
+        (final_type == "loop_size_bits"))
+    {
+		T_pf_frame_to_field  pf = frame_to_field_loop_size;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+    if (final_type == "loop_nb_times")
+    {
+		T_pf_frame_to_field  pf = frame_to_field_loop_nb_times;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+    if (final_type == "if")
+    {
+		T_pf_frame_to_field  pf = frame_to_field_if;
+		field_type_name.pf_frame_to_field = pf;
+		return;
+	}
+
+	// frame_to_field other
+
+    {
+		T_pf_frame_to_field  pf = frame_to_field_other;
+		field_type_name.pf_frame_to_field = pf;
+		// no return;
+	}
+
+	// frame_to_any then
 
     if (final_type == "set")
     {

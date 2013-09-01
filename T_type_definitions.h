@@ -218,6 +218,7 @@ struct T_field_type_name : public T_field_type_name_base
 	// Should be intialized at the end of init.
 	// But can also be initialized during interpretation.
     void                                    * pf_frame_to_any;
+    void                                    * pf_frame_to_field;
     const T_enum_definition_representation  * P_type_enum_def;
     const T_struct_definition               * P_type_struct_def;
 	const T_switch_definition               * P_type_switch_def;

@@ -154,6 +154,7 @@ T_field_type_name::T_field_type_name()
 	 A_is_a_variable(false),
 	 wsgd_field_idx (-1),
 	 pf_frame_to_any(NULL),
+	 pf_frame_to_field(NULL),
 	 P_type_enum_def(NULL),
 	 P_type_struct_def(NULL),
 	 P_type_switch_def(NULL),
