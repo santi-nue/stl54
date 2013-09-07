@@ -3018,59 +3018,6 @@ bool    frame_to_function (const T_type_definitions    & type_definitions,
 	return  result;
 }
 
-//*****************************************************************************
-// compute_function ***********************************************************
-//*****************************************************************************
-
-C_value    compute_function (const T_type_definitions    & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-                         const T_function_definition   & fct_def,
-						       string                    function_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err)
-{
-	M_STATE_ENTER ("compute_function", "");
-
-	vector<string>    fct_parameters;
-	{
-		if ((function_parameters == "") ||
-			(function_parameters[0] != '(') ||
-			(function_parameters[function_parameters.size()-1] != ')'))
-		{
-			M_FATAL_COMMENT("Bad function parameters (" << function_parameters << ")");
-		}
-
-		// Remove ( and ).
-		function_parameters.erase(0, 1);
-		function_parameters.erase(function_parameters.size()-1);
-
-		// Split on ,.
-		string_to_words(function_parameters, fct_parameters, K_parser_cfg_parameters);
-	}
-
-	C_value    return_value;
-	bool       result = frame_to_function_base (type_definitions,
-							   interpret_data,
-					           in_out_frame_data,
-							   fct_def,
-							   fct_parameters,
-							   data_name,
-							   data_simple_name,
-							   os_out,
-							   os_err,
-							   E_return_value_mandatory,
-							   return_value);
-	if (result == false)
-	{
-		M_FATAL_COMMENT("Error when computing function.");
-	}
-
-	return  return_value;
-}
-
 #if 1
 // ICIOA duplicata pour T_expression
 
@@ -3264,7 +3211,7 @@ bool    T_expression_frame_to_function_base (const T_type_definitions    & type_
 }
 
 //*****************************************************************************
-// compute_function ***********************************************************
+// T_expression_compute_function **********************************************
 //*****************************************************************************
 
 C_value    T_expression_compute_function (const T_type_definitions    & type_definitions,
@@ -3279,7 +3226,7 @@ C_value    T_expression_compute_function (const T_type_definitions    & type_def
 							   bool                      pre_compute,
 							   bool                    & pre_compute_result)
 {
-	M_STATE_ENTER ("compute_function", "");
+	M_STATE_ENTER ("T_expression_compute_function", "");
 
 	C_value    return_value;
 
