@@ -186,7 +186,7 @@ struct T_field_type_name : public T_field_type_name_base
 	T_expression                 new_expression;  // expression for variable, set, call
 	T_expression                 condition_expression;
 	T_expression                 return_expression;
-	vector<string>               fct_parameters;
+	vector<T_expression>         fct_parameters;
 	scoped_copyable_ptr<T_struct_definition>     P_sub_struct;      // struct fields or if/while bloc  
 //    vector<T_field_type_name>    sub_struct;      // struct fields or if/while bloc
     vector<T_field_type_name>    sub_struct_2;    // else bloc

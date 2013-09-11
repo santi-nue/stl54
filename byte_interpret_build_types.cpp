@@ -819,7 +819,17 @@ string    build_field (istream                           & is,
 		fct_parameters.erase(fct_parameters.size()-1);
 
 		// Split on ,.
-		string_to_words(fct_parameters, field_type_name.fct_parameters, K_parser_cfg_parameters);
+		vector<string>  fct_parameters_vector;
+		string_to_words(fct_parameters, fct_parameters_vector, K_parser_cfg_parameters);
+
+		for (int  idx_parameters = 0; idx_parameters < fct_parameters_vector.size(); ++idx_parameters)
+		{
+			const string  & fct_parameter = fct_parameters_vector[idx_parameters];
+			T_expression    expression;
+			expression.build_expression(type_definitions, fct_parameter);
+
+			field_type_name.fct_parameters.push_back(expression);
+		}
 
 		M_FINISH_build_field();
 	}

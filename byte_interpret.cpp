@@ -1009,7 +1009,7 @@ bool    frame_to_function_base (const T_type_definitions    & type_definitions,
 					           T_interpret_data        & in_out_interpret_data,
 					           T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
-						 const vector<string>          & fct_parameters,
+						 const vector<T_expression>    & fct_parameters,
                          const string                  & data_name,
                          const string                  & data_simple_name,
                                ostream                 & os_out,
@@ -1076,9 +1076,8 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 	// Compute frame address.
 	T_decode_stream_frame  * P_decode_stream_frame = NULL;
 	{
-		C_value	   frame_value =
-					compute_expression(type_definitions, interpret_data, in_out_frame_data,
-									   field_type_name.fct_parameters[0],
+		const C_value	 & frame_value = field_type_name.fct_parameters[0].compute_expression(
+									   type_definitions, interpret_data, in_out_frame_data,
 									   data_name, data_simple_name, os_out, os_err);
 		if (frame_value.get_type() == C_value::E_type_integer)
 		{
@@ -1092,9 +1091,8 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 	}
 
 	// Compute value of byte.
-	C_value	   obj_value =
-	            compute_expression(type_definitions, interpret_data, in_out_frame_data,
-								   field_type_name.fct_parameters[1],
+	const C_value  & obj_value = field_type_name.fct_parameters[1].compute_expression(
+								   type_definitions, interpret_data, in_out_frame_data,
 								   data_name, data_simple_name, os_out, os_err);
 	if (obj_value.get_type() == C_value::E_type_integer)
 	{
@@ -1145,9 +1143,8 @@ bool    frame_append_hexa_data (
 	// Compute frame address.
 	T_decode_stream_frame  * P_decode_stream_frame = NULL;
 	{
-		C_value	   frame_value =
-					compute_expression(type_definitions, interpret_data, in_out_frame_data,
-									   field_type_name.fct_parameters[0],
+		const C_value  & frame_value = field_type_name.fct_parameters[0].compute_expression(
+									   type_definitions, interpret_data, in_out_frame_data,
 									   data_name, data_simple_name, os_out, os_err);
 		if (frame_value.get_type() == C_value::E_type_integer)
 		{
@@ -1161,9 +1158,8 @@ bool    frame_append_hexa_data (
 	}
 
 	// Compute value of byte.
-	C_value	   obj_value =
-	            compute_expression(type_definitions, interpret_data, in_out_frame_data,
-								   field_type_name.fct_parameters[1],
+	const C_value  & obj_value = field_type_name.fct_parameters[1].compute_expression(
+								   type_definitions, interpret_data, in_out_frame_data,
 								   data_name, data_simple_name, os_out, os_err);
 	if (obj_value.get_type() == C_value::E_type_string)
 	{
@@ -1217,11 +1213,19 @@ void    decode_data_size (
 	const long    remaining_bits = decode_stream_frame.frame_data.get_remaining_bits();
 
 	const T_function_definition  & fct_def = type_definitions.get_function(interpret_data.get_decode_function());
-	vector<string>     fct_parameters;
+	vector<T_expression>     fct_parameters;
 	// Memory address of the frame (cast to avoid hexa number).
-	fct_parameters.push_back(get_string((long long)&decode_stream_frame));
+	{
+		T_expression    expression;
+		expression.build_expression(type_definitions, get_string((long long)&decode_stream_frame));
+		fct_parameters.push_back(expression);
+	}
 	// Bit size requested.
-	fct_parameters.push_back(get_string(TYPE_BIT_SIZE));
+	{
+		T_expression    expression;
+		expression.build_expression(type_definitions, get_string(TYPE_BIT_SIZE));
+		fct_parameters.push_back(expression);
+	}
 //		T_interpret_read_values::T_id  id_to_del =
 //			interpret_data.add_read_variable(
 //			"decode_stream_nb_of_bytes_effectively_read",
@@ -1282,11 +1286,19 @@ void    decode_data_bytes_until (
 	long    bit_offset_into_initial_frame = in_out_frame_data.get_bit_offset_into_initial_frame();
 
 	const T_function_definition  & fct_def = type_definitions.get_function(interpret_data.get_decode_function());
-	vector<string>     fct_parameters;
+	vector<T_expression>     fct_parameters;
 	// Memory address of the frame (cast to avoid hexa number).
-	fct_parameters.push_back(get_string((long long)&decode_stream_frame));
+	{
+		T_expression    expression;
+		expression.build_expression(type_definitions, get_string((long long)&decode_stream_frame));
+		fct_parameters.push_back(expression);
+	}
 	// Bit size requested.
-	fct_parameters.push_back(get_string(8));
+	{
+		T_expression    expression;
+		expression.build_expression(type_definitions, get_string(8));
+		fct_parameters.push_back(expression);
+	}
 //		T_interpret_read_values::T_id  id_to_del =
 //			interpret_data.add_read_variable(
 //			"decode_stream_nb_of_bytes_effectively_read",
@@ -2819,7 +2831,7 @@ bool    frame_to_function_base2 (const T_type_definitions    & type_definitions,
 							   T_interpret_data        & interpret_data,
 					           T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
-						 const vector<string>          & fct_parameters,
+						 const vector<T_expression>    & fct_parameters,
                          const string                  & data_name,
                          const string                  & data_simple_name,
                                ostream                 & os_out,
@@ -2862,33 +2874,31 @@ bool    frame_to_function_base2 (const T_type_definitions    & type_definitions,
 	{
 		const T_function_parameter  & function_parameter = fct_def.get_function_parameters()[idx];
 
-		// Compute value.
-		C_value	   obj_value = (idx >= fct_parameters.size()) ?
-			function_parameter.get_default_value() :
-			compute_expression(type_definitions, interpret_data, in_out_frame_data,
-									   fct_parameters[idx],
-									   data_name, data_simple_name, os_out, os_err);
-
-		// Check value type.
-		check_function_parameter_value(type_definitions, function_parameter, obj_value);
-
-		// quantum/offset/min/max/display
-		string     error_on_value;
-		if (post_treatment_value (type_definitions, interpret_data,
-								  function_parameter,
-								  obj_value, error_on_value) != true)
-		{
-			M_FATAL_COMMENT("Parameter " << function_parameter.name << " : " << error_on_value);
-		}
-
-
 		if (function_parameter.direction == E_parameter_in)
 		{
+			// Compute value.
+			C_value    obj_value = (idx >= fct_parameters.size()) ?
+				function_parameter.get_default_value() :
+				fct_parameters[idx].compute_expression(type_definitions, interpret_data, in_out_frame_data,
+										   data_name, data_simple_name, os_out, os_err);
+
+			// Check value type.
+			check_function_parameter_value(type_definitions, function_parameter, obj_value);
+
+			// quantum/offset/min/max/display
+			string     error_on_value;
+			if (post_treatment_value (type_definitions, interpret_data,
+									  function_parameter,
+									  obj_value, error_on_value) != true)
+			{
+				M_FATAL_COMMENT("Parameter " << function_parameter.name << " : " << error_on_value);
+			}
+
 			parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, function_parameter.name, obj_value);
 		}
 		else
 		{
-			parameters_id[idx] = interpret_data.add_ref_variable(function_parameter.name, fct_parameters[idx]);
+			parameters_id[idx] = interpret_data.add_ref_variable(function_parameter.name, fct_parameters[idx].get_variable_name());
 		}
 	}
 
@@ -2937,7 +2947,7 @@ bool    frame_to_function_base (const T_type_definitions    & type_definitions,
 							   T_interpret_data        & interpret_data,
 					           T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
-						 const vector<string>          & fct_parameters,
+						 const vector<T_expression>    & fct_parameters,
                          const string                  & data_name,
                          const string                  & data_simple_name,
                                ostream                 & os_out,
