@@ -645,6 +645,26 @@ T_expression::build_expression_str(
 //*****************************************************************************
 void
 T_expression::build_expression(
+						 const C_value             & value)
+{
+	if (A_original_string_expression.empty())
+	{
+		A_original_string_expression = value.as_string();
+	}
+
+    A_value = value;
+	A_type = E_type_value;
+
+
+	const T_type_definitions    type_definitions;
+	pre_compute_expression(type_definitions);
+}
+
+//*****************************************************************************
+// build_expression
+//*****************************************************************************
+void
+T_expression::build_expression(
 						 const T_type_definitions  & type_definitions,
 						 const std::string         & str)
 {

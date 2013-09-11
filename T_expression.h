@@ -107,6 +107,8 @@ struct T_expression : public CT_debug_object_counter<T_expression>
 	void             build_expression(
 						 const T_type_definitions  & type_definitions,
 						 const std::string         & str);
+	void             build_expression(
+						 const C_value             & value);
 
 
 	void      pre_compute_expression(
@@ -191,23 +193,23 @@ private:
 
 	// The original string from which the expression have been build.
 	//
-	std::string                 A_original_string_expression;
+	std::string                         A_original_string_expression;
 
 	// True if the value has already been calculated (during initialisation).
 	mutable bool                        A_value_alreay_computed;
 
 	// Type of expression.
-	E_type                      A_type;
+	E_type                              A_type;
 
 	// The value.
 	// compute_expression always return this value.
 	mutable C_value		                A_value;
 
 	// Name of the variable or name of the function.
-	std::string                 A_variable_or_function_name;
+	std::string                         A_variable_or_function_name;
 
 	// Operation to do (with A_expressions)
-	E_operation                 A_operation;
+	E_operation                         A_operation;
 
 	// Expression for function call or operation or variable with array
 	mutable std::vector<T_expression>   A_expressions;

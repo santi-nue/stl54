@@ -1213,25 +1213,13 @@ void    decode_data_size (
 	const long    remaining_bits = decode_stream_frame.frame_data.get_remaining_bits();
 
 	const T_function_definition  & fct_def = type_definitions.get_function(interpret_data.get_decode_function());
-	vector<T_expression>     fct_parameters;
+
+	vector<T_expression>     fct_parameters(2);
 	// Memory address of the frame (cast to avoid hexa number).
-	{
-		T_expression    expression;
-		expression.build_expression(type_definitions, get_string((long long)&decode_stream_frame));
-		fct_parameters.push_back(expression);
-	}
+	fct_parameters[0].build_expression(C_value((long long)&decode_stream_frame));
 	// Bit size requested.
-	{
-		T_expression    expression;
-		expression.build_expression(type_definitions, get_string(TYPE_BIT_SIZE));
-		fct_parameters.push_back(expression);
-	}
-//		T_interpret_read_values::T_id  id_to_del =
-//			interpret_data.add_read_variable(
-//			"decode_stream_nb_of_bytes_effectively_read",
-//			"decode_stream_nb_of_bytes_effectively_read",
-//			0);
-//		fct_parameters.push_back("decode_stream_nb_of_bytes_effectively_read");
+	fct_parameters[1].build_expression(C_value(TYPE_BIT_SIZE));
+
 	C_value    return_value_do_not_care;
 	bool  result = frame_to_function_base (type_definitions,
 							   interpret_data,
@@ -1286,25 +1274,13 @@ void    decode_data_bytes_until (
 	long    bit_offset_into_initial_frame = in_out_frame_data.get_bit_offset_into_initial_frame();
 
 	const T_function_definition  & fct_def = type_definitions.get_function(interpret_data.get_decode_function());
-	vector<T_expression>     fct_parameters;
+
+	vector<T_expression>     fct_parameters(2);
 	// Memory address of the frame (cast to avoid hexa number).
-	{
-		T_expression    expression;
-		expression.build_expression(type_definitions, get_string((long long)&decode_stream_frame));
-		fct_parameters.push_back(expression);
-	}
+	fct_parameters[0].build_expression(C_value((long long)&decode_stream_frame));
 	// Bit size requested.
-	{
-		T_expression    expression;
-		expression.build_expression(type_definitions, get_string(8));
-		fct_parameters.push_back(expression);
-	}
-//		T_interpret_read_values::T_id  id_to_del =
-//			interpret_data.add_read_variable(
-//			"decode_stream_nb_of_bytes_effectively_read",
-//			"decode_stream_nb_of_bytes_effectively_read",
-//			0);
-//		fct_parameters.push_back("decode_stream_nb_of_bytes_effectively_read");
+	fct_parameters[1].build_expression(C_value(8));
+
 	C_value    return_value_do_not_care;
 
 	while (in_out_frame_data.get_remaining_bits() >= 8)
