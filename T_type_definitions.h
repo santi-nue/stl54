@@ -180,7 +180,20 @@ struct T_field_type_name : public T_field_type_name_base
 	};
 
 	E_output_directive           output_directive;
-    vector<string>               str_arrays;
+
+	struct T_array
+	{
+		enum E_size_type
+		{
+			E_size_normal,
+			E_size_unknow_any,
+			E_size_unknow_at_least_1,
+		};
+
+		E_size_type        size_type;
+		T_expression       size_expression;
+	};
+    vector<T_array>              str_arrays;
 
 	bool                         A_is_a_variable;
 	T_expression                 new_expression;  // expression for variable, set, call

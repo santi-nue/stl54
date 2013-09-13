@@ -1195,7 +1195,23 @@ string    build_field (istream                           & is,
 					}
 				}
 				field_type_name.type = type_definitions.get_final_type(simple_type);
-				field_type_name.str_arrays.insert(field_type_name.str_arrays.begin(), str_array_size);
+
+				T_field_type_name::T_array  field_array;
+				if (str_array_size == "*")
+				{
+					field_array.size_type = T_field_type_name::T_array::E_size_unknow_any;
+				}
+				else if (str_array_size == "+")
+				{
+					field_array.size_type = T_field_type_name::T_array::E_size_unknow_at_least_1;
+				}
+				else
+				{
+					field_array.size_type = T_field_type_name::T_array::E_size_normal;
+					field_array.size_expression.build_expression(type_definitions, str_array_size);
+				}
+
+				field_type_name.str_arrays.insert(field_type_name.str_arrays.begin(), field_array);
 			}
 		}
 

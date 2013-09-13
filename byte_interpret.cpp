@@ -1871,11 +1871,10 @@ bool    frame_to_field_other(
 
 		for (int   array_idx = 0; array_idx < number_of_arrays; ++array_idx)
 		{
-			const string  & str_array_size = field_type_name.str_arrays[array_idx];
-	        long            array_size = -1;
+			const T_field_type_name::T_array  & field_array = field_type_name.str_arrays[array_idx];
+	        long                                array_size = -1;
 
-            if ((str_array_size == "*") ||
-                (str_array_size == "+"))
+			if (field_array.size_type != T_field_type_name::T_array::E_size_normal)
 			{
 				if (array_idx != (number_of_arrays - 1))
 				{
@@ -1884,7 +1883,7 @@ bool    frame_to_field_other(
 				}
 
 				array_size = LONG_MAX;
-				if (str_array_size == "+")
+				if (field_array.size_type == T_field_type_name::T_array::E_size_unknow_at_least_1)
 				{
 					LONG_MAX_is_plus = true;
 				}
@@ -1892,25 +1891,26 @@ bool    frame_to_field_other(
 			else
 			{
 				// Compute the array size.
-				C_value    value = compute_expression(type_definitions, interpret_data, in_out_frame_data,
-													  str_array_size,
+				const C_value  & value = field_array.size_expression.compute_expression(
+					                                  type_definitions, interpret_data, in_out_frame_data,
 													  data_name, data_simple_name, os_out, os_err);
 
 				if (value.get_type () == C_value::E_type_integer)
 				{
 					array_size = static_cast<long>(value.get_int ());
 				}
-			}
 
-            if (array_size < 0)  /* taille variable == 0 OK */
-            {
-                os_err << "Error array size= " << str_array_size
-                       << " data= " << data_name << endl;
-				interpret_builder_error(type_definitions, in_out_frame_data,
-										field_type_name, data_name, data_simple_name,
-										"Error array size= " + str_array_size + " for " + data_simple_name);
-                return  false;
-            }
+				if (array_size < 0)  /* taille variable == 0 OK */
+				{
+					const string  & str_array_size = field_array.size_expression.get_original_string_expression();
+					os_err << "Error array size= " << str_array_size
+						   << " data= " << data_name << endl;
+					interpret_builder_error(type_definitions, in_out_frame_data,
+											field_type_name, data_name, data_simple_name,
+											"Error array size= " + str_array_size + " for " + data_simple_name);
+					return  false;
+				}
+			}
 
 			array_sizes[array_idx] = array_size;
 			array_indexes[array_idx] = 0;
