@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -106,6 +106,8 @@ struct T_interpret_read_values : public C_reference_counter,
 	typedef vector<T_var_name_P_value>    T_var_name_P_values;
 
 	// NB: interpret_read_values_src could not be this
+	void	copy_global_values(
+					  const T_interpret_read_values  & interpret_read_values_src);
 	void	copy_multiple_values(
 					  const T_interpret_read_values  & interpret_read_values_src,
 					  const std::string                var_name_with_star);
@@ -122,6 +124,8 @@ struct T_interpret_read_values : public C_reference_counter,
 // ICIOA ivvector begin 
 	void    read_variable_group_begin(const std::string  & name);
 	void    read_variable_group_end();
+	void    pinfo_variable_group_begin();
+	void    pinfo_variable_group_end();
 
 	vector<T_interpret_value>  DEBUG_get_msg() const { return  A_msg;}
 	std::string                DEBUG_get_current_path() const { return  A_current_path;}

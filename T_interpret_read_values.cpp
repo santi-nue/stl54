@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -627,6 +627,13 @@ T_interpret_read_values::duplicate_multiple_values(
 }
 
 void
+T_interpret_read_values::copy_global_values(
+					  const T_interpret_read_values  & interpret_read_values_src)
+{
+	copy_multiple_values(interpret_read_values_src, "global.*");
+}
+
+void
 T_interpret_read_values::copy_multiple_values(
 					  const T_interpret_read_values  & interpret_read_values_src,
 					  const std::string                var_name_with_star)
@@ -835,5 +842,22 @@ T_interpret_read_values::read_variable_group_end()
 	}
 }
 
+void
+T_interpret_read_values::pinfo_variable_group_begin()
+{
+	M_STATE_ENTER("pinfo_variable_group_begin", A_current_path);
+
+	// pinfo must be at root level
+	M_FATAL_IF_NE(A_current_path, "");
+
+	read_variable_group_begin("pinfo");
+}
+
+void
+T_interpret_read_values::pinfo_variable_group_end()
+{
+	M_STATE_ENTER("pinfo_variable_group_end", A_current_path);
+	read_variable_group_end();
+}
 #endif
 // ICIOA ivvector end 

@@ -1789,30 +1789,33 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
 
 	interpret_data.leave_node();
 #else
+	interpret_data.pinfo_variable_group_begin();
+
 #define M_ADD_PINFO(NAME)                                             \
-	interpret_data.add_read_variable("pinfo." #NAME, "pinfo." #NAME, pinfo->NAME)
+	interpret_data.add_read_variable(#NAME, #NAME, pinfo->NAME)
 
 #define M_ADD_PINFO_STR(NAME)                                             \
-	interpret_data.add_read_variable("pinfo." #NAME, "pinfo." #NAME, pinfo->NAME ? pinfo->NAME : "")
+	interpret_data.add_read_variable(#NAME, #NAME, pinfo->NAME ? pinfo->NAME : "")
 
 #define M_ADD_PINFO_ADDRESS(NAME)                                             \
-	interpret_data.add_read_variable("pinfo." #NAME, "pinfo." #NAME, pinfo_address_to_string(pinfo->NAME).c_str())
+	interpret_data.add_read_variable(#NAME, #NAME, pinfo_address_to_string(pinfo->NAME).c_str())
 
 #define M_ADD_PINFO_ADDRESS(NAME)                                             \
-	interpret_data.add_read_variable("pinfo." #NAME, "pinfo." #NAME, pinfo_address_to_string(pinfo->NAME).c_str())
+	interpret_data.add_read_variable(#NAME, #NAME, pinfo_address_to_string(pinfo->NAME).c_str())
 
 #define M_ADD_PINFO_FD(NAME)                                             \
-	interpret_data.add_read_variable("pinfo.fd." #NAME, "pinfo.fd." #NAME, pinfo->fd->NAME)
+	interpret_data.add_read_variable(#NAME, #NAME, pinfo->fd->NAME)
 
 #define M_ADD_PINFO_FD_NSTIME(NAME)                                             \
-	interpret_data.add_read_variable("pinfo.fd." #NAME, "pinfo.fd." #NAME, pinfo_nstime_to_string(pinfo->fd->NAME));  \
-	interpret_data.add_read_variable("pinfo.fd." #NAME ".secs", "pinfo.fd." #NAME ".secs", pinfo->fd->NAME.secs);  \
-	interpret_data.add_read_variable("pinfo.fd." #NAME ".nsecs", "pinfo.fd." #NAME ".nsecs", pinfo->fd->NAME.nsecs)
+	interpret_data.add_read_variable(#NAME, #NAME, pinfo_nstime_to_string(pinfo->fd->NAME));  \
+	interpret_data.add_read_variable(#NAME ".secs", #NAME ".secs", pinfo->fd->NAME.secs);  \
+	interpret_data.add_read_variable(#NAME ".nsecs", #NAME ".nsecs", pinfo->fd->NAME.nsecs)
 
   M_ADD_PINFO(current_proto);
 //  M_ADD_PINFO();  // column_info *cinfo;		/* Column formatting information */
   if (pinfo->fd != NULL_PTR)  // frame_data*
   {
+    interpret_data.read_variable_group_begin("fd");
 	M_ADD_PINFO_FD(num);         /* Frame number */
 	M_ADD_PINFO_FD(pkt_len);     /* Packet length */
 	M_ADD_PINFO_FD(cap_len);     /* Amount actually captured */
@@ -1824,6 +1827,7 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
     M_ADD_PINFO_FD_NSTIME(del_cap_ts);  /* Delta timestamp to previous captured frame (yes, it can be negative) */
 #endif
 	M_ADD_PINFO_FD(file_off);    /* File offset */
+    interpret_data.read_variable_group_end();
   }
 //  M_ADD_PINFO();  // union wtap_pseudo_header *pseudo_header;
 //  M_ADD_PINFO();  // GSList *data_src;		/* Frame data sources */
@@ -1843,11 +1847,8 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
   // wireshark version is "x.y.z<anything>"
   const char  * version_compil = VERSION;
   const char  * version_exec   = epan_get_version();
-  if (strncmp(version_compil, version_exec, 4) != 0)
+  if (strncmp(version_compil, version_exec, 4) == 0)
   {
-	  return;
-  }
-
   M_ADD_PINFO(ctype);               /* type of circuit, for protocols with a VC identifier */
   M_ADD_PINFO(circuit_id);
   M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
@@ -1861,6 +1862,9 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
   M_ADD_PINFO(match_port);
   M_ADD_PINFO_STR(match_string);
 #endif
+  }
+
+  interpret_data.pinfo_variable_group_end();
 }
 
 //*****************************************************************************
@@ -1913,15 +1917,6 @@ void    update_pinfo_ports(const T_generic_protocol_data  & protocol_data,
 			return;
 		}
 	}
-}
-
-//*****************************************************************************
-//*****************************************************************************
-
-void   copy_global_values(T_interpret_read_values  & interpret_read_values_dst,
-					  const T_interpret_read_values  & interpret_read_values_src)
-{
-	interpret_read_values_dst.copy_multiple_values(interpret_read_values_src, "global.*");
 }
 
 //*****************************************************************************
@@ -2024,11 +2019,11 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  // Copy global data of previous msg into interpret_data
 	  if (RCP_prev_saved_interpret_data.get() != NULL)
 	  {
-		  copy_global_values(*RCP_interpret_data, *RCP_prev_saved_interpret_data);
+		  RCP_interpret_data->copy_global_values(*RCP_prev_saved_interpret_data);
 	  }
 	  else
 	  {
-		  *RCP_interpret_data = protocol_data.ws_data.global_data.initialized_data;
+		  RCP_interpret_data->copy_global_values(protocol_data.ws_data.global_data.initialized_data);
 	  }
   }
 

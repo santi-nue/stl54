@@ -1,4 +1,8 @@
 
+2013/09/11  Prf : improve array size computation
+2013/09/11  Prf : improve function calls (and so decoder)
+2013/09/01  Prf : improve frame_to_field
+2013/08/19  Prf : improve frame_to_any
 2013/06/25  Add : {filter=var_filter_name}{desc=var_extended_name}
 2013/05/08  Fix : uint32 pos = string.find... fail when nothing found on 64 bits version
 2013/05/05  Add : Could set WIRESHARK_GENERIC_DISSECTOR_TRACES_DIR env variable to specify traces directory.
