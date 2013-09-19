@@ -3930,6 +3930,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
   					   NULL);
   }
   
+	interpret_data.read_variable_group_begin("A_current_path_not_empty");
 	for (int  idx_tst = 0; idx_tst < 40; ++idx_tst)
 	{
 		// global
@@ -3942,6 +3943,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 		ut_interpret_bytes(type_definitions, "", " set pinfo.srcport = pinfo.dstport ;", interpret_data, "");
 		ut_interpret_bytes(type_definitions, "", " set pinfo.fd.pipo = \"a new string\" ;", interpret_data, "");
 	}
+	interpret_data.read_variable_group_end();
 	
 	type_definitions = T_type_definitions();
     build_types ("unitary_tests_example_with_capture.fdesc",

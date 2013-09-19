@@ -283,7 +283,8 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 	{
 		return  get_P_attribute_value_of_read_variable(var_name, var_id,
 													   A_msg.rbegin() + (A_msg_size - A_msg_global_idx_end),
-													   A_msg.rend()                 - A_msg_global_idx_begin);
+													   A_msg.rend()                 - A_msg_global_idx_begin,
+													   true /*full_name_only*/);
 	}
 
 	if ((A_msg_pinfo_idx_end != A_msg_pinfo_idx_begin) &&
@@ -291,12 +292,14 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 	{
 		return  get_P_attribute_value_of_read_variable(var_name, var_id,
 													   A_msg.rbegin() + (A_msg_size - A_msg_pinfo_idx_end),
-													   A_msg.rend()                 - A_msg_pinfo_idx_begin);
+													   A_msg.rend()                 - A_msg_pinfo_idx_begin,
+													   true /*full_name_only*/);
 	}
 
 	return  get_P_attribute_value_of_read_variable(var_name, var_id,
 												   A_msg.rbegin(),
-												   A_msg.rend() - A_msg_other_idx_begin);
+												   A_msg.rend() - A_msg_other_idx_begin,
+												   false /*full_name_only*/);
 }
 
 const T_attribute_value *
@@ -304,9 +307,10 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
                                                const string                                      & var_name,
 													 T_id                                        & var_id,
 													 T_interpret_values::const_reverse_iterator    A_msg_rstart,
-													 T_interpret_values::const_reverse_iterator    A_msg_rstop) const
+													 T_interpret_values::const_reverse_iterator    A_msg_rstop,
+													 bool                                          full_name_only) const
 {
-	if (A_current_path != "")
+	if ((A_current_path != "") && (full_name_only == false))
 	{
 		string    full_name = A_current_path;
 		full_name += ".";
@@ -451,7 +455,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 					return  P_attribute_value;
 				}
 			}
-			else
+			else if (full_name_only == false)
 			{
 				// Search value from end of name.
 				int  idx_dot = interpret_value_name.size() - var_name.size() -1;

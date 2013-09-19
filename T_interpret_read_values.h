@@ -155,7 +155,8 @@ private:
                                                const string                                      & var_name,
 													 T_id                                        & var_id,
 													 T_interpret_values::const_reverse_iterator    A_msg_rstart,
-													 T_interpret_values::const_reverse_iterator    A_msg_rstop) const;
+													 T_interpret_values::const_reverse_iterator    A_msg_rstop,
+													 bool                                          full_name_only) const;
 
     const T_interpret_read_values *  get_P_interpret_read_values_min_max (
                                               const string  & var_name,
