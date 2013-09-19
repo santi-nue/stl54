@@ -3567,6 +3567,21 @@ void    test_interpret_simple()
 	ut_interpret_bytes(type_definitions, BIN_DATA, TO_READ, interpret_data, EXPECTED K_eol)
 
 
+	// global and pinfo must be instantiated at the beginning
+	interpret_data.global_variable_group_begin();
+	M_TEST_SIMPLE("", " var uint32  msg_counter = 0 ;", "msg_counter = 0");
+	interpret_data.global_variable_group_end();
+
+	interpret_data.pinfo_variable_group_begin();
+	M_TEST_SIMPLE("", " var uint32  msg_counter = 0 ;", "msg_counter = 0");
+	M_TEST_SIMPLE("", " var uint32  dstport = 133 ;"  , "dstport = 133");
+	M_TEST_SIMPLE("", " var uint32  srcport = 5000 ;" , "srcport = 5000");
+	interpret_data.read_variable_group_begin("fd");
+	M_TEST_SIMPLE("", " var string  pipo = \"str\" ;" , "pipo = str");
+	interpret_data.read_variable_group_end();
+	interpret_data.pinfo_variable_group_end();
+
+
 	interpret_data.set_big_endian();
 	M_TEST_EQ(interpret_data.is_little_endian(), false);
 
@@ -3915,14 +3930,18 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
   					   NULL);
   }
   
-	// global
-	interpret_data.read_variable_group_begin("global");
-	M_TEST_SIMPLE("", " var uint32  msg_counter = 0 ;", "msg_counter = 0");
-	interpret_data.read_variable_group_end();
+	for (int  idx_tst = 0; idx_tst < 40; ++idx_tst)
+	{
+		// global
+		ut_interpret_bytes(type_definitions, "", " set global.msg_counter = 0 ;", interpret_data, "");
+		ut_interpret_bytes(type_definitions, "", " set global.msg_counter = global.msg_counter + 1 ;", interpret_data, "");
 
-	ut_interpret_bytes(type_definitions, "", " set global.msg_counter = 0 ;", interpret_data, "");
-	ut_interpret_bytes(type_definitions, "", " set global.msg_counter = global.msg_counter + 1 ;", interpret_data, "");
-
+		// pinfo
+		ut_interpret_bytes(type_definitions, "", " set pinfo.msg_counter = 0 ;", interpret_data, "");
+		ut_interpret_bytes(type_definitions, "", " set pinfo.msg_counter = pinfo.msg_counter + 1 ;", interpret_data, "");
+		ut_interpret_bytes(type_definitions, "", " set pinfo.srcport = pinfo.dstport ;", interpret_data, "");
+		ut_interpret_bytes(type_definitions, "", " set pinfo.fd.pipo = \"a new string\" ;", interpret_data, "");
+	}
 	
 	type_definitions = T_type_definitions();
     build_types ("unitary_tests_example_with_capture.fdesc",
@@ -4166,7 +4185,9 @@ void    test_interpret_msg(int   msg_to_test = -1)
 	if ((msg_to_test < 0) || (msg_to_test == 1))
 	{
 		T_interpret_data  interpret_data;
-		interpret_data.add_read_variable("global.msg_counter", "global.msg_counter" ,0);
+		interpret_data.global_variable_group_begin();
+		interpret_data.add_read_variable("global.msg_counter", "msg_counter" ,0);
+		interpret_data.global_variable_group_end();
 
 		ut_interpret_bytes(type_definitions,
 						   msg_1_frame,
@@ -4180,7 +4201,9 @@ void    test_interpret_msg(int   msg_to_test = -1)
 	if ((msg_to_test < 0) || (msg_to_test == 2))
 	{
 		T_interpret_data  interpret_data;
-		interpret_data.add_read_variable("global.msg_counter", "global.msg_counter" ,1);
+		interpret_data.global_variable_group_begin();
+		interpret_data.add_read_variable("global.msg_counter", "msg_counter" ,1);
+		interpret_data.global_variable_group_end();
 
 		// 2010/10/15         2013 ms
 		// 2010/10/16  1513 - 1545 ms
@@ -4195,7 +4218,9 @@ void    test_interpret_msg(int   msg_to_test = -1)
 	if ((msg_to_test < 0) || (msg_to_test == 4))
 	{
 		T_interpret_data  interpret_data;
-		interpret_data.add_read_variable("global.msg_counter", "global.msg_counter" ,2);
+		interpret_data.global_variable_group_begin();
+		interpret_data.add_read_variable("global.msg_counter", "msg_counter" ,2);
+		interpret_data.global_variable_group_end();
 
 		ut_interpret_bytes(type_definitions,
 						   msg_4_frame,
@@ -4205,7 +4230,9 @@ void    test_interpret_msg(int   msg_to_test = -1)
 	if ((msg_to_test < 0) || (msg_to_test == 35))
 	{
 		T_interpret_data  interpret_data;
-		interpret_data.add_read_variable("global.msg_counter", "global.msg_counter" ,3);
+		interpret_data.global_variable_group_begin();
+		interpret_data.add_read_variable("global.msg_counter", "msg_counter" ,3);
+		interpret_data.global_variable_group_end();
 
 		ut_interpret_bytes(type_definitions,
 						   msg_35_frame,

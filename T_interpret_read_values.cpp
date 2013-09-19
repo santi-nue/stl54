@@ -29,6 +29,15 @@
 // T_interpret_read_values
 //*****************************************************************************
 
+T_interpret_read_values::T_interpret_read_values()
+	: A_msg_global_idx_begin(0)
+	, A_msg_global_idx_end(0)
+	, A_msg_pinfo_idx_begin(0)
+	, A_msg_pinfo_idx_end(0)
+	, A_msg_other_idx_begin(0)
+{
+}
+
 bool
 T_interpret_read_values::is_read_variable (const string  & var_name) const
 {
@@ -267,6 +276,36 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
                                                const string  & var_name,
 													 T_id    & var_id) const
 {
+	const int  A_msg_size = A_msg.size();
+
+	if ((A_msg_global_idx_end != A_msg_global_idx_begin) &&
+		(var_name.compare(0, 7, "global.") == 0))
+	{
+		return  get_P_attribute_value_of_read_variable(var_name, var_id,
+													   A_msg.rbegin() + (A_msg_size - A_msg_global_idx_end),
+													   A_msg.rend()                 - A_msg_global_idx_begin);
+	}
+
+	if ((A_msg_pinfo_idx_end != A_msg_pinfo_idx_begin) &&
+		(var_name.compare(0, 6, "pinfo.") == 0))
+	{
+		return  get_P_attribute_value_of_read_variable(var_name, var_id,
+													   A_msg.rbegin() + (A_msg_size - A_msg_pinfo_idx_end),
+													   A_msg.rend()                 - A_msg_pinfo_idx_begin);
+	}
+
+	return  get_P_attribute_value_of_read_variable(var_name, var_id,
+												   A_msg.rbegin(),
+												   A_msg.rend() - A_msg_other_idx_begin);
+}
+
+const T_attribute_value *
+T_interpret_read_values::get_P_attribute_value_of_read_variable (
+                                               const string                                      & var_name,
+													 T_id                                        & var_id,
+													 T_interpret_values::const_reverse_iterator    A_msg_rstart,
+													 T_interpret_values::const_reverse_iterator    A_msg_rstop) const
+{
 	if (A_current_path != "")
 	{
 		string    full_name = A_current_path;
@@ -274,8 +313,8 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 		full_name += var_name;
 
 		for (T_interpret_values::const_reverse_iterator
-												iter  = A_msg.rbegin();
-												iter != A_msg.rend();
+												iter  = A_msg_rstart;
+												iter != A_msg_rstop;
 											  ++iter)
 		{
 			const T_interpret_value  & interpret_value = *iter;
@@ -356,8 +395,8 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 	else
 	{
 		for (T_interpret_values::const_reverse_iterator
-												iter  = A_msg.rbegin();
-												iter != A_msg.rend();
+												iter  = A_msg_rstart;
+												iter != A_msg_rstop;
 											  ++iter)
 		{
 			const T_interpret_value  & interpret_value = *iter;
@@ -630,7 +669,10 @@ void
 T_interpret_read_values::copy_global_values(
 					  const T_interpret_read_values  & interpret_read_values_src)
 {
+	A_msg_global_idx_begin = A_msg.size();
 	copy_multiple_values(interpret_read_values_src, "global.*");
+	A_msg_global_idx_end = A_msg.size();
+	A_msg_other_idx_begin = A_msg_global_idx_end;
 }
 
 void
@@ -777,6 +819,11 @@ T_interpret_read_values::reset()
 
 	A_msg.clear();
 	A_current_path = "";
+	A_msg_global_idx_begin = 0;
+	A_msg_global_idx_end = 0;
+	A_msg_pinfo_idx_begin = 0;
+	A_msg_pinfo_idx_end = 0;
+	A_msg_other_idx_begin = 0;
 	A_this_msg_attribute_value = T_attribute_value();
 }
 
@@ -796,8 +843,14 @@ T_interpret_read_values::reset_short_names()
 void    swap(T_interpret_read_values  & lhs,
 			 T_interpret_read_values  & rhs)
 {
-	swap(lhs.A_msg,            rhs.A_msg);
-	swap(lhs.A_current_path, rhs.A_current_path);
+	swap(lhs.A_msg,                  rhs.A_msg);
+	swap(lhs.A_msg_global_idx_begin, rhs.A_msg_global_idx_begin);
+	swap(lhs.A_msg_global_idx_end,   rhs.A_msg_global_idx_end);
+	swap(lhs.A_msg_pinfo_idx_begin,  rhs.A_msg_pinfo_idx_begin);
+	swap(lhs.A_msg_pinfo_idx_end,    rhs.A_msg_pinfo_idx_end);
+	swap(lhs.A_msg_other_idx_begin,  rhs.A_msg_other_idx_begin);
+	swap(lhs.A_current_path,         rhs.A_current_path);
+	// A_this_msg_attribute_value ? currently set just before used
 }
 
 
@@ -843,6 +896,27 @@ T_interpret_read_values::read_variable_group_end()
 }
 
 void
+T_interpret_read_values::global_variable_group_begin()
+{
+	M_STATE_ENTER("global_variable_group_begin", A_current_path);
+
+	// global must be at root level
+	M_FATAL_IF_NE(A_current_path, "");
+
+	read_variable_group_begin("global");
+	A_msg_global_idx_begin = A_msg.size();
+}
+
+void
+T_interpret_read_values::global_variable_group_end()
+{
+	M_STATE_ENTER("global_variable_group_end", A_current_path);
+	A_msg_global_idx_end = A_msg.size();
+	A_msg_other_idx_begin = A_msg_global_idx_end;
+	read_variable_group_end();
+}
+
+void
 T_interpret_read_values::pinfo_variable_group_begin()
 {
 	M_STATE_ENTER("pinfo_variable_group_begin", A_current_path);
@@ -851,12 +925,15 @@ T_interpret_read_values::pinfo_variable_group_begin()
 	M_FATAL_IF_NE(A_current_path, "");
 
 	read_variable_group_begin("pinfo");
+	A_msg_pinfo_idx_begin = A_msg.size();
 }
 
 void
 T_interpret_read_values::pinfo_variable_group_end()
 {
 	M_STATE_ENTER("pinfo_variable_group_end", A_current_path);
+	A_msg_pinfo_idx_end = A_msg.size();
+	A_msg_other_idx_begin = A_msg_pinfo_idx_end;
 	read_variable_group_end();
 }
 #endif

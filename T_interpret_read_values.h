@@ -45,6 +45,8 @@ struct T_interpret_read_values : public C_reference_counter,
 {
 	typedef int       T_id;
 
+	T_interpret_read_values();
+
     bool              is_read_variable (const string   & var_name) const;
     bool    get_value_of_read_variable (const string   & var_name,
                                               C_value  & out_value) const;
@@ -124,7 +126,9 @@ struct T_interpret_read_values : public C_reference_counter,
 // ICIOA ivvector begin 
 	void    read_variable_group_begin(const std::string  & name);
 	void    read_variable_group_end();
-	void    pinfo_variable_group_begin();
+	void    global_variable_group_begin();    // only 1 global group and at the beginning
+	void    global_variable_group_end();
+	void    pinfo_variable_group_begin();     // only 1 pinfo group and at the beginning
 	void    pinfo_variable_group_end();
 
 	vector<T_interpret_value>  DEBUG_get_msg() const { return  A_msg;}
@@ -133,6 +137,11 @@ struct T_interpret_read_values : public C_reference_counter,
 private:
 	typedef vector<T_interpret_value>      T_interpret_values;
 	vector<T_interpret_value>    A_msg;
+	int                          A_msg_global_idx_begin;
+	int                          A_msg_global_idx_end;
+	int                          A_msg_pinfo_idx_begin;
+	int                          A_msg_pinfo_idx_end;
+	int                          A_msg_other_idx_begin;    // other data start after global and pinfo
 	std::string                  A_current_path;
 // ICIOA ivvector end 
 
@@ -142,6 +151,11 @@ private:
     const T_attribute_value *  get_P_attribute_value_of_read_variable (
                                               const string  & var_name,
 													T_id    & var_id) const;
+    const T_attribute_value *  get_P_attribute_value_of_read_variable (
+                                               const string                                      & var_name,
+													 T_id                                        & var_id,
+													 T_interpret_values::const_reverse_iterator    A_msg_rstart,
+													 T_interpret_values::const_reverse_iterator    A_msg_rstop) const;
 
     const T_interpret_read_values *  get_P_interpret_read_values_min_max (
                                               const string  & var_name,
