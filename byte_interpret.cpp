@@ -1468,16 +1468,6 @@ bool    frame_to_switch (const T_type_definitions      & type_definitions,
 void    build_types_finalize_itself(const T_type_definitions  & type_definitions,
 							        const T_field_type_name   & field_type_name);
 
-typedef bool    (*T_pf_frame_to_field)(
-						 const T_type_definitions    & type_definitions,
-					           T_frame_data          & in_out_frame_data,
-					           T_interpret_data      & interpret_data,
-                         const T_field_type_name     & field_type_name,
-                         const string                & data_name,
-                         const string                & data_simple_name,
-                               ostream               & os_out,
-                               ostream               & os_err);
-
 //*****************************************************************************
 // frame_to_field_deep_break **************************************************
 //*****************************************************************************
@@ -2245,14 +2235,13 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
 		}
 	}
 
-	T_pf_frame_to_field  pf = (T_pf_frame_to_field)field_type_name.pf_frame_to_field;
-	return  pf(type_definitions,
-			   in_out_frame_data,
-			   interpret_data,
-			   field_type_name,
-			   data_name,
-			   data_simple_name,
-			   os_out, os_err);
+	return  field_type_name.pf_frame_to_field(type_definitions,
+											   in_out_frame_data,
+											   interpret_data,
+											   field_type_name,
+											   data_name,
+											   data_simple_name,
+											   os_out, os_err);
 }
 
 //*****************************************************************************
@@ -4614,16 +4603,6 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 
 bool    G_is_a_variable_ICIOA = false;
 
-typedef bool    (*T_pf_frame_to_any)
-                     (const T_type_definitions    & type_definitions,
-					        T_frame_data          & in_out_frame_data,
-					        T_interpret_data      & interpret_data,
-                      const T_field_type_name     & field_type_name,
-                      const string                & data_name,
-                      const string                & data_simple_name,
-                            ostream               & os_out,
-                            ostream               & os_err);
-
 //*****************************************************************************
 // frame_to_any simple type ***************************************************
 //*****************************************************************************
@@ -5479,74 +5458,64 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 
 	if (final_type == "deep_break")
     {
-		T_pf_frame_to_field  pf = frame_to_field_deep_break;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_deep_break;
 		return;
 	}
 
     if (final_type == "deep_continue")
     {
-		T_pf_frame_to_field  pf = frame_to_field_deep_continue;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_deep_continue;
 		return;
 	}
 
     if (final_type == "break")
     {
-		T_pf_frame_to_field  pf = frame_to_field_break;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_break;
 		return;
 	}
 
     if (final_type == "continue")
     {
-		T_pf_frame_to_field  pf = frame_to_field_continue;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_continue;
 		return;
 	}
 
     if (final_type == "return")
     {
-		T_pf_frame_to_field  pf = frame_to_field_return;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_return;
 		return;
 	}
 
     if ((final_type == "while") ||
 		(final_type == "do_while"))
     {
-		T_pf_frame_to_field  pf = frame_to_field_while;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_while;
 		return;
 	}
 
     if ((final_type == "loop_size_bytes") ||
         (final_type == "loop_size_bits"))
     {
-		T_pf_frame_to_field  pf = frame_to_field_loop_size;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_loop_size;
 		return;
 	}
 
     if (final_type == "loop_nb_times")
     {
-		T_pf_frame_to_field  pf = frame_to_field_loop_nb_times;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_loop_nb_times;
 		return;
 	}
 
     if (final_type == "if")
     {
-		T_pf_frame_to_field  pf = frame_to_field_if;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_if;
 		return;
 	}
 
 	// frame_to_field other
 
     {
-		T_pf_frame_to_field  pf = frame_to_field_other;
-		field_type_name.pf_frame_to_field = pf;
+		field_type_name.pf_frame_to_field = frame_to_field_other;
 		// no return;
 	}
 
@@ -5554,15 +5523,13 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 
     if (final_type == "set")
     {
-		T_pf_frame_to_any  pf = frame_to_any_set;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_set;
 		return;
 	}
 
     if (final_type == "call")
     {
-		T_pf_frame_to_any  pf = frame_to_any_call;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_call;
 		return;
 	}
 
@@ -5570,8 +5537,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 		const T_struct_definition  * P_struct_def = type_definitions.get_P_struct(final_type);
 		if (P_struct_def != NULL)
         {
-			T_pf_frame_to_any  pf = frame_to_any_struct;
-			field_type_name.pf_frame_to_any = pf;
+			field_type_name.pf_frame_to_any = frame_to_any_struct;
 			field_type_name.P_type_struct_def = P_struct_def;
 			return;
         }
@@ -5599,12 +5565,11 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 #define M_READ_SIMPLE_TYPE(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL)                 \
 	if (final_type == #TYPE_NAME)                                             \
 	{                                                                         \
-		T_pf_frame_to_any  pf = frame_to_any_ ##  TYPE_NAME;                  \
+		field_type_name.pf_frame_to_any = frame_to_any_ ##  TYPE_NAME;        \
 		if (is_enum == true)                                                  \
 		{                                                                     \
-			pf = frame_to_any_ ##  TYPE_NAME ## _enum;                        \
+			field_type_name.pf_frame_to_any = frame_to_any_ ##  TYPE_NAME ## _enum;  \
 		}                                                                     \
-		field_type_name.pf_frame_to_any = pf;                                 \
 		return;                                                               \
 	}
 
@@ -5698,8 +5663,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 	if ((final_type == "string") ||
 		(final_type == "string_nl"))
     {
-		T_pf_frame_to_any  pf = frame_to_string;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_string;
 		return;
     }
 
@@ -5707,8 +5671,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 		(final_type == "subproto") ||
 		(final_type == "insproto"))
     {
-		T_pf_frame_to_any  pf = frame_to_raw;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_raw;
 		return;
     }
 
@@ -5716,8 +5679,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 		const T_switch_definition  * P_switch = type_definitions.get_P_switch(final_type);
 		if (P_switch != NULL_PTR)
 		{
-			T_pf_frame_to_any  pf = frame_to_any_switch;
-			field_type_name.pf_frame_to_any = pf;
+			field_type_name.pf_frame_to_any = frame_to_any_switch;
 			field_type_name.P_type_switch_def = P_switch;
 			return;
         }
@@ -5727,8 +5689,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 		const T_bitfield_definition  * P_bitfield_def = type_definitions.get_P_bitfield(final_type);
 		if (P_bitfield_def != NULL)
 		{
-			T_pf_frame_to_any  pf = frame_to_any_bitfield;
-			field_type_name.pf_frame_to_any = pf;
+			field_type_name.pf_frame_to_any = frame_to_any_bitfield;
 			field_type_name.P_type_bitfield_def = P_bitfield_def;
 			return;
 		}
@@ -5736,15 +5697,13 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 
     if (final_type == "padding_bits")
     {
-		T_pf_frame_to_any  pf = frame_to_any_padding_bits;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_padding_bits;
 		return;
     }
 
     if ((final_type == "debug_print") || (final_type == "print"))
     {
-		T_pf_frame_to_any  pf = frame_to_any_print;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_print;
 		return;
     }
 
@@ -5753,43 +5712,37 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 		(final_type == "warning") ||
 		(final_type == "error"))
     {
-		T_pf_frame_to_any  pf = frame_to_any_error;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_error;
 		return;
     }
 
     if (final_type == "fatal")
     {
-		T_pf_frame_to_any  pf = frame_to_any_fatal;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_fatal;
 		return;
     }
 
     if (final_type == "output")
     {
-		T_pf_frame_to_any  pf = frame_to_any_output;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_output;
 		return;
     }
 
     if (final_type == "byte_order")
     {
-		T_pf_frame_to_any  pf = frame_to_any_byte_order;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_byte_order;
 		return;
     }
 
     if (final_type == "decoder")
     {
-		T_pf_frame_to_any  pf = frame_to_any_decoder;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_decoder;
 		return;
     }
 
     if (final_type == "save_position")
     {
-		T_pf_frame_to_any  pf = frame_to_any_save_position;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_save_position;
 		return;
     }
 
@@ -5797,23 +5750,20 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 		(final_type == "move_position_bytes") ||
 		(final_type == "move_position_bits"))
 	{
-		T_pf_frame_to_any  pf = frame_to_any_position;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_position;
 		return;
     }
 
     if ((final_type == "check_eof_distance_bytes") ||
 		(final_type == "check_eof_distance_bits"))
     {
-		T_pf_frame_to_any  pf = frame_to_any_check_eof_distance;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_check_eof_distance;
 		return;
     }
 
     if (final_type == "chrono")
     {
-		T_pf_frame_to_any  pf = frame_to_any_chrono;
-		field_type_name.pf_frame_to_any = pf;
+		field_type_name.pf_frame_to_any = frame_to_any_chrono;
 		return;
     }
 }
@@ -5875,14 +5825,13 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
 		}
 	}
 
-	T_pf_frame_to_any  pf = (T_pf_frame_to_any)field_type_name.pf_frame_to_any;
-	return  pf(type_definitions,
-			   in_out_frame_data,
-			   interpret_data,
-               field_type_name,
-               data_name,
-               data_simple_name,
-               os_out, os_err);
+	return  field_type_name.pf_frame_to_any(type_definitions,
+										   in_out_frame_data,
+										   interpret_data,
+										   field_type_name,
+										   data_name,
+										   data_simple_name,
+										   os_out, os_err);
 }
 
 //*****************************************************************************
