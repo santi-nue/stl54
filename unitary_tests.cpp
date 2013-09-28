@@ -3227,6 +3227,24 @@ void    test_builtin_functions()
 	interpret_data.set_read_variable("str", "123");
 	M_TEST_EQ(compute_expression_no_io_flt("to_numeric (str + \".2\" + \"3\")"), 123.23);
 
+    // to_integer
+	M_TEST_EQ(compute_expression_static_int("to_integer (\"12\" + \"34\")"), 1234);
+	M_TEST_EQ(compute_expression_static_int("to_integer (\"12\" + \"3\") * 3"), 369);
+	interpret_data.set_read_variable("str", "123");
+	M_TEST_EQ(compute_expression_no_io_int("to_integer (str + \"3\")"), 1233);
+    // to_integer from float (can loose data) inside string or not
+	M_TEST_EQ(compute_expression_static_int("to_integer (\"1.2\" + \"34\")"), 1);   //crash
+	M_TEST_EQ(compute_expression_static_int("to_integer (1.2 + 34)"), 35);
+
+    // to_float
+	M_TEST_EQ(compute_expression_static_flt("to_float (\"1.2\" + \"34\")"), 1.234);
+	M_TEST_EQ(compute_expression_static_flt("to_float (\"1.2\" + \"3\") / 2"), 0.615);
+	interpret_data.set_read_variable("str", "123");
+	M_TEST_EQ(compute_expression_no_io_flt("to_float (str + \".2\" + \"3\")"), 123.23);
+	// to_float from int (can loose precision) inside string or not
+	M_TEST_EQ(compute_expression_static_flt("to_float (\"12\" + \"34\")"), 1234.0);
+	M_TEST_EQ(compute_expression_static_flt("to_float (12 + 34)"), 46.0);
+
 	// getenv
 	compute_expression_static_str("getenv (\"USERNAME\")");
 
@@ -3971,7 +3989,7 @@ void    test_interpret_simple_int64()
 // test_interpret_simple_uint8_array
 //*****************************************************************************
 
-void    test_interpret_simple_uint8_array(const int  max_iter)
+void    test_interpret_simple_uint8_array(const int  max_iter = 1)
 {
 	T_type_definitions    type_definitions;
     build_types ("unitary_tests_basic.fdesc",
@@ -4334,6 +4352,8 @@ int   main(const int         argc,
 		M_TEST_FCT(test_value_format);
 		M_TEST_FCT(test_value_printf);
 		M_TEST_FCT(test_interpret_simple);
+		M_TEST_FCT(test_interpret_simple_int64);
+		M_TEST_FCT(test_interpret_simple_uint8_array);
 		M_TEST_FCT(test_interpret_simple_internal_frame);
 		M_TEST_FCT(test_interpret_msg);
 		M_TEST_FCT(test_build_types_and_interpret_bytes);

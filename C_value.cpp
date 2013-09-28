@@ -392,16 +392,24 @@ C_value::to_int(int  base)
 	if (A_type == E_type_float)
 	{
 		A_type = E_type_integer;
+		A_str = get_string ((long long)A_integer);
 	}
 	else if (A_type == E_type_string)
 	{
 		// Try to promote to integer
 		long long    value;
+		double       value_dbl;
 		if (get_number(A_str.c_str(), base, value))
 		{
 			A_type = E_type_integer;
 			A_integer = value;
 			A_flt = (double)value;
+		}
+		else if (get_number(A_str.c_str(), value_dbl))
+		{
+			A_type = E_type_integer;           // can loose data, e.g 1e120
+			A_integer = (long long)value_dbl;
+			A_flt = value_dbl;
 		}
 	}
 
@@ -419,6 +427,7 @@ C_value::to_float()
 	if (A_type == E_type_integer)
 	{
 		A_type = E_type_float;
+		A_str = get_string ((long long)A_flt);
 	}
 	else if (A_type == E_type_string)
 	{
