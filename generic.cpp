@@ -1595,23 +1595,20 @@ void    cpp_dissect_generic_set_packet_id_str(T_generic_protocol_data  & protoco
 
   if (G_inside_dissector == false)
   {
-    if (check_col(pinfo->cinfo, COL_INFO))
-    {
-      // ICIOA : do not print the port's names as tcp dissector does
-      // must use get_tcp_port (or ...) from epan/addr_resolv.h
-	  // I choose to NOT do it (for now) :
-	  // - perhaps I'm not on tcp (how to know it ?)
-	  // - always use generic dissector with NOT public protocol on NOT public ports
-	  // - is it normal to display the parent proto ports ?
-	  // - what will happen with a sub proto ?
+    // ICIOA : do not print the port's names as tcp dissector does
+    // must use get_tcp_port (or ...) from epan/addr_resolv.h
+    // I choose to NOT do it (for now) :
+    // - perhaps I'm not on tcp (how to know it ?)
+    // - always use generic dissector with NOT public protocol on NOT public ports
+    // - is it normal to display the parent proto ports ?
+    // - what will happen with a sub proto ?
 #if 0
-	  col_add_fstr(pinfo->cinfo, COL_INFO,
-                   "%d > %d %s",
-                   pinfo->srcport, pinfo->destport, packet_id_str.c_str());
+    col_add_fstr(pinfo->cinfo, COL_INFO,
+                 "%d > %d %s",
+                 pinfo->srcport, pinfo->destport, packet_id_str.c_str());
 #else
-	  col_append_fstr(pinfo->cinfo, COL_INFO, " %s", packet_id_str.c_str());
+    col_append_fstr(pinfo->cinfo, COL_INFO, " %s", packet_id_str.c_str());
 #endif
-    }
   }
 }
 
@@ -2473,16 +2470,11 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
 
   if (G_inside_dissector == false)
   {
-    if (check_col(pinfo->cinfo, COL_PROTOCOL))
-      col_set_str(pinfo->cinfo, COL_PROTOCOL, protocol_data.PROTOSHORTNAME.c_str());
+    col_set_str(pinfo->cinfo, COL_PROTOCOL, protocol_data.PROTOSHORTNAME.c_str());
 
-    /* Clear out stuff in the info column */
-    if (check_col(pinfo->cinfo, COL_INFO))
-    {
-	  col_add_fstr(pinfo->cinfo, COL_INFO,
-                   "%d > %d",
-                   pinfo->srcport, pinfo->destport);
-    }
+    col_add_fstr(pinfo->cinfo, COL_INFO,
+                 "%d > %d",
+                 pinfo->srcport, pinfo->destport);
   }
 
 
