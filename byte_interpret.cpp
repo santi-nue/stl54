@@ -1968,6 +1968,8 @@ bool    frame_to_field_other(
 					}
 				}
 
+				// Triggers invalid error on array of struct containing only variables.  2013/10/06
+#if 0
 				os_err << "Error array"
                        << " data= " << data_simple_array_name
                        << " : no more data to read" << endl;
@@ -1976,6 +1978,7 @@ bool    frame_to_field_other(
 										"End array : no more data to read " + data_simple_array_name);
 				M_FATAL_MISSING_DATA();
                 return  false;
+#endif
 			}
 
 // ICIOA il faut supprimer les tests fait dans C_byte_interpret_wsgd_builder::group_begin ?
@@ -5776,6 +5779,40 @@ void    build_types_finalize_itself(const T_type_definitions  & type_definitions
 }
 
 //*****************************************************************************
+// C_interpret_forget_data
+// Permits recursive call.
+//*****************************************************************************
+
+class C_interpret_forget_data
+{
+public:
+	C_interpret_forget_data(T_interpret_read_values  & interpret_read_values,
+							bool                       must_forget)
+		:A_interpret_read_values(interpret_read_values),
+		 A_must_forget(must_forget),
+		 A_read_variable_id(A_interpret_read_values.get_id_of_last_read_variable())
+	{
+	}
+	~C_interpret_forget_data()
+	{
+		if (A_must_forget == true)
+		{
+			A_interpret_read_values.sup_all_read_variables_after(A_read_variable_id);
+		}
+	}
+
+private:
+	// Copy and assignment are forbidden
+	C_interpret_forget_data(const C_interpret_forget_data  &);
+	C_interpret_forget_data & operator=(const C_interpret_forget_data  &);
+
+	T_interpret_read_values        & A_interpret_read_values;
+	bool                             A_must_forget;
+	T_interpret_read_values::T_id    A_read_variable_id;
+};
+
+
+//*****************************************************************************
 // frame_to_any ***************************************************************
 //*****************************************************************************
 
@@ -5790,6 +5827,9 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
 {
 	M_STATE_ENTER ("frame_to_any",
                    "data_type= " << field_type_name.type << " data_name= " << data_name);
+
+	// Will forget data if asked.
+	C_interpret_forget_data    ifd(interpret_data, field_type_name.must_forget);
 
 	// Hide the field if asked.
 	const int   output_level_offset = field_type_name.get_output_level_offset();

@@ -1,4 +1,5 @@
 
+2013/10/06  Prf : forget keyword permits to forget some data (useless for wireshark)
 2013/09/28  Fix : to_integer now accept string containing a float expression
 2013/09/19  Prf : improve data access when there is global or pinfo data
 2013/09/11  Prf : improve array size computation

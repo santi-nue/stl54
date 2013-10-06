@@ -661,6 +661,13 @@ string    build_field (istream                           & is,
 
 	M_FATAL_IF_EQ (first_word, "");
 
+	// modifier: forget
+	if (first_word == "forget")
+	{
+		field_type_name.must_forget = true;
+		M_FATAL_IF_FALSE (read_token_left_any (is, first_word));
+	}
+
 	// modifier: hide
 	if (first_word == "hide")
 	{

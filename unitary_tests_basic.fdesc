@@ -401,3 +401,12 @@ function int64  call_me_maybe_u1 (in uint1  value)
 #  return  call_me_maybe_u2 (value);
   return  1;
 }
+
+###############################################################################
+# forget
+###############################################################################
+
+struct T_forget
+{
+  var int32  struct_counter = struct_counter + 1;
+}

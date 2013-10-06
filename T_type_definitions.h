@@ -192,6 +192,8 @@ typedef bool    (*T_pf_frame_to_field)(
 
 struct T_field_type_name : public T_field_type_name_base
 {
+	bool                         must_forget;
+
 	enum E_output_directive
 	{
 		// Do NOT change values, directly used to change output level.

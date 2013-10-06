@@ -150,7 +150,8 @@ T_field_type_name_base::has_post_treatment() const
 //*****************************************************************************
 
 T_field_type_name::T_field_type_name()
-	:output_directive(E_output_directive_none),
+	:must_forget(false),
+	 output_directive(E_output_directive_none),
 	 A_is_a_variable(false),
 	 wsgd_field_idx (-1),
 	 pf_frame_to_any(NULL),

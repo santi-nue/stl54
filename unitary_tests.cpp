@@ -4174,6 +4174,37 @@ void    test_interpret_simple_internal_frame()
 }
 
 //*****************************************************************************
+// test_interpret_forget
+//*****************************************************************************
+
+void    test_interpret_forget()
+{
+	T_type_definitions    type_definitions;
+    build_types ("unitary_tests_basic.fdesc",
+                 type_definitions);
+
+	T_interpret_data      interpret_data;
+
+	M_TEST_SIMPLE("", "        var uint32  value = 7 ;", "value = 7");
+	M_TEST_SIMPLE("", "        print (\"%d\", value);", "7");
+	M_TEST_SIMPLE("", " forget var uint32  value = 3457 ;", "value = 3457");
+	M_TEST_SIMPLE("", "        print (\"%d\", value);", "7");
+	M_TEST_SIMPLE("", "        var uint32  value = 3 ;", "value = 3");
+	M_TEST_SIMPLE("", "        print (\"%d\", value);", "3");
+
+	// Test with struct
+	M_TEST_SIMPLE("", "    var int32  struct_counter = 1000 ;", "struct_counter = 1000");
+	M_TEST_SIMPLE("", "        T_forget      st1 ;", "st1.struct_counter = 1001");
+	M_TEST_SIMPLE("", " forget T_forget      st2 ;", "st2.struct_counter = 1002");
+	M_TEST_SIMPLE("", "        T_forget      st3 ;", "st3.struct_counter = 1002");
+	// Test with array : each item of the array is forgot
+	M_TEST_SIMPLE("", " forget T_forget[3]   sta ;", "sta[0].struct_counter = 1003" K_eol
+		                                             "sta[1].struct_counter = 1003" K_eol
+												     "sta[2].struct_counter = 1003");
+	M_TEST_SIMPLE("", "        T_forget      st7 ;", "st7.struct_counter = 1003");
+}
+
+//*****************************************************************************
 // test_interpret_msg
 //*****************************************************************************
 
@@ -4355,6 +4386,7 @@ int   main(const int         argc,
 		M_TEST_FCT(test_interpret_simple_int64);
 		M_TEST_FCT(test_interpret_simple_uint8_array);
 		M_TEST_FCT(test_interpret_simple_internal_frame);
+		M_TEST_FCT(test_interpret_forget);
 		M_TEST_FCT(test_interpret_msg);
 		M_TEST_FCT(test_build_types_and_interpret_bytes);
 		M_TEST_FCT(test_size);
