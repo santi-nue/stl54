@@ -3052,36 +3052,35 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 	{
 		const T_function_parameter  & function_parameter = fct_def.get_function_parameters()[idx];
 
-		// Compute value.
-		bool       pre_compute_result_local = true;
-		C_value	   obj_value = (idx >= fct_parameters.size()) ?
-			function_parameter.get_default_value() :
-			fct_parameters[idx].compute_expression(
-									type_definitions, interpret_data, in_out_frame_data,
-									data_name, data_simple_name, os_out, os_err,
-									pre_compute, pre_compute_result_local);
-
-		pre_compute_result = pre_compute_result && pre_compute_result_local;
-		if ((pre_compute == true) && (pre_compute_result_local == false))
-		{
-			continue;
-		}
-
-		// Check value type.
-		check_function_parameter_value(type_definitions, function_parameter, obj_value);
-
-		// quantum/offset/min/max/display
-		string     error_on_value;
-		if (post_treatment_value (type_definitions, interpret_data,
-								  function_parameter,
-								  obj_value, error_on_value) != true)
-		{
-			M_FATAL_COMMENT("Parameter " << function_parameter.name << " : " << error_on_value);
-		}
-
-
 		if (function_parameter.direction == E_parameter_in)
 		{
+			// Compute value.
+			bool       pre_compute_result_local = true;
+			C_value	   obj_value = (idx >= fct_parameters.size()) ?
+				function_parameter.get_default_value() :
+				fct_parameters[idx].compute_expression(
+										type_definitions, interpret_data, in_out_frame_data,
+										data_name, data_simple_name, os_out, os_err,
+										pre_compute, pre_compute_result_local);
+
+			pre_compute_result = pre_compute_result && pre_compute_result_local;
+			if ((pre_compute == true) && (pre_compute_result_local == false))
+			{
+				continue;
+			}
+
+			// Check value type.
+			check_function_parameter_value(type_definitions, function_parameter, obj_value);
+
+			// quantum/offset/min/max/display
+			string     error_on_value;
+			if (post_treatment_value (type_definitions, interpret_data,
+									  function_parameter,
+									  obj_value, error_on_value) != true)
+			{
+				M_FATAL_COMMENT("Parameter " << function_parameter.name << " : " << error_on_value);
+			}
+
 			parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, function_parameter.name, obj_value);
 		}
 		else if (fct_parameters[idx].is_a_variable())
