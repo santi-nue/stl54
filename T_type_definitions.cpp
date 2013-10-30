@@ -596,13 +596,13 @@ ostream &  operator<< (ostream               & os,
   return  os;
 }
 
-T_function_definition::T_function_definition()
+T_function_prototype_definition::T_function_prototype_definition()
 	:A_nb_of_mandatory_parameters(0)
 {
 }
 
 void
-T_function_definition::add_function_parameter(const T_function_parameter  & function_parameter)
+T_function_prototype_definition::add_function_parameter(const T_function_parameter  & function_parameter)
 {
 	function_parameters.push_back(function_parameter);
 
@@ -612,8 +612,8 @@ T_function_definition::add_function_parameter(const T_function_parameter  & func
     }
 }
 
-ostream &  operator<< (ostream                & os,
-                 const T_function_definition  & rhs)
+ostream &  operator<< (ostream                          & os,
+                 const T_function_prototype_definition  & rhs)
 {
 	os << rhs.return_type << "  (";
 
@@ -626,6 +626,12 @@ ostream &  operator<< (ostream                & os,
 
 	os << ")" << endl;
 	return  os;
+}
+
+ostream &  operator<< (ostream                & os,
+                 const T_function_definition  & rhs)
+{
+	return  os << (const T_function_prototype_definition  &)rhs;
 }
 
 //*****************************************************************************

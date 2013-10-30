@@ -1934,28 +1934,24 @@ void    build_switch (const E_override            must_override,
 }
 
 //*****************************************************************************
-// build_function
+// build_function_prototype
 // ----------------------------------------------------------------------------
 // Format :
 // function  <type_name>  <function_name> ( <type_name>  <param_name>, ... )
-// {
-//   fields
-// }
 //*****************************************************************************
-void    build_function (const E_override            must_override,
-                        const string              & key_word,
-                              istream             & is,
-                              T_type_definitions  & type_definitions)
+void    build_function_prototype (
+                        const string                           & key_word,
+                              istream                          & is,
+                              T_function_prototype_definition  & function_def,
+							  string                           & function_name,
+                        const T_type_definitions               & type_definitions)
 {
-	M_STATE_ENTER ("build_function", "");
+	M_STATE_ENTER ("build_function_prototype", "");
 
 	M_ASSERT_EQ (key_word, "function");
 
-    T_function_definition    function_def;
-
 	M_FATAL_IF_FALSE (read_token_type_simple (is, function_def.return_type));
 
-    string  function_name;
     M_FATAL_IF_FALSE (read_token_type_simple (is, function_name));
 
 	build_types_context_type_begin(function_name);
@@ -2050,6 +2046,28 @@ void    build_function (const E_override            must_override,
 		}
 	}
 
+	build_types_context_type_end(function_name);
+}
+
+//*****************************************************************************
+// build_function_after_prototype
+// ----------------------------------------------------------------------------
+// Format :
+// {
+//   fields
+// }
+//*****************************************************************************
+void    build_function_after_prototype (
+                        const E_override                         must_override,
+                              istream                          & is,
+                              T_function_definition            & function_def,
+					    const string                           & function_name,
+                              T_type_definitions               & type_definitions)
+{
+	M_STATE_ENTER ("build_function_after_prototype", "");
+
+	build_types_context_type_begin(function_name);
+
     read_token_key_word_specified (is, "{");
 
 	build_struct_fields(is, type_definitions, function_def.fields,
@@ -2066,6 +2084,30 @@ void    build_function (const E_override            must_override,
     type_definitions.map_function_definition[function_name] = function_def;    // possible override ok
 
 	build_types_context_type_end(function_name);
+}
+
+//*****************************************************************************
+// build_function
+// ----------------------------------------------------------------------------
+// Format :
+// function  <type_name>  <function_name> ( <type_name>  <param_name>, ... )
+// {
+//   fields
+// }
+//*****************************************************************************
+void    build_function (const E_override            must_override,
+                        const string              & key_word,
+                              istream             & is,
+                              T_type_definitions  & type_definitions)
+{
+	M_STATE_ENTER ("build_function", "");
+
+    T_function_definition    function_def;
+    string                   function_name;
+
+	build_function_prototype (key_word, is, function_def, function_name, type_definitions);
+
+    build_function_after_prototype (must_override, is, function_def, function_name, type_definitions);
 }
 
 //*****************************************************************************

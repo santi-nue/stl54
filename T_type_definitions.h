@@ -430,7 +430,7 @@ ostream &  operator<< (ostream               & os,
 
 typedef vector<T_function_parameter>                   T_function_parameters;
 
-struct T_function_definition
+struct T_function_prototype_definition
 {
     string                 return_type;
 
@@ -438,16 +438,19 @@ struct T_function_definition
 	int                    get_nb_of_mandatory_parameters() const  { return  A_nb_of_mandatory_parameters; }
 	void                   add_function_parameter(const T_function_parameter  & function_parameter);
 
-	T_struct_fields        fields;
-
-	T_function_definition();
+	T_function_prototype_definition();
 
 private:
 	T_function_parameters  function_parameters;
 	int                    A_nb_of_mandatory_parameters;
 
-	friend ostream &  operator<< (ostream                & os,
-                            const T_function_definition  & rhs);
+	friend ostream &  operator<< (ostream                          & os,
+                            const T_function_prototype_definition  & rhs);
+};
+
+struct T_function_definition : public T_function_prototype_definition
+{
+	T_struct_fields        fields;
 };
 
 ostream &  operator<< (ostream                & os,
