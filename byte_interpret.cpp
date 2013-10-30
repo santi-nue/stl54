@@ -2792,222 +2792,14 @@ bool    post_treatment_value (
 }
 
 //*****************************************************************************
-// frame_to_function_base *****************************************************
-//*****************************************************************************
-
-bool    frame_to_function_base2 (const T_type_definitions    & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-                         const T_function_definition   & fct_def,
-						 const vector<T_expression>    & fct_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err,
-							   E_return_value_indicator  return_value_indicator,
-							   C_value                 & returned_value)
-{
-	M_STATE_ENTER ("frame_to_function_base", "");
-
-	// Check return_value_indicator.
-	if (return_value_indicator == E_return_value_mandatory)
-	{
-		if (fct_def.return_type == "void")
-		{
-			M_FATAL_COMMENT("void function can not return a value.");
-		}
-	}
-	else if (return_value_indicator == E_return_value_forbidden)
-	{
-		if (fct_def.return_type != "void")
-		{
-			M_FATAL_COMMENT("not void function return a value.");
-		}
-	}
-
-	// Check number of parameters.
-	if (fct_parameters.size() < fct_def.get_nb_of_mandatory_parameters())
-	{
-		M_FATAL_COMMENT("Too few parameters for function " << data_simple_name);
-	}
-	if (fct_parameters.size() > fct_def.get_function_parameters().size())
-	{
-		M_FATAL_COMMENT("Too many parameters for function " << data_simple_name);
-	}
-
-	// Compute values.
-	T_interpret_read_values::T_id    parameters_id[50];         // ICIOA magic number
-
-	for (unsigned int   idx = 0; idx < fct_def.get_function_parameters().size(); ++idx)
-	{
-		const T_function_parameter  & function_parameter = fct_def.get_function_parameters()[idx];
-
-		if (function_parameter.direction == E_parameter_in)
-		{
-			// Compute value.
-			C_value    obj_value = (idx >= fct_parameters.size()) ?
-				function_parameter.get_default_value() :
-				fct_parameters[idx].compute_expression(type_definitions, interpret_data, in_out_frame_data,
-										   data_name, data_simple_name, os_out, os_err);
-
-			// Check value type.
-			check_function_parameter_value(type_definitions, function_parameter, obj_value);
-
-			// quantum/offset/min/max/display
-			string     error_on_value;
-			if (post_treatment_value (type_definitions, interpret_data,
-									  function_parameter,
-									  obj_value, error_on_value) != true)
-			{
-				M_FATAL_COMMENT("Parameter " << function_parameter.name << " : " << error_on_value);
-			}
-
-			parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, function_parameter.name, obj_value);
-		}
-		else
-		{
-			parameters_id[idx] = interpret_data.add_ref_variable(function_parameter.name, fct_parameters[idx].get_variable_name());
-		}
-	}
-
-
-	bool    result = true;
-
-	try
-	{
-		result = frame_to_fields(type_definitions, in_out_frame_data, interpret_data, fct_def.fields,
-							data_name, data_simple_name,
-                            os_out, os_err);
-
-		if (fct_def.return_type != "void")
-		{
-			M_FATAL_COMMENT("No return in a not void function");
-		}
-	}
-	catch (C_byte_interpret_exception_return  & val)
-	{
-		if (fct_def.return_type == "void")
-		{
-			if (val.is_returned_value_set == true)
-			{
-				M_FATAL_COMMENT("A value is returned from a void function (internal bug)");
-			}
-		}
-		else
-		{
-			if (val.is_returned_value_set == false)
-			{
-				M_FATAL_COMMENT("No value is returned from a not void function (internal bug)");
-			}
-
-			// ICIOA type verification ... (factoriser avec le code des parameters)
-			returned_value = val.returned_value;
-		}
-	}
-
-	// rollback on parameters
-	interpret_data.sup_read_variables(fct_parameters.size(), parameters_id);
-
-	return  result;
-}
-
-bool    frame_to_function_base (const T_type_definitions    & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-                         const T_function_definition   & fct_def,
-						 const vector<T_expression>    & fct_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err,
-							   E_return_value_indicator  return_value_indicator,
-							   C_value                 & returned_value)
-{
-//	size_t              interpret_values_size = interpret_data.A_msg.size();
-	T_interpret_read_values::T_id    last_data_id = interpret_data.get_id_of_last_read_variable ();
-
-	bool	result = frame_to_function_base2 (type_definitions,
-								   interpret_data,
-								   in_out_frame_data,
-								   fct_def,
-								   fct_parameters,
-								   data_name,
-								   data_simple_name,
-								   os_out,
-								   os_err,
-								   return_value_indicator,
-								   returned_value);
-
-	// 2010/09/25 function behavior modification
-	// Remove ALL datas created inside function !!!
-	interpret_data.sup_all_read_variables_after(last_data_id);
-
-
-	return  result;
-}
-
-//*****************************************************************************
-// frame_to_function **********************************************************
-//*****************************************************************************
-
-bool    frame_to_function (const T_type_definitions    & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-                         const T_function_definition   & fct_def,
-						 const T_field_type_name       & field_type_name,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err)
-{
-	M_STATE_ENTER ("frame_to_function", "");
-
-	bool  result = false;
-	if (field_type_name.name == "frame_append_data")
-	{
-		result = frame_append_data (type_definitions, in_out_frame_data, interpret_data,
-							   fct_def,
-							   field_type_name, data_name, data_simple_name,
-							   os_out, os_err);
-	}
-	else if (field_type_name.name == "frame_append_hexa_data")
-	{
-		result = frame_append_hexa_data (type_definitions, in_out_frame_data, interpret_data,
-							   fct_def,
-							   field_type_name, data_name, data_simple_name,
-							   os_out, os_err);
-	}
-	else
-	{
-		C_value    return_value_do_not_care;
-		result = frame_to_function_base (type_definitions,
-								   interpret_data,
-								   in_out_frame_data,
-								   fct_def,
-								   field_type_name.fct_parameters,
-								   data_name,
-								   data_simple_name,
-								   os_out,
-								   os_err,
-								   E_return_value_do_not_care,
-								   return_value_do_not_care);
-	}
-
-	return  result;
-}
-
-#if 1
-// ICIOA duplicata pour T_expression
-
-//*****************************************************************************
-// frame_to_function_base *****************************************************
+// T_expression_frame_to_function_base2 ***************************************
 //*****************************************************************************
 
 bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type_definitions,
 							   T_interpret_data        & interpret_data,
 					           T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
-							   vector<T_expression>    & fct_parameters,
+						 const vector<T_expression>    & fct_parameters,
                          const string                  & data_name,
                          const string                  & data_simple_name,
                                ostream                 & os_out,
@@ -3148,6 +2940,10 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 	return  result;
 }
 
+//*****************************************************************************
+// T_expression_frame_to_function_base ****************************************
+//*****************************************************************************
+
 bool    T_expression_frame_to_function_base (const T_type_definitions    & type_definitions,
 							   T_interpret_data        & interpret_data,
 					           T_frame_data            & in_out_frame_data,
@@ -3162,7 +2958,6 @@ bool    T_expression_frame_to_function_base (const T_type_definitions    & type_
 							   bool                      pre_compute,
 							   bool                    & pre_compute_result)
 {
-//	size_t              interpret_values_size = interpret_data.A_msg.size();
 	T_interpret_read_values::T_id    last_data_id = interpret_data.get_id_of_last_read_variable ();
 
 	bool	result = T_expression_frame_to_function_base2 (type_definitions,
@@ -3227,7 +3022,97 @@ C_value    T_expression_compute_function (const T_type_definitions    & type_def
 
 	return  return_value;
 }
-#endif
+
+//*****************************************************************************
+// frame_to_function_base *****************************************************
+//*****************************************************************************
+
+bool    frame_to_function_base (const T_type_definitions    & type_definitions,
+							   T_interpret_data        & interpret_data,
+					           T_frame_data            & in_out_frame_data,
+                         const T_function_definition   & fct_def,
+						 const vector<T_expression>    & fct_parameters,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err,
+							   E_return_value_indicator  return_value_indicator,
+							   C_value                 & returned_value)
+{
+	T_interpret_read_values::T_id    last_data_id = interpret_data.get_id_of_last_read_variable ();
+
+	bool  pre_compute_result = false;
+	bool  result = T_expression_frame_to_function_base2 (type_definitions,
+													interpret_data,
+													in_out_frame_data,
+													fct_def,
+													fct_parameters,
+													data_name,
+													data_simple_name,
+													os_out,
+													os_err,
+													return_value_indicator,
+													returned_value,
+													false,
+													pre_compute_result);
+
+	// 2010/09/25 function behavior modification
+	// Remove ALL datas created inside function !!!
+	interpret_data.sup_all_read_variables_after(last_data_id);
+
+
+	return  result;
+}
+
+//*****************************************************************************
+// frame_to_function **********************************************************
+//*****************************************************************************
+
+bool    frame_to_function (const T_type_definitions    & type_definitions,
+							   T_interpret_data        & interpret_data,
+					           T_frame_data            & in_out_frame_data,
+                         const T_function_definition   & fct_def,
+						 const T_field_type_name       & field_type_name,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err)
+{
+	M_STATE_ENTER ("frame_to_function", "");
+
+	bool  result = false;
+	if (field_type_name.name == "frame_append_data")
+	{
+		result = frame_append_data (type_definitions, in_out_frame_data, interpret_data,
+							   fct_def,
+							   field_type_name, data_name, data_simple_name,
+							   os_out, os_err);
+	}
+	else if (field_type_name.name == "frame_append_hexa_data")
+	{
+		result = frame_append_hexa_data (type_definitions, in_out_frame_data, interpret_data,
+							   fct_def,
+							   field_type_name, data_name, data_simple_name,
+							   os_out, os_err);
+	}
+	else
+	{
+		C_value    return_value_do_not_care;
+		result = frame_to_function_base (type_definitions,
+								   interpret_data,
+								   in_out_frame_data,
+								   fct_def,
+								   field_type_name.fct_parameters,
+								   data_name,
+								   data_simple_name,
+								   os_out,
+								   os_err,
+								   E_return_value_do_not_care,
+								   return_value_do_not_care);
+	}
+
+	return  result;
+}
 
 //*****************************************************************************
 // print_syntax ***************************************************************
