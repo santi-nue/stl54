@@ -150,6 +150,25 @@ void    test_size()
 }
 
 //*****************************************************************************
+// test_cast
+// Not a test.
+//*****************************************************************************
+
+void    test_cast()
+{
+#define M_OUT_VAL(PARAM)    \
+	cout << "value(" << #PARAM << ") = " << PARAM << endl
+
+	unsigned short  valu  = 40000;
+	short           vals  = (int)valu;
+	unsigned short  valu2 = (unsigned int)vals;
+
+	M_OUT_VAL(valu);
+	M_OUT_VAL(vals);
+	M_OUT_VAL(valu2);
+}
+
+//*****************************************************************************
 // C_perf_chrono
 //*****************************************************************************
 
