@@ -721,6 +721,8 @@ void
 T_expression::pre_compute_expression(
 						 const T_type_definitions      & type_definitions)
 {
+	M_STATE_ENTER("pre_compute_expression", *this);
+
 	if (A_value_alreay_computed == true)
 	{
 		return;
@@ -744,6 +746,81 @@ T_expression::pre_compute_expression(
 				os_err,
 				true /* pre_compute */,
 				pre_compute_result_do_not_care);
+
+	M_STATE_LEAVE(*this);
+}
+
+std::ostream &  operator<< (std::ostream    & os,
+                      const T_expression    & rhs)
+{
+	os << "input=" << rhs.A_original_string_expression << "  ";
+
+	if (rhs.A_value_alreay_computed == true)
+	{
+		os << "value=" << rhs.A_value.as_string() << "  ";
+	}
+
+	os << "type=" << rhs.A_type << "  ";
+
+	if (rhs.A_variable_or_function_name != "")
+	{
+		os << "variable_or_function_name=" << rhs.A_variable_or_function_name << "  ";
+	}
+
+	if (rhs.A_operation != T_expression::E_operation_none)
+	{
+		os << "operation=" << rhs.A_operation << "  ";
+	}
+
+	return  os;
+}
+
+std::ostream &  operator<< (std::ostream            & os,
+                      const T_expression::E_type    & rhs)
+{
+	switch (rhs)
+	{
+	case T_expression::E_type_none          : os << "none";          break;
+	case T_expression::E_type_value         : os << "value";         break;
+	case T_expression::E_type_variable      : os << "variable";      break;
+	case T_expression::E_type_function_call : os << "function_call"; break;
+	case T_expression::E_type_operation     : os << "operation";     break;
+	default                                 : os << (int)rhs;        break;
+	}
+	return  os;
+}
+
+std::ostream &  operator<< (std::ostream               & os,
+                      const T_expression::E_operation  & rhs)
+{
+	switch (rhs)
+	{
+	case T_expression::E_operation_none             : os << "none";             break;
+	case T_expression::E_operation_condition        : os << "condition";        break;
+	case T_expression::E_operation_logical_and      : os << "logical_and";      break;
+	case T_expression::E_operation_logical_or       : os << "logical_or";       break;
+	case T_expression::E_operation_bit_and          : os << "bit_and";          break;
+	case T_expression::E_operation_bit_or           : os << "bit_or";           break;
+	case T_expression::E_operation_bit_xor          : os << "bit_xor";          break;
+	case T_expression::E_operation_bit_shift_left   : os << "bit_shift_left";   break;
+	case T_expression::E_operation_bit_shift_right  : os << "bit_shift_right";  break;
+	case T_expression::E_operation_equal            : os << "equal";            break;
+	case T_expression::E_operation_not_equal        : os << "not_equal";        break;
+	case T_expression::E_operation_less_or_equal    : os << "less_or_equal";    break;
+	case T_expression::E_operation_greater_or_equal : os << "greater_or_equal"; break;
+	case T_expression::E_operation_less             : os << "less";             break;
+	case T_expression::E_operation_greater          : os << "greater";          break;
+	case T_expression::E_operation_addition         : os << "addition";         break;
+	case T_expression::E_operation_subtraction      : os << "subtraction";      break;
+	case T_expression::E_operation_pow              : os << "pow";              break;
+	case T_expression::E_operation_multiply         : os << "multiply";         break;
+	case T_expression::E_operation_divide_float     : os << "divide_float";     break;
+	case T_expression::E_operation_divide_c         : os << "divide_c";         break;
+	case T_expression::E_operation_modulo           : os << "modulo";           break;
+	default                                         : os << (int)rhs;           break;
+	}
+
+	return  os;
 }
 
 //*****************************************************************************
@@ -761,16 +838,18 @@ T_expression::compute_expression(
 {
 	bool    pre_compute_result_do_not_care = true;
 
-	return  compute_expression(
-			type_definitions,
-			interpret_data,
-			in_out_frame_data,
-			data_name,
-			data_simple_name,
-			os_out,
-			os_err,
-			false /* pre_compute */,
-			pre_compute_result_do_not_care);
+	const C_value &  result = compute_expression(
+					type_definitions,
+					interpret_data,
+					in_out_frame_data,
+					data_name,
+					data_simple_name,
+					os_out,
+					os_err,
+					false /* pre_compute */,
+					pre_compute_result_do_not_care);
+
+	return  result;
 }
 
 //*****************************************************************************
@@ -1037,9 +1116,7 @@ T_expression::compute_expression_function(
 {
 	pre_compute_result = true;
 
-	// static for performance (no measurement) to avoid ctor/dtor each time
-	// *      for performance (no measurement) to avoid copy each time
-	static const C_value  * P_parameter_values[50];    // ICIOA magic number
+	const C_value  * P_parameter_values[50];    // ICIOA magic number
 
 	for (unsigned int   idx = 0; idx < A_expressions.size(); ++idx)
 	{

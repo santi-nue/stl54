@@ -448,9 +448,21 @@ private:
                             const T_function_prototype_definition  & rhs);
 };
 
+struct T_library_definition;
+struct T_library_function_definition;
+
 struct T_function_definition : public T_function_prototype_definition
 {
 	T_struct_fields        fields;
+
+	T_library_definition  * P_library_def;
+	int                     idx_library_function_def;
+
+	T_function_definition()
+		: P_library_def(NULL)
+		, idx_library_function_def(-1)
+	{
+	}
 };
 
 ostream &  operator<< (ostream                & os,
@@ -492,6 +504,41 @@ ostream &  operator<< (ostream                     & os,
 typedef vector<T_plugin_output_definition>    T_vector_plugin_output_definition;
 
 //****************************************************************************
+// Library
+//****************************************************************************
+
+struct T_library_function_definition
+{
+	std::string    name;
+	void *         funptr;
+
+	T_library_function_definition()
+		: funptr(NULL)
+	{
+	}
+};
+
+struct T_library_definition
+{
+	std::string    user_namespace;
+	std::string    full_name;
+	void *         DLLib_handle;
+
+	vector<T_library_function_definition>  library_functions;
+
+	T_library_definition()
+		: DLLib_handle(NULL)
+	{
+	}
+};
+
+ostream &  operator<< (ostream                     & os,
+                 const T_library_definition        & rhs);
+
+// library name -> library definition representation
+typedef map<string,T_library_definition>    T_map_library_definition;
+
+//****************************************************************************
 // T_type_definitions
 //****************************************************************************
 
@@ -521,6 +568,7 @@ struct T_type_definitions
 	T_map_function_definition             map_function_definition;
 
 	T_vector_plugin_output_definition     vector_plugin_output_definition;
+    T_map_library_definition              map_library_definition;
 
 	typedef vector<string>              T_vector_dissector_name;
 	T_vector_dissector_name               vector_subdissector_name;

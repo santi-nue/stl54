@@ -2792,6 +2792,21 @@ bool    post_treatment_value (
 }
 
 //*****************************************************************************
+//
+//*****************************************************************************
+#ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
+#include <dyncall.h>
+
+DC_API void  dcArgUChar (DCCallVM* vm, DCuchar     value) { return  dcArgChar (vm, (DCchar) value); }
+DC_API void  dcArgUShort(DCCallVM* vm, DCushort    value) { return  dcArgShort(vm, (DCshort)value); }
+DC_API void  dcArgUInt  (DCCallVM* vm, DCuint      value) { return  dcArgInt  (vm, (DCint)  value); }
+
+DC_API DCuchar   dcCallUChar (DCCallVM* vm, DCpointer funcptr) { return  dcCallChar (vm, funcptr); }
+DC_API DCushort  dcCallUShort(DCCallVM* vm, DCpointer funcptr) { return  dcCallShort(vm, funcptr); }
+DC_API DCuint    dcCallUInt  (DCCallVM* vm, DCpointer funcptr) { return  dcCallInt  (vm, funcptr); }
+#endif
+
+//*****************************************************************************
 // T_expression_frame_to_function_base2 ***************************************
 //*****************************************************************************
 
@@ -2837,58 +2852,156 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 		M_FATAL_COMMENT("Too many parameters for function " << data_simple_name);
 	}
 
+
+	// magic number
+#define K_NBMAX_PARAMETERS  50
+
+#ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
+	// dyncall
+	const bool    is_dyncall = (fct_def.P_library_def != NULL);
+	DCCallVM    * vm = NULL;
+	struct T_dyncall_parameter
+	{
+		char                 int8;
+		unsigned char       uint8;
+		short                int16;
+		unsigned short      uint16;
+		int                  int32;
+		unsigned int        uint32;
+		long long            int64;
+		unsigned long long  uint64;
+		float               float32;
+		double              float64;
+		string              str;
+	} dyncall_parameters[K_NBMAX_PARAMETERS];
+
+	if ((pre_compute == false) && (is_dyncall == true))
+	{
+		const int   CallingConvention = DC_CALL_C_DEFAULT;
+		vm = dcNewCallVM (4096);
+		dcMode (vm, CallingConvention);
+		dcReset (vm);
+	}
+#endif
+
 	// Compute values.
-	T_interpret_read_values::T_id    parameters_id[50];         // magic number
+	T_interpret_read_values::T_id    parameters_id[K_NBMAX_PARAMETERS];
 
 	for (unsigned int   idx = 0; idx < fct_def.get_function_parameters().size(); ++idx)
 	{
 		const T_function_parameter  & function_parameter = fct_def.get_function_parameters()[idx];
 
-		if (function_parameter.direction == E_parameter_in)
+		if (function_parameter.direction != E_parameter_in)
 		{
-			// Compute value.
-			bool       pre_compute_result_local = true;
-			C_value	   obj_value = (idx >= fct_parameters.size()) ?
-				function_parameter.get_default_value() :
-				fct_parameters[idx].compute_expression(
-										type_definitions, interpret_data, in_out_frame_data,
-										data_name, data_simple_name, os_out, os_err,
-										pre_compute, pre_compute_result_local);
-
-			pre_compute_result = pre_compute_result && pre_compute_result_local;
-			if ((pre_compute == true) && (pre_compute_result_local == false))
+			if (fct_parameters[idx].is_a_variable() == false)
 			{
-				continue;
+				M_FATAL_COMMENT("out or in_out parameter[" << idx << "] must be a variable");
 			}
-
-			// Check value type.
-			check_function_parameter_value(type_definitions, function_parameter, obj_value);
-
-			// quantum/offset/min/max/display
-			string     error_on_value;
-			if (post_treatment_value (type_definitions, interpret_data,
-									  function_parameter,
-									  obj_value, error_on_value) != true)
-			{
-				M_FATAL_COMMENT("Parameter " << function_parameter.name << " : " << error_on_value);
-			}
-
-			parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, function_parameter.name, obj_value);
 		}
-		else if (fct_parameters[idx].is_a_variable())
+		
+		if (fct_parameters[idx].is_a_variable() == true)
 		{
 			if (pre_compute == true)
 			{
 				pre_compute_result = false;
 				continue;
 			}
+		}
 
-			parameters_id[idx] = interpret_data.add_ref_variable(function_parameter.name, fct_parameters[idx].get_variable_name());
-		}
-		else
+		// Compute value.
+		bool       pre_compute_result_local = true;
+		C_value	   obj_value = (idx >= fct_parameters.size()) ?
+			function_parameter.get_default_value() :
+			fct_parameters[idx].compute_expression(
+									type_definitions, interpret_data, in_out_frame_data,
+									data_name, data_simple_name, os_out, os_err,
+									pre_compute, pre_compute_result_local);
+
+		pre_compute_result = pre_compute_result && pre_compute_result_local;
+		if ((pre_compute == true) && (pre_compute_result_local == false))
 		{
-			M_FATAL_COMMENT("Must be a variable");
+			continue;
 		}
+
+		// Check value type.
+		check_function_parameter_value(type_definitions, function_parameter, obj_value);
+
+		// quantum/offset/min/max/display
+		string     error_on_value;
+		if (post_treatment_value (type_definitions, interpret_data,
+								  function_parameter,
+								  obj_value, error_on_value) != true)
+		{
+			M_FATAL_COMMENT("Parameter " << function_parameter.name << " : " << error_on_value);
+		}
+
+
+
+#ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
+		if (is_dyncall == false)
+#endif
+		{
+			if (function_parameter.direction == E_parameter_in)
+			{
+				parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, function_parameter.name, obj_value);
+			}
+			else
+			{
+				parameters_id[idx] = interpret_data.add_ref_variable(function_parameter.name, fct_parameters[idx].get_variable_name());
+			}
+		}
+#ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
+		else if (vm != NULL)
+		{
+			T_dyncall_parameter  & dyncall_parameter = dyncall_parameters[idx];
+
+#undef  M_FCT_READ_SIMPLE_TYPE
+#define M_FCT_READ_SIMPLE_TYPE(TYPE_NAME,DC_FCT,FCT)                               \
+			else if (function_parameter.type == #TYPE_NAME)                        \
+			{                                                                      \
+				dyncall_parameter. TYPE_NAME = obj_value. FCT ();                  \
+				if (function_parameter.direction == E_parameter_in)                \
+					DC_FCT(vm , dyncall_parameter. TYPE_NAME);                     \
+				else                                                               \
+					dcArgPointer(vm , &dyncall_parameter. TYPE_NAME );             \
+			}
+
+#undef  M_FCT_READ_SIMPLE_TYPE_INT
+#define M_FCT_READ_SIMPLE_TYPE_INT(TYPE_NAME,TYPE_DC)                              \
+			M_FCT_READ_SIMPLE_TYPE(TYPE_NAME,TYPE_DC,get_int)
+
+#undef  M_FCT_READ_SIMPLE_TYPE_FLT
+#define M_FCT_READ_SIMPLE_TYPE_FLT(TYPE_NAME,TYPE_DC)                              \
+			M_FCT_READ_SIMPLE_TYPE(TYPE_NAME,TYPE_DC,get_flt)
+
+
+			if (function_parameter.type == "string")
+			{
+				// string implementation could be shared,
+				//  so copy does not duplicate data and keeps the original pointer.
+				// Which means, if out parameter, that the original string will be modified !
+//				dyncall_parameter.str = obj_value.get_str();
+				// Using c_str() avoid share. Except if share implementation method works on raw pointer !
+				dyncall_parameter.str = obj_value.get_str().c_str();
+				// Called function will directly write on raw pointer of string object !
+				// Should NOT write more than the size of the input string !
+				dcArgPointer(vm , (DCpointer)dyncall_parameter.str.c_str());
+			}
+			M_FCT_READ_SIMPLE_TYPE_INT( int8 ,dcArgChar)
+			M_FCT_READ_SIMPLE_TYPE_INT(uint8 ,dcArgUChar)
+			M_FCT_READ_SIMPLE_TYPE_INT( int16,dcArgShort)
+			M_FCT_READ_SIMPLE_TYPE_INT(uint16,dcArgUShort)
+			M_FCT_READ_SIMPLE_TYPE_INT( int32,dcArgInt)
+			M_FCT_READ_SIMPLE_TYPE_INT(uint32,dcArgUInt)
+			M_FCT_READ_SIMPLE_TYPE_INT( int64,dcArgLongLong)
+			M_FCT_READ_SIMPLE_TYPE_FLT(float32,dcArgFloat)
+			M_FCT_READ_SIMPLE_TYPE_FLT(float64,dcArgDouble)
+			else
+			{
+				M_FATAL_COMMENT("unknow type (" << function_parameter.type << ") for dyncall parameter");
+			}
+		}
+#endif
 	}
 
 	if ((pre_compute == true) && (pre_compute_result == false))
@@ -2897,8 +3010,125 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 		return  true;
 	}
 
-	if (pre_compute) { pre_compute_result = false; return  true; }   /* ICIOA temporaire */
+	if (pre_compute == true) { pre_compute_result = false; return  true; }   /* ICIOA temporaire */
 
+
+#ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
+	if (is_dyncall == true)
+	{
+		T_library_definition           & library_def = * fct_def.P_library_def;
+		T_library_function_definition  & library_function_def = library_def.library_functions[fct_def.idx_library_function_def];
+
+		if (fct_def.return_type == "void")
+		{
+			dcCallVoid(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "int8")
+		{
+			returned_value = dcCallChar(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "uint8")
+		{
+			returned_value = dcCallUChar(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "int16")
+		{
+			returned_value = dcCallShort(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "uint16")
+		{
+			returned_value = dcCallUShort(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "int32")
+		{
+			returned_value = dcCallInt(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "uint32")
+		{
+			returned_value = dcCallUInt(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "int64")
+		{
+			returned_value = dcCallLongLong(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "float32")
+		{
+			returned_value = dcCallFloat(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "float64")
+		{
+			returned_value = dcCallDouble(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "string")
+		{
+			returned_value = (char*)dcCallPointer(vm, library_function_def.funptr);
+		}
+		else
+		{
+			M_FATAL_COMMENT("unknow type (" << fct_def.return_type << ") for dyncall return value");
+		}
+
+		dcFree ( vm );
+
+		for (unsigned int   idx = 0; idx < fct_def.get_function_parameters().size(); ++idx)
+		{
+			const T_function_parameter  & function_parameter = fct_def.get_function_parameters()[idx];
+
+			if (function_parameter.direction == E_parameter_in)
+				continue;
+
+			const T_expression   & fct_parameter = fct_parameters[idx];
+			T_dyncall_parameter  & dyncall_parameter = dyncall_parameters[idx];
+
+			if (function_parameter.type == "int8")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.int8);
+			}
+			else if (function_parameter.type == "uint8")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.uint8);
+			}
+			else if (function_parameter.type == "int16")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.int16);
+			}
+			else if (function_parameter.type == "uint16")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.uint16);
+			}
+			else if (function_parameter.type == "int32")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.int32);
+			}
+			else if (function_parameter.type == "uint32")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.uint32);
+			}
+			else if (function_parameter.type == "int64")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.int64);
+			}
+			else if (function_parameter.type == "float32")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.float32);
+			}
+			else if (function_parameter.type == "float64")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.float64);
+			}
+			else if (function_parameter.type == "string")
+			{
+				interpret_data.set_read_variable(fct_parameter.get_variable_name(), dyncall_parameter.str.c_str());
+			}
+			else
+			{
+				M_FATAL_COMMENT("unknow type (" << function_parameter.type << ") for dyncall parameter");
+			}
+		}
+
+		return  true;
+	}
+#endif
 
 	bool    result = true;
 

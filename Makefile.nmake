@@ -10,10 +10,20 @@ include moduleinfo.nmake
 include Makefile.common
 include Makefile.version
 
+# 2013/10/22 Olivier Aveline : add everything about dyncall
+DYNCALL_PATH = dyncall-0.7-$(WIRESHARK_TARGET_PLATFORM)-msvc/dyncall
+DYNCALL_INC_PATH = $(DYNCALL_PATH)/include
+DYNCALL_LIB_PATH = $(DYNCALL_PATH)/lib
+
+BYTE_INTERPRET_ADD_CPPFLAGS = /DBYTE_INTERPRET_USE_LIBRARY_DYNCALL /I$(DYNCALL_INC_PATH)
+BYTE_INTERPRET_ADD_OBJECTS = 
+BYTE_INTERPRET_ADD_LIBS = $(DYNCALL_LIB_PATH)/libdynload_s.lib $(DYNCALL_LIB_PATH)/libdyncall_s.lib
+
+
 # 2008/10/02 Olivier Aveline : add everything about cpp
 
 C_CPP_COMMON_FLAGS=/DHAVE_CONFIG_H /I../.. /I../../wiretap $(GLIB_CFLAGS) \
-	/I$(PCAP_DIR)\include -D_U_="" $(LOCAL_CFLAGS)
+	/I$(PCAP_DIR)\include -D_U_="" $(LOCAL_CFLAGS) $(BYTE_INTERPRET_ADD_CPPFLAGS)
 
 CFLAGS=/WX $(C_CPP_COMMON_FLAGS)
 
@@ -27,10 +37,11 @@ CPPFLAGS=/EHsc $(C_CPP_COMMON_FLAGS)  /DWIRESHARK_VERSION_NUMBER=$(WIRESHARK_VER
 	$(CC) $(CPPFLAGS) /c $<
 	
 # 2008/10/02 Olivier Aveline : add /NODEFAULTLIB:LIBCMT for cpp link
-LDFLAGS = $(PLUGIN_LDFLAGS)  /NODEFAULTLIB:LIBCMT
+# 2013/10/24 Olivier Aveline : add /SAFESEH:NO for dyncall link
+LDFLAGS = $(PLUGIN_LDFLAGS)  /NODEFAULTLIB:LIBCMT /SAFESEH:NO
 
 !IFDEF ENABLE_LIBWIRESHARK
-LINK_PLUGIN_WITH=..\..\epan\libwireshark.lib ..\..\wiretap\wiretap-$(WTAP_VERSION).lib
+LINK_PLUGIN_WITH=..\..\epan\libwireshark.lib ..\..\wiretap\wiretap-$(WTAP_VERSION).lib $(BYTE_INTERPRET_ADD_LIBS)
 CFLAGS=/DHAVE_WIN32_LIBWIRESHARK_LIB /D_NEED_VAR_IMPORT_ $(CFLAGS)
 
 DISSECTOR_OBJECTS = $(DISSECTOR_SRC:.c=.obj)
@@ -50,7 +61,7 @@ DISSECTOR_CORE_OBJECTS = $(DISSECTOR_CORE_SRC:.cpp=.obj)
 
 byte_interpret_OBJECTS = byte_interpret_main.obj $(DISSECTOR_CORE_OBJECTS)
 byte_interpret.exe : $(byte_interpret_OBJECTS)
-  link  /out:byte_interpret.exe  $(LDFLAGS) /LARGEADDRESSAWARE /SUBSYSTEM:console  $(GLIB_LIBS) $(GNUTLS_LIBS) $(conlibsdll)  $(byte_interpret_OBJECTS)
+  link  /out:byte_interpret.exe  $(LDFLAGS) /LARGEADDRESSAWARE /SUBSYSTEM:console  $(GLIB_LIBS) $(GNUTLS_LIBS) $(conlibsdll)  $(byte_interpret_OBJECTS) $(BYTE_INTERPRET_ADD_LIBS)
 
 byte_interpret_clean:
   rm -f $(byte_interpret_OBJECTS) byte_interpret.exe byte_interpret.exe.manifest
@@ -62,7 +73,7 @@ byte_interpret_prod: byte_interpret.exe
 # Unitary tests.
 unitary_tests_OBJECTS = unitary_tests.obj $(DISSECTOR_CORE_UT_SRC:.cpp=.obj) 
 unitary_tests.exe : $(unitary_tests_OBJECTS)
-  link  /out:unitary_tests.exe  $(LDFLAGS) /LARGEADDRESSAWARE /SUBSYSTEM:console  $(GLIB_LIBS) $(GNUTLS_LIBS) $(conlibsdll)  $(unitary_tests_OBJECTS)
+  link  /out:unitary_tests.exe  $(LDFLAGS) /LARGEADDRESSAWARE /SUBSYSTEM:console  $(GLIB_LIBS) $(GNUTLS_LIBS) $(conlibsdll)  $(unitary_tests_OBJECTS) $(BYTE_INTERPRET_ADD_LIBS)
 
 unit_test_clean:
   rm -f $(unitary_tests_OBJECTS) unitary_tests.exe unitary_tests.exe.manifest unitary_tests.exe.traces.txt

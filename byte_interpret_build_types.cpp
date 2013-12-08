@@ -52,6 +52,7 @@ using namespace std;
 #undef  BYTE_INTERPRET_USE_PLUGIN
 #endif
 
+
 //*****************************************************************************
 // byte_interpret_get_include_file_name
 //*****************************************************************************
@@ -2253,6 +2254,184 @@ void    build_plugin_output (const E_override            must_override,
 #endif
 
 //*****************************************************************************
+// build_library
+// ----------------------------------------------------------------------------
+// Format :
+// library  <namespace>  <library_name>
+//   path{os=win32}   = "library path";
+//   path{os=...}     = "library path";
+//   path{os=linux64} = "library path";
+//   path             = "library path";
+// {
+//    <function prototype>
+//    ...
+//    <function prototype>
+// }
+//*****************************************************************************
+#ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
+#include <dynload.h>
+
+void    build_library  (const E_override            must_override,
+                        const string              & key_word,
+                              istream             & is,
+                              T_type_definitions  & type_definitions)
+{
+	M_STATE_ENTER ("build_library", "");
+
+	M_ASSERT_EQ (key_word, "library");
+
+
+	T_library_definition  library_def;
+
+	M_FATAL_IF_FALSE (read_token_type_simple (is, library_def.user_namespace));
+
+#if defined _WIN64
+#define K_PLATFORM    "win64"
+#elif defined WIN32
+#define K_PLATFORM    "win32"
+#elif defined __GNUC__
+#if defined  __x86_64__
+#define K_PLATFORM    "linux64"
+#else
+#define K_PLATFORM    "linux32"
+#endif
+#else
+#define K_PLATFORM    "???"
+#endif
+
+	string  libraries_platform_do_not_match;
+	string  libraries_not_found;
+	string  libraries_not_loadable;
+	while (true)
+	{
+		// Read platform (from path{os=...})
+		string  platform = "";
+		{
+			string    path_key_word;
+			M_FATAL_IF_FALSE (read_token_left_any (is, path_key_word));
+
+			if (path_key_word == "{")
+			{
+				break;
+			}
+
+			string    os_specification;
+			if (decompose_type_sep_value_sep (path_key_word,
+															  '{',
+															  '}',
+															  path_key_word,
+															  os_specification) == E_rc_ok)
+			{
+				M_FATAL_IF_NE(os_specification.substr(0, 3), "os=");
+				platform = os_specification.substr(3);
+			}
+
+			M_FATAL_IF_NE(path_key_word, "path");
+		}
+
+		read_token_key_word_specified(is, "=");
+
+		// Read library filename
+		string    library_filename;
+		{
+			string    expression_str;
+			M_FATAL_IF_FALSE (read_token_expression_any(is, expression_str));
+
+			T_expression  expression;
+			expression.build_expression(type_definitions, expression_str);
+
+			C_value  expression_result = expression.compute_expression_static(type_definitions);
+			library_filename = expression_result.get_str();
+		}
+
+		read_token_end_of_statement(is);
+
+
+		if (library_def.DLLib_handle == NULL)
+		{
+			if ((platform != "") && (platform != K_PLATFORM))
+			{
+				libraries_platform_do_not_match += " >";
+				libraries_platform_do_not_match += library_filename;
+				libraries_platform_do_not_match += "<";
+				continue;
+			}
+
+			ifstream              ifs (library_filename.c_str());
+			if (!ifs)
+			{
+				M_STATE_DEBUG(library_filename << " not found");
+				libraries_not_found += " >";
+				libraries_not_found += library_filename;
+				libraries_not_found += "<";
+				continue;
+			}
+
+			library_def.DLLib_handle = dlLoadLibrary (library_filename.c_str());
+			if (library_def.DLLib_handle == NULL)
+			{
+				M_STATE_DEBUG(library_filename << " not a loadable library");
+				libraries_not_loadable += " >";
+				libraries_not_loadable += library_filename;
+				libraries_not_loadable += "<";
+				continue;
+			}
+
+			library_def.full_name = library_filename;
+		}
+	}
+
+	if (library_def.DLLib_handle == NULL)
+	{
+		M_FATAL_COMMENT(
+			"Libraries" << libraries_platform_do_not_match << " do not match platform " << K_PLATFORM << "." << endl <<
+			"Libraries" << libraries_not_found << " not found." << endl <<
+			"Libraries" << libraries_not_loadable << " not loadable.");
+	}
+
+	M_STATE_DEBUG(library_def.full_name << " is a loadable library");
+
+
+	while (true)
+	{
+		string  key_word;
+		M_FATAL_IF_FALSE (read_token_simple_word_or_string (is, key_word));
+		if (key_word == "}")
+			break;
+
+		T_function_definition            function_def;
+		T_library_function_definition    library_function_def;
+		string                         & function_name = library_function_def.name;
+
+		build_function_prototype (key_word, is, function_def, function_name, type_definitions);
+		read_token_key_word_specified(is, ";");
+
+		library_function_def.funptr = dlFindSymbol((DLLib*)library_def.DLLib_handle , library_function_def.name.c_str());
+		if (library_function_def.funptr == NULL)
+		{
+			M_FATAL_COMMENT(library_function_def.name << " not found into " << library_def.full_name << " library");
+		}
+		M_STATE_DEBUG(library_function_def.name << " found into " << library_def.full_name << " library");
+
+		function_def.idx_library_function_def = library_def.library_functions.size();
+		function_def.P_library_def = & type_definitions.map_library_definition[library_def.user_namespace];
+
+		function_name = library_def.user_namespace + "." + function_name;
+		istrstream    iss("{ \n"
+						  "  fatal \"Bug in the software, this version is only a prototype\"; \n"
+						  "}");
+	    build_function_after_prototype (must_override, iss, function_def, function_name, type_definitions);
+
+		library_def.library_functions.push_back(library_function_def);
+	}
+
+	type_definitions.map_library_definition[library_def.user_namespace] = library_def;
+
+	skip_line(is);
+}
+#endif
+
+//*****************************************************************************
 // use_non_portable_types
 // Completely deprecated function.
 // Not supposed to be called (since nobody knows the command which permits
@@ -2381,6 +2560,12 @@ string    build_types_no_include (istream             & is,
 		else if (strncmp(key_word.c_str(), "plugin{output}", 14) == 0)
 		{
             build_plugin_output (must_override, key_word, is, type_definitions);
+		}
+#endif
+#ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
+		else if (strncmp(key_word.c_str(), "library", 7) == 0)
+		{
+            build_library (must_override, key_word, is, type_definitions);
 		}
 #endif
         else

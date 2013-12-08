@@ -229,10 +229,21 @@ private:
 	};
 //	std::vector<T_array>        A_arrays;
 #endif
+
+	friend std::ostream &  operator<< (std::ostream    & os,
+		                     const T_expression    & rhs);
+	friend std::ostream &  operator<< (std::ostream            & os,
+		                     const T_expression::E_type    & rhs);
+	friend std::ostream &  operator<< (std::ostream               & os,
+		                     const T_expression::E_operation  & rhs);
 };
 
 std::ostream &  operator<< (std::ostream    & os,
                       const T_expression    & rhs);
+std::ostream &  operator<< (std::ostream            & os,
+                      const T_expression::E_type    & rhs);
+std::ostream &  operator<< (std::ostream               & os,
+                      const T_expression::E_operation  & rhs);
 
 
 
