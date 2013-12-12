@@ -552,6 +552,7 @@ void    check_function_parameter_value(
 		const T_enum_definition_representation  * P_enum = NULL;
 
 		if (function_parameter.type == "any") ;
+		else if (function_parameter.type == "pointer") ;
 		M_READ_SIMPLE_TYPE ( "int8",    8,    signed char)
 		M_READ_SIMPLE_TYPE ("uint8",    8,  unsigned char)
 		M_READ_SIMPLE_TYPE ( "int16",  16,    signed short)

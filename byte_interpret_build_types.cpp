@@ -490,7 +490,8 @@ void    post_build_field_base (
 
 		if (field_scope == E_field_scope_parameter)
 		{
-			if (field_type_name.type == "any")
+			if ((field_type_name.type == "any") ||
+				(field_type_name.type == "pointer"))
 			{
 				bad_type = false;
 			}
@@ -2383,10 +2384,21 @@ void    build_library  (const E_override            must_override,
 
 	if (library_def.DLLib_handle == NULL)
 	{
-		M_FATAL_COMMENT(
-			"Libraries" << libraries_platform_do_not_match << " do not match platform " << K_PLATFORM << "." << endl <<
-			"Libraries" << libraries_not_found << " not found." << endl <<
-			"Libraries" << libraries_not_loadable << " not loadable.");
+		ostringstream  oss;
+		if (libraries_not_loadable != "")
+		{
+			oss << "Libraries" << libraries_not_loadable << " are not loadable." << endl << endl;
+		}
+		if (libraries_not_found != "")
+		{
+			oss << "Libraries" << libraries_not_found << " are not found." << endl << endl;
+		}
+		if (libraries_platform_do_not_match != "")
+		{
+			oss << "Libraries" << libraries_platform_do_not_match << " do not match platform " << K_PLATFORM << "." << endl << endl;
+		}
+
+		M_FATAL_COMMENT(oss.str());
 	}
 
 	M_STATE_DEBUG(library_def.full_name << " is a loadable library");
@@ -2646,6 +2658,12 @@ void    build_types_begin (T_type_definitions  & type_definitions)
     build_types_no_include_str("alias     frame   int64 ;", type_definitions);
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_data (in frame  frame, in any  byte)");
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_hexa_data (in frame  frame, in string  str_hexa)");
+
+	// Library pointer function
+	M_DEFINE_BUILTIN_FUNCTION("int64    get_pointer_len_bytes     (                        in uint32  length_bytes )");
+	M_DEFINE_BUILTIN_FUNCTION("int64    get_pointer_len_bits      (                        in uint32  length_bits )");
+	M_DEFINE_BUILTIN_FUNCTION("int64    get_pointer_pos_len_bytes ( in uint32  pos_bytes , in uint32  length_bytes )");
+	M_DEFINE_BUILTIN_FUNCTION("int64    get_pointer_pos_len_bits  ( in uint32  pos_bits  , in uint32  length_bits  )");
 }
 
 

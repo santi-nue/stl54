@@ -131,6 +131,7 @@ void    test_size()
 #define M_OUT_SIZEOF(PARAM)    \
 	cout << "sizeof(" << #PARAM << ") = " << sizeof(PARAM) << endl
 
+	M_OUT_SIZEOF(void*);
 	M_OUT_SIZEOF(int);
 	M_OUT_SIZEOF(long);
 	M_OUT_SIZEOF(long long);

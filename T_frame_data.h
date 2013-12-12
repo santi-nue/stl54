@@ -50,7 +50,8 @@ struct T_frame_data : public CT_debug_object_counter<T_frame_data>
 	long            get_physical_bit_offset() const   { return  A_bit_offset_in_1st_byte + get_bit_offset(); }
 
 	// The current position
-	const T_byte  * get_P_bytes() const         { return  A_P_bytes; }
+	const T_byte  * get_P_bytes() const               { return  A_P_bytes; }
+	const T_byte  * get_initial_P_bytes() const       { return  A_initial_P_bytes; }
 
 	bool            is_physically_at_beginning_of_byte() const   { return  ((get_physical_bit_offset() % 8) == 0); }
 

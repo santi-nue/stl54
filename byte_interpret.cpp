@@ -2873,6 +2873,7 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 		float               float32;
 		double              float64;
 		string              str;
+		void              * ptr;
 	} dyncall_parameters[K_NBMAX_PARAMETERS];
 
 	if ((pre_compute == false) && (is_dyncall == true))
@@ -2996,6 +2997,15 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 			M_FCT_READ_SIMPLE_TYPE_INT( int64,dcArgLongLong)
 			M_FCT_READ_SIMPLE_TYPE_FLT(float32,dcArgFloat)
 			M_FCT_READ_SIMPLE_TYPE_FLT(float64,dcArgDouble)
+			else if (function_parameter.type == "pointer")
+			{
+				const long long    position_bits  = obj_value.get_int();
+				const long long    position_bytes = position_bits / 8;
+				const T_byte     * pointer = in_out_frame_data.get_initial_P_bytes() + position_bytes;
+
+				dyncall_parameter.ptr = (void*)pointer;
+				dcArgPointer(vm , (DCpointer)dyncall_parameter.ptr);
+			}
 			else
 			{
 				M_FATAL_COMMENT("unknow type (" << function_parameter.type << ") for dyncall parameter");

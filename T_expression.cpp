@@ -1059,6 +1059,40 @@ T_expression::compute_expression_variable_array(
 // 
 //*****************************************************************************
 
+long long  get_pointer_pos_len_bits(T_frame_data  & in_out_frame_data,
+									unsigned int    pos_bits,
+									unsigned int    length_bits)
+{
+	const long  pos_current_bits = in_out_frame_data.get_bit_offset();
+	in_out_frame_data.set_bit_offset(pos_bits + length_bits);
+	in_out_frame_data.set_bit_offset(pos_current_bits);
+
+	return  pos_bits;
+}
+
+long long  get_pointer_pos_len_bytes(T_frame_data  & in_out_frame_data,
+									 unsigned int    pos_bytes,
+									 unsigned int    length_bytes)
+{
+	return  get_pointer_pos_len_bits(in_out_frame_data, pos_bytes * 8, length_bytes * 8);
+}
+
+long long  get_pointer_len_bits(T_frame_data  & in_out_frame_data,
+								unsigned int    length_bits)
+{
+	return  get_pointer_pos_len_bits(in_out_frame_data, in_out_frame_data.get_bit_offset(), length_bits);
+}
+
+long long  get_pointer_len_bytes(T_frame_data  & in_out_frame_data,
+								 unsigned int    length_bytes)
+{
+	return  get_pointer_pos_len_bits(in_out_frame_data, in_out_frame_data.get_bit_offset(), length_bytes * 8);
+}
+
+//*****************************************************************************
+// 
+//*****************************************************************************
+
 #ifndef UINT32_MAX
 #define UINT32_MAX  4294967295
 #endif
@@ -1279,6 +1313,32 @@ T_expression::compute_expression_function(
 
 		const string  str_date = date_get_string_from_seconds(A_value.get_int(), number_of_seconds.get_int());
 		A_value = str_date;
+	}
+	else if (A_variable_or_function_name == "get_pointer_len_bytes")
+	{
+		const C_value  & length_bytes = * P_parameter_values[0];
+
+		A_value = get_pointer_len_bytes(in_out_frame_data, length_bytes.get_int());
+	}
+	else if (A_variable_or_function_name == "get_pointer_len_bits")
+	{
+		const C_value  & length_bits = * P_parameter_values[0];
+
+		A_value = get_pointer_len_bits(in_out_frame_data, length_bits.get_int());
+	}
+	else if (A_variable_or_function_name == "get_pointer_pos_len_bytes")
+	{
+		const C_value  & pos_bytes    = * P_parameter_values[0];
+		const C_value  & length_bytes = * P_parameter_values[1];
+
+		A_value = get_pointer_pos_len_bytes(in_out_frame_data, pos_bytes.get_int(), length_bytes.get_int());
+	}
+	else if (A_variable_or_function_name == "get_pointer_pos_len_bits")
+	{
+		const C_value  & pos_bits    = * P_parameter_values[0];
+		const C_value  & length_bits = * P_parameter_values[1];
+
+		A_value = get_pointer_pos_len_bits(in_out_frame_data, pos_bits.get_int(), length_bits.get_int());
 	}
 #if 0
 	else if (A_variable_or_function_name == "string.")
