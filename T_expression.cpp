@@ -1056,7 +1056,7 @@ T_expression::compute_expression_variable_array(
 }
 
 //*****************************************************************************
-// 
+// get_pointer_...
 //*****************************************************************************
 
 long long  get_pointer_pos_len_bits(T_frame_data  & in_out_frame_data,

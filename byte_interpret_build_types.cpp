@@ -2626,6 +2626,18 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 	// string type definitions
 	type_definitions.map_const_value["string::npos"] = string_count_cpp_to_fdesc(string::npos);
 
+	// system
+#if defined WIN32
+	type_definitions.map_const_value["system::os"]     = "win";
+#else
+	type_definitions.map_const_value["system::os"]     = "linux";
+#endif
+	type_definitions.map_const_value["system::bits"] = sizeof(void*)*8;
+	type_definitions.map_const_value["system::osbits"] =
+		type_definitions.map_const_value["system::os"].as_string() +
+		type_definitions.map_const_value["system::bits"].as_string();
+
+
 #define M_DEFINE_BUILTIN_FUNCTION(PROTOTYPE)                                    \
     build_types_no_include_str("function " PROTOTYPE " \n"                      \
 		"{ \n"                                                                  \
