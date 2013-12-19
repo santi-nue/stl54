@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2013 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -34,6 +34,16 @@
 #include "byte_interpret_build_types_netpdl.h"
 
 #include <fstream>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+#include <epan/filesystem.h>
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 //*****************************************************************************
 // 
@@ -730,6 +740,15 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 	}
   }
   build_types_context_include_file_open (wsgd_file_name_short);
+
+  {
+	  protocol_data.type_definitions.map_const_value["shark::progfile_dir"]     = get_progfile_dir();
+	  protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugin_dir();
+	  protocol_data.type_definitions.map_const_value["shark::datafile_dir"]     = get_datafile_dir();
+	  protocol_data.type_definitions.map_const_value["shark::systemfile_dir"]   = get_systemfile_dir();
+	  protocol_data.type_definitions.map_const_value["shark::profiles_dir"]     = get_profiles_dir();
+	  protocol_data.type_definitions.map_const_value["shark::persdatafile_dir"] = get_persdatafile_dir();
+  }
 
   while (is_istream_empty(ifs) != true)
   {
