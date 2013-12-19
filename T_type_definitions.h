@@ -520,7 +520,6 @@ struct T_library_function_definition
 
 struct T_library_definition
 {
-	std::string    user_namespace;
 	std::string    full_name;
 	void *         DLLib_handle;
 

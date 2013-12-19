@@ -4341,6 +4341,46 @@ void    test_build_types_and_interpret_bytes()
 }
 
 //*****************************************************************************
+// test_library
+//*****************************************************************************
+
+void    test_library()
+{
+    T_type_definitions    type_definitions;
+    build_types ("unitary_tests_library.fdesc",
+                 type_definitions);
+
+	T_interpret_data      interpret_data;
+
+	// ascii_strdown_inplace & ascii_strup_inplace
+	M_TEST_SIMPLE("", "var string  original = \"Hello WORLD !\";",          "original = Hello WORLD !");
+	M_TEST_SIMPLE("", "var string  before = original;",                       "before = Hello WORLD !");
+	M_TEST_SIMPLE("", "var string  ret    = ascii_strdown_inplace (before);",    "ret = hello world !");
+	M_TEST_SIMPLE("", "var string  after  = before;",                          "after = hello world !");
+	M_TEST_SIMPLE("", "var string  ret    = ascii_strup_inplace (before);",      "ret = HELLO WORLD !");
+	M_TEST_SIMPLE("", "var string  after  = before;",                          "after = HELLO WORLD !");
+	M_TEST_SIMPLE("", "var string  notmodified = original;",             "notmodified = Hello WORLD !");
+
+	// crc32c_calculate_byte
+#define DATA  "6c 00 0b 00 00 00 00 00 00 00 00 00"
+
+#define M_TEST_CRC32(POS,OFFSET,SEED,RESULT)  \
+	M_TEST_SIMPLE(DATA,  \
+		"var uint32  crc32 = crc32c_calculate_byte (" #POS "," #OFFSET "," #SEED "); move_position_bytes 12;",  \
+		"crc32 = " #RESULT)
+
+	M_TEST_CRC32( 0, 0,   0,            0);
+	M_TEST_CRC32( 2, 0, 136,          136);
+	M_TEST_CRC32( 0, 4,   0,   1483871832);
+	M_TEST_CRC32( 4, 4,   0,            0);
+	M_TEST_CRC32( 0, 4, 136,   4010883408);
+	M_TEST_CRC32( 4, 4, 136,   3076730632);
+	M_TEST_CRC32( 8, 4,   0,            0);
+//	M_TEST_CRC32( 9, 4,   0,            0);    // out of bounds
+//	M_TEST_CRC32(12, 4,   0,            0);    // out of bounds
+}
+
+//*****************************************************************************
 // main
 //*****************************************************************************
 
@@ -4409,6 +4449,7 @@ int   main(const int         argc,
 		M_TEST_FCT(test_interpret_forget);
 		M_TEST_FCT(test_interpret_msg);
 		M_TEST_FCT(test_build_types_and_interpret_bytes);
+		M_TEST_FCT(test_library);
 		M_TEST_FCT(test_size);
 	}
 

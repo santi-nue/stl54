@@ -3026,8 +3026,8 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 #ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
 	if (is_dyncall == true)
 	{
-		T_library_definition           & library_def = * fct_def.P_library_def;
-		T_library_function_definition  & library_function_def = library_def.library_functions[fct_def.idx_library_function_def];
+		const T_library_definition           & library_def = * fct_def.P_library_def;
+		const T_library_function_definition  & library_function_def = library_def.library_functions[fct_def.idx_library_function_def];
 
 		if (fct_def.return_type == "void")
 		{
