@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -188,11 +188,11 @@ void    fatal_pb (const string  & lhs,
 
 #define M_FATAL_COMMENT(comment)                                              \
     {                                                                         \
-        std::ostrstream  oss;                                                 \
-        oss << comment << ends;                                               \
-    	fatal_pb ("FATAL :", "", oss.str (),                                  \
+        std::ostrstream  M_FATAL_COMMENT_oss;                                 \
+        M_FATAL_COMMENT_oss << comment << ends;                               \
+    	fatal_pb ("FATAL :", "", M_FATAL_COMMENT_oss.str (),                  \
                   __FILE__, __LINE__);                                        \
-        oss.freeze (false);           /* avoid memory leak */                 \
+        M_FATAL_COMMENT_oss.freeze (false);           /* avoid memory leak */ \
     }
 
 #define M_ASSERT(assertion)     M_FATAL_IF_FALSE(assertion)
