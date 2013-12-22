@@ -5,12 +5,17 @@
 
 const string  dev::winBaseDir = "..\..\";
 const string  dev::linuxBaseDir = "../../";
-  
-  
-library
+
+const string  lib::wsutil =
   system::os == "win"   ? dev::winBaseDir   + "wireshark-gtk2\libwsutil.dll" :
   system::os == "linux" ? dev::linuxBaseDir + "wsutil/.libs/libwsutil.so" :
   "os " + system::os + " unknow";
+
+###############################################################################
+# libwsutil str part
+###############################################################################
+
+library  lib::wsutil
 {
   # gchar *ascii_strdown_inplace(gchar *str);
   function  string  ascii_strdown_inplace (in_out string  str);
@@ -23,20 +28,9 @@ library
 
   # gboolean isdigit_string(guchar *string);
   function  int8  isdigit_string (in string  str);
-
-  # guint32 crc32c_calculate(const void *buf, int len, guint32 crc);
-  function  uint32  crc32c_calculate (in pointer  buf, in int32  len, in uint32 crc );
-
-  # guint8 crc8_0x2F(guint8 *buf, guint32 len, guint8 seed);
-  function uint8 crc8_0x2F (in pointer  buf, in uint32  len, in uint8  seed);
 }
 
-function uint32  crc32c_calculate_byte ( in int64  pos_byte, in int32  length_byte, in uint32  seed )
-{
-  return  crc32c_calculate (get_pointer_pos_len_bytes(pos_byte, length_byte), length_byte, seed);
-}
-
-struct T_test_library_wsutil
+struct T_test_library_wsutil_str
 {
 #  call ascii_strdown_inplace ("does not work, must be a variable");
   var string  original = "Hello WORLD !";
@@ -49,7 +43,28 @@ struct T_test_library_wsutil
   
   var int8    isprint = isprint_string (before);
   var int8    isdigit = isdigit_string (before);
-  
+}  
+
+###############################################################################
+# libwsutil crc
+###############################################################################
+
+library  lib::wsutil
+{
+  # guint32 crc32c_calculate(const void *buf, int len, guint32 crc);
+  function  uint32  crc32c_calculate (in pointer  buf, in int32  len, in uint32 crc );
+
+  # guint8 crc8_0x2F(guint8 *buf, guint32 len, guint8 seed);
+  function uint8 crc8_0x2F (in pointer  buf, in uint32  len, in uint8  seed);
+}
+
+function uint32  crc32c_calculate_byte ( in int64  pos_byte, in int32  length_byte, in uint32  seed )
+{
+  return  crc32c_calculate (get_pointer_pos_len_bytes(pos_byte, length_byte), length_byte, seed);
+}
+
+struct T_test_library_wsutil_crc
+{
   var uint32  crc32_0_0_0   = crc32c_calculate_byte (0, 0, 0);
   var uint32  crc32_0_0_136 = crc32c_calculate_byte (2, 0, 136);
   var uint32  crc32_0_4_0   = crc32c_calculate_byte (0, 4, 0);

@@ -2258,11 +2258,7 @@ void    build_plugin_output (const E_override            must_override,
 // build_library
 // ----------------------------------------------------------------------------
 // Format :
-// library  <namespace>  <library_name>
-//   path{os=win32}   = "library path";
-//   path{os=...}     = "library path";
-//   path{os=linux64} = "library path";
-//   path             = "library path";
+// library  "library path;...;library path"    or const string with same format
 // {
 //    <function prototype>
 //    ...
@@ -2281,46 +2277,55 @@ void    build_library  (const E_override            must_override,
 
 	M_ASSERT_EQ (key_word, "library");
 
+
+	// Read library filenames list (1 string with ; delimiter)
+	string   library_filenames_str;
+	M_FATAL_IF_FALSE (read_token_right_any(is, library_filenames_str));
+
+	{
+		T_expression  expression;
+		expression.build_expression(type_definitions, library_filenames_str);
+
+		C_value  expression_result = expression.compute_expression_static(type_definitions);
+		library_filenames_str = expression_result.get_str();
+	}
+
+	// Split string read on ;
+	vector<string>  library_filenames;
+	while (true)
+	{
+		string         library_filename;
+		string         str_right;
+		E_return_code  rc = get_before_separator_after (library_filenames_str, ';', library_filename, str_right);
+		if (rc != E_rc_ok)
+		{
+			library_filenames.push_back(library_filenames_str);
+			break;
+		}
+
+		library_filenames.push_back(library_filename);
+		library_filenames_str = str_right;
+	}
+
+
+	// Load library from one of the library_filenames 
 	T_library_definition  * P_library_def = NULL;
 	string   libraries_not_found;
 	string   libraries_not_loadable;
 
-	while (true)
+	for (vector<string>::const_iterator  iter  = library_filenames.begin();
+		                                 iter != library_filenames.end();
+									   ++iter)
 	{
-		skip_blanks_and_comments(is);
-		if (is.peek() == '{')
-		{
-			break;
-		}
+		const string  & library_filename = *iter;
 
-		// Read library filename
-		string   library_filename;
-		{
-			string    expression_str;
-			M_FATAL_IF_FALSE (read_token_expression_any(is, expression_str));
-
-			T_expression  expression;
-			expression.build_expression(type_definitions, expression_str);
-
-			C_value  expression_result = expression.compute_expression_static(type_definitions);
-			library_filename = expression_result.get_str();
-		}
-
-		read_token_end_of_statement(is);
-
-		if (P_library_def != NULL)
-		{
-			// already found
-			continue;
-		}
-
-		T_map_library_definition::iterator  iter =
+		T_map_library_definition::iterator  iter_lib =
 			type_definitions.map_library_definition.find(library_filename);
-		if (iter != type_definitions.map_library_definition.end())
+		if (iter_lib != type_definitions.map_library_definition.end())
 		{
 			// already found
-			P_library_def = & iter->second;
-			continue;
+			P_library_def = & iter_lib->second;
+			break;
 		}
 
 		ifstream              ifs (library_filename.c_str());
@@ -2347,9 +2352,8 @@ void    build_library  (const E_override            must_override,
 		P_library_def = & type_definitions.map_library_definition[library_filename];
 		P_library_def->DLLib_handle = DLLib_handle;
 		P_library_def->full_name    = library_filename;
+		break;
 	}
-
-	read_token_key_word_specified(is, "{");
 
 	if (P_library_def == NULL)
 	{
@@ -2368,7 +2372,9 @@ void    build_library  (const E_override            must_override,
 
 	M_STATE_DEBUG(P_library_def->full_name << " is a loadable library");
 
+	read_token_key_word_specified(is, "{");
 
+	// Read function prototypes and get corresponding pointer into library
 	while (true)
 	{
 		string  key_word;
