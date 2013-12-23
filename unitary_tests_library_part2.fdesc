@@ -1,0 +1,63 @@
+
+# These functions do not exist inside wsutil before 18X
+
+###############################################################################
+# libwsutil str part
+###############################################################################
+
+library  lib::wsutil
+{
+  # gboolean isprint_string(guchar *string);
+  function  int8  isprint_string (in string  str);
+
+  # gboolean isdigit_string(guchar *string);
+  function  int8  isdigit_string (in string  str);
+}
+
+struct T_test_library_wsutil_str2
+{
+  var int8    isprint = isprint_string (before);
+  var int8    isdigit = isdigit_string (before);
+}  
+
+
+###############################################################################
+# libwsutil crc
+###############################################################################
+
+library  lib::wsutil
+{
+  # guint32 crc32c_calculate(const void *buf, int len, guint32 crc);
+  function  uint32  crc32c_calculate (in pointer  buf, in int32  len, in uint32 crc );
+
+  # guint8 crc8_0x2F(guint8 *buf, guint32 len, guint8 seed);
+  function uint8 crc8_0x2F (in pointer  buf, in uint32  len, in uint8  seed);
+}
+
+function uint32  crc32c_calculate_byte ( in int64  pos_byte, in int32  length_byte, in uint32  seed )
+{
+  return  crc32c_calculate (get_pointer_pos_len_bytes(pos_byte, length_byte), length_byte, seed);
+}
+
+struct T_test_library_wsutil_crc
+{
+  var uint32  crc32_0_0_0   = crc32c_calculate_byte (0, 0, 0);
+  var uint32  crc32_0_0_136 = crc32c_calculate_byte (2, 0, 136);
+  var uint32  crc32_0_4_0   = crc32c_calculate_byte (0, 4, 0);
+  var uint32  crc32_4_4_0   = crc32c_calculate_byte (4, 4, 0);
+  var uint32  crc32_0_4_136 = crc32c_calculate_byte (0, 4, 136);
+  var uint32  crc32_4_4_136 = crc32c_calculate_byte (4, 4, 136);
+  var uint32  crc32_8_4_0   = crc32c_calculate_byte (8, 4, 0);
+  var uint32  crc32_12_4_0  = crc32c_calculate_byte (12, 4, 0);   # outside bounds
+
+#  call  crc32c_calculate_byte (12, 4, 0);   # outside bounds
+  
+  var uint8{d=hex}   crc8_0_1_0   = crc8_0x2F (0 * 8, 1, 0);
+  var uint8{d=hex}   crc8_0_2_0   = crc8_0x2F (0 * 8, 2, 0);
+  var uint8{d=hex}   crc8_0_3_0   = crc8_0x2F (0 * 8, 3, 0);
+  var uint8{d=hex}   crc8_0_4_0   = crc8_0x2F (0 * 8, 4, 0);
+  var uint8{d=hex}   crc8_4_4_0   = crc8_0x2F (4 * 8, 4, 0);
+  var uint8{d=hex}   crc8_0_4_136 = crc8_0x2F (0 * 8, 4, 136);
+  var uint8{d=hex}   crc8_4_4_136 = crc8_0x2F (4 * 8, 4, 136);
+}
+

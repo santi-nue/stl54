@@ -4361,6 +4361,12 @@ void    test_library()
 	M_TEST_SIMPLE("", "var string  after  = before;",                          "after = HELLO WORLD !");
 	M_TEST_SIMPLE("", "var string  notmodified = original;",             "notmodified = Hello WORLD !");
 
+
+	// crc is not inside wsutil before wireshark 18X
+#if 0
+	build_types ("unitary_tests_library_part2.fdesc",
+                 type_definitions);
+
 	// crc32c_calculate_byte
 #define DATA  "6c 00 0b 00 00 00 00 00 00 00 00 00"
 
@@ -4378,6 +4384,7 @@ void    test_library()
 	M_TEST_CRC32( 8, 4,   0,            0);
 //	M_TEST_CRC32( 9, 4,   0,            0);    // out of bounds
 //	M_TEST_CRC32(12, 4,   0,            0);    // out of bounds
+#endif
 }
 
 //*****************************************************************************
