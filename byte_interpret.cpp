@@ -2900,7 +2900,7 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 			}
 		}
 		
-		if (fct_parameters[idx].is_a_variable() == true)
+		if ((idx < fct_parameters.size()) && (fct_parameters[idx].is_a_variable() == true))
 		{
 			if (pre_compute == true)
 			{
