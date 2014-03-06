@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -312,7 +312,16 @@ int   main (int  argc, const char * const  argv[])
         if ((file_name == "-") || (file_name == "stdin"))
             P_istream = &cin;
         else
+		{
             P_istream = new ifstream (file_name.c_str ());
+
+			const string::size_type  last_separator = file_name.find_last_of("/\\");
+			if (last_separator != string::npos)
+			{
+				const string    directory = file_name.substr(0, last_separator);
+				byte_interpret_set_include_directory(directory);
+			}
+		}
     }
     else
     {
