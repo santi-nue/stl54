@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -1495,7 +1495,7 @@ void    proto_init_routine(T_generic_protocol_data  & protocol_data)
 		T_interpret_data   & interpret_data = protocol_data.ws_data.global_data.initialized_data;
 		const T_byte       * in_out_P_bytes = NULL_PTR;
 		size_t               in_out_sizeof_bytes = 0;
-		const string         str_interpret = protocol_data.GLOBAL_DATA_TYPE + " global ;";
+		const string         str_interpret = "var " + protocol_data.GLOBAL_DATA_TYPE + " global = zero;";
 		istrstream           iss(str_interpret.c_str());
 		ostream            & os = get_interpret_ostream();
 		bool    result = interpret_bytes (protocol_data.type_definitions,

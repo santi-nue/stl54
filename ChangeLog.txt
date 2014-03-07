@@ -1,4 +1,5 @@
 
+2014/03/07  Fix : global is now a var  
 2014/03/06  Fix : byte_interpret.exe does not take care of the fdesc path for include
 2013/12/08  Add : library permits to call dynamically C functions into a dll/so (powered by http://dyncall.org/)
 2013/10/06  Prf : forget keyword permits to forget some data (useless for wireshark)
