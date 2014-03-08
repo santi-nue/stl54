@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -118,10 +118,15 @@ struct T_generic_protocol_saved_interpreted_data : public CT_debug_object_counte
 struct T_generic_protocol_global_data : public CT_debug_object_counter<T_generic_protocol_global_data>
 {
   // Contains the initial values of global data
-  T_interpret_data    initialized_data;
+  T_RCP_interpret_data    RCP_initialized_data;
 
   // Contains all interpret_data of msg
   vector<T_generic_protocol_saved_interpreted_data>  saved_interpreted_datas;
+
+  T_generic_protocol_global_data()
+	  : RCP_initialized_data(new T_interpret_data())
+  {
+  }
 };
 
 struct T_generic_protocol_ws_data : public CT_debug_object_counter<T_generic_protocol_ws_data>

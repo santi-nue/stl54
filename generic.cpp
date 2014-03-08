@@ -1492,7 +1492,7 @@ void    proto_init_routine(T_generic_protocol_data  & protocol_data)
 
 		// init global data
 		C_interpret_builder_set_temporary  interpret_builder_set_temporary(NULL);
-		T_interpret_data   & interpret_data = protocol_data.ws_data.global_data.initialized_data;
+		T_interpret_data   & interpret_data = * protocol_data.ws_data.global_data.RCP_initialized_data;
 		const T_byte       * in_out_P_bytes = NULL_PTR;
 		size_t               in_out_sizeof_bytes = 0;
 		const string         str_interpret = "var " + protocol_data.GLOBAL_DATA_TYPE + " global = zero;";
@@ -1514,7 +1514,7 @@ void    proto_init_routine(T_generic_protocol_data  & protocol_data)
 		}
 
 		// global data only usable with full name.
-		protocol_data.ws_data.global_data.initialized_data.reset_short_names();
+		protocol_data.ws_data.global_data.RCP_initialized_data->reset_short_names();
 	}
 }
 
@@ -1958,6 +1958,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 
   // Global data.
   T_generic_protocol_saved_interpreted_data  * P_where_to_save_interpret_data = NULL;
+  T_RCP_interpret_data                         RCP_prev_global_interpret_data = NULL;
   if (protocol_data.GLOBAL_DATA_TYPE != "")
   {
 	  // Search for previous msg
@@ -2012,16 +2013,13 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 		  M_STATE_DEBUG ("GLOBAL_DATA new T_interpret_data");
 		  RCP_interpret_data = new T_interpret_data;
 	  }
-
-	  // Copy global data of previous msg into interpret_data
-	  if (RCP_prev_saved_interpret_data.get() != NULL)
+	  // Save global data pointer
+	  RCP_prev_global_interpret_data = RCP_prev_saved_interpret_data;
+	  if (RCP_prev_global_interpret_data.get() == NULL)
 	  {
-		  RCP_interpret_data->copy_global_values(*RCP_prev_saved_interpret_data);
+		  RCP_prev_global_interpret_data = protocol_data.ws_data.global_data.RCP_initialized_data;
 	  }
-	  else
-	  {
-		  RCP_interpret_data->copy_global_values(protocol_data.ws_data.global_data.initialized_data);
-	  }
+	  RCP_interpret_data->copy_global_values(*RCP_prev_global_interpret_data);
   }
 
   // interpret data.
@@ -2231,6 +2229,13 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  {
 		// All the input data is present.
 		wsgd_builder.set_is_input_data_complete(true);
+	  }
+
+	  if (RCP_prev_global_interpret_data.get() != NULL)
+	  {
+		  // global data could have been modified by header
+		  // Since we read again the header, must start with the original values
+		  interpret_data.copy_global_values(*RCP_prev_global_interpret_data);
 	  }
 
 	  // Intrepretation of the main type.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -112,7 +112,9 @@ struct T_interpret_read_values : public C_reference_counter,
 					  const T_interpret_read_values  & interpret_read_values_src);
 	void	copy_multiple_values(
 					  const T_interpret_read_values  & interpret_read_values_src,
-					  const std::string                var_name_with_star);
+					  const std::string                var_name_with_star,
+					        int                        dest_idx_begin,
+					  const int                        dest_idx_end);
 
     void    get_multiple_P_attribute_value_of_read_variable (
 							const string               & var_name_with_star,
