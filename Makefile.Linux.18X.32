@@ -533,7 +533,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/Makefile.common $(am__co
 	$(am__cd) $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu plugins/generic/Makefile
 .PRECIOUS: Makefile
-Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+# wsgd Olivier Aveline remove $(srcdir)/Makefile.in 
+#Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+Makefile: $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
 	    cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh;; \
