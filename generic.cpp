@@ -2531,7 +2531,7 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
 }
 
 //*****************************************************************************
-// 
+// heuristic_generic_proto
 //*****************************************************************************
 
 gboolean    heuristic_generic_proto(const int      proto_idx,
@@ -2548,12 +2548,16 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
                  << pinfo << ", "
                  << tree << ")");
 
-  // doit retourner false si ce n'est pas un packet du protocol
-  // sinon :
-  // - return true
-  // - effectue la dissection
+  // Check of tvb data to know if it is our protocol
 
-  // ICIOA a coder
+  // No check !!!!!!!!!!!!!!!! ICIOA TODO TBC
+  // No check !!!!!!!!!!!!!!!! ICIOA TODO TBC
+  // No check !!!!!!!!!!!!!!!! ICIOA TODO TBC
+  // if (check fails) return false;
 
-  return  false;
+
+  // Do not care of return value ?
+  dissect_generic_proto(proto_idx, tvb, pinfo, tree);
+
+  return  true;
 }
