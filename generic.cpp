@@ -1358,7 +1358,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 					" (because it does NOT exist).\n" 
 					"\n"
 					"The given protocol will NOT be called (at least automatically).\n");
-		return;
+		continue;
 	  }
 
 	  for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_int.size(); ++idx)
@@ -1401,7 +1401,14 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
   {
 	  const string  & parent_name = *parent_iter;
 
-	  M_STATE_DEBUG ("PARENT_HEURISTIC = " << parent_name);
+	  dissector_handle_t  dissector_handle = find_dissector(parent_name.c_str());
+	  if (dissector_handle == NULL)
+	  {
+		wsgd_report_failure(
+					"Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
+					" (because it does NOT exist).\n");
+		continue;
+	  }
 
       heur_dissector_add(parent_name.c_str(),
 						 P_protocol_ws_data->P_heuristic_fct,
@@ -2548,13 +2555,43 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
                  << pinfo << ", "
                  << tree << ")");
 
-  // Check of tvb data to know if it is our protocol
+  if (protocol_data.HEURISTIC_FUNCTION != "")
+  {
+	  // Check of tvb data to know if it is our protocol
+	  try
+	  {
+		  const void           * ptr_raw_data = tvb_get_ptr(tvb, 0, -1);
+		  const int              length_raw_data = tvb_length_remaining(tvb, 0);
+		  if ((ptr_raw_data == NULL) || (length_raw_data <= 0))
+		  {
+			  return  false;
+		  }
+		  T_frame_data           frame_data(ptr_raw_data, 0, length_raw_data * 8);
 
-  // No check !!!!!!!!!!!!!!!! ICIOA TODO TBC
-  // No check !!!!!!!!!!!!!!!! ICIOA TODO TBC
-  // No check !!!!!!!!!!!!!!!! ICIOA TODO TBC
-  // if (check fails) return false;
+		  const string           expression_str = protocol_data.HEURISTIC_FUNCTION + " ()";
+		  T_interpret_data       interpret_data;
+		  T_decode_stream_frame  decode_stream_frame;
+		  interpret_data.set_decode_stream_frame(&decode_stream_frame);
+		  const string           data_name;
+		  const string         & data_simple_name = data_name;
+		  ostrstream             os_out;
+		  ostrstream           & os_err = os_out;
 
+		  const C_value          HEURISTIC_FUNCTION_result = compute_expression(protocol_data.type_definitions, interpret_data, frame_data,
+																		   expression_str,
+																		   data_name, data_simple_name, os_out, os_err);
+
+		  if (HEURISTIC_FUNCTION_result.get_bool() != true)
+		  {
+			  return  false;
+		  }
+	  }
+	  catch(...)
+	  {
+		  M_STATE_FATAL("Unexpected exception.");
+		  return  false;
+	  }
+  }
 
   // Do not care of return value ?
   dissect_generic_proto(proto_idx, tvb, pinfo, tree);

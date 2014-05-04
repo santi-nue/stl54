@@ -187,7 +187,9 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
 	vector<pair<int,int> >   PARENT_SUBFIELD_RANGES_int;
   };
   vector<T_parent>  PARENTS;
+
   vector<string>    PARENTS_HEURISTIC;
+  string            HEURISTIC_FUNCTION;
 
   string            SUBPROTO_SUBFIELD;
   string            SUBPROTO_SUBFIELD_PARAM;

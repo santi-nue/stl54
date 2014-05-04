@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -641,6 +641,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 		ifs >> parent_name;
 		protocol_data.PARENTS_HEURISTIC.push_back(parent_name);
 	}
+	M_READ_VALUE(HEURISTIC_FUNCTION)
 
     else if (keyword == "SUBFIELD")
 	{
@@ -777,6 +778,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   // Verify that all mandatory data have been initialized.
   protocol_data.check_config_parameters_initialized();
 
+  // Check/update PARENTS
   for (vector<T_generic_protocol_data::T_parent>::iterator
 									parent_iter  = protocol_data.PARENTS.begin();
 									parent_iter != protocol_data.PARENTS.end();
@@ -816,6 +818,20 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 
 	  }
   }
+
+  // Check HEURISTIC_FUNCTION
+  {
+	  remove_string_limits(protocol_data.HEURISTIC_FUNCTION);
+	  if (protocol_data.HEURISTIC_FUNCTION != "")
+	  {
+		  if (protocol_data.type_definitions.is_a_function(protocol_data.HEURISTIC_FUNCTION) == false)
+		  {
+			  M_FATAL_COMMENT("HEURISTIC_FUNCTION (" << protocol_data.HEURISTIC_FUNCTION << ") is NOT a defined function name");
+		  }
+	  }
+  }
+
+
 
   // Check MSG_HEADER_TYPE.
   if (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_HEADER_TYPE) == false)
