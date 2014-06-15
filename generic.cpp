@@ -54,8 +54,13 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#if WIRESHARK_VERSION_NUMBER >= 11200
+#include <wsutil/filesystem.h>
+#include <wsutil/report_err.h>
+#else
 #include <epan/filesystem.h>
 #include <epan/report_err.h>
+#endif
 #include <epan/conversation.h>
 #include <epan/tap.h>
 #include <epan/stats_tree.h>
@@ -1825,7 +1830,9 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
 	M_ADD_PINFO_FD(cap_len);     /* Amount actually captured */
 	M_ADD_PINFO_FD(cum_bytes);   /* Cumulative bytes into the capture */
     M_ADD_PINFO_FD_NSTIME(abs_ts);      /* Absolute timestamp */
+#if WIRESHARK_VERSION_NUMBER < 11200
     M_ADD_PINFO_FD_NSTIME(rel_ts);      /* Relative timestamp (yes, it can be negative) */
+#endif
 #if WIRESHARK_VERSION_NUMBER < 11000
     M_ADD_PINFO_FD_NSTIME(del_dis_ts);  /* Delta timestamp to previous displayed frame (yes, it can be negative) */
     M_ADD_PINFO_FD_NSTIME(del_cap_ts);  /* Delta timestamp to previous captured frame (yes, it can be negative) */
@@ -1841,9 +1848,13 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
   M_ADD_PINFO_ADDRESS(net_dst);		/* network-layer destination address */
   M_ADD_PINFO_ADDRESS(src);			/* source address (net if present, DL otherwise )*/
   M_ADD_PINFO_ADDRESS(dst);			/* destination address (net if present, DL otherwise )*/
+#if WIRESHARK_VERSION_NUMBER < 11200
   M_ADD_PINFO(ethertype);
+#endif
   M_ADD_PINFO(ipproto);
+#if WIRESHARK_VERSION_NUMBER < 11200
   M_ADD_PINFO(ipxptype);
+#endif
 
   // In wireshark 1.1.z, there is a new field here.
   // So, all following fields are not at the same place.
@@ -1863,7 +1874,9 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
   M_ADD_PINFO(ptype);               /* type of the following two port numbers */
   M_ADD_PINFO(srcport);
   M_ADD_PINFO(destport);
+#if WIRESHARK_VERSION_NUMBER < 11200
   M_ADD_PINFO(match_port);
+#endif
   M_ADD_PINFO_STR(match_string);
 #endif
   }

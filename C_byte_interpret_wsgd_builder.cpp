@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -88,10 +88,16 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
       return;
   }
 
+#if WIRESHARK_VERSION_NUMBER >= 11200
+  heur_dtbl_entry_t *hdtbl_entry;
+#endif
+  
   if (subdissector_data.try_heuristic_first) {
     M_STATE_DEBUG ("subdissector try heuristic");
     /* do lookup with the heuristic subdissector table */
-#if WIRESHARK_VERSION_NUMBER >= 11000
+#if WIRESHARK_VERSION_NUMBER >= 11200
+    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, &hdtbl_entry, NULL))
+#elif WIRESHARK_VERSION_NUMBER >= 11000
     if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, NULL))
 #else
     if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree))
@@ -106,7 +112,11 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
     M_STATE_DEBUG ("subdissector try *P_value_1=" << P_value_1->as_string());
 	if (protocol_data.SUBPROTO_SUBFIELD_TYPE_WS == FT_STRING)
 	{
+#if WIRESHARK_VERSION_NUMBER >= 11200
+      if (dissector_try_string(subdissector_data.dissector_table, P_value_1->get_str().c_str(), next_tvb, pinfo, tree, NULL))
+#else
       if (dissector_try_string(subdissector_data.dissector_table, P_value_1->get_str().c_str(), next_tvb, pinfo, tree))
+#endif
         return;
 	}
 	else
@@ -121,7 +131,11 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
     M_STATE_DEBUG ("subdissector try *P_value_2=" << P_value_2->as_string());
 	if (protocol_data.SUBPROTO_SUBFIELD_TYPE_WS == FT_STRING)
 	{
+#if WIRESHARK_VERSION_NUMBER >= 11200
+      if (dissector_try_string(subdissector_data.dissector_table, P_value_2->get_str().c_str(), next_tvb, pinfo, tree, NULL))
+#else
       if (dissector_try_string(subdissector_data.dissector_table, P_value_2->get_str().c_str(), next_tvb, pinfo, tree))
+#endif
         return;
 	}
 	else
@@ -136,7 +150,11 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
     M_STATE_DEBUG ("subdissector try *P_value_3=" << P_value_3->as_string());
 	if (protocol_data.SUBPROTO_SUBFIELD_TYPE_WS == FT_STRING)
 	{
+#if WIRESHARK_VERSION_NUMBER >= 11200
+      if (dissector_try_string(subdissector_data.dissector_table, P_value_3->get_str().c_str(), next_tvb, pinfo, tree, NULL))
+#else
       if (dissector_try_string(subdissector_data.dissector_table, P_value_3->get_str().c_str(), next_tvb, pinfo, tree))
+#endif
         return;
 	}
 	else
@@ -149,7 +167,9 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
   if (!subdissector_data.try_heuristic_first) {
     M_STATE_DEBUG ("subdissector try heuristic");
     /* do lookup with the heuristic subdissector table */
-#if WIRESHARK_VERSION_NUMBER >= 11000
+#if WIRESHARK_VERSION_NUMBER >= 11200
+    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, &hdtbl_entry, NULL))
+#elif WIRESHARK_VERSION_NUMBER >= 11000
     if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, NULL))
 #else
     if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree))

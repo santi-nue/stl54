@@ -39,7 +39,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#if WIRESHARK_VERSION_NUMBER >= 11200
+#include <wsutil/filesystem.h>
+#else
 #include <epan/filesystem.h>
+#endif
 
 #ifdef __cplusplus
 }

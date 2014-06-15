@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,8 +30,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <epan/expert.h>
+#if WIRESHARK_VERSION_NUMBER >= 11200
+#include <wsutil/filesystem.h>
+#include <wsutil/report_err.h>
+#else
 #include <epan/filesystem.h>
 #include <epan/report_err.h>
+#endif
 #include <epan/conversation.h>
 #include <epan/tap.h>
 #include <epan/prefs.h>
@@ -85,6 +90,10 @@ void    test_remote_command()
 		field_byte_size = offset_end - offset;                               \
 	}
 
+#if WIRESHARK_VERSION_NUMBER >= 11200
+// ICIOA TBC Temporaire
+#define expert_add_info_format(pinfo,proto_item_1,PI_MALFORMED,error_code,format,text)
+#endif
 
 /******************************************************************************
  * cpp_dissect_generic_add_item
