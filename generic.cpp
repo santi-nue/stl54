@@ -2547,7 +2547,9 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
 	}
   } while (true);
 
-  return  offset_where_dissection_stops;
+
+//  return  offset_where_dissection_stops;    // tshark 1.12.0 rc2 crash 
+  return tvb_length(tvb);
 }
 
 //*****************************************************************************
