@@ -5,6 +5,8 @@
 #
 
 include ..\..\config.nmake
+include ..\..\Makefile.nmake.inc
+
 include moduleinfo.nmake
 
 include Makefile.common
@@ -41,8 +43,8 @@ CPPFLAGS=/EHsc $(C_CPP_COMMON_FLAGS)  /DWIRESHARK_VERSION_NUMBER=$(WIRESHARK_VER
 LDFLAGS = $(PLUGIN_LDFLAGS)  /NODEFAULTLIB:LIBCMT /SAFESEH:NO
 
 !IFDEF ENABLE_LIBWIRESHARK
-LINK_PLUGIN_WITH=..\..\epan\libwireshark.lib ..\..\wiretap\wiretap-$(WTAP_VERSION).lib $(BYTE_INTERPRET_ADD_LIBS)
-CFLAGS=/DHAVE_WIN32_LIBWIRESHARK_LIB /D_NEED_VAR_IMPORT_ $(CFLAGS)
+LINK_PLUGIN_WITH=..\..\epan\libwireshark.lib ..\..\wiretap\wiretap-$(WTAP_VERSION).lib ..\..\wsutil\libwsutil.lib $(BYTE_INTERPRET_ADD_LIBS)
+CFLAGS=$(CFLAGS)
 
 DISSECTOR_OBJECTS = $(DISSECTOR_SRC:.c=.obj)
 
@@ -131,11 +133,11 @@ $(PLUGIN_NAME).dll $(PLUGIN_NAME).exp $(PLUGIN_NAME).lib : $(OBJECTS) $(LINK_PLU
 # All subsequent arguments are the files to scan.
 #
 !IFDEF PYTHON
-plugin.c: $(DISSECTOR_SRC) moduleinfo.h ../../tools/make-dissector-reg.py
+plugin.c: $(DISSECTOR_SRC) moduleinfo.h Makefile.common ../../tools/make-dissector-reg.py
 	@echo Making plugin.c (using python)
 	@$(PYTHON) "../../tools/make-dissector-reg.py" . plugin $(DISSECTOR_SRC)
 !ELSE
-plugin.c: $(DISSECTOR_SRC) moduleinfo.h ../../tools/make-dissector-reg
+plugin.c: $(DISSECTOR_SRC) moduleinfo.h Makefile.common ../../tools/make-dissector-reg
 	@echo Making plugin.c (using sh)
 	@$(SH) ../../tools/make-dissector-reg . plugin $(DISSECTOR_SRC)
 !ENDIF
@@ -143,7 +145,7 @@ plugin.c: $(DISSECTOR_SRC) moduleinfo.h ../../tools/make-dissector-reg
 !ENDIF
 
 clean: unit_test_clean byte_interpret_clean
-	rm -f $(OBJECTS) $(RESOURCE) plugin.c *.pdb \
+	rm -f $(OBJECTS) $(RESOURCE) plugin.c *.pdb *.sbr \
 	    $(PLUGIN_NAME).dll $(PLUGIN_NAME).dll.manifest $(PLUGIN_NAME).lib \
 	    $(PLUGIN_NAME).exp $(PLUGIN_NAME).rc \
       *.lo *.la .libs/*.*
