@@ -1,4 +1,6 @@
 
+2014/06/26  Fix : implement expert info for 1.12.X
+2014/06/23  Fix : crash tshark 1.12.0rc2 when message on 3 packets
 2014/05/04  Add : HEURISTIC_FUNCTION <function>    to check data
 2014/04/26  Add : PARENT_HEURISTIC  <dissector>    but does NOT check data !!!
 2014/03/08  Fix : global data can now be modified into header

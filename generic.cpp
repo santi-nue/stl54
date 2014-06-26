@@ -964,6 +964,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 	register_enum_values(protocol_data);
     register_fields(protocol_data);
 
+
 	T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
 	M_STATE_DEBUG("proto_register_field_array " <<
@@ -979,6 +980,59 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 				  P_protocol_ws_data->fields_data.ett.size());
 	proto_register_subtree_array (&P_protocol_ws_data->fields_data.ett[0],
 		                          P_protocol_ws_data->fields_data.ett.size());
+
+#if WIRESHARK_VERSION_NUMBER >= 11200
+	{
+		ei_register_info   ei_register_info = 
+			{ &P_protocol_ws_data->expert_data.ei_malformed_comment,
+			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
+				PI_MALFORMED, PI_COMMENT, "comment", EXPFILL }};
+
+		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+	}
+	{
+		ei_register_info   ei_register_info = 
+			{ &P_protocol_ws_data->expert_data.ei_malformed_chat,
+			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
+				PI_MALFORMED, PI_CHAT, "chat", EXPFILL }};
+
+		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+	}
+	{
+		ei_register_info   ei_register_info = 
+			{ &P_protocol_ws_data->expert_data.ei_malformed_note,
+			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
+				PI_MALFORMED, PI_NOTE, "note", EXPFILL }};
+
+		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+	}
+	{
+		ei_register_info   ei_register_info = 
+			{ &P_protocol_ws_data->expert_data.ei_malformed_warn,
+			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
+				PI_MALFORMED, PI_WARN, "warn", EXPFILL }};
+
+		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+	}
+	{
+		ei_register_info   ei_register_info = 
+			{ &P_protocol_ws_data->expert_data.ei_malformed_error,
+			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
+				PI_MALFORMED, PI_ERROR, "error", EXPFILL }};
+
+		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+	}
+
+	M_STATE_DEBUG("expert_register_field_array " <<
+				  &P_protocol_ws_data->expert_data.ei[0] << " " <<
+				  P_protocol_ws_data->expert_data.ei.size());
+
+    expert_module_t* expert_proto = expert_register_protocol(P_protocol_ws_data->proto_generic);
+	expert_register_field_array(expert_proto,
+		                        &P_protocol_ws_data->expert_data.ei[0],
+								 P_protocol_ws_data->expert_data.ei.size());
+#endif
+
 
 	/* subdissector code */
 	if (protocol_data.SUBPROTO_SUBFIELD != "")

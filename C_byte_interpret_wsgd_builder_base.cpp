@@ -91,8 +91,19 @@ void    test_remote_command()
 	}
 
 #if WIRESHARK_VERSION_NUMBER >= 11200
-// ICIOA TBC Temporaire
-#define expert_add_info_format(pinfo,proto_item_1,PI_MALFORMED,error_code,format,text)
+#define wsgd_expert_add_info_format(pinfo,proto_item_1,PI_MALFORMED,error_code,format,text)                        \
+{                                                                                                                  \
+    expert_field  * p_expert_field = &P_protocol_ws_data->expert_data.ei_malformed_error;                          \
+	if (false) ;                                                                                                   \
+	else if (error_code == PI_COMMENT)  p_expert_field = &P_protocol_ws_data->expert_data.ei_malformed_comment;    \
+	else if (error_code == PI_CHAT)     p_expert_field = &P_protocol_ws_data->expert_data.ei_malformed_chat;       \
+	else if (error_code == PI_NOTE)     p_expert_field = &P_protocol_ws_data->expert_data.ei_malformed_note;       \
+	else if (error_code == PI_WARN)     p_expert_field = &P_protocol_ws_data->expert_data.ei_malformed_warn;       \
+	else if (error_code == PI_ERROR)    p_expert_field = &P_protocol_ws_data->expert_data.ei_malformed_error;      \
+	expert_add_info_format(pinfo, proto_item_1, p_expert_field, format, text);                                     \
+}
+#else
+#define wsgd_expert_add_info_format expert_add_info_format
 #endif
 
 /******************************************************************************
@@ -150,7 +161,7 @@ proto_item  * cpp_dissect_generic_add_item(const int     proto_idx,
 
   if (error_code > 0)
   {
-    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+    wsgd_expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
 
 	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
 	// Permits filter on error_in_packet.
@@ -207,7 +218,7 @@ proto_item  * cpp_dissect_generic_add_item_string(const int     proto_idx,
 								   "%s", text);
   if (error_code > 0)
   {
-    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+    wsgd_expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
 	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
 	// Permits filter on error_in_packet.
 	if ((error_code >= PI_ERROR) && (field_idx != K_ERROR_WSGD_FIELD_IDX))
@@ -258,7 +269,7 @@ proto_item  * cpp_dissect_generic_add_item_uint32(const int     proto_idx,
 								   "%s", text);
   if (error_code > 0)
   {
-    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+    wsgd_expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
 	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
 	// Permits filter on error_in_packet.
 	if ((error_code >= PI_ERROR) && (field_idx != K_ERROR_WSGD_FIELD_IDX))
@@ -309,7 +320,7 @@ proto_item  * cpp_dissect_generic_add_item_int32(const int     proto_idx,
 								   "%s", text);
   if (error_code > 0)
   {
-    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+    wsgd_expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
 	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
 	// Permits filter on error_in_packet.
 	if ((error_code >= PI_ERROR) && (field_idx != K_ERROR_WSGD_FIELD_IDX))
@@ -360,7 +371,7 @@ proto_item  * cpp_dissect_generic_add_item_uint64(const int     proto_idx,
 								   "%s", text);
   if (error_code > 0)
   {
-    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+    wsgd_expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
 	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
 	// Permits filter on error_in_packet.
 	if ((error_code >= PI_ERROR) && (field_idx != K_ERROR_WSGD_FIELD_IDX))
@@ -411,7 +422,7 @@ proto_item  * cpp_dissect_generic_add_item_int64(const int     proto_idx,
 								   "%s", text);
   if (error_code > 0)
   {
-    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+    wsgd_expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
 	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
 	// Permits filter on error_in_packet.
 	if ((error_code >= PI_ERROR) && (field_idx != K_ERROR_WSGD_FIELD_IDX))
@@ -462,7 +473,7 @@ proto_item  * cpp_dissect_generic_add_item_float(const int     proto_idx,
 								   "%s", text);
   if (error_code > 0)
   {
-    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+    wsgd_expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
 	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
 	// Permits filter on error_in_packet.
 	if ((error_code >= PI_ERROR) && (field_idx != K_ERROR_WSGD_FIELD_IDX))
@@ -513,7 +524,7 @@ proto_item  * cpp_dissect_generic_add_item_double(const int     proto_idx,
 								   "%s", text);
   if (error_code > 0)
   {
-    expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
+    wsgd_expert_add_info_format(pinfo, proto_item_1, PI_MALFORMED, error_code, "%s", text);
 
 	// Add a hidden error_in_packet field (if not already on a error_in_packet field).
 	// Permits filter on error_in_packet.
