@@ -1380,6 +1380,28 @@ static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_
 }
 
 //*****************************************************************************
+// is_an_heuristic_dissector
+//*****************************************************************************
+bool  is_an_heuristic_dissector(const string &  parent_name)
+{
+#if WIRESHARK_VERSION_NUMBER >= 11200
+  bool  result = has_heur_dissector_list(parent_name.c_str());
+#else
+// Will NOT work : find_heur_dissector_list is not accessible (ie NOT exported)
+//  bool  result = false;
+//  heur_dissector_list_t *  heur_dissector_list = find_heur_dissector_list(parent_name.c_str());
+//  if (heur_dissector_list != NULL)
+//    result = true;
+
+  M_STATE_WARNING ("wsgd is NOT able to check if " << parent_name << " is an heuristic dissector");
+  M_STATE_WARNING ("--> If it is NOT an heuristic dissector, it will NOT work and perhaps crash");
+  bool  result = true;
+#endif
+
+   return  result;
+}
+
+//*****************************************************************************
 // cpp_proto_reg_handoff_generic_proto
 //*****************************************************************************
 
@@ -1460,15 +1482,24 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
   {
 	  const string  & parent_name = *parent_iter;
 
-	  dissector_handle_t  dissector_handle = find_dissector(parent_name.c_str());
-	  if (dissector_handle == NULL)
+      if (is_an_heuristic_dissector(parent_name) != true)
 	  {
-		wsgd_report_failure(
-					"Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
-					" (because it does NOT exist).\n");
+        if (find_dissector_table(parent_name.c_str()) == NULL)
+        {
+			wsgd_report_failure(
+						"Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
+						" (because it does NOT exist).\n");
+		}
+		else
+        {
+			wsgd_report_failure(
+						"Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
+						" (because it is NOT an heuristic dissector).\n");
+		}
+		
 		continue;
 	  }
-
+	  
       heur_dissector_add(parent_name.c_str(),
 						 P_protocol_ws_data->P_heuristic_fct,
 						 P_protocol_ws_data->proto_generic);
