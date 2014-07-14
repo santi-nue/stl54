@@ -4456,7 +4456,9 @@ int   main(const int         argc,
 		M_TEST_FCT(test_interpret_forget);
 		M_TEST_FCT(test_interpret_msg);
 		M_TEST_FCT(test_build_types_and_interpret_bytes);
+#ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
 		M_TEST_FCT(test_library);
+#endif
 		M_TEST_FCT(test_size);
 	}
 
