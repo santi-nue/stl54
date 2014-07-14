@@ -30,6 +30,7 @@
 #include "T_generic_protocol_data.h"
 
 #include <limits.h>
+#include <stdlib.h>
 
 #include "byte_interpret_common.h"
 #include "byte_interpret_parse.h"
