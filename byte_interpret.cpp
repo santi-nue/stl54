@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -4883,6 +4883,9 @@ bool    frame_to_any_ ## TYPE_NAME                                            \
                             ostream               & os_out,                   \
                             ostream               & os_err)                   \
 {                                                                             \
+	M_STATE_ENTER ("frame_to_any_" #TYPE_NAME,                                \
+	               (field_type_name.is_a_variable() ? "var " : "") <<         \
+                   "data_type=" << field_type_name.type << " data_name=" << data_name); \
 	const string                            & final_type = field_type_name.type;        \
     bool                                      is_enum = false;        \
 	const T_enum_definition_representation  * P_enum_def = NULL;        \
@@ -5950,7 +5953,7 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
                             ostream               & os_err)
 {
 	M_STATE_ENTER ("frame_to_any",
-                   "data_type= " << field_type_name.type << " data_name= " << data_name);
+                   "data_type=" << field_type_name.type << " data_name=" << data_name);
 
 	// Will forget data if asked.
 	C_interpret_forget_data    ifd(interpret_data, field_type_name.must_forget);

@@ -124,22 +124,14 @@ void
 T_interpret_read_values::set_read_variable (const string   & var_name,
                                             const C_value  & in_value)
 {
-	M_STATE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.as_string());
-
-	T_attribute_value  * P_attr = const_cast<T_attribute_value*>(get_P_attribute_value_of_read_variable(var_name));
-    if (P_attr == NULL)
-	{
-	    M_FATAL_COMMENT("set of an unknow variable/field (" << var_name << ")");
-    }
-
-	*P_attr = T_attribute_value(in_value);
+	set_read_variable(var_name, T_attribute_value(in_value));
 }
 
 void
 T_interpret_read_values::set_read_variable (const string             & var_name,
                                             const T_attribute_value  & in_value)
 {
-	M_STATE_ENTER("set_read_variable", A_current_path << " " << var_name);
+	M_STATE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.transformed.as_string());
 
 	T_attribute_value  * P_attr = const_cast<T_attribute_value*>(get_P_attribute_value_of_read_variable(var_name));
     if (P_attr == NULL)
@@ -149,6 +141,23 @@ T_interpret_read_values::set_read_variable (const string             & var_name,
 
 	*P_attr = in_value;
 	// reference !!!
+
+
+	// Must reset position of global because
+	//  it is computed in a msg and will be used in another msg.
+	// So the position will be (in this another msg) :
+	// - wrong, so useless
+	// - possibily out-of-bound
+	// ICIOA TBC same problem when using data from another msg
+	if (var_name.compare(0, 6, "global") == 0)
+	{
+		if ((var_name.size() == 6) || (var_name[6] == '.'))
+		{
+//            M_STATE_DEBUG(var_name << " start with global, reset_bit_position_offset_size " <<
+//				          P_attr->transformed.get_bit_position_offset());
+			P_attr->transformed.set_bit_position_offset_size(-1, -1);
+		}
+	}
 }
 
 void    
