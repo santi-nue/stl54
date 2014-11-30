@@ -141,23 +141,6 @@ T_interpret_read_values::set_read_variable (const string             & var_name,
 
 	*P_attr = in_value;
 	// reference !!!
-
-
-	// Must reset position of global because
-	//  it is computed in a msg and will be used in another msg.
-	// So the position will be (in this another msg) :
-	// - wrong, so useless
-	// - possibily out-of-bound
-	// ICIOA TBC same problem when using data from another msg
-	if (var_name.compare(0, 6, "global") == 0)
-	{
-		if ((var_name.size() == 6) || (var_name[6] == '.'))
-		{
-//            M_STATE_DEBUG(var_name << " start with global, reset_bit_position_offset_size " <<
-//				          P_attr->transformed.get_bit_position_offset());
-			P_attr->transformed.set_bit_position_offset_size(-1, -1);
-		}
-	}
 }
 
 void    
@@ -694,6 +677,20 @@ T_interpret_read_values::copy_global_values(
 		copy_multiple_values(interpret_read_values_src, "global.*", -1, -1);
 		A_msg_global_idx_end = A_msg.size();
 		A_msg_other_idx_begin = A_msg_global_idx_end;
+	}
+
+
+	// Must reset position of global because
+	//  it is computed in a msg and will be used in another msg.
+	// So the position will be (in this another msg) :
+	// - wrong, so useless
+	// - possibily out-of-bound
+	// ICIOA TBC same problem when using data from another msg
+	// Should be done at the end of the message ?
+	for (int  idx = A_msg_global_idx_begin; idx < A_msg_global_idx_end; ++idx)
+	{
+		const T_attribute_value  & attr = A_msg[idx].get_attribute_value();
+		const_cast<T_attribute_value&>(attr).transformed.set_bit_position_offset_size(-1, -1);
 	}
 }
 
