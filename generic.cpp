@@ -2551,9 +2551,14 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
 							  tree,
 							  msg_number_inside_packet);
   }
+  catch(std::exception& e)
+  {
+    M_STATE_FATAL("Unexpected exception " << e.what());
+    result = 0;
+  }
   catch(...)
   {
-    M_STATE_FATAL("Unexpected exception.");
+    M_STATE_FATAL("Unexpected unknow exception.");
     result = 0;
   }
 
@@ -2687,9 +2692,14 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
 			  return  false;
 		  }
 	  }
+	  catch(std::exception& e)
+	  {
+		M_STATE_FATAL("Unexpected exception " << e.what());
+		return  false;
+	  }
 	  catch(...)
 	  {
-		  M_STATE_FATAL("Unexpected exception.");
+		  M_STATE_FATAL("Unexpected unknow exception.");
 		  return  false;
 	  }
   }

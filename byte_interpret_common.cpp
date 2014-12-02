@@ -31,6 +31,26 @@
 // C_byte_interpret_exception
 //****************************************************************************
 
+C_byte_interpret_exception::C_byte_interpret_exception(
+						const char                        * file_name,
+							int                           file_line,
+							E_byte_interpret_exception    bie,
+                        const std::string                 & str)
+	:std::exception(),
+	A_file_name(file_name),
+	A_file_line(file_line),
+	A_bie(bie),
+	A_str(str)
+{
+	A_explanation = get_explanation();
+}
+
+const char*
+C_byte_interpret_exception::what() const
+{
+	return  A_explanation.c_str();
+}
+
 const std::string 
 C_byte_interpret_exception::get_explanation() const
 {

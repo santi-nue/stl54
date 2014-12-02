@@ -90,21 +90,18 @@ enum E_byte_interpret_exception
 	E_byte_interpret_exception_fatal
 };
 
-class C_byte_interpret_exception
+class C_byte_interpret_exception : public std::exception
 {
 public:
 	C_byte_interpret_exception(
 						 const char                        * file_name,
 							   int                           file_line,
 							   E_byte_interpret_exception    bie,
-                         const std::string                 & str)
-		:A_file_name(file_name),
-		 A_file_line(file_line),
-		 A_bie(bie),
-		 A_str(str)
-	{
-	}
+                         const std::string                 & str);
 
+	// override
+	virtual const char* what() const;
+	
 	E_byte_interpret_exception    get_cause() const          { return  A_bie; }
 	const std::string             get_explanation() const;
 
@@ -113,6 +110,7 @@ private:
 	int                           A_file_line;
 	E_byte_interpret_exception    A_bie;
 	std::string                   A_str;
+	std::string                   A_explanation;
 };
 
 //****************************************************************************
