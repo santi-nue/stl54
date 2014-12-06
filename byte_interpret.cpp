@@ -4728,6 +4728,9 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 // frame_to_any ***************************************************************
 //*****************************************************************************
 
+// When a struct is a variable, this flag is set to true.
+// Then all fields (recursively) of the struct become variable
+//  and are intialized to zero.
 bool    G_is_a_variable_ICIOA = false;
 
 //*****************************************************************************
@@ -5907,6 +5910,7 @@ void    build_types_finalize_itself(const T_type_definitions  & type_definitions
 
 //*****************************************************************************
 // C_interpret_forget_data
+// Destructor will remove ALL variables created after the contructor.
 // Permits recursive call.
 //*****************************************************************************
 
