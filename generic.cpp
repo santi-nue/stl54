@@ -488,11 +488,13 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 	// enum ?
 	int     wsgd_enum_values_idx = -1;
     bool    is_enum = false;
+    bool    is_enum_signed = false;
 	{
 		const T_enum_definition_representation  * P_enum = type_definitions.get_P_enum(final_type);
 		if (P_enum != NULL_PTR)
 		{
 			is_enum = true;
+			is_enum_signed = P_enum->is_signed;
 
 			final_type = P_enum->representation_type;
 
@@ -546,17 +548,19 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 		}                                                                     \
 		else if (field_type_name.must_force_manage_as_biggest_int())          \
 		{                                                                     \
+		    bool  is_signed = (is_enum == true) ? is_enum_signed : true;      \
 			M_STATE_DEBUG ("PROMOTION add_field_int("                         \
 			   << protocol_data.proto_idx << ", "                             \
 			   << field_idx << ", "                                           \
 			   << field_type_name.name << ", "                                \
-			   << TYPE_IMPL_BIT_SIZE << ")");                                 \
+			   << TYPE_IMPL_BIT_SIZE << ", "                                  \
+	           << is_signed << ")");                                          \
             register_fields_add_field_int(                                    \
                                        protocol_data,                         \
                                        field_idx,                             \
 									   field_type_name,                       \
 									   64,                                    \
-									   true,                                  \
+									   is_signed,                             \
 									   wsgd_enum_values_idx);                 \
 		}                                                                     \
 		else                                                                  \
@@ -876,6 +880,9 @@ void    register_fields(T_generic_protocol_data  & protocol_data)
     fields_data.hf[idx].p_id  = &fields_data.hf_id[idx];
     fields_data.ett_id[idx] = -1;
     fields_data.ett[idx]    = &fields_data.ett_id[idx];
+
+//	M_STATE_DEBUG("hf[" << idx << "].p_id  = " << &fields_data.hf_id[idx]);
+//	M_STATE_DEBUG("ett[" << idx << "].p_id  = " << &fields_data.ett_id[idx]);
   }
 }
 
@@ -975,6 +982,16 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
     proto_register_field_array (P_protocol_ws_data->proto_generic,
 		                        &P_protocol_ws_data->fields_data.hf[0],
 								P_protocol_ws_data->fields_data.hf.size());
+#if 0
+	{
+		for (int idx = 0; idx < P_protocol_ws_data->fields_data.hf.size(); ++idx)
+		{
+			M_STATE_DEBUG("hf[" << idx << "].p_id=" << P_protocol_ws_data->fields_data.hf[idx].p_id <<
+			              "  &hf_id[" << idx << "]=" << &P_protocol_ws_data->fields_data.hf_id[idx] <<
+					      "   hf_id[" << idx << "]=" <<  P_protocol_ws_data->fields_data.hf_id[idx]);
+		}
+	}
+#endif
 
 	M_STATE_DEBUG("proto_register_subtree_array " <<
 				  &P_protocol_ws_data->fields_data.ett[0] << " " <<
@@ -2116,8 +2133,8 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  }
 	  else
 	  {
-		  M_STATE_DEBUG ("GLOBAL_DATA new T_interpret_data");
 		  RCP_interpret_data = new T_interpret_data;
+		  M_STATE_DEBUG ("GLOBAL_DATA new T_interpret_data=" << RCP_interpret_data.get());
 	  }
 	  // Save global data pointer
 	  RCP_prev_global_interpret_data = RCP_prev_saved_interpret_data;
@@ -2132,6 +2149,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
   if (! RCP_interpret_data)
   {
 	  RCP_interpret_data = new T_interpret_data;
+	  M_STATE_DEBUG ("new T_interpret_data=" << RCP_interpret_data.get());
   }
   T_interpret_data                & interpret_data = * RCP_interpret_data;
 

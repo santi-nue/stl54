@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -204,6 +204,10 @@ void    fatal_pb (const string  & lhs,
 #define M_STATE_ENTER(function_name,OSTREAM_OUTPUT_EXPR)                      \
 	C_trace    M_trace(function_name);                                        \
 	M_STATE_base (" ", "Enter", function_name << " " << OSTREAM_OUTPUT_EXPR)
+
+#define M_STATE_ENTER_NO_LEAVE(function_name,OSTREAM_OUTPUT_EXPR)             \
+	M_STATE_ENTER(function_name,OSTREAM_OUTPUT_EXPR);                         \
+	M_trace.leave_trace_done()
 
 #define M_STATE_LEAVE(OSTREAM_OUTPUT_EXPR)                      \
 	M_STATE_base (" ", "Leave", M_trace.A_function_name << " " << OSTREAM_OUTPUT_EXPR);  \
