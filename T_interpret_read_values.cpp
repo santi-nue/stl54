@@ -466,6 +466,11 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 		}
 	}
 
+	// Now done with a real variable (see generic.cpp).
+	// Can not be done here like this :
+	// this_msg will be pre-conputed with a temporary this.
+	// --> gives a crash when used.
+#if 0
 	if (var_name == "this_msg")
 	{
 		T_interpret_read_values  * this_not_const = const_cast<T_interpret_read_values*>(this);
@@ -473,6 +478,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 		var_id = -1;
 		return  & A_this_msg_attribute_value;
 	}
+#endif
 
 	return  NULL;
 }

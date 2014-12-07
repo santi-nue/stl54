@@ -2159,6 +2159,12 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  add_pinfo(protocol_data, pinfo, interpret_data);
   }
 
+  // create this_msg variable
+  if (protocol_data.GLOBAL_DATA_TYPE != "")
+  {
+	  interpret_data.add_read_variable("this_msg", "this_msg", C_value(C_value::E_type_msg, &interpret_data));
+  }
+
   // No wireshark output.
   C_interpret_builder_set_temporary  interpret_builder_set_temporary(NULL);
 
