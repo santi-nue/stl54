@@ -684,20 +684,6 @@ T_interpret_read_values::copy_global_values(
 		A_msg_global_idx_end = A_msg.size();
 		A_msg_other_idx_begin = A_msg_global_idx_end;
 	}
-
-
-	// Must reset position of global because
-	//  it is computed in a msg and will be used in another msg.
-	// So the position will be (in this another msg) :
-	// - wrong, so useless
-	// - possibily out-of-bound
-	// ICIOA TBC same problem when using data from another msg
-	// Should be done at the end of the message ?
-	for (int  idx = A_msg_global_idx_begin; idx < A_msg_global_idx_end; ++idx)
-	{
-		const T_attribute_value  & attr = A_msg[idx].get_attribute_value();
-		const_cast<T_attribute_value&>(attr).transformed.set_bit_position_offset_size(-1, -1);
-	}
 }
 
 void
@@ -877,6 +863,25 @@ T_interpret_read_values::reset_short_names()
 {
 	M_STATE_ENTER("reset_short_names", "");
 // fonction a supprimer
+}
+
+//*****************************************************************************
+// reset_position_offset_sizes
+//*****************************************************************************
+void
+T_interpret_read_values::reset_position_offset_sizes()
+{
+	// Reset position size.
+	// Not used once the msg is finished.
+	// No sense to use it in another msg and crash possible.
+	for (T_interpret_values::iterator    iter  = A_msg.begin();
+									     iter != A_msg.end();
+									   ++iter)
+	{
+		T_interpret_value &  interpret_value = *iter;
+		T_attribute_value &  attribute_value = const_cast<T_attribute_value&>(interpret_value.get_attribute_value());
+		attribute_value.transformed.set_bit_position_offset_size(-1, -1);
+	}
 }
 
 //*****************************************************************************

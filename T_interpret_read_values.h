@@ -99,6 +99,7 @@ struct T_interpret_read_values : public C_reference_counter,
 
 	void    reset();
 	void    reset_short_names();
+	void    reset_position_offset_sizes();
 
 	struct T_var_name_P_value : public CT_debug_object_counter<T_var_name_P_value>
 	{

@@ -2508,6 +2508,12 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 //	  pinfo->desegment_len = DESEGMENT_ONE_MORE_SEGMENT;    // ICIOA -> dissector non rappele
 	}
 
+	if (result == true)
+	{
+		// Msg is ended, position and size are no more necessary
+		interpret_data.reset_position_offset_sizes();
+	}
+
 	return  length_raw_data - sizeof_bytes_NOT_given_to_interpretor;
   }
 
