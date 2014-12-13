@@ -2162,7 +2162,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
   // create this_msg variable
   if (protocol_data.GLOBAL_DATA_TYPE != "")
   {
-	  interpret_data.add_read_variable("this_msg", "this_msg", C_value(C_value::E_type_msg, &interpret_data));
+	  interpret_data.add_this_msg();
   }
 
   // No wireshark output.
@@ -2510,8 +2510,8 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 
 	if (result == true)
 	{
-		// Msg is ended, position and size are no more necessary
-		interpret_data.reset_position_offset_sizes();
+		// Msg is ended, some data are no more necessary
+		interpret_data.msg_is_ended();
 	}
 
 	return  length_raw_data - sizeof_bytes_NOT_given_to_interpretor;

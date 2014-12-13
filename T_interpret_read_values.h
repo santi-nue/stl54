@@ -100,6 +100,8 @@ struct T_interpret_read_values : public C_reference_counter,
 	void    reset();
 	void    reset_short_names();
 	void    reset_position_offset_sizes();
+	void    msg_is_ended();
+	void    add_this_msg();
 
 	struct T_var_name_P_value : public CT_debug_object_counter<T_var_name_P_value>
 	{
@@ -150,6 +152,7 @@ private:
 
 	// ICIOA msg
 	T_attribute_value            A_this_msg_attribute_value;
+	bool                         A_this_msg_attribute_value_used;
 
     const T_attribute_value *  get_P_attribute_value_of_read_variable (
                                               const string  & var_name,

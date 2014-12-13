@@ -35,6 +35,8 @@ T_interpret_read_values::T_interpret_read_values()
 	, A_msg_pinfo_idx_begin(0)
 	, A_msg_pinfo_idx_end(-1)
 	, A_msg_other_idx_begin(0)
+	, A_this_msg_attribute_value(C_value(C_value::E_type_msg, NULL))
+	, A_this_msg_attribute_value_used(false)
 {
 }
 
@@ -466,19 +468,19 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 		}
 	}
 
-	// Now done with a real variable (see generic.cpp).
-	// Can not be done here like this :
-	// this_msg will be pre-conputed with a temporary this.
-	// --> gives a crash when used.
-#if 0
 	if (var_name == "this_msg")
 	{
-		T_interpret_read_values  * this_not_const = const_cast<T_interpret_read_values*>(this);
-		this_not_const->A_this_msg_attribute_value = T_attribute_value(C_value(C_value::E_type_msg, this_not_const));
-		var_id = -1;
-		return  & A_this_msg_attribute_value;
+		// Check that this_msg has been set.
+		// If not, we are into pre-computation, so this_msg is NOT defined.
+		if (A_this_msg_attribute_value.transformed.get_msg() != NULL)
+		{
+			T_interpret_read_values  * this_not_const = const_cast<T_interpret_read_values*>(this);
+			this_not_const->A_this_msg_attribute_value_used = true;
+			var_id = -1;
+			M_STATE_DEBUG("A_this_msg_attribute_value_used=" << A_this_msg_attribute_value_used);
+			return  & A_this_msg_attribute_value;
+		}
 	}
-#endif
 
 	return  NULL;
 }
@@ -871,6 +873,8 @@ T_interpret_read_values::reset_short_names()
 void
 T_interpret_read_values::reset_position_offset_sizes()
 {
+	M_STATE_ENTER("reset_position_offset_sizes", "");
+
 	// Reset position size.
 	// Not used once the msg is finished.
 	// No sense to use it in another msg and crash possible.
@@ -885,19 +889,74 @@ T_interpret_read_values::reset_position_offset_sizes()
 }
 
 //*****************************************************************************
+// msg_is_ended
+//*****************************************************************************
+void
+T_interpret_read_values::msg_is_ended()
+{
+	M_STATE_ENTER("msg_is_ended", "");
+
+	// Check there is some global data.
+	if (A_msg_global_idx_end <= A_msg_global_idx_begin)
+	{
+		// No global data, so nothing to do, this object will be deleted (or reseted)
+		M_STATE_LEAVE("No global data  A_msg_global_idx_begin=" << A_msg_global_idx_begin << "  A_msg_global_idx_end=" << A_msg_global_idx_end);
+		return;
+	}
+
+	// Check this_msg has been used
+	if (A_this_msg_attribute_value_used == false)
+	{
+		M_STATE_DEBUG("Remove all data (except global) : from idx " << A_msg_global_idx_end << " to " << A_msg.size()-1);
+
+		// We can remove every data (except global)
+		//  because they will NOT be accessed (through this_msg in global)
+		A_msg.erase(A_msg.begin() + A_msg_global_idx_end, A_msg.end());
+
+		A_current_path = "";
+		A_msg_pinfo_idx_begin = 0;
+		A_msg_pinfo_idx_end = -1;
+		A_msg_other_idx_begin = A_msg_global_idx_end;
+		A_this_msg_attribute_value = T_attribute_value();
+		A_this_msg_attribute_value_used = false;
+	}
+	else
+	{
+		// this_msg has been used.
+		// It could have been save inside global data.
+		// So can not remove any data.
+		M_STATE_DEBUG("this_msg has been used");
+	}
+
+	// position and size are no more necessary
+	reset_position_offset_sizes();
+}
+
+//*****************************************************************************
+// add_this_msg
+//*****************************************************************************
+void
+T_interpret_read_values::add_this_msg()
+{
+	A_this_msg_attribute_value = T_attribute_value(C_value(C_value::E_type_msg, this));
+	A_this_msg_attribute_value_used = false;
+}
+
+//*****************************************************************************
 // swap
 //*****************************************************************************
 void    swap(T_interpret_read_values  & lhs,
 			 T_interpret_read_values  & rhs)
 {
-	swap(lhs.A_msg,                  rhs.A_msg);
-	swap(lhs.A_msg_global_idx_begin, rhs.A_msg_global_idx_begin);
-	swap(lhs.A_msg_global_idx_end,   rhs.A_msg_global_idx_end);
-	swap(lhs.A_msg_pinfo_idx_begin,  rhs.A_msg_pinfo_idx_begin);
-	swap(lhs.A_msg_pinfo_idx_end,    rhs.A_msg_pinfo_idx_end);
-	swap(lhs.A_msg_other_idx_begin,  rhs.A_msg_other_idx_begin);
-	swap(lhs.A_current_path,         rhs.A_current_path);
-	// A_this_msg_attribute_value ? currently set just before used
+	swap(lhs.A_msg,                           rhs.A_msg);
+	swap(lhs.A_msg_global_idx_begin,          rhs.A_msg_global_idx_begin);
+	swap(lhs.A_msg_global_idx_end,            rhs.A_msg_global_idx_end);
+	swap(lhs.A_msg_pinfo_idx_begin,           rhs.A_msg_pinfo_idx_begin);
+	swap(lhs.A_msg_pinfo_idx_end,             rhs.A_msg_pinfo_idx_end);
+	swap(lhs.A_msg_other_idx_begin,           rhs.A_msg_other_idx_begin);
+	swap(lhs.A_current_path,                  rhs.A_current_path);
+	swap(lhs.A_this_msg_attribute_value,      rhs.A_this_msg_attribute_value);
+	swap(lhs.A_this_msg_attribute_value_used, rhs.A_this_msg_attribute_value_used);
 }
 
 

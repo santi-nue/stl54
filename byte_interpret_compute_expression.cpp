@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,8 +37,11 @@ using namespace std;
 // <value>
 // <value> could be :
 //   <int_value>
-//   <enum_value>                           NOT IMPLEMENTED
+//   <float_value>
+//   <enum_value> or <const_value>
 //   <variable_value>
+//   *   --> return E_rc_multiple_value
+//   "string value"
 //*****************************************************************************
 
 E_return_code    get_complex_value (const T_type_definitions  & type_definitions,

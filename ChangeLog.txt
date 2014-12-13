@@ -1,4 +1,5 @@
 
+2014/12/13  Prf : global data avoid save message data when this_msg is not used
 2014/12/08  Fix : msg data used in another msg could fail depending on msg size
 2014/12/07  Fix : visible enum variable does not work
 2014/11/30  Fix : global data computed in a msg used in another msg could fail depending on msg size
