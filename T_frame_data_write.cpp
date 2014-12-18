@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -78,10 +78,10 @@ T_frame_data_write::write_1_byte(T_byte  byte)
 }
 
 //*****************************************************************************
-// 
+// write_n_bytes
 //*****************************************************************************
 void
-T_frame_data_write::write_n_bytes(short  n_bytes, void  * P_n_bytes_write_void)
+T_frame_data_write::write_n_bytes(short  n_bytes, const void  * P_n_bytes_write_void)
 {
 	M_FATAL_IF_LT(n_bytes, 1);
 	M_FATAL_IF_EQ(P_n_bytes_write_void, NULL);
@@ -107,7 +107,7 @@ T_frame_data_write::write_n_bytes(short  n_bytes, void  * P_n_bytes_write_void)
 }
 
 //*****************************************************************************
-// 
+// write_less_1_byte
 //*****************************************************************************
 void
 T_frame_data_write::write_less_1_byte(T_byte  byte, short  n_bits)
@@ -185,10 +185,10 @@ T_frame_data_write::write_less_1_byte(T_byte  byte, short  n_bits)
 }
 
 //*****************************************************************************
-// 
+// write_n_bits
 //*****************************************************************************
 void
-T_frame_data_write::write_n_bits(short  n_bits, void  * P_n_bytes_write_void, short  n_bytes_write)
+T_frame_data_write::write_n_bits(short  n_bits, const void  * P_n_bytes_write_void, short  n_bytes_write)
 {
 	M_FATAL_IF_LT(n_bits, 1);
 	M_FATAL_IF_EQ(P_n_bytes_write_void, NULL);
