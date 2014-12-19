@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -4363,7 +4363,7 @@ void    test_library()
 
 
 	// crc is not inside wsutil before wireshark 18X
-#if 0
+#if WIRESHARK_VERSION_NUMBER >= 10800
 	build_types ("unitary_tests_library_part2.fdesc",
                  type_definitions);
 
@@ -4384,6 +4384,23 @@ void    test_library()
 	M_TEST_CRC32( 8, 4,   0,            0);
 //	M_TEST_CRC32( 9, 4,   0,            0);    // out of bounds
 //	M_TEST_CRC32(12, 4,   0,            0);    // out of bounds
+#endif
+
+	// base64 is not inside wsutil before wireshark 112X
+#if WIRESHARK_VERSION_NUMBER >= 11200
+	build_types ("unitary_tests_library_part3.fdesc",
+                 type_definitions);
+
+#define M_TEST_BASE64(INPUT,RESULT)  \
+	M_TEST_SIMPLE("",  \
+		"hide var string  input_output = " #INPUT "; "  \
+		"hide var int64   size = ws_base64_decode_inplace (input_output); "  \
+		"print (\"%s\", input_output); ",  \
+		RESULT)
+
+	M_TEST_BASE64("V3NnZA==", "Wsgd");
+	M_TEST_BASE64("SSBoYXZlIGEgYmFzZTY0IGVuY29kZWQgc3RyaW5n", "I have a base64 encoded string");
+	M_TEST_BASE64("T3V0a2FzdCAvIEhleSBZYQ==", "Outkast / Hey Ya");
 #endif
 }
 

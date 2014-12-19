@@ -1,0 +1,12 @@
+
+# These functions do not exist inside wsutil before 112X
+
+###############################################################################
+# libwsutil base64
+###############################################################################
+
+library  lib::wsutil
+{
+  # size_t ws_base64_decode_inplace(char *s);
+  function int64 ws_base64_decode_inplace (in_out string  str);
+}
