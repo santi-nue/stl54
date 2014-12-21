@@ -3824,6 +3824,13 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 		" stringUtf16Be  val ;",
 		"val = abcde\r\n12345\r\n&é\"'(-è_çà)=\r\n.\r\n^$ù*,;:!\r\n¨£%µ?./§");
 
+	// stringUtf8 using decoder with fixed asked size.
+	// Shows that, usingdecoder, the specified size is not the input raw size and the input raw size is variable.
+	// There is currently no way to specify input raw size with a decoder
+	M_TEST_SIMPLE("6126C3A9", " stringUtf8(3)     val ;", "val = a&.");
+	M_TEST_SIMPLE("612600"  , " stringUtf8(3)     val ;", "val = a&");
+	M_TEST_SIMPLE("610000"  , " stringUtf8(3)     val ;", "val = a");
+	
 
 	// min/max ok
 	M_TEST_SIMPLE("3fc2", "uint16{q=2:o=13}{min=99000}    val ;", "val = 99467 (49727)");
@@ -4217,7 +4224,7 @@ void    test_interpret_forget()
 	M_TEST_SIMPLE("", "        T_forget      st1 ;", "st1.struct_counter = 1001");
 	M_TEST_SIMPLE("", " forget T_forget      st2 ;", "st2.struct_counter = 1002");
 	M_TEST_SIMPLE("", "        T_forget      st3 ;", "st3.struct_counter = 1002");
-	// Test with array : each item of the array is forgot
+	// Test with array : each item of the array is forgot (one by one, not at the end of the array)
 	M_TEST_SIMPLE("", " forget T_forget[3]   sta ;", "sta[0].struct_counter = 1003" K_eol
 		                                             "sta[1].struct_counter = 1003" K_eol
 												     "sta[2].struct_counter = 1003");
@@ -4281,6 +4288,7 @@ void    test_interpret_msg(int   msg_to_test = -1)
 		// 2010/10/29         1190 ms  T_expression var set call
 		// 2010/10/29          655 ms  T_expression condition return
 		// 2010/11/10          675 ms  T_expression pre_compute value & operation
+		// 2014/12/20          172 ms
 		ut_interpret_bytes(type_definitions,
 						   msg_2_frame,
 						   "T_msg_sc_start_ack         msg_2;",
