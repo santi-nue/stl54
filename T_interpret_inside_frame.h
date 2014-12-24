@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2013-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,6 +50,7 @@ struct T_decode_stream_frame
 	// To avoid decoded_data_bit_size grows indefinitely.
 	void            synchronize();
 
+	void            write_n_bytes(const T_byte *  ptr, int  n_bytes);
 	void            write_1_byte(T_byte  byte);
 	void            write_less_1_byte(T_byte  byte, short  n_bits);
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2013-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,18 @@ T_decode_stream_frame::synchronize()
 		decoded_data_bit_size = 0;
 		frame_data = T_frame_data(decoded_data, 0, 0);
 	}
+}
+
+void
+T_decode_stream_frame::write_n_bytes(const T_byte *  ptr, int  n_bytes)
+{
+	T_frame_data_write  frame_data_write(decoded_data, 0, sizeof(decoded_data) * 8);
+	frame_data_write.set_bit_offset(decoded_data_bit_size);
+
+	frame_data_write.write_n_bytes(n_bytes, ptr);
+	decoded_data_bit_size = frame_data_write.get_bit_offset();
+
+	frame_data.n_bits_data_appended(n_bytes * 8);
 }
 
 void
