@@ -228,12 +228,6 @@ function void  decoder_base64 (in frame  frame, in uint32   nb_of_bits_needed_ui
 {
   hide var int32   nb_of_bits_needed = nb_of_bits_needed_uint;
   
-  if ((nb_of_bits_needed % 8) != 0)
-  {
-    fatal "Only entire byte";
-    return;
-  }
-
   while (nb_of_bits_needed > 0)
   {
     call  read_base64_to_frame (frame);
@@ -246,7 +240,7 @@ function void  decoder_base64 (in frame  frame, in uint32   nb_of_bits_needed_ui
 }
 
 # NB: base64 encoding can encode anything, not only string
-# This alias is only for particular where 1 (and only 1) string is encoded.
+# This alias is only for particular case where 1 (and only 1) string is encoded.
 alias stringBase64  string{decoder=decoder_base64};
 
 # If you have many consecutive strings encoded together, you can NOT use stringBase64.
