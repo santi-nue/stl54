@@ -174,6 +174,90 @@ alias stringUtf16Be  string{decoder=decoder_utf16be};
 
 
 ###############################################################################
+# Base64 using decoder
+###############################################################################
+
+function int8  read_base64_to_int ()
+{
+  hide uint8  val;
+
+  if (val >= 0x41 && val <= 0x5A)    # 0x41=A  0x5A=Z
+  {
+    return  val - 0x41;
+  }
+  if (val >= 0x61 && val <= 0x7A)    # 0x61=a  0x7A=z
+  {
+    return  (val - 0x61) + 26;
+  }
+  if (val >= 0x30 && val <= 0x39)    # 0x30=0  0x39=9
+  {
+    return  (val - 0x30) + 52;
+  }
+  if (val == 0x2B)    # 0x2B=+
+  {
+    return  62;
+  }
+  if (val == 0x2F)    # 0x2F=/
+  {
+    return  63;
+  }
+  if (val == 0x3D)    # 0x3D==
+  {
+    return  -1;
+  }
+  return  -2;
+}
+
+function void  read_base64_to_frame (in frame  frame)
+{
+  hide var int8  val_signed = read_base64_to_int();
+  if (val_signed >= 0)
+  {
+    hide var uint6  val = val_signed;
+	 call frame_append_data (frame, val);
+	 return;
+  }
+  if (val_signed != -1)
+  {
+    fatal "Bad base64 input value";
+	 return;
+  }
+}
+
+function void  decoder_base64 (in frame  frame, in uint32   nb_of_bits_needed_uint)
+{
+  hide var int32   nb_of_bits_needed = nb_of_bits_needed_uint;
+  
+  if ((nb_of_bits_needed % 8) != 0)
+  {
+    fatal "Only entire byte";
+    return;
+  }
+
+  while (nb_of_bits_needed > 0)
+  {
+    call  read_base64_to_frame (frame);
+    call  read_base64_to_frame (frame);
+    call  read_base64_to_frame (frame);
+    call  read_base64_to_frame (frame);
+
+	 set nb_of_bits_needed = nb_of_bits_needed - (4 * 6);
+  }
+}
+
+# NB: base64 encoding can encode anything, not only string
+# This alias is only for particular where 1 (and only 1) string is encoded.
+alias stringBase64  string{decoder=decoder_base64};
+
+# If you have many consecutive strings encoded together, you can NOT use stringBase64.
+# You should do :
+# decoder  decoder_base64;
+# string   val1;
+# string   val2;
+# ...
+# decoder  nil;
+
+###############################################################################
 # Print ip
 ###############################################################################
 

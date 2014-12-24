@@ -3831,6 +3831,25 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("612600"  , " stringUtf8(3)     val ;", "val = a&");
 	M_TEST_SIMPLE("610000"  , " stringUtf8(3)     val ;", "val = a");
 	
+	// Base64 decoding
+	// 56334E6E 5A413D3D --> V3Nn ZA== --> 0x 57 73 67  64 --> "wsgd" (if it is a string)
+	M_TEST_SIMPLE("56334E6E5A413D3D", " uint8{decoder=decoder_base64}     val1 ;"
+		                              "uint24{decoder=decoder_base64}     val2 ;", "val1 = 87" K_eol "val2 = 6580083");
+	// Specifying a size for string works only if encoded size if the same size
+	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64(4)  val  ;", "val = Wsgd");
+	// Does not work, the 5th byte is missing
+//	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64(5)  val  ;", "val = Wsgd");
+	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64(5)  val  ;", "val = Wsgd");
+	// Does not work, the 6th byte is missing
+//	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64(6)  val  ;", "val = Wsgd");
+	M_TEST_SIMPLE("56334E6E5A414141", "stringBase64(6)  val  ;", "val = Wsgd");
+	M_TEST_SIMPLE("56334E6E5A414156", "stringBase64(6)  val  ;", "val = Wsgd");
+	// It works, even without zero end of string, because there is no more data
+	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64     val  ;", "val = Wsgd");
+	// In normal case, zero end of string is needed
+	// 56334E6E 5A41413D --> V3Nn ZAA= --> 0x 57 73 67  64 00 --> "wsgd" (if it is a string)
+	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64     val  ;", "val = Wsgd");
+
 
 	// min/max ok
 	M_TEST_SIMPLE("3fc2", "uint16{q=2:o=13}{min=99000}    val ;", "val = 99467 (49727)");
@@ -4406,6 +4425,7 @@ void    test_library()
 		"print (\"%s\", input_output); ",  \
 		RESULT)
 
+	// Only test with output = string, but output can be anything
 	M_TEST_BASE64("V3NnZA==", "Wsgd");
 	M_TEST_BASE64("SSBoYXZlIGEgYmFzZTY0IGVuY29kZWQgc3RyaW5n", "I have a base64 encoded string");
 	M_TEST_BASE64("T3V0a2FzdCAvIEhleSBZYQ==", "Outkast / Hey Ya");
