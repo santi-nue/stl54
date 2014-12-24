@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,9 @@
 
 //*****************************************************************************
 // T_interpret_output
+// Manage current output level
+// A normal field is output if output_level >= 0
+// This output level can be changer for a specific field or at a given time
 //*****************************************************************************
 
 struct T_interpret_output : public CT_debug_object_counter<T_interpret_output>
@@ -53,14 +56,20 @@ private:
 };
 
 //*****************************************************************************
+// C_interpret_output_level_move_temporary
+// Temporary change the output level
 // Permits recursive call.
+// Permits exception and return (thanks to dtor).
 //*****************************************************************************
 
 class C_interpret_output_level_move_temporary
 {
 public:
+	// Change the output level
 	C_interpret_output_level_move_temporary(T_interpret_output  & interpret_output,
 											int                   output_level_offset);
+
+	// Restore the previous output level
 	~C_interpret_output_level_move_temporary();
 
 private:
