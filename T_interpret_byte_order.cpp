@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -133,7 +133,7 @@ T_interpret_byte_order::get_host_order()
 }
 
 //*****************************************************************************
-// C_interpret_decode_set_temporary
+// C_interpret_byte_order_set_temporary
 //*****************************************************************************
 
 C_interpret_byte_order_set_temporary::C_interpret_byte_order_set_temporary(

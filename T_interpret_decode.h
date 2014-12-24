@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,8 @@ using namespace std;
 
 //*****************************************************************************
 // T_interpret_decode
+// Contains the decoding function name to use
+// Manage the decoding status (in progress or not) 
 //*****************************************************************************
 
 struct T_interpret_decode : public CT_debug_object_counter<T_interpret_decode>
@@ -54,13 +56,17 @@ private:
 };
 
 //*****************************************************************************
-// Permits exception.
+// C_interpret_decode_in_progress
+// Permits exception and return (thanks to dtor).
 //*****************************************************************************
 
 class C_interpret_decode_in_progress
 {
 public:
+	// Ctor set_decode_in_progress(true)
 	C_interpret_decode_in_progress(T_interpret_decode  & interpret_decode);
+
+	// Dtor set_decode_in_progress(false)
 	~C_interpret_decode_in_progress();
 
 private:
@@ -69,18 +75,22 @@ private:
 	C_interpret_decode_in_progress & operator=(const C_interpret_decode_in_progress  &);
 
 	T_interpret_decode  & A_interpret_decode;
-	int                   A_decode_level_offset;
 };
 
 //*****************************************************************************
+// C_interpret_decode_set_temporary
 // Permits recursive call.
+// Permits exception and return (thanks to dtor).
 //*****************************************************************************
 
 class C_interpret_decode_set_temporary
 {
 public:
+	// Change the decoder function
 	C_interpret_decode_set_temporary(T_interpret_decode  & interpret_decode,
                                const std::string         & decoder_function);
+
+	// Restore the previous decoder function
 	~C_interpret_decode_set_temporary();
 
 private:

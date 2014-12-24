@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,13 +35,14 @@
 // T_interpret_data
 //*****************************************************************************
 
-struct T_interpret_data : public T_interpret_read_values,
-                          public T_interpret_output,
-                          public T_interpret_byte_order,
-						  public T_interpret_decode,
-						  public T_interpret_inside_frame,
-						  public T_interpret_chrono,
-						  public CT_debug_object_counter<T_interpret_data>
+struct T_interpret_data :
+            public T_interpret_read_values,                   // values (field/variable) read
+            public T_interpret_output,                        // output level to hide/show data
+            public T_interpret_byte_order,                    // byte order (big/little endian)
+            public T_interpret_decode,                        // decoder status
+            public T_interpret_inside_frame,                  // used for decoded data or ...
+            public T_interpret_chrono,                        // time measurement for chrono command
+            public CT_debug_object_counter<T_interpret_data>  // debug only
 {
 };
 

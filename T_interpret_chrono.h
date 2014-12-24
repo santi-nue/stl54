@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 
 //*****************************************************************************
 // T_interpret_chrono
+// For chrono command (perf debug only)
 //*****************************************************************************
 
 struct T_interpret_chrono : public CT_debug_object_counter<T_interpret_chrono>
