@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,20 +27,15 @@
 
 #include "byte_interpret_common.h"
 
-//*****************************************************************************
-// NB: byte order     inverted : intel,    little endian
-//     byte order NOT inverted : motorola, big    endian, network
-//*****************************************************************************
-
-bool    is_host_byte_order_inverted ();
 
 //*****************************************************************************
 // T_interpret_byte_order
+// Manage the current byte order
 //*****************************************************************************
 
 struct T_interpret_byte_order : public CT_debug_object_counter<T_interpret_byte_order>
 {
-    bool    must_invert_bytes() const;
+	bool    must_invert_bytes() const            { return  A_must_invert_bytes; }
 
 	void    set_big_endian();
 	void    set_little_endian();
@@ -50,27 +45,35 @@ struct T_interpret_byte_order : public CT_debug_object_counter<T_interpret_byte_
 
 	void         set_data_order(const std::string  & byte_order);
 	std::string  get_data_order() const;
+
 	static
 	std::string  get_host_order();
+	static
+	bool         is_host_byte_order_inverted ()  { return  A_is_host_byte_order_inverted; }
 
-    T_interpret_byte_order ()
-        :A_must_invert_bytes (false)
-    {
-    }
+    T_interpret_byte_order ();
 
 private:
 	bool    A_must_invert_bytes;
+
+	static bool    A_is_host_byte_order_inverted;
 };
 
 //*****************************************************************************
+// C_interpret_byte_order_set_temporary
+// Temporary change the byte order
 // Permits recursive call.
+// Permits exception and return (thanks to dtor).
 //*****************************************************************************
 
 class C_interpret_byte_order_set_temporary
 {
 public:
+	// Change the byte order
 	C_interpret_byte_order_set_temporary(T_interpret_byte_order  & interpret_byte_order,
                                    const std::string             & byte_order);
+
+	// Restore the previous byte order
 	~C_interpret_byte_order_set_temporary();
 
 private:

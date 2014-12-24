@@ -40,16 +40,17 @@ bool    is_host_byte_order_inverted ()
 //*****************************************************************************
 // T_interpret_byte_order
 //*****************************************************************************
-bool
-T_interpret_byte_order::must_invert_bytes() const
+bool    T_interpret_byte_order::A_is_host_byte_order_inverted = ::is_host_byte_order_inverted();
+
+T_interpret_byte_order::T_interpret_byte_order ()
+    :A_must_invert_bytes (false)
 {
-	return  A_must_invert_bytes;
 }
 
 bool
 T_interpret_byte_order::is_little_endian() const
 {
-    if (is_host_byte_order_inverted ())
+    if (A_is_host_byte_order_inverted)
     {
         if (A_must_invert_bytes)
             return  false;
@@ -68,13 +69,13 @@ T_interpret_byte_order::is_little_endian() const
 void
 T_interpret_byte_order::set_big_endian()
 {
-	A_must_invert_bytes = is_host_byte_order_inverted ();
+	A_must_invert_bytes = A_is_host_byte_order_inverted;
 }
 
 void
 T_interpret_byte_order::set_little_endian()
 {
-	A_must_invert_bytes = ! is_host_byte_order_inverted ();
+	A_must_invert_bytes = ! A_is_host_byte_order_inverted;
 }
 
 void
@@ -107,7 +108,7 @@ T_interpret_byte_order::set_data_order(const std::string  & byte_order)
 string
 T_interpret_byte_order::get_data_order() const
 {
-    if (is_host_byte_order_inverted ())
+    if (A_is_host_byte_order_inverted)
     {
         if (A_must_invert_bytes)
             return  "big_endian";
@@ -126,7 +127,7 @@ T_interpret_byte_order::get_data_order() const
 string
 T_interpret_byte_order::get_host_order()
 {
-    if (is_host_byte_order_inverted ())
+    if (A_is_host_byte_order_inverted)
         return  "little_endian";
 	else
         return  "big_endian";

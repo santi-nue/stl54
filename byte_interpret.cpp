@@ -777,7 +777,7 @@ bool    read_data_bits (      T_frame_data  & in_out_frame_data,
 	T_byte  * P_value = P_value_orig;
 	if (TYPE_IMPL_BIT_SIZE > 8)
 	{
-		if (is_host_byte_order_inverted() == false)
+		if (T_interpret_byte_order::is_host_byte_order_inverted() == false)
 		{
 			P_value += (TYPE_IMPL_BIT_SIZE / 8) - TYPE_SIZE;
 		}
@@ -907,7 +907,7 @@ bool    read_data (      T_frame_data  & in_out_frame_data,
 	T_byte  * P_value = P_value_orig;
 	if (TYPE_BIT_SIZE < TYPE_IMPL_BIT_SIZE)
 	{
-		if (is_host_byte_order_inverted() == false)
+		if (T_interpret_byte_order::is_host_byte_order_inverted() == false)
 		{
 			P_value += TYPE_IMPL_SIZE - TYPE_SIZE;
 		}
@@ -937,7 +937,7 @@ bool    read_data (      T_frame_data  & in_out_frame_data,
 	T_byte  * P_ff_end = NULL;
 
 	// hope it is ok !
-	if (is_host_byte_order_inverted())
+	if (T_interpret_byte_order::is_host_byte_order_inverted())
 	{
 		P_where_sign_bit_is      = P_value      + (TYPE_SIZE - 1);
 		P_ff_begin = P_value_orig + TYPE_SIZE;
