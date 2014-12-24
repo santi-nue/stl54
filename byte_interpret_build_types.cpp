@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2635,6 +2635,7 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 	// Decoder definitions
     build_types_no_include_str("alias     frame   int64 ;", type_definitions);
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_data (in frame  frame, in any  byte)");
+	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_data_array (in frame  frame, in pointer  data, in int64  data_size)");
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_hexa_data (in frame  frame, in string  str_hexa)");
 
 	// Library pointer function

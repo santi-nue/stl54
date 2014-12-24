@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1057,17 +1057,32 @@ T_expression::compute_expression_variable_array(
 
 //*****************************************************************************
 // get_pointer_...
+// Returns the address
 //*****************************************************************************
 
 long long  get_pointer_pos_len_bits(T_frame_data  & in_out_frame_data,
 									unsigned int    pos_bits,
 									unsigned int    length_bits)
 {
+	// Save current position
 	const long  pos_current_bits = in_out_frame_data.get_bit_offset();
+
+	// Set position to the last position asked.
+	// Trigger a fatal error if not enough data.
+	// Sufficient to ensure desegmentation ICIOA ??? or need to trigger specific exception ?
 	in_out_frame_data.set_bit_offset(pos_bits + length_bits);
+
+	// Set position to the first position asked.
+	// Check we are at beginning of a byte
+	// Get the pointer.
+	in_out_frame_data.set_bit_offset(pos_bits);
+	M_FATAL_IF_FALSE(in_out_frame_data.is_physically_at_beginning_of_byte());
+	const T_byte *  ptr = in_out_frame_data.get_P_bytes();
+
+	// Restore current position
 	in_out_frame_data.set_bit_offset(pos_current_bits);
 
-	return  pos_bits;
+	return  (long long)ptr;
 }
 
 long long  get_pointer_pos_len_bytes(T_frame_data  & in_out_frame_data,

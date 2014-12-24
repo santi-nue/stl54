@@ -1118,6 +1118,101 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 }
 
 //*****************************************************************************
+// frame_append_data_array ****************************************************
+//*****************************************************************************
+
+bool    frame_append_data_array (
+						 const T_type_definitions      & type_definitions,
+					           T_frame_data            & in_out_frame_data,
+					           T_interpret_data        & interpret_data,
+                         const T_function_definition   & fct_def,
+						 const T_field_type_name       & field_type_name,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err)
+{
+	M_STATE_ENTER ("frame_append_data_array", "");
+
+	if (field_type_name.fct_parameters.size() != 3)
+	{
+		M_FATAL_COMMENT("frame_append_data_array expect 3 parameters");
+		return  false;
+	}
+
+	// Compute frame address.
+	T_decode_stream_frame  * P_decode_stream_frame = NULL;
+	{
+		const C_value  & frame_value = field_type_name.fct_parameters[0].compute_expression(
+									   type_definitions, interpret_data, in_out_frame_data,
+									   data_name, data_simple_name, os_out, os_err);
+		if (frame_value.get_type() == C_value::E_type_integer)
+		{
+			P_decode_stream_frame = (T_decode_stream_frame*)frame_value.get_int();
+			if (P_decode_stream_frame == NULL)
+			{
+				M_FATAL_COMMENT("frame_append_data_array expect param1 = frame (= int) != NULL");
+				return  false;
+			}
+		}
+		else
+		{
+			M_FATAL_COMMENT("frame_append_data_array expect param1 = frame (= int)");
+			return  false;
+		}
+	}
+
+	// Compute value of data pointer.
+	const T_byte *  ptr = NULL;
+	{
+		const C_value  & obj_value = field_type_name.fct_parameters[1].compute_expression(
+									   type_definitions, interpret_data, in_out_frame_data,
+									   data_name, data_simple_name, os_out, os_err);
+		if (obj_value.get_type() == C_value::E_type_integer)
+		{
+			ptr = (const T_byte *)obj_value.get_int();
+			if (ptr == NULL)
+			{
+				M_FATAL_COMMENT("frame_append_data_array expect param2 = data pointer != NULL");
+				return  false;
+			}
+		}
+		else
+		{
+			M_FATAL_COMMENT("frame_append_data_array expect param2 = data pointer (int64)");
+			return  false;
+		}
+	}
+
+	// Compute value of data size.
+	long long        data_size = 0;
+	{
+		const C_value  & obj_value = field_type_name.fct_parameters[2].compute_expression(
+									   type_definitions, interpret_data, in_out_frame_data,
+									   data_name, data_simple_name, os_out, os_err);
+		if (obj_value.get_type() == C_value::E_type_integer)
+		{
+			data_size = obj_value.get_int();
+			if (data_size < 0)
+			{
+				M_FATAL_COMMENT("frame_append_data_array expect param3 = data size (integer) >= 0");
+				return  false;
+			}
+		}
+		else
+		{
+			M_FATAL_COMMENT("frame_append_data_array expect param3 = data size (integer)");
+			return  false;
+		}
+	}
+
+	// Copy data into frame.
+	P_decode_stream_frame->write_n_bytes(ptr, data_size);
+
+	return  true;
+}
+
+//*****************************************************************************
 // frame_append_hexa_data *****************************************************
 //*****************************************************************************
 
@@ -2999,9 +3094,7 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 			M_FCT_READ_SIMPLE_TYPE_FLT(float64,dcArgDouble)
 			else if (function_parameter.type == "pointer")
 			{
-				const long long    position_bits  = obj_value.get_int();
-				const long long    position_bytes = position_bits / 8;
-				const T_byte     * pointer = in_out_frame_data.get_initial_P_bytes() + position_bytes;
+				const T_byte     * pointer = (const T_byte *)obj_value.get_int();
 
 				dyncall_parameter.ptr = (void*)pointer;
 				dcArgPointer(vm , (DCpointer)dyncall_parameter.ptr);
@@ -3072,6 +3165,10 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 		else if (fct_def.return_type == "string")
 		{
 			returned_value = (char*)dcCallPointer(vm, library_function_def.funptr);
+		}
+		else if (fct_def.return_type == "pointer")
+		{
+			returned_value = dcCallPointer(vm, library_function_def.funptr);
 		}
 		else
 		{
@@ -3324,6 +3421,13 @@ bool    frame_to_function (const T_type_definitions    & type_definitions,
 	if (field_type_name.name == "frame_append_data")
 	{
 		result = frame_append_data (type_definitions, in_out_frame_data, interpret_data,
+							   fct_def,
+							   field_type_name, data_name, data_simple_name,
+							   os_out, os_err);
+	}
+	else if (field_type_name.name == "frame_append_data_array")
+	{
+		result = frame_append_data_array (type_definitions, in_out_frame_data, interpret_data,
 							   fct_def,
 							   field_type_name, data_name, data_simple_name,
 							   os_out, os_err);
