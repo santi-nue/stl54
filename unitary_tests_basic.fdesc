@@ -220,11 +220,12 @@ function void  read_base64_to_frame (in frame  frame)
   if (val_signed != -1)
   {
     fatal "Bad base64 input value";
-	 return;
+    return;
   }
 }
 
-function void  decoder_base64 (in frame  frame, in uint32   nb_of_bits_needed_uint)
+# this function is called ..._unused because decoder_base64 is now built-in
+function void  decoder_base64_unused (in frame  frame, in uint32   nb_of_bits_needed_uint)
 {
   hide var int32   nb_of_bits_needed = nb_of_bits_needed_uint;
   
@@ -235,12 +236,12 @@ function void  decoder_base64 (in frame  frame, in uint32   nb_of_bits_needed_ui
     call  read_base64_to_frame (frame);
     call  read_base64_to_frame (frame);
 
-	 set nb_of_bits_needed = nb_of_bits_needed - (4 * 6);
+    set nb_of_bits_needed = nb_of_bits_needed - (4 * 6);
   }
 }
 
 # NB: base64 encoding can encode anything, not only string
-# This alias is only for particular case where 1 (and only 1) string is encoded.
+# This alias is only for particular case where 1 and only 1 string is encoded.
 alias stringBase64  string{decoder=decoder_base64};
 
 # If you have many consecutive strings encoded together, you can NOT use stringBase64.

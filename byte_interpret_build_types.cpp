@@ -2638,6 +2638,9 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_data_array (in frame  frame, in pointer  data, in int64  data_size)");
 	M_DEFINE_BUILTIN_FUNCTION("void  frame_append_hexa_data (in frame  frame, in string  str_hexa)");
 
+	// Decoder built-in
+	M_DEFINE_BUILTIN_FUNCTION("void  decoder_base64 (in frame  frame, in uint32   nb_of_bits_needed_uint)");
+
 	// Library pointer function
 	M_DEFINE_BUILTIN_FUNCTION("int64    get_pointer_len_bytes     (                        in uint32  length_bytes )");
 	M_DEFINE_BUILTIN_FUNCTION("int64    get_pointer_len_bits      (                        in uint32  length_bits )");

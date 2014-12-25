@@ -1284,6 +1284,199 @@ bool    frame_append_hexa_data (
 }
 
 //*****************************************************************************
+// decoder_base64 *************************************************************
+//*****************************************************************************
+// http://en.wikipedia.org/wiki/Base64
+//*****************************************************************************
+
+bool    decoder_base64 ( const T_type_definitions      & type_definitions,
+					           T_frame_data            & in_out_frame_data,
+					           T_interpret_data        & interpret_data,
+							   T_decode_stream_frame   & decode_stream_frame,
+							   long long                 nb_of_bits_needed,
+                         const string                  & decode_function_name,
+                         const T_function_definition   & fct_def,
+						 const vector<T_expression>    & fct_parameters,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err)
+{
+	M_STATE_ENTER ("decoder_base64", "");
+
+	while (nb_of_bits_needed > 0)
+	{
+		// Always read 4 characters 
+		for (int idx = 0; idx < 4; ++idx)
+		{
+			T_byte  byte_encoded = in_out_frame_data.read_1_byte();
+			T_byte  val = 100;
+			if (byte_encoded >= 'A' && byte_encoded <= 'Z')
+			{
+				val = byte_encoded - 'A';
+			}
+			else if (byte_encoded >= 'a' && byte_encoded <= 'z')
+			{
+				val = (byte_encoded - 'a') + 26;
+			}
+			else if (byte_encoded >= '0' && byte_encoded <= '9')
+			{
+				val = (byte_encoded - '0') + 26 + 26;
+			}
+			else if (byte_encoded == '+')
+			{
+				val = 62;
+			}
+			else if (byte_encoded == '/')
+			{
+				val = 63;
+			}
+			else if (byte_encoded == '=')
+			{
+				// Complement, do not add it
+				continue;
+			}
+			else
+			{
+				M_FATAL_COMMENT("unexpected Base64 character " << (int)byte_encoded);
+			}
+
+			// Copy 6 bit data into frame.
+			decode_stream_frame.write_less_1_byte(val, 6);
+		}
+	 
+		nb_of_bits_needed -= 4 * 6;    // 3 bytes
+	}
+
+	return  true;
+}
+
+
+//*****************************************************************************
+// frame_to_function_base_decoder *********************************************
+//*****************************************************************************
+// Call possible built-in decoder
+// Call frame_to_function_base in other cases
+//*****************************************************************************
+
+bool    frame_to_function_base_decoder (
+	                     const T_type_definitions        & type_definitions,
+					           T_interpret_data          & interpret_data,
+					           T_frame_data              & in_out_frame_data,
+                         const string                    & decode_function_name,
+                         const T_function_definition     & fct_def,
+						 const vector<T_expression>      & fct_parameters,
+                         const string                    & data_name,
+                         const string                    & data_simple_name,
+                               ostream                   & os_out,
+                               ostream                   & os_err,
+							   E_return_value_indicator    return_value_indicator,
+							   C_value                   & returned_value)
+{
+	// List of built-in decoders
+	static const
+	struct {
+		string  decode_function_name;
+		bool  (*ptr_function)( const T_type_definitions      & type_definitions,
+					           T_frame_data            & in_out_frame_data,
+					           T_interpret_data        & interpret_data,
+							   T_decode_stream_frame   & decode_stream_frame,
+							   long long                 nb_of_bits_needed,
+                         const string                  & decode_function_name,
+                         const T_function_definition   & fct_def,
+						 const vector<T_expression>    & fct_parameters,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err);
+	} decoder_builtin[] = {
+		{ "decoder_base64", decoder_base64 }
+    };
+
+	// Search for built-in decoder
+	for (int idx = 0; idx < M_SIZE_TAB(decoder_builtin); ++idx)
+	{
+		if (decode_function_name == decoder_builtin[idx].decode_function_name)
+		{
+			// Built-in decoder found
+
+			if (fct_parameters.size() != 2)
+			{
+				M_FATAL_COMMENT(decode_function_name << " expect 2 parameters");
+				return  false;
+			}
+
+			// Compute frame address.
+			T_decode_stream_frame  * P_decode_stream_frame = NULL;
+			{
+				const C_value  & frame_value = fct_parameters[0].compute_expression(
+											   type_definitions, interpret_data, in_out_frame_data,
+											   data_name, data_simple_name, os_out, os_err);
+				if (frame_value.get_type() == C_value::E_type_integer)
+				{
+					P_decode_stream_frame = (T_decode_stream_frame*)frame_value.get_int();
+				}
+				else
+				{
+					M_FATAL_COMMENT(decode_function_name << " expect param1 = frame (= int)");
+					return  false;
+				}
+			}
+
+			// Compute value of nb_of_bits_needed_uint.
+			long long        nb_of_bits_needed = 0;
+			{
+				const C_value  & obj_value = fct_parameters[1].compute_expression(
+											   type_definitions, interpret_data, in_out_frame_data,
+											   data_name, data_simple_name, os_out, os_err);
+				if (obj_value.get_type() == C_value::E_type_integer)
+				{
+					nb_of_bits_needed = obj_value.get_int();
+					if (nb_of_bits_needed < 0)
+					{
+						M_FATAL_COMMENT(decode_function_name << " expect param2 = nb_of_bits_needed_uint (integer) >= 0");
+						return  false;
+					}
+				}
+				else
+				{
+					M_FATAL_COMMENT(decode_function_name << " expect param2 = nb_of_bits_needed_uint (integer)");
+					return  false;
+				}
+			}
+
+			return  decoder_builtin[idx].ptr_function(
+									   type_definitions,
+									   in_out_frame_data,
+									   interpret_data,
+									  *P_decode_stream_frame,
+									   nb_of_bits_needed,
+									   decode_function_name,
+									   fct_def,
+									   fct_parameters,
+									   data_name,
+									   data_simple_name,
+									   os_out,
+									   os_err);
+		}
+	}
+
+	// Not a built-in decoder
+
+	return  frame_to_function_base (type_definitions,
+								   interpret_data,
+								   in_out_frame_data,
+								   fct_def,
+								   fct_parameters,
+								   data_name,
+								   data_simple_name,
+								   os_out,
+								   os_err,
+								   return_value_indicator,
+								   returned_value);
+}
+
+//*****************************************************************************
 // decode_data_size
 //*****************************************************************************
 
@@ -1316,9 +1509,11 @@ void    decode_data_size (
 	fct_parameters[1].build_expression(C_value(TYPE_BIT_SIZE));
 
 	C_value    return_value_do_not_care;
-	bool  result = frame_to_function_base (type_definitions,
+	bool       result = frame_to_function_base_decoder (
+							   type_definitions,
 							   interpret_data,
 							   in_out_frame_data,
+							   interpret_data.get_decode_function(),
 							   fct_def,
 							   fct_parameters,
 							   data_name,
@@ -1329,7 +1524,7 @@ void    decode_data_size (
 							   return_value_do_not_care);
 	if (result == false)
 	{
-		M_FATAL_COMMENT("frame_to_function_base");
+		M_FATAL_COMMENT("frame_to_function_base_decoder");
 	}
 
 	// Check that the decoded size is >= at the asked size
@@ -1382,9 +1577,11 @@ void    decode_data_bytes_until (
 	{
 		const long  current_decoded_data_bit_size = decode_stream_frame.decoded_data_bit_size;
 
-		bool  result = frame_to_function_base (type_definitions,
+		bool  result = frame_to_function_base_decoder (
+								   type_definitions,
 								   interpret_data,
 								   in_out_frame_data,
+								   interpret_data.get_decode_function(),
 								   fct_def,
 								   fct_parameters,
 								   data_name,
@@ -1395,7 +1592,7 @@ void    decode_data_bytes_until (
 								   return_value_do_not_care);
 		if (result == false)
 		{
-			M_FATAL_COMMENT("frame_to_function_base");
+			M_FATAL_COMMENT("frame_to_function_base_decoder");
 		}
 
 		// Check that the decoded size is >= at the asked size
