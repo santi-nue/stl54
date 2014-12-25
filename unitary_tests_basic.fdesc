@@ -65,7 +65,8 @@ function void  decode_invert_4_bytes (in frame  frame, in uint32   nb_of_bits_ne
 # stringUtf8, stringUtf16Le & stringUtf16Be using decoder
 ###############################################################################
 
-function void  decoder_utf8 (in frame  frame, in uint32   nb_of_bits_needed)
+# NB: decoder_utf8 is now built-in
+function void  decoder_utf8_is_now_builtin (in frame  frame, in uint32   nb_of_bits_needed)
 {
   if ((nb_of_bits_needed % 8) != 0)
   {
@@ -109,7 +110,8 @@ function void  decoder_utf8 (in frame  frame, in uint32   nb_of_bits_needed)
 alias stringUtf8  string{decoder=decoder_utf8};
 
 
-function void  decoder_utf16le (in frame  frame, in uint32   nb_of_bits_needed)
+# NB: decoder_utf16le is now built-in
+function void  decoder_utf16le_is_now_builtin (in frame  frame, in uint32   nb_of_bits_needed)
 {
   if ((nb_of_bits_needed % 8) != 0)
   {
@@ -141,7 +143,8 @@ function void  decoder_utf16le (in frame  frame, in uint32   nb_of_bits_needed)
 alias stringUtf16Le  string{decoder=decoder_utf16le};
 
 
-function void  decoder_utf16be (in frame  frame, in uint32   nb_of_bits_needed)
+# NB: decoder_utf16be is now built-in
+function void  decoder_utf16be_is_now_builtin (in frame  frame, in uint32   nb_of_bits_needed)
 {
   if ((nb_of_bits_needed % 8) != 0)
   {
@@ -224,8 +227,8 @@ function void  read_base64_to_frame (in frame  frame)
   }
 }
 
-# this function is called ..._unused because decoder_base64 is now built-in
-function void  decoder_base64_unused (in frame  frame, in uint32   nb_of_bits_needed_uint)
+# NB: decoder_base64 is now built-in
+function void  decoder_base64_is_now_builtin (in frame  frame, in uint32   nb_of_bits_needed_uint)
 {
   hide var int32   nb_of_bits_needed = nb_of_bits_needed_uint;
   

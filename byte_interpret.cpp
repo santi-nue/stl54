@@ -1286,8 +1286,6 @@ bool    frame_append_hexa_data (
 //*****************************************************************************
 // decoder_base64 *************************************************************
 //*****************************************************************************
-// http://en.wikipedia.org/wiki/Base64
-//*****************************************************************************
 
 bool    decoder_base64 ( const T_type_definitions      & type_definitions,
 					           T_frame_data            & in_out_frame_data,
@@ -1351,6 +1349,166 @@ bool    decoder_base64 ( const T_type_definitions      & type_definitions,
 	return  true;
 }
 
+//*****************************************************************************
+// decoder_utf8 ***************************************************************
+//*****************************************************************************
+
+bool    decoder_utf8 (   const T_type_definitions      & type_definitions,
+					           T_frame_data            & in_out_frame_data,
+					           T_interpret_data        & interpret_data,
+							   T_decode_stream_frame   & decode_stream_frame,
+							   long long                 nb_of_bits_needed,
+                         const string                  & decode_function_name,
+                         const T_function_definition   & fct_def,
+						 const vector<T_expression>    & fct_parameters,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err)
+{
+	M_STATE_ENTER ("decoder_utf8", "");
+
+	if ((nb_of_bits_needed % 8) != 0)
+	{
+		M_FATAL_COMMENT("Only entire byte");
+		return  false;
+	}
+
+	while (nb_of_bits_needed > 0)
+	{
+		T_byte  byte1 = in_out_frame_data.read_1_byte();
+
+		if ((byte1 & 0x80) != 0)
+		{
+			if ((byte1 & 0xF0) == 0xF0)
+			{
+				T_byte  byte2 = in_out_frame_data.read_1_byte();
+				T_byte  byte3 = in_out_frame_data.read_1_byte();
+				T_byte  byte4 = in_out_frame_data.read_1_byte();
+			}
+			else
+			{
+				if ((byte1 & 0xE0) == 0xE0)
+				{
+					T_byte  byte2 = in_out_frame_data.read_1_byte();
+					T_byte  byte3 = in_out_frame_data.read_1_byte();
+				}
+				else
+				{
+					T_byte  byte2 = in_out_frame_data.read_1_byte();
+				}
+			}
+ 
+			byte1 = '.';   // means unknow char
+		}
+
+		decode_stream_frame.write_1_byte(byte1);
+
+		nb_of_bits_needed -= 8;
+	}
+
+	return  true;
+}
+
+//*****************************************************************************
+// decoder_utf16le ************************************************************
+//*****************************************************************************
+
+bool    decoder_utf16le (const T_type_definitions      & type_definitions,
+					           T_frame_data            & in_out_frame_data,
+					           T_interpret_data        & interpret_data,
+							   T_decode_stream_frame   & decode_stream_frame,
+							   long long                 nb_of_bits_needed,
+                         const string                  & decode_function_name,
+                         const T_function_definition   & fct_def,
+						 const vector<T_expression>    & fct_parameters,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err)
+{
+	M_STATE_ENTER ("decoder_utf16le", "");
+
+	if ((nb_of_bits_needed % 8) != 0)
+	{
+		M_FATAL_COMMENT("Only entire byte");
+		return  false;
+	}
+
+	while (nb_of_bits_needed > 0)
+	{
+		T_byte  byte1 = in_out_frame_data.read_1_byte();
+		T_byte  byte2 = in_out_frame_data.read_1_byte();
+
+		if (byte2 != 0)
+		{
+			byte1 = '.';   // means unknow char
+
+			if ((byte2 & 0xfc) == 0xd8)
+			{
+				T_byte  byte3 = in_out_frame_data.read_1_byte();
+				T_byte  byte4 = in_out_frame_data.read_1_byte();
+			}
+		}
+
+		decode_stream_frame.write_1_byte(byte1);
+
+		nb_of_bits_needed -= 8;
+	}
+
+	return  true;
+}
+
+//*****************************************************************************
+// decoder_utf16be ************************************************************
+//*****************************************************************************
+
+bool    decoder_utf16be (const T_type_definitions      & type_definitions,
+					           T_frame_data            & in_out_frame_data,
+					           T_interpret_data        & interpret_data,
+							   T_decode_stream_frame   & decode_stream_frame,
+							   long long                 nb_of_bits_needed,
+                         const string                  & decode_function_name,
+                         const T_function_definition   & fct_def,
+						 const vector<T_expression>    & fct_parameters,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err)
+{
+	M_STATE_ENTER ("decoder_utf16be", "");
+
+	if ((nb_of_bits_needed % 8) != 0)
+	{
+		M_FATAL_COMMENT("Only entire byte");
+		return  false;
+	}
+
+	while (nb_of_bits_needed > 0)
+	{
+		// inverted read
+		T_byte  byte2 = in_out_frame_data.read_1_byte();
+		T_byte  byte1 = in_out_frame_data.read_1_byte();
+
+		if (byte2 != 0)
+		{
+			byte1 = '.';   // means unknow char
+
+			if ((byte2 & 0xfc) == 0xd8)
+			{
+				T_byte  byte3 = in_out_frame_data.read_1_byte();
+				T_byte  byte4 = in_out_frame_data.read_1_byte();
+			}
+		}
+
+		decode_stream_frame.write_1_byte(byte1);
+
+		nb_of_bits_needed -= 8;
+	}
+
+	return  true;
+}
+
 
 //*****************************************************************************
 // frame_to_function_base_decoder *********************************************
@@ -1390,7 +1548,10 @@ bool    frame_to_function_base_decoder (
                                ostream                 & os_out,
                                ostream                 & os_err);
 	} decoder_builtin[] = {
-		{ "decoder_base64", decoder_base64 }
+		{ "decoder_base64",  decoder_base64  },
+		{ "decoder_utf8",    decoder_utf8    },
+		{ "decoder_utf16le", decoder_utf16le },
+		{ "decoder_utf16be", decoder_utf16be },
     };
 
 	// Search for built-in decoder
