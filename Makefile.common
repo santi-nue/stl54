@@ -37,6 +37,7 @@ DISSECTOR_INCLUDES =	\
 
 # Dissector core sources.
 # All files specified here do NOT depend of wireshark.
+# NB: .cpp is mandatory for shark_wsutil_aes.cpp (because of $(DISSECTOR_CORE_UT_SRC:.cpp=.obj) ...)
 DISSECTOR_CORE_UT_SRC = \
 	byte_interpret.cpp \
 	byte_interpret_compute_expression.cpp T_expression.cpp \
@@ -51,7 +52,8 @@ DISSECTOR_CORE_UT_SRC = \
   byte_interpret_build_types_context.cpp \
   byte_interpret_build_types_read_token.cpp \
   byte_interpret_parse.cpp byte_interpret_common.cpp \
-  CT_debug_object_counter.cpp
+  CT_debug_object_counter.cpp \
+  shark_wsutil_aes.cpp
 
 DISSECTOR_CORE_OTHER_SRC = \
   byte_interpret_build_types_netpdl.cpp \

@@ -1284,6 +1284,55 @@ bool    frame_append_hexa_data (
 }
 
 //*****************************************************************************
+// decoder_aes ****************************************************************
+//*****************************************************************************
+#include <glib.h>
+extern "C"
+{
+#include "shark_wsutil_aes.h"
+}
+// NOT multi-thread, NOT reentrant, NOT multi dissectors 
+//static rijndael_ctx   S_rijndael_ctx;
+
+bool    decoder_aes (    const T_type_definitions      & type_definitions,
+					           T_frame_data            & in_out_frame_data,
+					           T_interpret_data        & interpret_data,
+							   T_decode_stream_frame   & decode_stream_frame,
+							   long long                 nb_of_bits_needed,
+                         const string                  & decode_function_name,
+                         const T_function_definition   & fct_def,
+						 const vector<T_expression>    & fct_parameters,
+                         const string                  & data_name,
+                         const string                  & data_simple_name,
+                               ostream                 & os_out,
+                               ostream                 & os_err)
+{
+	M_STATE_ENTER ("decoder_aes", "");
+
+	while (nb_of_bits_needed > 0)
+	{
+		// Always read 16 bytes
+		T_byte  bytes_in[16];
+		in_out_frame_data.read_n_bytes(sizeof (bytes_in), bytes_in);
+
+		// ICIOA key hard-coded !!!
+		// ICIOA key is rebuild each 16 bytes !!!
+		rijndael_ctx   S_rijndael_ctx;
+		fdesc_rijndael_set_key(&S_rijndael_ctx, (const guchar*)"1234567890123456", 16 * 8);
+
+		T_byte  bytes_out[16];
+		fdesc_rijndael_decrypt(&S_rijndael_ctx, bytes_in, bytes_out);
+
+		// Copy all bytes data into frame.
+		decode_stream_frame.write_n_bytes(bytes_out, sizeof(bytes_out));
+	 
+		nb_of_bits_needed -= sizeof(bytes_out) * 8;
+	}
+
+	return  true;
+}
+
+//*****************************************************************************
 // decoder_base64 *************************************************************
 //*****************************************************************************
 
@@ -1350,10 +1399,10 @@ bool    decoder_base64 ( const T_type_definitions      & type_definitions,
 }
 
 //*****************************************************************************
-// decoder_utf8 ***************************************************************
+// decoder_utf16be ************************************************************
 //*****************************************************************************
 
-bool    decoder_utf8 (   const T_type_definitions      & type_definitions,
+bool    decoder_utf16be (const T_type_definitions      & type_definitions,
 					           T_frame_data            & in_out_frame_data,
 					           T_interpret_data        & interpret_data,
 							   T_decode_stream_frame   & decode_stream_frame,
@@ -1366,7 +1415,7 @@ bool    decoder_utf8 (   const T_type_definitions      & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("decoder_utf8", "");
+	M_STATE_ENTER ("decoder_utf16be", "");
 
 	if ((nb_of_bits_needed % 8) != 0)
 	{
@@ -1376,30 +1425,19 @@ bool    decoder_utf8 (   const T_type_definitions      & type_definitions,
 
 	while (nb_of_bits_needed > 0)
 	{
+		// inverted read
+		T_byte  byte2 = in_out_frame_data.read_1_byte();
 		T_byte  byte1 = in_out_frame_data.read_1_byte();
 
-		if ((byte1 & 0x80) != 0)
+		if (byte2 != 0)
 		{
-			if ((byte1 & 0xF0) == 0xF0)
+			byte1 = '.';   // means unknow char
+
+			if ((byte2 & 0xfc) == 0xd8)
 			{
-				T_byte  byte2 = in_out_frame_data.read_1_byte();
 				T_byte  byte3 = in_out_frame_data.read_1_byte();
 				T_byte  byte4 = in_out_frame_data.read_1_byte();
 			}
-			else
-			{
-				if ((byte1 & 0xE0) == 0xE0)
-				{
-					T_byte  byte2 = in_out_frame_data.read_1_byte();
-					T_byte  byte3 = in_out_frame_data.read_1_byte();
-				}
-				else
-				{
-					T_byte  byte2 = in_out_frame_data.read_1_byte();
-				}
-			}
- 
-			byte1 = '.';   // means unknow char
 		}
 
 		decode_stream_frame.write_1_byte(byte1);
@@ -1460,10 +1498,10 @@ bool    decoder_utf16le (const T_type_definitions      & type_definitions,
 }
 
 //*****************************************************************************
-// decoder_utf16be ************************************************************
+// decoder_utf8 ***************************************************************
 //*****************************************************************************
 
-bool    decoder_utf16be (const T_type_definitions      & type_definitions,
+bool    decoder_utf8 (   const T_type_definitions      & type_definitions,
 					           T_frame_data            & in_out_frame_data,
 					           T_interpret_data        & interpret_data,
 							   T_decode_stream_frame   & decode_stream_frame,
@@ -1476,7 +1514,7 @@ bool    decoder_utf16be (const T_type_definitions      & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("decoder_utf16be", "");
+	M_STATE_ENTER ("decoder_utf8", "");
 
 	if ((nb_of_bits_needed % 8) != 0)
 	{
@@ -1486,19 +1524,30 @@ bool    decoder_utf16be (const T_type_definitions      & type_definitions,
 
 	while (nb_of_bits_needed > 0)
 	{
-		// inverted read
-		T_byte  byte2 = in_out_frame_data.read_1_byte();
 		T_byte  byte1 = in_out_frame_data.read_1_byte();
 
-		if (byte2 != 0)
+		if ((byte1 & 0x80) != 0)
 		{
-			byte1 = '.';   // means unknow char
-
-			if ((byte2 & 0xfc) == 0xd8)
+			if ((byte1 & 0xF0) == 0xF0)
 			{
+				T_byte  byte2 = in_out_frame_data.read_1_byte();
 				T_byte  byte3 = in_out_frame_data.read_1_byte();
 				T_byte  byte4 = in_out_frame_data.read_1_byte();
 			}
+			else
+			{
+				if ((byte1 & 0xE0) == 0xE0)
+				{
+					T_byte  byte2 = in_out_frame_data.read_1_byte();
+					T_byte  byte3 = in_out_frame_data.read_1_byte();
+				}
+				else
+				{
+					T_byte  byte2 = in_out_frame_data.read_1_byte();
+				}
+			}
+ 
+			byte1 = '.';   // means unknow char
 		}
 
 		decode_stream_frame.write_1_byte(byte1);
@@ -1548,10 +1597,11 @@ bool    frame_to_function_base_decoder (
                                ostream                 & os_out,
                                ostream                 & os_err);
 	} decoder_builtin[] = {
+		{ "decoder_aes",     decoder_aes  },
 		{ "decoder_base64",  decoder_base64  },
-		{ "decoder_utf8",    decoder_utf8    },
-		{ "decoder_utf16le", decoder_utf16le },
 		{ "decoder_utf16be", decoder_utf16be },
+		{ "decoder_utf16le", decoder_utf16le },
+		{ "decoder_utf8",    decoder_utf8    },
     };
 
 	// Search for built-in decoder

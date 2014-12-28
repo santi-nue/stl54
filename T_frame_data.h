@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -101,6 +101,9 @@ struct T_frame_data : public CT_debug_object_counter<T_frame_data>
 
 private:
 protected:
+	// NB: copy ctor and assignment operators are ok
+	// Because no memory is managed here, it only points to ...
+
     const T_byte  * A_P_bytes;
     long            A_remaining_bits;
 
