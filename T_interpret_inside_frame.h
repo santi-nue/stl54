@@ -36,7 +36,7 @@ using namespace std;
 
 struct T_decode_stream_frame
 {
-	unsigned char    decoded_data[10000];       // ICIOA hard coded magic number
+	T_byte           decoded_data[10000];       // ICIOA hard coded magic number
 	int              decoded_data_bit_size;
 	T_frame_data     frame_data;
 
@@ -46,6 +46,7 @@ struct T_decode_stream_frame
 	{
 	}
 
+	// Reset/remove all data
 	void            reset();
 
 	// Permits to reset frame_data & decoded_data_size when all data has been read.
@@ -78,7 +79,7 @@ struct T_interpret_inside_frame : public CT_debug_object_counter<T_interpret_ins
 
 private:
 	// ICIOA temporary implementation
-	T_decode_stream_frame     A_decode_stream_frame;    // ICIOA means 10kBmore permsg (if global is used)
+	T_decode_stream_frame     A_decode_stream_frame;    // ICIOA means 10000B more per msg (if global is used)
 	T_decode_stream_frame *  AP_decode_stream_frame;
 };
 
