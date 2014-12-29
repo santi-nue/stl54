@@ -46,6 +46,8 @@ struct T_decode_stream_frame
 	{
 	}
 
+	void            reset();
+
 	// Permits to reset frame_data & decoded_data_size when all data has been read.
 	// To avoid decoded_data_bit_size grows indefinitely.
 	void            synchronize();
@@ -64,17 +66,41 @@ struct T_interpret_inside_frame : public CT_debug_object_counter<T_interpret_ins
 {
 	// Fatal if AP_decode_stream_frame is NULL
 	T_decode_stream_frame &  get_decode_stream_frame();
+	T_decode_stream_frame *  get_P_decode_stream_frame()  { return  AP_decode_stream_frame; }
 
-	void                     set_decode_stream_frame(T_decode_stream_frame *  P_rhs);
+//	void                     set_decode_stream_frame(T_decode_stream_frame *  P_rhs);
 
 
     T_interpret_inside_frame ()
-        :AP_decode_stream_frame (NULL)
+        :AP_decode_stream_frame (&A_decode_stream_frame)
     {
     }
 
 private:
+	// ICIOA temporary implementation
+	T_decode_stream_frame     A_decode_stream_frame;    // ICIOA means 10kBmore permsg (if global is used)
 	T_decode_stream_frame *  AP_decode_stream_frame;
+};
+
+
+//*****************************************************************************
+// C_decode_stream_frame_set_temporary_if_necessary
+//*****************************************************************************
+
+class C_decode_stream_frame_set_temporary_if_necessary
+{
+public:
+	C_decode_stream_frame_set_temporary_if_necessary(T_interpret_inside_frame  & interpret_inside_frame,
+		                                             T_decode_stream_frame     & decode_stream_frame);
+	~C_decode_stream_frame_set_temporary_if_necessary();
+
+private:
+	C_decode_stream_frame_set_temporary_if_necessary(const C_decode_stream_frame_set_temporary_if_necessary  &);
+	C_decode_stream_frame_set_temporary_if_necessary& operator= (const C_decode_stream_frame_set_temporary_if_necessary  &);
+
+	T_interpret_inside_frame  & A_interpret_inside_frame;
+	T_decode_stream_frame     & A_decode_stream_frame;
+	bool                        A_value_set;
 };
 
 

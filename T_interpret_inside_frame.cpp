@@ -33,9 +33,15 @@ T_decode_stream_frame::synchronize()
 {
 	if (frame_data.get_remaining_bits() == 0)
 	{
-		decoded_data_bit_size = 0;
-		frame_data = T_frame_data(decoded_data, 0, 0);
+		reset();
 	}
+}
+
+void
+T_decode_stream_frame::reset()
+{
+	decoded_data_bit_size = 0;
+	frame_data = T_frame_data(decoded_data, 0, 0);
 }
 
 void
@@ -90,10 +96,42 @@ T_interpret_inside_frame::get_decode_stream_frame()
 	M_FATAL_IF_EQ(AP_decode_stream_frame, NULL);
 	return  * AP_decode_stream_frame;
 }
-
+#if 0
 void
 T_interpret_inside_frame::set_decode_stream_frame(T_decode_stream_frame *  P_rhs)
 {
 	AP_decode_stream_frame = P_rhs;
 }
+#endif
+//*****************************************************************************
+// C_decode_stream_frame_set_temporary_if_necessary
+//*****************************************************************************
+#if 0
+C_decode_stream_frame_set_temporary_if_necessary::C_decode_stream_frame_set_temporary_if_necessary(
+													 T_interpret_inside_frame  & interpret_inside_frame,
+		                                             T_decode_stream_frame     & decode_stream_frame)
+	: A_interpret_inside_frame(interpret_inside_frame)
+	, A_decode_stream_frame(decode_stream_frame)
+	, A_value_set(false)
+{
+	// This test is here only for UT.
+	// The UT can create decode_stream_frame and associate it to interpret_inside_frame outside of interpret_bytes.
+	// Then UT can check if there is remaining data into internal_frame.
+	// The interface of interpret_bytes does not permit this check : NOT ok
+	// The interface of build_types_and_interpret_bytes is worst, does not permit this work-around : NOT ok
+	if (interpret_inside_frame.get_P_decode_stream_frame() == NULL)
+	{
+		interpret_inside_frame.set_decode_stream_frame(&A_decode_stream_frame);
+		A_value_set = true;
+	}
+}
+
+C_decode_stream_frame_set_temporary_if_necessary::~C_decode_stream_frame_set_temporary_if_necessary()
+{
+	if (A_value_set == true)
+	{
+		A_interpret_inside_frame.set_decode_stream_frame(NULL);
+	}
+}
+#endif
 

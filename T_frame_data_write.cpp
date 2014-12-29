@@ -109,6 +109,8 @@ T_frame_data_write::write_n_bytes(short  n_bytes, const void  * P_n_bytes_write_
 //*****************************************************************************
 // write_less_1_byte
 //*****************************************************************************
+// Take the lower significant bits
+//*****************************************************************************
 void
 T_frame_data_write::write_less_1_byte(T_byte  byte, short  n_bits)
 {
@@ -127,6 +129,8 @@ T_frame_data_write::write_less_1_byte(T_byte  byte, short  n_bits)
 
 	if (remaining_bits_in_byte == 8)
 	{
+		// We are at the beginning of the destination byte.
+
 		// move to left & right bits = 0
 		byte <<= 8 - n_bits;
 
@@ -141,6 +145,9 @@ T_frame_data_write::write_less_1_byte(T_byte  byte, short  n_bits)
 
 	if (remaining_bits_in_byte >= n_bits)
 	{
+		// We are not at the beginning of the destination byte.
+		// But still fit in this 1 destination byte. 
+
 		// move to left & right bits = 0
 		byte <<= 8 - n_bits;
 		// move to right place & left bits = 0
@@ -159,7 +166,7 @@ T_frame_data_write::write_less_1_byte(T_byte  byte, short  n_bits)
 		return;
 	}
 
-	/* bits to write are on 2 bytes */
+	/* bits to write are on 2 destination bytes */
 	{
 		byte = bit_erase_left(byte, 8 - n_bits);
 

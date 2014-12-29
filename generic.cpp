@@ -2706,8 +2706,8 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
 
 		  const string           expression_str = protocol_data.HEURISTIC_FUNCTION + " ()";
 		  T_interpret_data       interpret_data;
-		  T_decode_stream_frame  decode_stream_frame;
-		  interpret_data.set_decode_stream_frame(&decode_stream_frame);
+//		  T_decode_stream_frame  decode_stream_frame;
+//		  interpret_data.set_decode_stream_frame(&decode_stream_frame);
 		  const string           data_name;
 		  const string         & data_simple_name = data_name;
 		  ostrstream             os_out;

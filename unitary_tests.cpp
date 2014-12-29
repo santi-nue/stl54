@@ -3656,16 +3656,10 @@ bool    ut_interpret_bytes_base (const T_type_definitions  & type_definitions,
 	M_STATE_WARNING("leave ut_interpret_bytes_base " << conditions << "  for " << in_input_string);
 
 	M_TEST_EQ(result, true);
+	// Check no remaining input
 	M_TEST_EQ(sizeof_bytes, 0);
-
-	// T_decode_stream_frame est une variable locale de interpret_bytes
-	// interpret_data.get_P_decode_stream_frame(); returns a NOT usable pointer
-//	T_decode_stream_frame *  P_decode_stream_frame = interpret_data.get_P_decode_stream_frame();
-//	if (P_decode_stream_frame != NULL)
-//	{
-//		M_TEST_EQ(P_decode_stream_frame->frame_data.get_remaining_bits(), 0);
-//	}
-//	M_TEST_EQ(interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits(), 0);
+	// Even in internal_frame
+	M_TEST_EQ(interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits(), 0);
 
 	return  result;
 }
@@ -4004,25 +3998,6 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("612600"  , " stringUtf8(3)     val ;", "val = a&");
 	M_TEST_SIMPLE("610000"  , " stringUtf8(3)     val ;", "val = a");
 	
-	// Base64 using decoder
-	// 56334E6E 5A413D3D --> V3Nn ZA== --> 0x 57 73 67  64 --> "wsgd" (if it is a string)
-	M_TEST_SIMPLE("56334E6E5A413D3D", " uint8{decoder=decoder_base64}     val1 ;"
-		                              "uint24{decoder=decoder_base64}     val2 ;", "val1 = 87" K_eol "val2 = 6580083");
-	// Specifying a size for string works only if encoded size if the same size
-	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64(4)  val  ;", "val = Wsgd");
-	// Does not work, the 5th byte is missing
-//	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64(5)  val  ;", "val = Wsgd");
-	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64(5)  val  ;", "val = Wsgd");
-	// Does not work, the 6th byte is missing
-//	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64(6)  val  ;", "val = Wsgd");
-	M_TEST_SIMPLE("56334E6E5A414141", "stringBase64(6)  val  ;", "val = Wsgd");
-	M_TEST_SIMPLE("56334E6E5A414156", "stringBase64(6)  val  ;", "val = Wsgd");
-	// It works, even without zero end of string, because there is no more data
-	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64     val  ;", "val = Wsgd");
-	// In normal case, zero end of string is needed
-	// 56334E6E 5A41413D --> V3Nn ZAA= --> 0x 57 73 67  64 00 --> "wsgd" (if it is a string)
-	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64     val  ;", "val = Wsgd");
-
 
 	// min/max ok
 	M_TEST_SIMPLE("3fc2", "uint16{q=2:o=13}{min=99000}    val ;", "val = 99467 (49727)");
@@ -4188,10 +4163,10 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 }
 
 //*****************************************************************************
-// test_interpret_simple_aes
+// test_interpret_simple_decoder_aes
 //*****************************************************************************
 
-void    test_interpret_simple_aes()
+void    test_interpret_simple_decoder_aes()
 {
 	T_type_definitions    type_definitions;
     build_types ("unitary_tests_basic.fdesc",
@@ -4204,18 +4179,20 @@ void    test_interpret_simple_aes()
 	// http://aes.online-domain-tools.com/   function=AES  mode=ECB (electronic codebook)
 
 	// key="1234567890123456"  value="string{decoder=decoder_aes}  val ;"
-	// value length = 34
+	// value length = 35 (34 + zero end of string)
 	// decrypted length = 48 (3*16)
-	// Que faire des 14 bytes supplementaires ?
+	// So 13 padding bytes that must be read
 	M_TEST_SIMPLE("1a	03	8c	23	70	bb	e8	59	d1	4f	d6	9e	b5	4d	f9	ad"
 				  "7c	bc	ca	75	d1	99	89	5d	0c	86	fa	8e	2f	35	63	0e"
                   "de	5d	db	de	5e	56	af	7c	15	82	cb	fa	5e	e4	11	ce",
-				  "string{decoder=decoder_aes}  val ;", "val = string{decoder=decoder_aes}  val ;");
+				  "string{decoder=decoder_aes}  val ;"
+				  "hide raw(13)                 padding16bytes ;",
+				  "val = string{decoder=decoder_aes}  val ;");
 
 	// key="1234567890123456"  file=favicon.ico
 	// file length = 822
 	// decrypted length = 832 (52*16)
-	// Que faire des 10 bytes supplementaires ?
+	// So 10 padding bytes that must be read
 	M_TEST_SIMPLE("42	d5	77	d8	f4	75	18	12	7b	ab	7c	38	02	17	c2	fb"
 				  "32	8e	d0	74	b6	64	99	ab	c0	f7	92	da	f7	22	6d	bb"
 				  "c0	d0	66	2f	70	a8	9a	b6	8f	45	7e	b9	96	1f	7d	e1"
@@ -4272,7 +4249,8 @@ void    test_interpret_simple_aes()
 				  "uint32{d=hex}[4*51]   val ;"
 				  "uint16{d=hex}         val1 ;"
 				  "uint16{d=hex}         val2 ;"
-				  "uint16{d=hex}         val3 ;",
+				  "uint16{d=hex}         val3 ;"
+				  "hide raw(10)          padding16bytes ;",
 				  "val[0] = 0x424d3603 (1112356355)" K_eol
 				  "val[1] = 0x0 (0)" K_eol
 				  "val[2] = 0x3600 (13824)" K_eol
@@ -4481,6 +4459,48 @@ void    test_interpret_simple_aes()
 				  "val2 = 0x6e00 (28160)" K_eol
 				  "val3 = 0x0 (0)"
 				  );
+}
+
+//*****************************************************************************
+// test_interpret_simple_decoder_base64
+//*****************************************************************************
+
+void    test_interpret_simple_decoder_base64()
+{
+	T_type_definitions    type_definitions;
+    build_types ("unitary_tests_basic.fdesc",
+                 type_definitions);
+
+	T_interpret_data      interpret_data;
+
+	interpret_data.set_big_endian();
+
+
+	// 56334E6E 5A413D3D --> V3Nn ZA== --> 0x 57 73 67  64 --> "Wsgd" (if it is a string)
+	M_TEST_SIMPLE("56334E6E5A413D3D", " uint8{decoder=decoder_base64}     val1 ;"
+		                              "uint24{decoder=decoder_base64}     val2 ;", "val1 = 87" K_eol "val2 = 7563108");
+	// Specifying a size for string works only if encoded size is the same size
+	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64(4)  val  ;", "val = Wsgd");
+	// Does not work, the 5th byte is missing
+//	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64(5)  val  ;", "val = Wsgd");
+	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64(5)  val  ;", "val = Wsgd");
+	// Does not work, the 6th byte is missing
+//	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64(6)  val  ;", "val = Wsgd");
+	M_TEST_SIMPLE("56334E6E5A414141", "stringBase64(6)  val  ;", "val = Wsgd");
+	M_TEST_SIMPLE("56334E6E5A414156", "stringBase64(6)  val  ;", "val = Wsgd");
+	// It works, even without zero end of string, because there is no more data
+	M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64     val  ;", "val = Wsgd");
+	// In normal case, zero end of string is needed
+	// 56334E6E 5A41413D --> V3Nn ZAA= --> 0x 57 73 67  64 00 --> "wsgd" (if it is a string)
+	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64     val  ;", "val = Wsgd");
+
+
+	set_debug(true);
+	// Test complement not preceded by A (zero)
+	// 56334E6E 57673D3D --> V3Nn Wg== --> 0x 57 73 67  5A --> "WsgZ" (if it is a string)
+	M_TEST_SIMPLE("56334E6E57673D3D", "stringBase64(4)  val  ;", "val = WsgZ");
+	// 56334E6E 5A466F3D --> V3Nn ZFo= --> 0x 57 73 67  64 5A --> "WsgdZ" (if it is a string)
+	M_TEST_SIMPLE("56334E6E5A466F3D", "stringBase64(5)  val  ;", "val = WsgdZ");
 }
 
 //*****************************************************************************
@@ -4965,7 +4985,8 @@ int   main(const int         argc,
 		M_TEST_FCT(test_value_format);
 		M_TEST_FCT(test_value_printf);
 		M_TEST_FCT(test_interpret_simple);
-		M_TEST_FCT(test_interpret_simple_aes);
+		M_TEST_FCT(test_interpret_simple_decoder_aes);
+		M_TEST_FCT(test_interpret_simple_decoder_base64);
 		M_TEST_FCT(test_interpret_simple_int64);
 		M_TEST_FCT(test_interpret_simple_uint8_array);
 		M_TEST_FCT(test_interpret_simple_internal_frame);

@@ -1307,7 +1307,7 @@ bool    decoder_aes (    const T_type_definitions      & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("decoder_aes", "");
+	M_STATE_ENTER ("decoder_aes", nb_of_bits_needed);
 
 	while (nb_of_bits_needed > 0)
 	{
@@ -1333,6 +1333,43 @@ bool    decoder_aes (    const T_type_definitions      & type_definitions,
 }
 
 //*****************************************************************************
+// convert_base64 *************************************************************
+//*****************************************************************************
+// Complement = must not appear, must have been filtered/managed before
+//*****************************************************************************
+
+T_byte  convert_base64(T_byte  byte_encoded)
+{
+	T_byte  val = 100;
+	if (byte_encoded >= 'A' && byte_encoded <= 'Z')
+	{
+		val = byte_encoded - 'A';
+	}
+	else if (byte_encoded >= 'a' && byte_encoded <= 'z')
+	{
+		val = (byte_encoded - 'a') + 26;
+	}
+	else if (byte_encoded >= '0' && byte_encoded <= '9')
+	{
+		val = (byte_encoded - '0') + 26 + 26;
+	}
+	else if (byte_encoded == '+')
+	{
+		val = 62;
+	}
+	else if (byte_encoded == '/')
+	{
+		val = 63;
+	}
+	else
+	{
+		M_FATAL_COMMENT("unexpected Base64 character " << (int)byte_encoded);
+	}
+
+	return  val;
+}
+
+//*****************************************************************************
 // decoder_base64 *************************************************************
 //*****************************************************************************
 
@@ -1340,7 +1377,7 @@ bool    decoder_base64 ( const T_type_definitions      & type_definitions,
 					           T_frame_data            & in_out_frame_data,
 					           T_interpret_data        & interpret_data,
 							   T_decode_stream_frame   & decode_stream_frame,
-							   long long                 nb_of_bits_needed,
+							   long long                 nb_of_bits_needed_ll,
                          const string                  & decode_function_name,
                          const T_function_definition   & fct_def,
 						 const vector<T_expression>    & fct_parameters,
@@ -1349,50 +1386,61 @@ bool    decoder_base64 ( const T_type_definitions      & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("decoder_base64", "");
+	M_STATE_ENTER ("decoder_base64", nb_of_bits_needed_ll);
+
+	int  nb_of_bits_needed = nb_of_bits_needed_ll;
 
 	while (nb_of_bits_needed > 0)
 	{
 		// Always read 4 characters 
-		for (int idx = 0; idx < 4; ++idx)
-		{
-			T_byte  byte_encoded = in_out_frame_data.read_1_byte();
-			T_byte  val = 100;
-			if (byte_encoded >= 'A' && byte_encoded <= 'Z')
-			{
-				val = byte_encoded - 'A';
-			}
-			else if (byte_encoded >= 'a' && byte_encoded <= 'z')
-			{
-				val = (byte_encoded - 'a') + 26;
-			}
-			else if (byte_encoded >= '0' && byte_encoded <= '9')
-			{
-				val = (byte_encoded - '0') + 26 + 26;
-			}
-			else if (byte_encoded == '+')
-			{
-				val = 62;
-			}
-			else if (byte_encoded == '/')
-			{
-				val = 63;
-			}
-			else if (byte_encoded == '=')
-			{
-				// Complement, do not add it
-				continue;
-			}
-			else
-			{
-				M_FATAL_COMMENT("unexpected Base64 character " << (int)byte_encoded);
-			}
+		T_byte  byte_encoded1 = in_out_frame_data.read_1_byte();
+		T_byte  byte_encoded2 = in_out_frame_data.read_1_byte();
+		T_byte  byte_encoded3 = in_out_frame_data.read_1_byte();
+		T_byte  byte_encoded4 = in_out_frame_data.read_1_byte();
 
-			// Copy 6 bit data into frame.
-			decode_stream_frame.write_less_1_byte(val, 6);
+		// Copy 6 bit data into frame.
+		decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded1), 6);
+		nb_of_bits_needed -= 6;
+//		M_STATE_DEBUG ("xxxx 1) -6 = ", nb_of_bits_needed);
+
+		if ((byte_encoded4 == '=') && (byte_encoded3 == '='))
+		{
+			const int  nb_of_bits_available = 2;
+
+			T_byte  val = convert_base64(byte_encoded2);
+			val >>= (6 - nb_of_bits_available);
+
+			decode_stream_frame.write_less_1_byte(val, nb_of_bits_available);
+			nb_of_bits_needed -= nb_of_bits_available;
+//			M_STATE_DEBUG ("xx== 2) -2 = ", nb_of_bits_needed);
 		}
-	 
-		nb_of_bits_needed -= 4 * 6;    // 3 bytes
+		else if (byte_encoded4 == '=')
+		{
+			decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded2), 6);
+			nb_of_bits_needed -= 6;
+//			M_STATE_DEBUG ("xxx= 2) -6 = ", nb_of_bits_needed);
+
+			const int  nb_of_bits_available = 4;
+
+			T_byte  val = convert_base64(byte_encoded3);
+			val >>= (6 - nb_of_bits_available);
+
+			decode_stream_frame.write_less_1_byte(val, nb_of_bits_available);
+			nb_of_bits_needed -= nb_of_bits_available;
+//			M_STATE_DEBUG ("xxx= 3) -4 = ", nb_of_bits_needed);
+		}
+		else
+		{
+			decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded2), 6);
+			nb_of_bits_needed -= 6;
+//			M_STATE_DEBUG ("xxxx 2) -6 = ", nb_of_bits_needed);
+			decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded3), 6);
+			nb_of_bits_needed -= 6;
+//			M_STATE_DEBUG ("xxxx 3) -6 = ", nb_of_bits_needed);
+			decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded4), 6);
+			nb_of_bits_needed -= 6;
+//			M_STATE_DEBUG ("xxxx 4) -6 = ", nb_of_bits_needed);
+		}
 	}
 
 	return  true;
@@ -1415,7 +1463,7 @@ bool    decoder_utf16be (const T_type_definitions      & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("decoder_utf16be", "");
+	M_STATE_ENTER ("decoder_utf16be", nb_of_bits_needed);
 
 	if ((nb_of_bits_needed % 8) != 0)
 	{
@@ -1465,7 +1513,7 @@ bool    decoder_utf16le (const T_type_definitions      & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("decoder_utf16le", "");
+	M_STATE_ENTER ("decoder_utf16le", nb_of_bits_needed);
 
 	if ((nb_of_bits_needed % 8) != 0)
 	{
@@ -1514,7 +1562,7 @@ bool    decoder_utf8 (   const T_type_definitions      & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("decoder_utf8", "");
+	M_STATE_ENTER ("decoder_utf8", nb_of_bits_needed);
 
 	if ((nb_of_bits_needed % 8) != 0)
 	{
@@ -6575,9 +6623,9 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
 //	C_interpret_data_set_temporary  interpret_data_set_temporary(interpret_data);  // ICIOA
 
 	T_frame_data           frame_data(in_out_P_bytes, 0, in_out_sizeof_bytes * 8);
-	T_decode_stream_frame  decode_stream_frame;
-	interpret_data.set_decode_stream_frame(&decode_stream_frame);
-	interpret_data.add_read_variable("internal_frame", "internal_frame", (long long)&decode_stream_frame);
+//	T_decode_stream_frame  decode_stream_frame;
+//	interpret_data.set_decode_stream_frame(&decode_stream_frame);
+	interpret_data.add_read_variable("internal_frame", "internal_frame", (long long)interpret_data.get_P_decode_stream_frame());
 
 	bool    result = false;
 
@@ -6726,9 +6774,9 @@ bool    build_types_and_interpret_bytes (
 	// Set the interpret_data.
 	T_interpret_data    interpret_data;
 //	C_interpret_data_set_temporary    idst(interpret_data);
-	T_decode_stream_frame  decode_stream_frame;
-	interpret_data.set_decode_stream_frame(&decode_stream_frame);
-	interpret_data.add_read_variable("internal_frame", "internal_frame", get_string((long long)&decode_stream_frame));
+//	T_decode_stream_frame  decode_stream_frame;
+//	interpret_data.set_decode_stream_frame(&decode_stream_frame);
+	interpret_data.add_read_variable("internal_frame", "internal_frame", get_string((long long)interpret_data.get_P_decode_stream_frame()));
 
 	// Reads type definitions.
 	// Returns the 1st not understood word (i.e. a word which is NOT a type definition).
