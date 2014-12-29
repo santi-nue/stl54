@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,12 +36,15 @@ using namespace std;
 //*****************************************************************************
 // type_definitions    : definitions of types (struct, enum, function ...)
 // in_out_P_bytes      : binary data to interpret
-// in_out_sizeof_bytes : size of binary data
+// in_out_sizeof_bytes : size of binary data, out: size of unread data
 // input_stream        : what must be read inside binary data
 // os_out              : normal output stream
 // os_err              : error  output stream
 // interpret_data      : binary data read and interpreted
 // Returns true if ok.
+//*****************************************************************************
+// NB: Returns false if it remains data into inside_frame.
+// NB: This interface accepts only bytes and not bits.
 //*****************************************************************************
 
 bool    interpret_bytes (const T_type_definitions  & type_definitions,

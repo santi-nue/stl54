@@ -6679,6 +6679,14 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
 	if (result && (frame_data.is_physically_at_beginning_of_byte() != true))
 	{
 		result = false;  // bsew ICIOA must do a fatal
+
+
+		const long  inside_frame_remaining_bits = interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits();
+		if (inside_frame_remaining_bits != 0)
+		{
+			M_STATE_ERROR("inside_frame_remaining_bits=" << inside_frame_remaining_bits << " should be zero"); 
+			result = false;
+		}
 	}
 
   // restore the saved locale
@@ -6806,6 +6814,13 @@ bool    build_types_and_interpret_bytes (
 	// Verify that this is the end of stream.
     M_FATAL_IF_NE (last_extracted_word, "");
     M_ASSERT (is.eof ());
+
+	const long  inside_frame_remaining_bits = interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits();
+	if (inside_frame_remaining_bits != 0)
+	{
+		M_STATE_ERROR("inside_frame_remaining_bits=" << inside_frame_remaining_bits << " should be zero"); 
+		result = false;
+	}
   }
   
 	return  result;
