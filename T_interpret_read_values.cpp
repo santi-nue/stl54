@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -890,6 +890,11 @@ T_interpret_read_values::reset_position_offset_sizes()
 
 //*****************************************************************************
 // msg_is_ended
+//*****************************************************************************
+// Interpretation of the msg is terminated.
+// So content is useless, except for :
+// - global : all global must be kept
+// - global + this_msg : all data must be kept
 //*****************************************************************************
 void
 T_interpret_read_values::msg_is_ended()

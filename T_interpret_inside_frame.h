@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2013-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,20 +66,18 @@ struct T_decode_stream_frame
 struct T_interpret_inside_frame : public CT_debug_object_counter<T_interpret_inside_frame>
 {
 	// Fatal if AP_decode_stream_frame is NULL
-	T_decode_stream_frame &  get_decode_stream_frame();
-	T_decode_stream_frame *  get_P_decode_stream_frame()  { return  AP_decode_stream_frame; }
+	T_decode_stream_frame &  get_decode_stream_frame() const;
+	T_decode_stream_frame *  get_P_decode_stream_frame() const { return  AP_decode_stream_frame; }
 
-//	void                     set_decode_stream_frame(T_decode_stream_frame *  P_rhs);
+	void                     set_decode_stream_frame(T_decode_stream_frame *  P_rhs);
 
 
     T_interpret_inside_frame ()
-        :AP_decode_stream_frame (&A_decode_stream_frame)
+        :AP_decode_stream_frame (NULL)
     {
     }
 
 private:
-	// ICIOA temporary implementation
-	T_decode_stream_frame     A_decode_stream_frame;    // ICIOA means 10000B more per msg (if global is used)
 	T_decode_stream_frame *  AP_decode_stream_frame;
 };
 

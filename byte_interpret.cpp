@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -6623,7 +6623,8 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
 //	C_interpret_data_set_temporary  interpret_data_set_temporary(interpret_data);  // ICIOA
 
 	T_frame_data           frame_data(in_out_P_bytes, 0, in_out_sizeof_bytes * 8);
-//	T_decode_stream_frame  decode_stream_frame;
+	T_decode_stream_frame                             decode_stream_frame;
+	C_decode_stream_frame_set_temporary_if_necessary  dsfstin(interpret_data, decode_stream_frame);
 //	interpret_data.set_decode_stream_frame(&decode_stream_frame);
 	interpret_data.add_read_variable("internal_frame", "internal_frame", (long long)interpret_data.get_P_decode_stream_frame());
 
@@ -6679,8 +6680,10 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
 	if (result && (frame_data.is_physically_at_beginning_of_byte() != true))
 	{
 		result = false;  // bsew ICIOA must do a fatal
+	}
 
-
+	if (result == true)
+	{
 		const long  inside_frame_remaining_bits = interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits();
 		if (inside_frame_remaining_bits != 0)
 		{
@@ -6782,7 +6785,8 @@ bool    build_types_and_interpret_bytes (
 	// Set the interpret_data.
 	T_interpret_data    interpret_data;
 //	C_interpret_data_set_temporary    idst(interpret_data);
-//	T_decode_stream_frame  decode_stream_frame;
+	T_decode_stream_frame                             decode_stream_frame;
+	C_decode_stream_frame_set_temporary_if_necessary  dsfstin(interpret_data, decode_stream_frame);
 //	interpret_data.set_decode_stream_frame(&decode_stream_frame);
 	interpret_data.add_read_variable("internal_frame", "internal_frame", get_string((long long)interpret_data.get_P_decode_stream_frame()));
 

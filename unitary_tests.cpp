@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -3658,8 +3658,9 @@ bool    ut_interpret_bytes_base (const T_type_definitions  & type_definitions,
 	M_TEST_EQ(result, true);
 	// Check no remaining input
 	M_TEST_EQ(sizeof_bytes, 0);
-	// Even in internal_frame (this should be already tested by interpret_bytes)
-	M_TEST_EQ(interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits(), 0);
+	// Even in internal_frame : this is already tested by interpret_bytes
+	// Fail because decode_stream_frame does NOT exist anymore
+//	M_TEST_EQ(interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits(), 0);
 
 	return  result;
 }
