@@ -4177,12 +4177,16 @@ void    test_interpret_simple_decoder_aes()
 
 	interpret_data.set_big_endian();
 
+
+	// Encrypted with :
 	// http://aes.online-domain-tools.com/   function=AES  mode=ECB (electronic codebook)
+
 
 	// key="1234567890123456"  value="string{decoder=decoder_aes}  val ;"
 	// value length = 35 (34 + zero end of string)
 	// decrypted length = 48 (3*16)
 	// So 13 padding bytes that must be read
+	interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "1234567890123456");
 	M_TEST_SIMPLE("1a	03	8c	23	70	bb	e8	59	d1	4f	d6	9e	b5	4d	f9	ad"
 				  "7c	bc	ca	75	d1	99	89	5d	0c	86	fa	8e	2f	35	63	0e"
                   "de	5d	db	de	5e	56	af	7c	15	82	cb	fa	5e	e4	11	ce",
@@ -4190,10 +4194,25 @@ void    test_interpret_simple_decoder_aes()
 				  "hide raw(13)                 padding16bytes ;",
 				  "val = string{decoder=decoder_aes}  val ;");
 
+
+	// key="abcdefghijklmnop"  value="string{decoder=decoder_aes}  val ;"
+	// value length = 35 (34 + zero end of string)
+	// decrypted length = 48 (3*16)
+	// So 13 padding bytes that must be read
+	interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "abcdefghijklmnop");
+	M_TEST_SIMPLE("dd	4f	b4	94	e3	03	43	b0	17	e1	eb	5c	c1	70	cb	2b"
+				  "68	57	7c	00	c6	4c	ad	18	e3	a3	2d	53	e1	9c	11	9e"
+				  "2f	b3	d3	f3	88	d8	f7	8d	03	56	af	15	c5	87	14	07",
+				  "string{decoder=decoder_aes}  val ;"
+				  "hide raw(13)                 padding16bytes ;",
+				  "val = string{decoder=decoder_aes}  val ;");
+
+
 	// key="1234567890123456"  file=favicon.ico
 	// file length = 822
 	// decrypted length = 832 (52*16)
 	// So 10 padding bytes that must be read
+	interpret_data.set_read_variable("decoder_aes_key", "1234567890123456");
 	M_TEST_SIMPLE("42	d5	77	d8	f4	75	18	12	7b	ab	7c	38	02	17	c2	fb"
 				  "32	8e	d0	74	b6	64	99	ab	c0	f7	92	da	f7	22	6d	bb"
 				  "c0	d0	66	2f	70	a8	9a	b6	8f	45	7e	b9	96	1f	7d	e1"

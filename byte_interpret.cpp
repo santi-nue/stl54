@@ -1315,10 +1315,20 @@ bool    decoder_aes (    const T_type_definitions      & type_definitions,
 		T_byte  bytes_in[16];
 		in_out_frame_data.read_n_bytes(sizeof (bytes_in), bytes_in);
 
-		// ICIOA key hard-coded !!!
+		// ICIOA key is string only !!!
+		const string  & key = interpret_data.get_str_value_of_read_variable("decoder_aes_key");
+
+		// Check key size
+		const int       key_size = key.length() * 8;
+		if ((key_size != 128) && (key_size != 192) && (key_size != 256))
+		{
+			M_FATAL_COMMENT("Bad decoder_aes_key=>" << key << "<, length should be 128, 192 or 256 bits");
+			return  false;
+		}
+
 		// ICIOA key is rebuild each 16 bytes !!!
 		rijndael_ctx   S_rijndael_ctx;
-		fdesc_rijndael_set_key(&S_rijndael_ctx, (const guchar*)"1234567890123456", 16 * 8);
+		fdesc_rijndael_set_key(&S_rijndael_ctx, (const guchar*)key.c_str(), key_size);
 
 		T_byte  bytes_out[16];
 		fdesc_rijndael_decrypt(&S_rijndael_ctx, bytes_in, bytes_out);
@@ -1864,6 +1874,8 @@ void    decode_data_bytes_until (
 
 		if (p_ending_char_1 != NULL)
 		{
+			// ICIOA ce test est incomplet.
+			// Comme un decodeur peut renvoyer plus de donnees que demande il faut tester tous les octets
 			if (decode_stream_frame.decoded_data[(decode_stream_frame.decoded_data_bit_size / 8) - 1] == *p_ending_char_1)
 			{
 				// Final character is found.
