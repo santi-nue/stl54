@@ -4479,6 +4479,45 @@ void    test_interpret_simple_decoder_aes()
 				  "val2 = 0x6e00 (28160)" K_eol
 				  "val3 = 0x0 (0)"
 				  );
+				  
+	// key="WqA&1XsZ~2CdE\"3VfR'4BgT(" (24 bytes)  value="string{decoder=decoder_aes}  val ;"
+	// value length = 35 (34 + zero end of string)
+	// decrypted length = 48 (3*16)
+	// So 13 padding bytes that must be read
+	interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "WqA&1XsZ~2CdE\"3VfR'4BgT(");
+	M_TEST_SIMPLE("2a	61	39	d6	12	4c	04	32	7e	d1	7b	a3	2e	f5	9e	ae"
+				  "02	c9	1e	9e	eb	1a	54	10	31	44	d1	21	b9	71	88	cb"
+				  "f0	c1	7d	61	46	75	7c	db	a7	c7	86	4d	ad	b5	9c	77",
+				  "string{decoder=decoder_aes}  val ;"
+				  "hide raw(13)                 padding16bytes ;",
+				  "val = string{decoder=decoder_aes}  val ;");
+
+	// key="WqA&1XsZ~2CdE\"3VfR'4BgT(5NhY-6,;" (32 bytes)  value="string{decoder=decoder_aes}  val ;"
+	// value length = 35 (34 + zero end of string)
+	// decrypted length = 48 (3*16)
+	// So 13 padding bytes that must be read
+	interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "WqA&1XsZ~2CdE\"3VfR'4BgT(5NhY-6,;");
+	M_TEST_SIMPLE("f8	68	ea	04	3b	d9	c2	f8	52	05	18	b7	2f	7c	6d	c9"
+				  "7c	ec	50	5a	4c	0e	91	74	c3	c6	82	cb	92	8d	c4	e7"
+				  "53	63	ee	9e	1f	b5	1b	57	80	38	3a	2d	60	ba	b6	0a",
+				  "string{decoder=decoder_aes}  val ;"
+				  "hide raw(13)                 padding16bytes ;",
+				  "val = string{decoder=decoder_aes}  val ;");
+
+#if 0
+	// Binary key : NOT implemented
+	// key="00010203040506778899AABBCCDDEEFF101112131415161718191A2B3C4D5E6F" (32 bytes)  value="string{decoder=decoder_aes}  val ;"
+	// value length = 35 (34 + zero end of string)
+	// decrypted length = 48 (3*16)
+	// So 13 padding bytes that must be read
+	interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "00010203040506778899AABBCCDDEEFF101112131415161718191A2B3C4D5E6F");
+	M_TEST_SIMPLE("9c	20	40	56	82	e5	ac	eb	3b	62	dd	39	81	c9	f0	70"
+				  "85	e7	b2	01	a0	42	33	e3	53	09	cb	c6	01	60	9d	45"
+				  "81	69	29	79	ff	19	3a	78	c9	79	9f	d3	0b	70	47	76",
+				  "string{decoder=decoder_aes}  val ;"
+				  "hide raw(13)                 padding16bytes ;",
+				  "val = string{decoder=decoder_aes}  val ;");
+#endif
 }
 
 //*****************************************************************************
