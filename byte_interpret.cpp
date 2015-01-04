@@ -1827,6 +1827,9 @@ void    decode_data_bytes_until (
 				   const char                   * p_ending_char_2)
 {
 	M_STATE_ENTER ("decode_data_bytes_until", interpret_data.get_decode_function());
+//	M_STATE_DEBUG("p_ending_char_x "
+//				       << (const void *)p_ending_char_1 << " and "
+//				       << (const void *)p_ending_char_2);
 
 	C_interpret_decode_in_progress  idip(interpret_data);
 
@@ -1868,25 +1871,41 @@ void    decode_data_bytes_until (
 		const long	decoded_bits = decode_stream_frame.decoded_data_bit_size - current_decoded_data_bit_size;
 		if (decoded_bits < 8)
 		{
-			M_FATAL_COMMENT("decoded_bits(" <<
-				decoded_bits << ") < 8");
+			M_FATAL_COMMENT("decoded_bits(" << decoded_bits << ") < 8");
 		}
 
-		if (p_ending_char_1 != NULL)
+		if ((p_ending_char_1 != NULL) || (p_ending_char_2 != NULL))
 		{
-			// ICIOA ce test est incomplet.
-			// Comme un decodeur peut renvoyer plus de donnees que demande il faut tester tous les octets
-			if (decode_stream_frame.decoded_data[(decode_stream_frame.decoded_data_bit_size / 8) - 1] == *p_ending_char_1)
+			const char  ending_char_1 = (p_ending_char_1 != NULL) ? *p_ending_char_1 : *p_ending_char_2;
+			const char  ending_char_2 = (p_ending_char_2 != NULL) ? *p_ending_char_2 : *p_ending_char_1;
+
+			// Because T_decode_stream_frame::synchronize() only manage reset,
+			//  the interesting data can start at offset != 0 and not %8
+
+			// Save the current position
+			const long  frame_data_current_bit_offset = decode_stream_frame.frame_data.get_bit_offset();
+
+			bool  is_final_character_found = false;
+			while (decode_stream_frame.frame_data.can_move_1_byte_forward() == true)
 			{
-				// Final character is found.
-				break;
+				const T_byte  decoded_byte = decode_stream_frame.frame_data.read_1_byte();
+//				M_STATE_DEBUG("Decoded byte " << (int)decoded_byte << " 0x" << hex << (int)decoded_byte);
+
+				if ((decoded_byte == ending_char_1) ||
+					(decoded_byte == ending_char_2))
+				{
+					is_final_character_found = true;
+//					M_STATE_DEBUG("found");
+					break;
+				}
 			}
-		}
-		if (p_ending_char_2 != NULL)
-		{
-			if (decode_stream_frame.decoded_data[(decode_stream_frame.decoded_data_bit_size / 8) - 1] == *p_ending_char_2)
+
+			// Restore the current position
+			decode_stream_frame.frame_data.set_bit_offset(frame_data_current_bit_offset);
+
+			if (is_final_character_found == true)
 			{
-				// Final character is found.
+//				M_STATE_DEBUG("found so break");
 				break;
 			}
 		}

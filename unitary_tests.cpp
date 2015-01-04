@@ -4515,7 +4515,6 @@ void    test_interpret_simple_decoder_base64()
 	M_TEST_SIMPLE("56334E6E5A41413D", "stringBase64     val  ;", "val = Wsgd");
 
 
-	set_debug(true);
 	// Test complement not preceded by A (zero)
 	// 56334E6E 57673D3D --> V3Nn Wg== --> 0x 57 73 67  5A --> "WsgZ" (if it is a string)
 	M_TEST_SIMPLE("56334E6E57673D3D", "stringBase64(4)  val  ;", "val = WsgZ");
@@ -4695,6 +4694,23 @@ void    test_interpret_simple_internal_frame()
 				  "val2 = ERSTS" K_eol
 				  "end = 14" K_eol
 				  "end2 = 0x123456 (1193046)");
+
+	// string unknow size at bit position, with :
+	// - zero (end of string) not at the end of a 4 bytes block
+	// - decoder changed just after the block containing the zero
+	//   --> following block must NOT be read by initial decoder
+	M_TEST_SIMPLE("94 74 d4 b2  55 04 50 25  30 45 35 25",  // b2 d4 74 94   25 50 04 55  decoder nil  30 45 35 25
+				  "uint4  begin; string  val1 ; uint4  end; uint8{d=hex}  end2; decoder nil; uint8{d=hex}[4]  not_inverted;",
+				  "begin = 11" K_eol
+				  "val1 = -GIBU" K_eol
+				  "end = 4" K_eol
+				  "end2 = 0x55 (85)" K_eol
+				  "not_inverted[0] = 0x30 (48)" K_eol
+				  "not_inverted[1] = 0x45 (69)" K_eol
+				  "not_inverted[2] = 0x35 (53)" K_eol
+				  "not_inverted[3] = 0x25 (37)");
+	M_TEST_EQ(interpret_data.get_decode_function(), "");
+	interpret_data.set_decode_function("decode_invert_4_bytes");  // must set again the decoder (set to nil in previous test)
 
 	// raw fixed size
 	M_TEST_SIMPLE("4249472d 52455155 45535453",
