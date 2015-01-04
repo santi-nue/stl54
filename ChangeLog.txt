@@ -1,6 +1,6 @@
 
 2015/01/04  Fix : too much decoding with decoder which add more data and string not fixed size
-2015/01/03  Add : built-in decoder  decoder_aes    beta, use ascii string variable key 
+2015/01/03  Add : built-in decoder  decoder_aes    beta, use ascii string variable key "decoder_aes_key"
 2014/12/29  Add : built-in decoder  decoder_base64
 2014/12/25  Add : built-in decoders decoder_utf8, decoder_utf16le & decoder_utf16be
 2014/12/13  Prf : global data avoid save message data when this_msg is not used
