@@ -4559,6 +4559,19 @@ void    test_interpret_simple_decoder_base64()
 	M_TEST_SIMPLE("56334E6E57673D3D", "stringBase64(4)  val  ;", "val = WsgZ");
 	// 56334E6E 5A466F3D --> V3Nn ZFo= --> 0x 57 73 67  64 5A --> "WsgdZ" (if it is a string)
 	M_TEST_SIMPLE("56334E6E5A466F3D", "stringBase64(5)  val  ;", "val = WsgdZ");
+
+
+	// Complement = not at the end.
+	// Not a valid syntax.
+	// Behavior NOT guaranteed.
+	// 56334E6E 57673D3D 56334E6E 5A466F3D --> V3Nn Wg== V3Nn ZFo= --> 0x 57 73 67  5A  57 73 67  64 5A--> "WsgZWsgZ"
+	M_TEST_SIMPLE("56334E6E57673D3D56334E6E5A466F3D", "stringBase64(9)  val  ;", "val = WsgZWsgdZ");
+	M_TEST_SIMPLE("56334E6E57673D3D56334E6E5A466F3D", "stringBase64     val  ;", "val = WsgZWsgdZ");
+
+	// Idem previous + space, \t, \n, \r
+	// These characters are ignored.
+	// 562033094E0A6E 570D673D3D 56334E6E 5A466F3D --> V 3\tN\nn W\rg== V3Nn ZFo= --> 0x 57 73 67  5A  57 73 67  64 5A--> "WsgZWsgZ"
+	M_TEST_SIMPLE("562033094E0A6E570D673D3D56334E6E5A466F3D", "stringBase64     val  ;", "val = WsgZWsgdZ");
 }
 
 //*****************************************************************************

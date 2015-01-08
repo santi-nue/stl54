@@ -1380,9 +1380,29 @@ T_byte  convert_base64(T_byte  byte_encoded)
 }
 
 //*****************************************************************************
-// decoder_base64 *************************************************************
+// decoder_base64_read_byte ***************************************************
+//*****************************************************************************
+// Read 1 byte, ignore all space, \t, \n, \r
 //*****************************************************************************
 
+T_byte  decoder_base64_read_byte(T_frame_data            & in_out_frame_data)
+{
+	T_byte  byte_encoded;
+
+	do
+	{
+		byte_encoded = in_out_frame_data.read_1_byte();
+	} while ((byte_encoded == ' ') ||
+		     (byte_encoded == '\t') ||
+		     (byte_encoded == '\n') ||
+		     (byte_encoded == '\r'));
+
+	return  byte_encoded;
+}
+
+//*****************************************************************************
+// decoder_base64 *************************************************************
+//*****************************************************************************
 bool    decoder_base64 ( const T_type_definitions      & type_definitions,
 					           T_frame_data            & in_out_frame_data,
 					           T_interpret_data        & interpret_data,
@@ -1403,10 +1423,10 @@ bool    decoder_base64 ( const T_type_definitions      & type_definitions,
 	while (nb_of_bits_needed > 0)
 	{
 		// Always read 4 characters 
-		T_byte  byte_encoded1 = in_out_frame_data.read_1_byte();
-		T_byte  byte_encoded2 = in_out_frame_data.read_1_byte();
-		T_byte  byte_encoded3 = in_out_frame_data.read_1_byte();
-		T_byte  byte_encoded4 = in_out_frame_data.read_1_byte();
+		T_byte  byte_encoded1 = decoder_base64_read_byte(in_out_frame_data);
+		T_byte  byte_encoded2 = decoder_base64_read_byte(in_out_frame_data);
+		T_byte  byte_encoded3 = decoder_base64_read_byte(in_out_frame_data);
+		T_byte  byte_encoded4 = decoder_base64_read_byte(in_out_frame_data);
 
 		// Copy 6 bit data into frame.
 		decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded1), 6);
