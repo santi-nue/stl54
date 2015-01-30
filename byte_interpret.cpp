@@ -1747,6 +1747,12 @@ bool    frame_to_function_base_decoder (
 									   data_simple_name,
 									   os_out,
 									   os_err);
+
+			// Must call interpret_data.sup_all_read_variables_after(last_data_id);
+			//  like in frame_to_function_base.
+			// But current built-in decoders do NOT create variable.
+			// They use normal c variable.
+			// If they create variable, perhaps they want to keep them after the end of the function. 
 		}
 	}
 
