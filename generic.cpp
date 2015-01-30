@@ -807,9 +807,12 @@ void    register_fields(T_generic_protocol_data  & protocol_data)
   // pseudo field to do a coloring rule or a display filter on it
   // I do not know how to code a coloring rule.
   // -> must do it manually at this time.
-  M_FATAL_IF_NE(field_idx, K_ERROR_WSGD_FIELD_IDX);
-  register_fields_add_field_none(protocol_data, field_idx, "error_in_packet", "error_in_packet", "error_in_packet");
-  ++field_idx;
+  if (K_ERROR_WSGD_FIELD_IDX != K_ANY_WSGD_FIELD_IDX)
+  {
+    M_FATAL_IF_NE(field_idx, K_ERROR_WSGD_FIELD_IDX);
+    register_fields_add_field_none(protocol_data, field_idx, "error_in_packet", "error_in_packet", "error_in_packet");
+    ++field_idx;
+  }
 
   {
     T_map_struct_definition  & map_struct_definition = type_definitions.map_struct_definition;
