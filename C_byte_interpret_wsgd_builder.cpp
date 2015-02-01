@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,10 +32,118 @@
 
 
 /******************************************************************************
- * subdissector
+ * dissector_try_heuristic
+ * return a gboolean !
+ *****************************************************************************/
+int     dissector_try_heuristic(  T_generic_protocol_data  & protocol_data,
+								  tvbuff_t                 * next_tvb,
+								  packet_info              * pinfo,
+								  proto_tree               * tree,
+							const int                        bit_length_of_subdissector_data)
+{
+    T_generic_protocol_subdissector_data  & subdissector_data = protocol_data.ws_data.subdissector_data;
+
+	/* do lookup with the heuristic subdissector table */
+#if WIRESHARK_VERSION_NUMBER >= 11200
+    heur_dtbl_entry_t *hdtbl_entry = NULL;
+    const int  dissector_result = dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, &hdtbl_entry, NULL);
+#elif WIRESHARK_VERSION_NUMBER >= 11000
+    const int  dissector_result = dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, NULL);
+#else
+    const int  dissector_result = dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree);
+#endif
+
+	return  dissector_result;
+}
+
+/******************************************************************************
+ * dissector_try_string_return_size
+ * return  new dissector : size affectively dissected
+ * return  old dissector : tvb size
+ *****************************************************************************/
+int   dissector_try_string_return_size(dissector_table_t   sub_dissectors,
+                                 const gchar              *string,
+								       tvbuff_t           *tvb,
+									   packet_info        *pinfo,
+									   proto_tree         *tree)
+{
+    int  dissector_result = 0;    // means nothing done (dissector not found)
+
+	dissector_handle_t  dissector_handle = dissector_get_string_handle(sub_dissectors, string);
+	if (dissector_handle != NULL)
+	{
+	    dissector_result = call_dissector(dissector_handle, tvb, pinfo, tree);
+	}
+
+	return  dissector_result;
+}
+
+/******************************************************************************
+ * dissector_try_uint_return_size
+ * return  new dissector : size affectively dissected
+ * return  old dissector : tvb size
+ *****************************************************************************/
+int     dissector_try_uint_return_size(dissector_table_t   sub_dissectors,
+                                 const guint32             uint_val,
+								       tvbuff_t           *tvb,
+									   packet_info        *pinfo,
+									   proto_tree         *tree)
+{
+    int  dissector_result = 0;    // means nothing done (dissector not found)
+#if 1
+	dissector_handle_t  dissector_handle = dissector_get_uint_handle(sub_dissectors, uint_val);
+	if (dissector_handle != NULL)
+	{
+	    dissector_result = call_dissector(dissector_handle, tvb, pinfo, tree);
+	}
+
+	return  dissector_result;
+#else
+	int   result = dissector_try_uint(sub_dissectors, uint_val, tvb, pinfo, tree);
+	return  result;
+#endif
+}
+
+/******************************************************************************
+ * dissector_try_value
+ * return  new dissector : size affectively dissected
+ * return  old dissector : tvb size
+ *****************************************************************************/
+int     dissector_try_value(      T_generic_protocol_data  & protocol_data,
+								  tvbuff_t                 * next_tvb,
+								  packet_info              * pinfo,
+								  proto_tree               * tree,
+							const int                        bit_length_of_subdissector_data,
+							const C_value                  * P_value)
+{
+  int  dissector_result = 0;    // means nothing done (no value or dissector not found)
+
+  if (P_value != NULL)
+  {
+    M_STATE_DEBUG ("subdissector try *P_value_x=" << P_value->as_string());
+    T_generic_protocol_subdissector_data  & subdissector_data = protocol_data.ws_data.subdissector_data;
+	if (protocol_data.SUBPROTO_SUBFIELD_TYPE_WS == FT_STRING)
+	{
+      dissector_result = dissector_try_string_return_size(subdissector_data.dissector_table, P_value->get_str().c_str(), next_tvb, pinfo, tree);
+	}
+	else
+	{
+      dissector_result = dissector_try_uint_return_size(subdissector_data.dissector_table, P_value->get_int(), next_tvb, pinfo, tree);
+	}
+  }
+
+  return  dissector_result;
+}
+
+/******************************************************************************
+ * call_subdissector_or_data2
+ * return        new dissector : size affectively dissected
+ * return        old dissector : tvb size
+ * return  heuristic dissector : false/true
+ * So you must NOT rely on this return value
  *****************************************************************************/
 
-void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
+int     call_subdissector_or_data2(T_generic_protocol_data  & protocol_data,
 						    const dissector_handle_t         dissector_to_call_handle,
 								  tvbuff_t                 * tvb,
 							const int                        bit_offset,
@@ -84,104 +192,86 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
 
   if (dissector_to_call_handle != NULL)
   {
-	  call_dissector(dissector_to_call_handle, next_tvb, pinfo, tree);
-      return;
+	  return  call_dissector(dissector_to_call_handle, next_tvb, pinfo, tree);
   }
 
-#if WIRESHARK_VERSION_NUMBER >= 11200
-  heur_dtbl_entry_t *hdtbl_entry;
-#endif
-  
-  if (subdissector_data.try_heuristic_first) {
+  if (subdissector_data.try_heuristic_first)
+  {
+    M_STATE_DEBUG ("subdissector try heuristic first");
+    const int  dissector_result = dissector_try_heuristic(protocol_data, next_tvb,  pinfo, tree, bit_length_of_subdissector_data);
+    if (dissector_result != 0)
+      return  dissector_result;
+  }
+
+  {
+    const int  dissector_result = dissector_try_value(protocol_data, next_tvb,  pinfo, tree, bit_length_of_subdissector_data, P_value_1);
+    if (dissector_result != 0)
+      return  dissector_result;
+  }
+  {
+    const int  dissector_result = dissector_try_value(protocol_data, next_tvb,  pinfo, tree, bit_length_of_subdissector_data, P_value_2);
+    if (dissector_result != 0)
+      return  dissector_result;
+  }
+  {
+    const int  dissector_result = dissector_try_value(protocol_data, next_tvb,  pinfo, tree, bit_length_of_subdissector_data, P_value_3);
+    if (dissector_result != 0)
+      return  dissector_result;
+  }
+
+  if (!subdissector_data.try_heuristic_first)
+  {
     M_STATE_DEBUG ("subdissector try heuristic");
-    /* do lookup with the heuristic subdissector table */
-#if WIRESHARK_VERSION_NUMBER >= 11200
-    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, &hdtbl_entry, NULL))
-#elif WIRESHARK_VERSION_NUMBER >= 11000
-    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, NULL))
-#else
-    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree))
-#endif
-      return;
-  }
-
-  /* Do lookups with the subdissector table. */
-
-  if (P_value_1 != NULL)
-  {
-    M_STATE_DEBUG ("subdissector try *P_value_1=" << P_value_1->as_string());
-	if (protocol_data.SUBPROTO_SUBFIELD_TYPE_WS == FT_STRING)
-	{
-#if WIRESHARK_VERSION_NUMBER >= 11200
-      if (dissector_try_string(subdissector_data.dissector_table, P_value_1->get_str().c_str(), next_tvb, pinfo, tree, NULL))
-#else
-      if (dissector_try_string(subdissector_data.dissector_table, P_value_1->get_str().c_str(), next_tvb, pinfo, tree))
-#endif
-        return;
-	}
-	else
-	{
-      if (dissector_try_uint(subdissector_data.dissector_table, P_value_1->get_int(), next_tvb, pinfo, tree))
-        return;
-	}
-  }
-
-  if (P_value_2 != NULL)
-  {
-    M_STATE_DEBUG ("subdissector try *P_value_2=" << P_value_2->as_string());
-	if (protocol_data.SUBPROTO_SUBFIELD_TYPE_WS == FT_STRING)
-	{
-#if WIRESHARK_VERSION_NUMBER >= 11200
-      if (dissector_try_string(subdissector_data.dissector_table, P_value_2->get_str().c_str(), next_tvb, pinfo, tree, NULL))
-#else
-      if (dissector_try_string(subdissector_data.dissector_table, P_value_2->get_str().c_str(), next_tvb, pinfo, tree))
-#endif
-        return;
-	}
-	else
-	{
-      if (dissector_try_uint(subdissector_data.dissector_table, P_value_2->get_int(), next_tvb, pinfo, tree))
-        return;
-	}
-  }
-
-  if (P_value_3 != NULL)
-  {
-    M_STATE_DEBUG ("subdissector try *P_value_3=" << P_value_3->as_string());
-	if (protocol_data.SUBPROTO_SUBFIELD_TYPE_WS == FT_STRING)
-	{
-#if WIRESHARK_VERSION_NUMBER >= 11200
-      if (dissector_try_string(subdissector_data.dissector_table, P_value_3->get_str().c_str(), next_tvb, pinfo, tree, NULL))
-#else
-      if (dissector_try_string(subdissector_data.dissector_table, P_value_3->get_str().c_str(), next_tvb, pinfo, tree))
-#endif
-        return;
-	}
-	else
-	{
-      if (dissector_try_uint(subdissector_data.dissector_table, P_value_3->get_int(), next_tvb, pinfo, tree))
-        return;
-	}
-  }
-
-  if (!subdissector_data.try_heuristic_first) {
-    M_STATE_DEBUG ("subdissector try heuristic");
-    /* do lookup with the heuristic subdissector table */
-#if WIRESHARK_VERSION_NUMBER >= 11200
-    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, &hdtbl_entry, NULL))
-#elif WIRESHARK_VERSION_NUMBER >= 11000
-    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, NULL))
-#else
-    if (dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree))
-#endif
-      return;
+    const int  dissector_result = dissector_try_heuristic(protocol_data, next_tvb,  pinfo, tree, bit_length_of_subdissector_data);
+    if (dissector_result != 0)
+      return  dissector_result;
   }
 
   M_STATE_DEBUG ("subdissector not found ?");
 
-  call_dissector(T_generic_protocol_subdissector_data::data_handle, next_tvb, pinfo, tree);
+  return  call_dissector(T_generic_protocol_subdissector_data::data_handle, next_tvb, pinfo, tree);
 }
 
+/******************************************************************************
+ * call_subdissector_or_data
+ *****************************************************************************/
+
+void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
+						    const dissector_handle_t         dissector_to_call_handle,
+								  tvbuff_t                 * tvb,
+							const int                        bit_offset,
+								  packet_info              * pinfo,
+								  proto_tree               * tree,
+							const int                        bit_length_of_subdissector_data,
+							const C_value                  * P_value_1,
+							const C_value                  * P_value_2,
+							const C_value                  * P_value_3)
+{
+	// Do not rely on return value of call_subdissector_or_data2, see its comment
+
+	const int     desegment_offset_prev = pinfo->desegment_offset;
+	const guint32 desegment_len_prev    = pinfo->desegment_len;
+	const int     dissector_result =
+		call_subdissector_or_data2(protocol_data,
+									 dissector_to_call_handle,
+									 tvb,
+									 bit_offset,
+									 pinfo,
+									 tree,
+									 bit_length_of_subdissector_data,
+									 P_value_1,
+									 P_value_2,
+									 P_value_3);
+	const int     desegment_offset = pinfo->desegment_offset;
+	const guint32 desegment_len    = pinfo->desegment_len;
+
+	M_STATE_DEBUG("result=" << dissector_result <<
+		          "  offset=" << desegment_offset << " (was " << desegment_offset_prev << ")" <<
+		          "  len=" << desegment_len << " (was " << desegment_len_prev << ")"
+				  );
+
+	return;
+}
 
 //*****************************************************************************
 // C_byte_interpret_wsgd_builder
