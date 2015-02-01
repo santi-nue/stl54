@@ -36,7 +36,7 @@ using namespace std;
 
 struct T_decode_stream_frame
 {
-	T_byte           decoded_data[10000];       // ICIOA hard coded magic number
+	T_byte           decoded_data[10000];       // ICIOA hard coded magic number, 1000000 NOT ok for ...shark
 	int              decoded_data_bit_size;
 	T_frame_data     frame_data;
 
