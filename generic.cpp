@@ -2431,7 +2431,8 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 										   os,
 										   interpret_data);
 
-    proto_item_set_len(proto_item, length_raw_data - in_out_sizeof_bytes - sizeof_bytes_NOT_given_to_interpretor);
+    const int   proto_item_len = length_raw_data - in_out_sizeof_bytes - sizeof_bytes_NOT_given_to_interpretor;
+    proto_item_set_len(proto_item, proto_item_len);
 
 	// Global data and Tap.
 	if (result == true)
@@ -2517,7 +2518,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 		interpret_data.msg_is_ended();
 	}
 
-	return  length_raw_data - sizeof_bytes_NOT_given_to_interpretor;
+	return  proto_item_len;
   }
 
   M_FATAL_COMMENT("Bug in the software");
@@ -2672,8 +2673,14 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
   } while (true);
 
 
-//  return  offset_where_dissection_stops;    // tshark 1.12.0 rc2 crash 
-  return tvb_length(tvb);
+
+  if ((pinfo->desegment_len != 0) && (offset_where_dissection_stops == 0))
+  {
+	  // to avoid tshark 1.12.0 rc2 crash (rejects return 0 when desegment asked)
+//	  return tvb_length(tvb);
+	  return  1;
+  }
+  return  offset_where_dissection_stops;
 }
 
 //*****************************************************************************
