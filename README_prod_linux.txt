@@ -1,6 +1,6 @@
 
 1) you need to have a wireshark tree
-- Download wireshark source files (with svn or ...)
+- Download wireshark source files (with git or ...)
 - Generate wireshark following instructions ... (look at Makefile.Linux....)
 
 2) Put this directory into <wireshark src dir>/plugins
