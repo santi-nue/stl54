@@ -77,6 +77,8 @@ public:
 		:C_byte_interpret_exception(M_WHERE, E_byte_interpret_exception_fatal, "NOT initialized exception explanation")
 	{
 	}
+
+	~C_byte_interpret_exception_normal() throw() { }
 };
 
 class C_byte_interpret_exception_loop : public C_byte_interpret_exception_normal
@@ -94,6 +96,8 @@ public:
 		:C_byte_interpret_exception_normal(M_WHERE, E_byte_interpret_exception_fatal, "NOT initialized exception explanation")
 	{
 	}
+
+	~C_byte_interpret_exception_loop() throw() { }
 };
 
 class C_byte_interpret_exception_return : public C_byte_interpret_exception_normal
@@ -124,6 +128,8 @@ public:
 		 is_returned_value_set(false)
 	{
 	}
+
+	~C_byte_interpret_exception_return() throw() { }
 
 	bool       is_returned_value_set;
 	C_value    returned_value;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +46,7 @@ C_byte_interpret_exception::C_byte_interpret_exception(
 }
 
 const char*
-C_byte_interpret_exception::what() const
+C_byte_interpret_exception::what() const throw()
 {
 	return  A_explanation.c_str();
 }

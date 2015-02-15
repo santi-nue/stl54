@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -114,9 +114,10 @@ public:
 							   int                           file_line,
 							   E_byte_interpret_exception    bie,
                          const std::string                 & str);
+	~C_byte_interpret_exception() throw() { }
 
 	// override
-	virtual const char* what() const;
+	virtual const char* what() const throw();
 	
 	E_byte_interpret_exception    get_cause() const          { return  A_bie; }
 	const std::string             get_explanation() const;
