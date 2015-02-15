@@ -764,9 +764,9 @@ C_value    printf_args_to_string (const T_type_definitions  & type_definitions,
 
 bool    read_data_bits (      T_frame_data  & in_out_frame_data,
                          void          * P_value_param,
-                   const char          * TYPE_NAME,
+                   const char          * UNUSED(TYPE_NAME),
                    const size_t          TYPE_BIT_SIZE,
-                   const char          * TYPE_IMPL_STR,
+                   const char          * UNUSED(TYPE_IMPL_STR),
                    const size_t          TYPE_IMPL_BIT_SIZE,
 				   const bool            must_invert_bytes,
 				   const bool            is_signed_integer)
@@ -1058,7 +1058,7 @@ void    frame_append_data(T_decode_stream_frame  * P_decode_stream_frame,
 bool    frame_append_data (const T_type_definitions    & type_definitions,
 					           T_frame_data            & in_out_frame_data,
 					           T_interpret_data        & interpret_data,
-                         const T_function_definition   & fct_def,
+                         const T_function_definition   & UNUSED(fct_def),
 						 const T_field_type_name       & field_type_name,
                          const string                  & data_name,
                          const string                  & data_simple_name,
@@ -1125,7 +1125,7 @@ bool    frame_append_data_array (
 						 const T_type_definitions      & type_definitions,
 					           T_frame_data            & in_out_frame_data,
 					           T_interpret_data        & interpret_data,
-                         const T_function_definition   & fct_def,
+                         const T_function_definition   & UNUSED(fct_def),
 						 const T_field_type_name       & field_type_name,
                          const string                  & data_name,
                          const string                  & data_simple_name,
@@ -1220,7 +1220,7 @@ bool    frame_append_hexa_data (
 						 const T_type_definitions      & type_definitions,
 					           T_frame_data            & in_out_frame_data,
 					           T_interpret_data        & interpret_data,
-                         const T_function_definition   & fct_def,
+                         const T_function_definition   & UNUSED(fct_def),
 						 const T_field_type_name       & field_type_name,
                          const string                  & data_name,
                          const string                  & data_simple_name,
@@ -1294,18 +1294,18 @@ extern "C"
 // NOT multi-thread, NOT reentrant, NOT multi dissectors 
 //static rijndael_ctx   S_rijndael_ctx;
 
-bool    decoder_aes (    const T_type_definitions      & type_definitions,
+bool    decoder_aes (    const T_type_definitions      & UNUSED(type_definitions),
 					           T_frame_data            & in_out_frame_data,
 					           T_interpret_data        & interpret_data,
 							   T_decode_stream_frame   & decode_stream_frame,
 							   long long                 nb_of_bits_needed,
-                         const string                  & decode_function_name,
-                         const T_function_definition   & fct_def,
-						 const vector<T_expression>    & fct_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err)
+                         const string                  & UNUSED(decode_function_name),
+                         const T_function_definition   & UNUSED(fct_def),
+						 const vector<T_expression>    & UNUSED(fct_parameters),
+                         const string                  & UNUSED(data_name),
+                         const string                  & UNUSED(data_simple_name),
+                               ostream                 & UNUSED(os_out),
+                               ostream                 & UNUSED(os_err))
 {
 	M_STATE_ENTER ("decoder_aes", nb_of_bits_needed);
 
@@ -1403,18 +1403,18 @@ T_byte  decoder_base64_read_byte(T_frame_data            & in_out_frame_data)
 //*****************************************************************************
 // decoder_base64 *************************************************************
 //*****************************************************************************
-bool    decoder_base64 ( const T_type_definitions      & type_definitions,
+bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions),
 					           T_frame_data            & in_out_frame_data,
-					           T_interpret_data        & interpret_data,
+					           T_interpret_data        & UNUSED(interpret_data),
 							   T_decode_stream_frame   & decode_stream_frame,
 							   long long                 nb_of_bits_needed_ll,
-                         const string                  & decode_function_name,
-                         const T_function_definition   & fct_def,
-						 const vector<T_expression>    & fct_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err)
+                         const string                  & UNUSED(decode_function_name),
+                         const T_function_definition   & UNUSED(fct_def),
+						 const vector<T_expression>    & UNUSED(fct_parameters),
+                         const string                  & UNUSED(data_name),
+                         const string                  & UNUSED(data_simple_name),
+                               ostream                 & UNUSED(os_out),
+                               ostream                 & UNUSED(os_err))
 {
 	M_STATE_ENTER ("decoder_base64", nb_of_bits_needed_ll);
 
@@ -1480,18 +1480,18 @@ bool    decoder_base64 ( const T_type_definitions      & type_definitions,
 // decoder_utf16be ************************************************************
 //*****************************************************************************
 
-bool    decoder_utf16be (const T_type_definitions      & type_definitions,
+bool    decoder_utf16be (const T_type_definitions      & UNUSED(type_definitions),
 					           T_frame_data            & in_out_frame_data,
-					           T_interpret_data        & interpret_data,
+					           T_interpret_data        & UNUSED(interpret_data),
 							   T_decode_stream_frame   & decode_stream_frame,
 							   long long                 nb_of_bits_needed,
-                         const string                  & decode_function_name,
-                         const T_function_definition   & fct_def,
-						 const vector<T_expression>    & fct_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err)
+                         const string                  & UNUSED(decode_function_name),
+                         const T_function_definition   & UNUSED(fct_def),
+						 const vector<T_expression>    & UNUSED(fct_parameters),
+                         const string                  & UNUSED(data_name),
+                         const string                  & UNUSED(data_simple_name),
+                               ostream                 & UNUSED(os_out),
+                               ostream                 & UNUSED(os_err))
 {
 	M_STATE_ENTER ("decoder_utf16be", nb_of_bits_needed);
 
@@ -1530,18 +1530,18 @@ bool    decoder_utf16be (const T_type_definitions      & type_definitions,
 // decoder_utf16le ************************************************************
 //*****************************************************************************
 
-bool    decoder_utf16le (const T_type_definitions      & type_definitions,
+bool    decoder_utf16le (const T_type_definitions      & UNUSED(type_definitions),
 					           T_frame_data            & in_out_frame_data,
-					           T_interpret_data        & interpret_data,
+					           T_interpret_data        & UNUSED(interpret_data),
 							   T_decode_stream_frame   & decode_stream_frame,
 							   long long                 nb_of_bits_needed,
-                         const string                  & decode_function_name,
-                         const T_function_definition   & fct_def,
-						 const vector<T_expression>    & fct_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err)
+                         const string                  & UNUSED(decode_function_name),
+                         const T_function_definition   & UNUSED(fct_def),
+						 const vector<T_expression>    & UNUSED(fct_parameters),
+                         const string                  & UNUSED(data_name),
+                         const string                  & UNUSED(data_simple_name),
+                               ostream                 & UNUSED(os_out),
+                               ostream                 & UNUSED(os_err))
 {
 	M_STATE_ENTER ("decoder_utf16le", nb_of_bits_needed);
 
@@ -1579,18 +1579,18 @@ bool    decoder_utf16le (const T_type_definitions      & type_definitions,
 // decoder_utf8 ***************************************************************
 //*****************************************************************************
 
-bool    decoder_utf8 (   const T_type_definitions      & type_definitions,
+bool    decoder_utf8 (   const T_type_definitions      & UNUSED(type_definitions),
 					           T_frame_data            & in_out_frame_data,
-					           T_interpret_data        & interpret_data,
+					           T_interpret_data        & UNUSED(interpret_data),
 							   T_decode_stream_frame   & decode_stream_frame,
 							   long long                 nb_of_bits_needed,
-                         const string                  & decode_function_name,
-                         const T_function_definition   & fct_def,
-						 const vector<T_expression>    & fct_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err)
+                         const string                  & UNUSED(decode_function_name),
+                         const T_function_definition   & UNUSED(fct_def),
+						 const vector<T_expression>    & UNUSED(fct_parameters),
+                         const string                  & UNUSED(data_name),
+                         const string                  & UNUSED(data_simple_name),
+                               ostream                 & UNUSED(os_out),
+                               ostream                 & UNUSED(os_err))
 {
 	M_STATE_ENTER ("decoder_utf8", nb_of_bits_needed);
 
@@ -1779,13 +1779,13 @@ void    decode_data_size (
 				   const T_type_definitions     & type_definitions,
 					     T_frame_data           & in_out_frame_data,
 						 T_interpret_data       & interpret_data,
-				   const T_field_type_name      & field_type_name,
+				   const T_field_type_name      & UNUSED(field_type_name),
 				   const string                 & data_name,
 				   const string                 & data_simple_name,
                          ostream                & os_out,
                          ostream                & os_err,
                          T_decode_stream_frame  & decode_stream_frame,
-                   const char                   * TYPE_NAME,
+                   const char                   * UNUSED(TYPE_NAME),
                    const int                      TYPE_BIT_SIZE)  // could be decorelated of TYPE_NAME
 {
 	M_STATE_ENTER ("decode_data_size", interpret_data.get_decode_function() << " " << TYPE_BIT_SIZE);
@@ -1842,13 +1842,13 @@ void    decode_data_bytes_until (
 				   const T_type_definitions     & type_definitions,
 					     T_frame_data           & in_out_frame_data,
 						 T_interpret_data       & interpret_data,
-				   const T_field_type_name      & field_type_name,
+				   const T_field_type_name      & UNUSED(field_type_name),
 				   const string                 & data_name,
 				   const string                 & data_simple_name,
                          ostream                & os_out,
                          ostream                & os_err,
                          T_decode_stream_frame  & decode_stream_frame,
-                   const char                   * TYPE_NAME,
+                   const char                   * UNUSED(TYPE_NAME),
                    const char                   * p_ending_char_1,
 				   const char                   * p_ending_char_2)
 {
@@ -2081,14 +2081,14 @@ void    build_types_finalize_itself(const T_type_definitions  & type_definitions
 //*****************************************************************************
 
 bool    frame_to_field_deep_break(
-						 const T_type_definitions    & type_definitions,
-					           T_frame_data          & in_out_frame_data,
-					           T_interpret_data      & interpret_data,
-                         const T_field_type_name     & field_type_name,
-                         const string                & data_name,
-                         const string                & data_simple_name,
-                               ostream               & os_out,
-                               ostream               & os_err)
+						 const T_type_definitions    & UNUSED(type_definitions),
+					           T_frame_data          & UNUSED(in_out_frame_data),
+					           T_interpret_data      & UNUSED(interpret_data),
+                         const T_field_type_name     & UNUSED(field_type_name),
+                         const string                & UNUSED(data_name),
+                         const string                & UNUSED(data_simple_name),
+                               ostream               & UNUSED(os_out),
+                               ostream               & UNUSED(os_err))
 {
 	M_STATE_ENTER ("frame_to_field_deep_break", "");
 
@@ -2102,14 +2102,14 @@ bool    frame_to_field_deep_break(
 //*****************************************************************************
 
 bool    frame_to_field_deep_continue(
-						 const T_type_definitions    & type_definitions,
-					           T_frame_data          & in_out_frame_data,
-					           T_interpret_data      & interpret_data,
-                         const T_field_type_name     & field_type_name,
-                         const string                & data_name,
-                         const string                & data_simple_name,
-                               ostream               & os_out,
-                               ostream               & os_err)
+						 const T_type_definitions    & UNUSED(type_definitions),
+					           T_frame_data          & UNUSED(in_out_frame_data),
+					           T_interpret_data      & UNUSED(interpret_data),
+                         const T_field_type_name     & UNUSED(field_type_name),
+                         const string                & UNUSED(data_name),
+                         const string                & UNUSED(data_simple_name),
+                               ostream               & UNUSED(os_out),
+                               ostream               & UNUSED(os_err))
 {
 	M_STATE_ENTER ("frame_to_field_deep_continue", "");
 
@@ -2123,14 +2123,14 @@ bool    frame_to_field_deep_continue(
 //*****************************************************************************
 
 bool    frame_to_field_break(
-						 const T_type_definitions    & type_definitions,
-					           T_frame_data          & in_out_frame_data,
-					           T_interpret_data      & interpret_data,
-                         const T_field_type_name     & field_type_name,
-                         const string                & data_name,
-                         const string                & data_simple_name,
-                               ostream               & os_out,
-                               ostream               & os_err)
+						 const T_type_definitions    & UNUSED(type_definitions),
+					           T_frame_data          & UNUSED(in_out_frame_data),
+					           T_interpret_data      & UNUSED(interpret_data),
+                         const T_field_type_name     & UNUSED(field_type_name),
+                         const string                & UNUSED(data_name),
+                         const string                & UNUSED(data_simple_name),
+                               ostream               & UNUSED(os_out),
+                               ostream               & UNUSED(os_err))
 {
 	M_STATE_ENTER ("frame_to_field_break", "");
 
@@ -2144,14 +2144,14 @@ bool    frame_to_field_break(
 //*****************************************************************************
 
 bool    frame_to_field_continue(
-						 const T_type_definitions    & type_definitions,
-					           T_frame_data          & in_out_frame_data,
-					           T_interpret_data      & interpret_data,
-                         const T_field_type_name     & field_type_name,
-                         const string                & data_name,
-                         const string                & data_simple_name,
-                               ostream               & os_out,
-                               ostream               & os_err)
+						 const T_type_definitions    & UNUSED(type_definitions),
+					           T_frame_data          & UNUSED(in_out_frame_data),
+					           T_interpret_data      & UNUSED(interpret_data),
+                         const T_field_type_name     & UNUSED(field_type_name),
+                         const string                & UNUSED(data_name),
+                         const string                & UNUSED(data_simple_name),
+                               ostream               & UNUSED(os_out),
+                               ostream               & UNUSED(os_err))
 {
 	M_STATE_ENTER ("frame_to_field_continue", "");
 
@@ -5812,14 +5812,14 @@ bool    frame_to_any_bitfield (
 //*****************************************************************************
 
 bool    frame_to_any_padding_bits (
-				      const T_type_definitions    & type_definitions,
+				      const T_type_definitions    & UNUSED(type_definitions),
 					        T_frame_data          & in_out_frame_data,
-					        T_interpret_data      & interpret_data,
-                      const T_field_type_name     & field_type_name,
-                      const string                & data_name,
-                      const string                & data_simple_name,
-                            ostream               & os_out,
-                            ostream               & os_err)
+					        T_interpret_data      & UNUSED(interpret_data),
+                      const T_field_type_name     & UNUSED(field_type_name),
+                      const string                & UNUSED(data_name),
+                      const string                & UNUSED(data_simple_name),
+                            ostream               & UNUSED(os_out),
+                            ostream               & UNUSED(os_err))
 {
 	const short   remaining_bits_in_byte = in_out_frame_data.get_remaining_bits() % 8;
 	in_out_frame_data.move_bit_forward(remaining_bits_in_byte);
@@ -5908,7 +5908,7 @@ bool    frame_to_any_output (
                       const T_field_type_name     & field_type_name,
                       const string                & data_name,
                       const string                & data_simple_name,
-                            ostream               & os_out,
+                            ostream               & UNUSED(os_out),
                             ostream               & os_err)
 {
     //-------------------------------------------------------------------------
@@ -5942,7 +5942,7 @@ bool    frame_to_any_byte_order (
                       const T_field_type_name     & field_type_name,
                       const string                & data_name,
                       const string                & data_simple_name,
-                            ostream               & os_out,
+                            ostream               & UNUSED(os_out),
                             ostream               & os_err)
 {
 	const string  & final_type = field_type_name.type;
@@ -5979,14 +5979,14 @@ bool    frame_to_any_byte_order (
 //*****************************************************************************
 
 bool    frame_to_any_decoder (
-				      const T_type_definitions    & type_definitions,
-					        T_frame_data          & in_out_frame_data,
+				      const T_type_definitions    & UNUSED(type_definitions),
+					        T_frame_data          & UNUSED(in_out_frame_data),
 					        T_interpret_data      & interpret_data,
-                      const T_field_type_name     & field_type_name,
-                      const string                & data_name,
+                      const T_field_type_name     & UNUSED(field_type_name),
+                      const string                & UNUSED(data_name),
                       const string                & data_simple_name,
-                            ostream               & os_out,
-                            ostream               & os_err)
+                            ostream               & UNUSED(os_out),
+                            ostream               & UNUSED(os_err))
 {
 	interpret_data.set_decode_function(data_simple_name);
     return  true;
@@ -5997,14 +5997,14 @@ bool    frame_to_any_decoder (
 //*****************************************************************************
 
 bool    frame_to_any_save_position (
-				      const T_type_definitions    & type_definitions,
+				      const T_type_definitions    & UNUSED(type_definitions),
 					        T_frame_data          & in_out_frame_data,
 					        T_interpret_data      & interpret_data,
-                      const T_field_type_name     & field_type_name,
+                      const T_field_type_name     & UNUSED(field_type_name),
                       const string                & data_name,
                       const string                & data_simple_name,
-                            ostream               & os_out,
-                            ostream               & os_err)
+                            ostream               & UNUSED(os_out),
+                            ostream               & UNUSED(os_err))
 {
     //-------------------------------------------------------------------------
     // Position into data to read.
@@ -6026,7 +6026,7 @@ bool    frame_to_any_position (
                       const T_field_type_name     & field_type_name,
                       const string                & data_name,
                       const string                & data_simple_name,
-                            ostream               & os_out,
+                            ostream               & UNUSED(os_out),
                             ostream               & os_err)
 {
 	const string  & final_type = field_type_name.type;
@@ -6115,11 +6115,11 @@ bool    frame_to_any_position (
 bool    frame_to_any_check_eof_distance (
 				      const T_type_definitions    & type_definitions,
 					        T_frame_data          & in_out_frame_data,
-					        T_interpret_data      & interpret_data,
+					        T_interpret_data      & UNUSED(interpret_data),
                       const T_field_type_name     & field_type_name,
                       const string                & data_name,
                       const string                & data_simple_name,
-                            ostream               & os_out,
+                            ostream               & UNUSED(os_out),
                             ostream               & os_err)
 {
 	const string  & final_type = field_type_name.type;
@@ -6170,8 +6170,8 @@ bool    frame_to_any_chrono (
 					        T_frame_data          & in_out_frame_data,
 					        T_interpret_data      & interpret_data,
                       const T_field_type_name     & field_type_name,
-                      const string                & data_name,
-                      const string                & data_simple_name,
+                      const string                & UNUSED(data_name),
+                      const string                & UNUSED(data_simple_name),
                             ostream               & os_out,
                             ostream               & os_err)
 {
@@ -6196,7 +6196,7 @@ bool    frame_to_any_chrono (
 }
 
 //*****************************************************************************
-// build_types_finalize field *************************************************
+// build_types_finalize_itself ************************************************
 //*****************************************************************************
 
 void    build_types_finalize_itself(T_type_definitions  & type_definitions,
