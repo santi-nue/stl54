@@ -354,3 +354,12 @@
                   BUT, wireshark filters do NOT see the transformation and still filter on NOT transformed value.
                   NOT user friendly !
 2008/11/20  Fix : unlimited string without a zero (end of string) is no more an error
+
+
+
+Add : add a feature
+Fix : fix a problem
+Prf : about performance
+Mod : modify a syntax/behavior
+Upd : update (without syntax/behavior modification)
+Sup : suppress a feature

@@ -1279,6 +1279,52 @@ void    test_build_field ()
 		M_TEST_EQ(field_type_name.name, "toto");
 		M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
 	}
+
+	// switch inline
+	{
+		string         first_word = "hide";
+		istringstream  iss(" "
+			" switch"
+            " (1)"
+			" {"
+            "   case 0 : uint8  c0;"
+            "   case 1 : uint8  c1; uint8  c1bis;"
+//            "   case 2:  uint8  c2;"                // space is mandatory before :
+            "   default : uint8  df;"
+			" }");
+
+		T_field_type_name    field_type_name;
+
+		M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+		M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
+		M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+		M_TEST_EQ(field_type_name.type, "switch");                          // type
+//		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+		M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+		M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+		M_TEST_EQ(field_type_name.str_display_expression, "");
+		M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+		M_TEST_EQ(field_type_name.name, "");
+		M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_switch_inline->case_type, "");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case.size(), 3);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[0].is_default_case, false);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[0].case_value.get_int(), 0);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[0].fields.size(), 1);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[0].fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].is_default_case, false);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].case_value.get_int(), 1);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].fields[0].name, "c1");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].fields[1].name, "c1bis");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[2].is_default_case, true);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[2].fields.size(), 1);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[2].fields[0].name, "df");
+ 	}
 }
 
 //*****************************************************************************
@@ -4127,7 +4173,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	for (int  idx_tst = 0; idx_tst < 10; ++idx_tst)
 	{
 		M_STATE_WARNING("msg.size=" << interpret_data.DEBUG_get_msg().size());
-  	ut_interpret_bytes(type_definitions,
+		ut_interpret_bytes(type_definitions,
   					   "4249472d5245515545535453" "4249472d5245515545535453"
   					   "4249472d5245515545535453" "4249472d5245515545535453"
   					   "4249472d5245515545535453" "4249472d5245515545535453"
@@ -4141,7 +4187,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
   					   "uint8[240]  val ;",
 					   interpret_data,
   					   NULL);
-  }
+	}
   
 	interpret_data.read_variable_group_begin("A_current_path_not_empty");
 	for (int  idx_tst = 0; idx_tst < 40; ++idx_tst)
