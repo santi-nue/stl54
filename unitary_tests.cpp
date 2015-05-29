@@ -1310,20 +1310,68 @@ void    test_build_field ()
 		M_TEST_EQ(field_type_name.str_arrays.size(), 0);
 		M_TEST_EQ(field_type_name.name, "");
 		M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_switch_inline->is_switch_expr, false);
         M_TEST_EQ(field_type_name.P_switch_inline->case_type, "");
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case.size(), 3);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[0].is_default_case, false);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[0].case_value.get_int(), 0);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[0].fields.size(), 1);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[0].fields[0].name, "c0");
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].is_default_case, false);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].case_value.get_int(), 1);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].fields.size(), 2);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].fields[0].name, "c1");
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[1].fields[1].name, "c1bis");
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[2].is_default_case, true);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[2].fields.size(), 1);
-        M_TEST_EQ(field_type_name.P_switch_inline->switch_case[2].fields[0].name, "df");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases.size(), 3);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[0].is_default_case, false);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[0].case_value.get_int(), 0);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[0].fields.size(), 1);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[0].fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].is_default_case, false);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].case_value.get_int(), 1);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].fields[0].name, "c1");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].fields[1].name, "c1bis");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[2].is_default_case, true);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[2].fields.size(), 1);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[2].fields[0].name, "df");
+ 	}
+
+	// switch_expr inline
+	{
+		string         first_word = "hide";
+		istringstream  iss(" "
+			" switch_expr"
+            " "
+			" {"
+            "   case (0 == 0)     : uint8  c0;"
+            "   case (1 == a_var) : uint8  c1; uint8  c1bis;"
+//            "   case 2:  uint8  c2;"                // space is mandatory before :
+            "   default : uint8  df;"
+			" }");
+
+		T_field_type_name    field_type_name;
+
+		M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+		M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
+		M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+		M_TEST_EQ(field_type_name.type, "switch");                          // type
+//		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+		M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+		M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+		M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+		M_TEST_EQ(field_type_name.str_display_expression, "");
+		M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+		M_TEST_EQ(field_type_name.name, "");
+		M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_switch_inline->is_switch_expr, true);
+        M_TEST_EQ(field_type_name.P_switch_inline->case_type, "");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases.size(), 3);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[0].is_default_case, false);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[0].case_expr.get_original_string_expression(), "(0 == 0)");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[0].fields.size(), 1);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[0].fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].is_default_case, false);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].case_expr.get_original_string_expression(), "(1 == a_var)");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].fields[0].name, "c1");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[1].fields[1].name, "c1bis");
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[2].is_default_case, true);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[2].fields.size(), 1);
+        M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[2].fields[0].name, "df");
  	}
 }
 
@@ -4090,6 +4138,48 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	// 0x77 & 0x6a = 0x62
 	// 0x627F = 25215
 	M_TEST_SIMPLE("776a3fc2", "T_struct_16_16{decoder=decode_stream_test16}  str ;", "str.val1 = 25215" K_eol "str.val2 = 767");
+
+    // switch inline
+	M_TEST_SIMPLE("", "switch(T_enum1::value1) { "
+                          "  case 0                : var int8  val =  0;"
+                          "  case T_enum3::value1  : var int8  val = 10;"
+                          "  case T_enum2::enu2    : var int8  val = 30;"
+                          "  default               : var int8  val = -100;"
+                          "}", "val = 10");
+	M_TEST_SIMPLE("", "switch(7) { "
+                          "  case 0 : var int8  val =  0;"
+                          "  case 1 : var int8  val = 10;"
+                          "  case 2 : var int8  val = 30;"
+                          "  default : var int8  val = -100;"
+                          "}", "val = -100");
+	M_TEST_SIMPLE("", "switch_expr { "
+                          "  case (0 != 0) : var int8  val =  0;"
+                          "  case (1 >= 2) : var int8  val = 10;"
+                          "  case (2 == 2) : var int8  val = 30;"
+                          "  default : var int8  val = -100;"
+                          "}", "val = 30");
+	M_TEST_SIMPLE("", "switch_expr { "
+                          "  case (pinfo.dstport <  100) : var int16  val = 100;"
+                          "  case (pinfo.dstport >= 200) : var int16  val = 200;"
+                          "  case (pinfo.dstport == 133) : var int16  val = 133;"
+                          "  case (pinfo.fd.pipo == \"tsr\")      : var int16  val =   1;"
+                          "  case (pinfo.fd.pipo == \"rst\")      : var int16  val =   2;"
+                          "  case (pinfo.fd.pipo == \"str\")      : var int16  val =   3;"
+                          "  default : var int8  val = -100;"
+                          "}", "val = 133");
+	M_TEST_SIMPLE("", "switch_expr { "
+                          "  case (pinfo.fd.pipo == \"tsr\")      : var int16  val =   1;"
+                          "  case (pinfo.fd.pipo == \"rst\")      : var int16  val =   2;"
+                          "  case (pinfo.fd.pipo == \"str\")      : var int16  val =   3;"
+                          "  case (pinfo.dstport <  100) : var int16  val = 100;"
+                          "  case (pinfo.dstport >= 200) : var int16  val = 200;"
+                          "  case (pinfo.dstport == 133) : var int16  val = 133;"
+                          "  default : var int8  val = -100;"
+                          "}", "val = 3");
+
+    // switch
+	M_TEST_SIMPLE("", "T_switch(3)   \"\";", "val = enu3");
+	M_TEST_SIMPLE("", "T_switch_expr \"\";", "val = str");
 
 	// array
 	M_TEST_SIMPLE("4249472d5245515545535453",

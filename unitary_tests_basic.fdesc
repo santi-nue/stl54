@@ -388,6 +388,26 @@ enum24 T_enum24 expand T_enum5
 }
 
 ###############################################################################
+# switch
+###############################################################################
+
+switch T_switch
+{
+  case 0                     :  var string  val = "0";
+  case T_enum5::enu3         :  var string  val = "enu3";
+  case T_enum24::val12730334 :  var string  val = "val12730334";
+  default                    :  var string  val = "default";
+}
+
+switch_expr T_switch_expr
+{
+  case (pinfo.fd.pipo == "tsr") :  var string  val = "tsr";
+  case (pinfo.fd.pipo == "rst") :  var string  val = "rst";
+  case (pinfo.fd.pipo == "str") :  var string  val = "str";
+  default                       :  var string  val = "default";
+}
+
+###############################################################################
 # string::npos
 ###############################################################################
 

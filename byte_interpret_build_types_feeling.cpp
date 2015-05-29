@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -700,12 +700,12 @@ void    feeling_manage_field_structuredField(T_type_definitions  & type_definiti
 				type_definitions.set_field_type(field_type_name, S_msg_type_name);
 				type_definitions.set_field_name(field_type_name, "");       // tip to not see a useless supplementary tree
 
-				T_switch_case_value    switch_case_value;
-				switch_case_value.case_value = element->Attribute("value");
-				switch_case_value.case_value.promote();
-				switch_case_value.fields.push_back(field_type_name);
+				T_switch_case    switch_case;
+				switch_case.case_value = element->Attribute("value");
+				switch_case.case_value.promote();
+				switch_case.fields.push_back(field_type_name);
 
-				S_main_switch_definition.switch_case.push_back(switch_case_value);
+				S_main_switch_definition.switch_cases.push_back(switch_case);
 			}
 		}
 		else 

@@ -773,11 +773,11 @@ void    register_fields_switch_definition(T_generic_protocol_data      & protoco
 										  int                          & field_idx,
 										  T_switch_definition          & switch_definition)
 {
-  T_switch_case        & switch_case = switch_definition.switch_case;
+  T_switch_cases       & switch_cases = switch_definition.switch_cases;
 
-  for (T_switch_case::iterator
-                         sw_iter  = switch_case.begin();
-                         sw_iter != switch_case.end();
+  for (T_switch_cases::iterator
+                         sw_iter  = switch_cases.begin();
+                         sw_iter != switch_cases.end();
                        ++sw_iter)
   {
 	T_struct_fields  & struct_fields = sw_iter->fields;

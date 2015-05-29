@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2015 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -858,7 +858,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   // Check MSG_MAIN_TYPE.
   if ((protocol_data.MSG_MAIN_TYPE != "") &&
 	  (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_MAIN_TYPE) == false) &&
-	  (is_a_switch (protocol_data.type_definitions, protocol_data.MSG_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+	  (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
   {
 	  M_FATAL_COMMENT("MSG_MAIN_TYPE (" << protocol_data.MSG_MAIN_TYPE << ") is NOT a defined type name");
   }
@@ -866,7 +866,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   // Check MSG_FROM_MAIN_TYPE.
   if ((protocol_data.MSG_FROM_MAIN_TYPE != "") &&
 	  (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_FROM_MAIN_TYPE) == false) &&
-	  (is_a_switch (protocol_data.type_definitions, protocol_data.MSG_FROM_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+	  (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_FROM_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
   {
 	  M_FATAL_COMMENT("MSG_FROM_MAIN_TYPE (" << protocol_data.MSG_FROM_MAIN_TYPE << ") is NOT a defined type name");
   }
@@ -874,7 +874,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   // Check MSG_TO_MAIN_TYPE.
   if ((protocol_data.MSG_TO_MAIN_TYPE != "") &&
 	  (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_TO_MAIN_TYPE) == false) &&
-	  (is_a_switch (protocol_data.type_definitions, protocol_data.MSG_TO_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+	  (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_TO_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
   {
 	  M_FATAL_COMMENT("MSG_TO_MAIN_TYPE (" << protocol_data.MSG_TO_MAIN_TYPE << ") is NOT a defined type name");
   }

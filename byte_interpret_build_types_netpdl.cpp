@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -694,7 +694,7 @@ void  netpdl_manage_format_fields_switch(T_type_definitions  & type_definitions,
 		                 element != NULL_PTR;
 						 element  = element->NextSiblingElement())
 	{
-		T_switch_case_value    switch_case_value;
+		T_switch_case    switch_case;
 
 		const char  * value = element->Value();
 		M_FATAL_IF_EQ(value, NULL_PTR);
@@ -703,11 +703,11 @@ void  netpdl_manage_format_fields_switch(T_type_definitions  & type_definitions,
 		{
 			const char  * case_value = element->Attribute("value");
 			M_FATAL_IF_EQ(case_value, NULL_PTR);
-			switch_case_value.case_value = case_value;
-			switch_case_value.case_value.promote();
+			switch_case.case_value = case_value;
+			switch_case.case_value.promote();
 			/* ICIOA const char  * case_maxvalue = element->Attribute("maxvalue"); */
 
-			if (switch_case_value.case_value.get_type() == C_value::E_type_integer)
+			if (switch_case.case_value.get_type() == C_value::E_type_integer)
 			{
 				switch_definition.case_type = "int64";
 			}
@@ -718,16 +718,16 @@ void  netpdl_manage_format_fields_switch(T_type_definitions  & type_definitions,
 		}
 		else if (strcmp (value, "default") == 0)
 		{
-			switch_case_value.is_default_case = true;
+			switch_case.is_default_case = true;
 		}
 		else
 		{ 
 			M_FATAL_COMMENT("Unknow value " << value << " inside <switch>");
 		}
 
-		netpdl_manage_format_fields(type_definitions, switch_case_value.fields, element);
+		netpdl_manage_format_fields(type_definitions, switch_case.fields, element);
 
-		switch_definition.switch_case.push_back(switch_case_value);
+		switch_definition.switch_cases.push_back(switch_case);
 	}
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -468,8 +468,8 @@ string    enum_value_to_string (long long            value,
 // Switchs
 //*****************************************************************************
 
-ostream &  operator<< (ostream              & os,
-                 const T_switch_case_value  & rhs)
+ostream &  operator<< (ostream        & os,
+                 const T_switch_case  & rhs)
 {
   if (rhs.is_default_case)
     os << "default : ";
@@ -487,9 +487,9 @@ ostream &  operator<< (ostream              & os,
 ostream &  operator<< (ostream              & os,
                  const T_switch_definition  & rhs)
 {
-    for (T_switch_case::const_iterator  iter  = rhs.switch_case.begin ();
-                                        iter != rhs.switch_case.end ();
-                                      ++iter)
+    for (T_switch_cases::const_iterator  iter  = rhs.switch_cases.begin ();
+                                         iter != rhs.switch_cases.end ();
+                                       ++iter)
     {
       os << *iter << endl;
     }
@@ -1106,6 +1106,22 @@ bool
 T_type_definitions::is_a_switch   (const string      & type_name) const
 {
 	return  get_P_switch(type_name) != NULL_PTR;
+}
+bool
+T_type_definitions::is_a_switch_value   (const string      & type_name) const
+{
+    T_switch_definition const *  ptr = get_P_switch(type_name);
+    if ((ptr != NULL_PTR) && (ptr->is_switch_expr == false))
+        return  true;
+	return  false;
+}
+bool
+T_type_definitions::is_a_switch_expr   (const string      & type_name) const
+{
+    T_switch_definition const *  ptr = get_P_switch(type_name);
+    if ((ptr != NULL_PTR) && (ptr->is_switch_expr == true))
+        return  true;
+	return  false;
 }
 
 const T_function_definition &

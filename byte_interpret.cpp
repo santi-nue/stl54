@@ -410,10 +410,10 @@ long    size_expression_to_int(   const T_type_definitions  & type_definitions,
 //     - the name of the variable which contains the data
 //*****************************************************************************
 
-bool    is_a_switch (const T_type_definitions  & type_definitions,
-					 const string              & orig_type,
-                           string              & final_simple_type,
-                           string              & discriminant)
+bool    is_a_switch_value (const T_type_definitions  & type_definitions,
+					       const string              & orig_type,
+                                 string              & final_simple_type,
+                                 string              & discriminant)
 {
     if (decompose_type_sep_value_sep (orig_type, '(', ')',
                                       final_simple_type,
@@ -3139,11 +3139,13 @@ bool    frame_to_switch (const T_type_definitions      & type_definitions,
 {
 	M_STATE_ENTER ("frame_to_switch", "");
 
-	const T_switch_case        & switch_case = switch_def.switch_case;
+	const T_switch_cases       & switch_cases = switch_def.switch_cases;
 
-	C_value    discriminant_value = compute_expression_no_io (type_definitions,
-															  interpret_data,
-															  discriminant_str);
+    C_value    discriminant_value = switch_def.is_switch_expr ?
+                                               C_value() :
+                                               compute_expression_no_io (type_definitions,
+															             interpret_data,
+            														     discriminant_str);
 
 	const bool    is_discriminant_value_int = discriminant_value.get_type() == C_value::E_type_integer;
 #if 0
@@ -3154,28 +3156,45 @@ bool    frame_to_switch (const T_type_definitions      & type_definitions,
                                     discriminant_value);
     }
 #endif
-	for (T_switch_case::size_type  idx = 0; idx < switch_case.size (); ++idx)
+	for (T_switch_cases::size_type  idx = 0; idx < switch_cases.size (); ++idx)
     {
 		bool    case_found = false;
 
-		if (switch_case[idx].is_default_case)
+		if (switch_cases[idx].is_default_case)
 		{
 			case_found = true;
 		}
+        else if (switch_def.is_switch_expr == true)
+		{
+            T_expression const &   case_expr = switch_cases[idx].case_expr;
+            C_value const &        case_value = case_expr.compute_expression(
+                                                                  type_definitions,
+                                                                  interpret_data,
+                                                                  in_out_frame_data,
+                                                                  data_name,
+                                                                  data_simple_name,
+                                                                  os_out,
+                                                                  os_err);
+            M_FATAL_IF_NE(case_value.get_type(), C_value::E_type_integer);
+            if (case_value.get_int() != 0 /*false*/)
+            {
+        		case_found = true;
+            }
+		}
 		else
 		{
-			M_FATAL_IF_NE(discriminant_value.get_type(), switch_case[idx].case_value.get_type());
+			M_FATAL_IF_NE(discriminant_value.get_type(), switch_cases[idx].case_value.get_type());
 
 			if (is_discriminant_value_int)
 			{
-				if (switch_case[idx].case_value.get_int() == discriminant_value.get_int())
+				if (switch_cases[idx].case_value.get_int() == discriminant_value.get_int())
 		        {
 					case_found = true;
 				}
 			}
 			else
 			{
-				if (switch_case[idx].case_value.get_str() == discriminant_value.get_str())
+				if (switch_cases[idx].case_value.get_str() == discriminant_value.get_str())
 		        {
 					case_found = true;
 				}
@@ -3187,7 +3206,7 @@ bool    frame_to_switch (const T_type_definitions      & type_definitions,
             if (frame_to_fields (type_definitions,
                                  in_out_frame_data,
 								 interpret_data,
-								 switch_case[idx].fields,
+								 switch_cases[idx].fields,
                                  data_name,
                                  data_simple_name,
                                  os_out, os_err) != true)

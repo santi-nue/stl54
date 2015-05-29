@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -516,7 +516,7 @@ void    post_build_field_base (
 	if ((field_type_name.type == "raw") ||
 		(field_type_name.type == "subproto") ||
 		(field_type_name.type == "insproto") ||
-		(type_definitions.is_a_switch(field_type_name.type)))
+		(type_definitions.is_a_switch_value(field_type_name.type)))
 	{
 		if (field_type_name.str_size_or_parameter == "")
 		{
@@ -909,6 +909,7 @@ string    build_field (istream                           & is,
 	// command: inline switch
 	{
 		bool    is_an_inline_switch = false;
+        bool    is_switch_expr = false;
 		string  inline_switch_parameter;
 		if (field_type_name.type == "switch")
 		{
@@ -940,12 +941,19 @@ string    build_field (istream                           & is,
 			}
 			inline_switch_parameter.erase(inline_switch_parameter.size()-1);
 		}
+		else if (strncmp(field_type_name.type.c_str(), "switch_expr", 7) == 0)
+		{
+			is_an_inline_switch = true;
+            is_switch_expr = true;
+            // no parameter
+		}
 		if (is_an_inline_switch)
 		{
 			field_type_name.str_size_or_parameter = inline_switch_parameter;
-			field_type_name.type = "switch";
+            field_type_name.type = "switch";
 			
 			field_type_name.P_switch_inline.reset(new T_switch_definition);
+            field_type_name.P_switch_inline->is_switch_expr = is_switch_expr;
 			build_switch_unnamed (field_type_name.type, is, type_definitions, *field_type_name.P_switch_inline, return_type);
 
 #if 1
@@ -1793,6 +1801,7 @@ void    build_switch_unnamed (
 {
 	M_STATE_ENTER ("build_switch_unnamed", "");
 
+    bool const  is_switch_expr = switch_def.is_switch_expr;
 	M_ASSERT_EQ (key_word, "switch");
 
 //    M_FATAL_IF_FALSE (read_token_type_simple (is, switch_def.case_type));
@@ -1800,8 +1809,8 @@ void    build_switch_unnamed (
 
 	if (switch_def.case_type == "{")
 	{
-		// switch case_type is optional.
-		// It is not if you try to specify enum values without ::.
+		// switch case_type is optional and deprecated.
+		// It is not if you try to specify enum values without ::. You should not.
 		switch_def.case_type = "";
 	}
 	else
@@ -1816,9 +1825,17 @@ void    build_switch_unnamed (
 
     while (end_flag != "}")
     {
-        T_switch_case_value    switch_case_value;
+        T_switch_case    switch_case;
 
-        if (end_flag == "case")
+        if ((end_flag == "case") && (is_switch_expr == true))
+        {
+			string    str_case_expr;
+            M_FATAL_IF_FALSE (read_token_expression_parenthesis (is, str_case_expr));
+
+            T_expression  & case_expression = switch_case.case_expr;
+			case_expression.build_expression(type_definitions, str_case_expr);
+        }
+        else if (end_flag == "case")
         {
 			string    str_case_value;
             M_FATAL_IF_FALSE (read_token_case_value (is, str_case_value));
@@ -1826,7 +1843,7 @@ void    build_switch_unnamed (
 			// 20090606 new
 			string::size_type  str_size_before = str_case_value.size();
 			remove_string_limits(str_case_value);
-			switch_case_value.case_value = str_case_value;
+			switch_case.case_value = str_case_value;
 
 			if (str_case_value.size() != str_size_before)
 			{
@@ -1835,21 +1852,21 @@ void    build_switch_unnamed (
 			else
 			{
 				// It is not a string (could be int or enum symbolic value)
-				switch_case_value.case_value.promote();
+				switch_case.case_value.promote();
 
-				if (switch_case_value.case_value.get_type() == C_value::E_type_integer)
+				if (switch_case.case_value.get_type() == C_value::E_type_integer)
 				{
 				}
-				else if (switch_case_value.case_value.get_type() == C_value::E_type_string)
+				else if (switch_case.case_value.get_type() == C_value::E_type_string)
 				{
 					// Search ::, means <enum_type>::<symbolic_name>
-					if (switch_case_value.case_value.as_string().find("::") == string::npos)
+					if (switch_case.case_value.as_string().find("::") == string::npos)
 					{
 						// Must add <enum_type> to be able to retrieve the value.
-						switch_case_value.case_value = switch_def.case_type + "::" + switch_case_value.case_value.as_string();
+						switch_case.case_value = switch_def.case_type + "::" + switch_case.case_value.as_string();
 					}
-					switch_case_value.case_value =
-							string_to_numeric(type_definitions, switch_case_value.case_value.as_string(), "inline switch", "case value");
+					switch_case.case_value =
+							string_to_numeric(type_definitions, switch_case.case_value.as_string(), "inline switch", "case value");
 				}
 				else
 				{
@@ -1859,16 +1876,35 @@ void    build_switch_unnamed (
 
 			// Check that all case value have the same type.
 			if ((previous_case_value_type != C_value::E_type_float) &&
-				(switch_case_value.case_value.get_type() != previous_case_value_type))
+				(switch_case.case_value.get_type() != previous_case_value_type))
 			{
 				M_FATAL_COMMENT("switch case values must have the same type");
 			}
 
-			previous_case_value_type = switch_case_value.case_value.get_type();
+			previous_case_value_type = switch_case.case_value.get_type();
+        }
+        else if (end_flag == "case_")    // ICIOA in progress   does not work
+        {
+			string    str_case_value;
+            M_FATAL_IF_FALSE (read_token_case_value (is, str_case_value));
+
+            T_expression  & case_expression = switch_case.case_expr;
+			case_expression.build_expression(type_definitions, str_case_value);
+
+            switch_case.case_value = case_expression.compute_expression_static(type_definitions);
+
+			// Check that all case value have the same type.
+			if ((previous_case_value_type != C_value::E_type_float) &&
+				(switch_case.case_value.get_type() != previous_case_value_type))
+			{
+				M_FATAL_COMMENT("switch case values must have the same type");
+			}
+
+			previous_case_value_type = switch_case.case_value.get_type();
         }
         else if (end_flag == "default")
         {
-            switch_case_value.is_default_case = true;
+            switch_case.is_default_case = true;
         }
         else
         {
@@ -1877,16 +1913,16 @@ void    build_switch_unnamed (
 
         read_token_key_word_specified (is, ":");
 
-        // lecture struct dans switch_case_value.definition
+        // lecture struct dans switch_case.definition
         end_flag = build_struct_fields (is, type_definitions,
-									  switch_case_value.fields,
+									  switch_case.fields,
                                       "case",
                                       "default",
                                       "}",
 									  E_field_scope_other,
 									  return_type);
 
-        switch_def.switch_case.push_back (switch_case_value);
+        switch_def.switch_cases.push_back (switch_case);
     }
 }
 
@@ -1907,13 +1943,14 @@ void    build_switch_unnamed (
 // }
 //*****************************************************************************
 void    build_switch (const E_override            must_override,
-                      const string              & key_word,
+                      const string              & key_word_param,
                             istream             & is,
                             T_type_definitions  & type_definitions)
 {
 	M_STATE_ENTER ("build_switch", "");
 
-	M_ASSERT_EQ (key_word, "switch");
+//	M_ASSERT_EQ (key_word, "switch");
+	string    key_word = key_word_param;
 
     string  switch_name;
     M_FATAL_IF_FALSE (read_token_type_simple (is, switch_name));
@@ -1923,6 +1960,11 @@ void    build_switch (const E_override            must_override,
 	build_types_context_type_begin(switch_name);
 
 	T_switch_definition    switch_def;
+    if (key_word == "switch_expr")
+    {
+        switch_def.is_switch_expr = true;
+        key_word = "switch";
+    }
 
 	build_switch_unnamed(key_word, is, type_definitions, switch_def, "void");
 
@@ -2515,7 +2557,8 @@ string    build_types_no_include (istream             & is,
         {
             build_enum (must_override, key_word, is, type_definitions);
         }
-        else if (key_word == "switch")
+        else if ((key_word == "switch") ||
+                 (key_word == "switch_expr"))
         {
             build_switch (must_override, key_word, is, type_definitions);
         }
@@ -2702,12 +2745,12 @@ void    build_types_finalize(T_type_definitions     & type_definitions,
 void    build_types_finalize(T_type_definitions   & type_definitions,
 							 T_switch_definition  & switch_def)
 {
-    for (T_switch_case::iterator
-                             iter  = switch_def.switch_case.begin();
-	                         iter != switch_def.switch_case.end();
+    for (T_switch_cases::iterator
+                             iter  = switch_def.switch_cases.begin();
+	                         iter != switch_def.switch_cases.end();
 	                       ++iter)
     {
-		T_switch_case_value   & case_val = *iter;
+		T_switch_case   & case_val = *iter;
 
 		build_types_finalize(type_definitions, case_val.fields);
     }

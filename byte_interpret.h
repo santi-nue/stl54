@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -101,10 +101,10 @@ bool    build_types_and_interpret_bytes (
 // misc
 //*****************************************************************************
 
-bool    is_a_switch (const T_type_definitions  & type_definitions,
-					 const string              & orig_type,
-                           string              & final_simple_type,
-                           string              & discriminant);
+bool    is_a_switch_value (const T_type_definitions  & type_definitions,
+					       const string              & orig_type,
+                                 string              & final_simple_type,
+                                 string              & discriminant);
 
 
 

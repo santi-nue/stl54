@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -361,25 +361,32 @@ typedef map<string,T_enum_definition_representation>    T_map_enum_definition_re
 // Switchs
 //****************************************************************************
 
-struct T_switch_case_value
+struct T_switch_case
 {
-    C_value                case_value;   // value could be string, int, enum symbolic value
+    T_expression           case_expr;     // expression (if is_switch_expr)
+    C_value                case_value;    // value could be string, int, enum symbolic value
     bool                   is_default_case;
     T_struct_fields        fields;        // def
 
-    T_switch_case_value () : is_default_case (false) {}
+    T_switch_case () : is_default_case (false) {}
 };
 
-ostream &  operator<< (ostream              & os,
-                 const T_switch_case_value  & rhs);
+ostream &  operator<< (ostream        & os,
+                 const T_switch_case  & rhs);
 
-// An switch_case is an array of switch_case values
-typedef vector<T_switch_case_value>                   T_switch_case;
+// An switch_cases is an array of switch_case values
+typedef vector<T_switch_case>                   T_switch_cases;
 
 struct T_switch_definition
 {
+    bool                 is_switch_expr;       // for switch_expr
     string               case_type;
-    T_switch_case        switch_case;
+    T_switch_cases       switch_cases;
+
+    T_switch_definition()
+        : is_switch_expr(false)
+    {
+    }
 };
 
 ostream &  operator<< (ostream              & os,
@@ -654,6 +661,8 @@ struct T_type_definitions
 	const T_switch_definition               & get_switch    (const string      & type_name) const;
 	const T_switch_definition               * get_P_switch  (const string      & type_name) const;
 	      bool                                is_a_switch   (const string      & type_name) const;
+	      bool                                is_a_switch_value(const string      & type_name) const;
+	      bool                                is_a_switch_expr (const string      & type_name) const;
 
 	const T_function_definition             & get_function  (const string      & type_name) const;
 	const T_function_definition             * get_P_function(const string      & type_name) const;
