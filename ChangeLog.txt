@@ -1,4 +1,5 @@
 
+2015/11/09  Fix : functions can have parameters int40, uint40, int48 and uint48
 2015/05/29  Add : switch_expr which have case (expression) : ...
 2015/01/08  Add : decoder_base64 ignore all space, \t, \n, \r
 2015/01/04  Fix : too much decoding with decoder which add more data and string not fixed size

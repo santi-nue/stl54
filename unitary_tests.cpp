@@ -3453,16 +3453,25 @@ void    test_function_call()
 	T_interpret_data      interpret_data;
     SP_interpret_data = &interpret_data;
 
-	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u32(1234)"), 32);
-	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u24(1234)"), 24);
-	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u16(1234)"), 16);
-	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u8 ( 234)"),  8);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u8 (255)"), 254);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u16(65535)"), 65534);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u24(16777215)"), 16777214);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u32(4294967295)"), 4294967294);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u40(1099511627775)"), 1099511627774);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_u48(281474976710655)"), 281474976710654);
+
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_s8 (-127)"), -126);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_s16(-32767)"), -32766);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_s24(-8388607)"), -8388606);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_s32(-2122317823)"), -2122317822);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_s40(-543313362943)"), -543313362942);
+	M_TEST_EQ(compute_expression_static_int("call_me_maybe_s48(-139088220913663)"), -139088220913662);
+    M_TEST_EQ(compute_expression_static_int("call_me_maybe_s64(-35606584553897983)"), -35606584553897982);
 
 	// 1234 gives u8 overflow
     M_TEST_CATCH_EXCEPTION(compute_expression_static_int("call_me_maybe_u8 (1234)"), C_byte_interpret_exception);
 
 	// Currently, parameter must be an entire byte size
-	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u48(1234)"));
 	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u30(1234)"));
 	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u20(1234)"));
 	M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static_int("call_me_maybe_u10( 934)"));
@@ -4168,14 +4177,16 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
                           "  default : var int8  val = -100;"
                           "}", "val = 133");
 	M_TEST_SIMPLE("", "switch_expr { "
-                          "  case (pinfo.fd.pipo == \"tsr\")      : var int16  val =   1;"
-                          "  case (pinfo.fd.pipo == \"rst\")      : var int16  val =   2;"
-                          "  case (pinfo.fd.pipo == \"str\")      : var int16  val =   3;"
+                          "  case (pinfo.dstport == 133 && pinfo.fd.pipo == \"rst\") : var int16  val = 1332;"
+                          "  case (pinfo.dstport <  100 && pinfo.fd.pipo == \"str\") : var int16  val = 1003;"
+                          "  case (pinfo.dstport <  100 && pinfo.fd.pipo == \"tsr\") : var int16  val = 1001;"
+                          "  case (pinfo.dstport >= 200 && pinfo.fd.pipo == \"rst\") : var int16  val = 2002;"
+                          "  case (pinfo.dstport == 133 && pinfo.fd.pipo == \"str\") : var int16  val = 1333;"
                           "  case (pinfo.dstport <  100) : var int16  val = 100;"
                           "  case (pinfo.dstport >= 200) : var int16  val = 200;"
                           "  case (pinfo.dstport == 133) : var int16  val = 133;"
                           "  default : var int8  val = -100;"
-                          "}", "val = 3");
+                          "}", "val = 1333");
 
     // switch
 	M_TEST_SIMPLE("", "T_switch(3)   \"\";", "val = enu3");

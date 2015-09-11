@@ -447,61 +447,88 @@ function bool8  string_found (in string  value, in string  to_find)
 # int parameters
 ###############################################################################
 
+function int64  call_me_maybe_s8 (in int8  value)
+{
+  return  value+1;
+}
+function int64  call_me_maybe_s16 (in int16  value)
+{
+  return  value+1;
+}
+function int64  call_me_maybe_s24 (in int24  value)
+{
+  return  value+1;
+}
+function int64  call_me_maybe_s32 (in int32  value)
+{
+  return  value+1;
+}
+function int64  call_me_maybe_s40 (in int40  value)
+{
+  return  value+1;
+}
+function int64  call_me_maybe_s48 (in int48  value)
+{
+  return  value+1;
+}
+function int64  call_me_maybe_s64 (in int64  value)
+{
+  return  value+1;
+}
+
+
+function int64  call_me_maybe_u8 (in uint8  value)
+{
+  return  value-1;
+}
+function int64  call_me_maybe_u16 (in uint16  value)
+{
+  return  value-1;
+}
+function int64  call_me_maybe_u24 (in uint24  value)
+{
+  return  value-1;
+}
+function int64  call_me_maybe_u32 (in uint32  value)
+{
+  return  value-1;
+}
+function int64  call_me_maybe_u40 (in uint40  value)
+{
+  return  value-1;
+}
+function int64  call_me_maybe_u48 (in uint48  value)
+{
+  return  value-1;
+}
+
+
 # uint64 does not exist
 # function int64  call_me_maybe_u64 (in uint64  value)
 # {
 #   return  64;
 # }
 
-function int64  call_me_maybe_u48 (in uint48  value)
-{
-#   call call_me_maybe_u64 (value);
-  return  48;
-}
-function int64  call_me_maybe_u32 (in uint32  value)
-{
-#   call call_me_maybe_u48 (value);
-  return  32;
-}
+# Currently does not work, parameter size must be multiple of 8
 function int64  call_me_maybe_u30 (in uint30  value)
 {
-#   call call_me_maybe_u32 (value);
-  return  30;
-}
-function int64  call_me_maybe_u24 (in uint24  value)
-{
-#   call call_me_maybe_u30 (value);
-  return  24;
+  return  value-1;
 }
 function int64  call_me_maybe_u20 (in uint20  value)
 {
-#   call call_me_maybe_u24 (value);
-  return  20;
-}
-function int64  call_me_maybe_u16 (in uint16  value)
-{
-#   call call_me_maybe_u20 (value);
-  return  16;
+  return  value-1;
 }
 function int64  call_me_maybe_u10 (in uint10  value)
 {
-#   call call_me_maybe_u16 (value);
-  return  10;
-}
-function int64  call_me_maybe_u8 (in uint8  value)
-{
-#   call call_me_maybe_u10 (value);
-  return  8;
+  return  value-1;
 }
 function int64  call_me_maybe_u2 (in uint2  value)
 {
-#  return  call_me_maybe_u8 (value);
-  return  2;
+  return  value-1;
 }
 function int64  call_me_maybe_u1 (in uint1  value)
 {
-#  return  call_me_maybe_u2 (value);
-  return  1;
+  return  value-1;
 }
 
 ###############################################################################
