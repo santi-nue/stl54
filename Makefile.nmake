@@ -1,7 +1,5 @@
 # Makefile.nmake
-# nmake file for Wireshark plugin
-#
-# $Id: Makefile.nmake 24520 2008-03-01 12:31:01Z jake $
+# nmake file for generic plugin
 #
 
 include ..\..\config.nmake
@@ -145,7 +143,7 @@ plugin.c: $(DISSECTOR_SRC) moduleinfo.h Makefile.common ../../tools/make-dissect
 !ENDIF
 
 clean: unit_test_clean byte_interpret_clean
-	rm -f $(OBJECTS) $(RESOURCE) plugin.c *.pdb *.sbr \
+	rm -f $(OBJECTS) $(RESOURCE) plugin.c *.nativecodeanalysis.xml *.pdb *.sbr \
 	    $(PLUGIN_NAME).dll $(PLUGIN_NAME).dll.manifest $(PLUGIN_NAME).lib \
 	    $(PLUGIN_NAME).exp $(PLUGIN_NAME).rc \
       *.lo *.la .libs/*.*

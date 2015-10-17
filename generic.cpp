@@ -82,6 +82,10 @@ extern "C" {
 	dissector_add(abbrev, pattern, handle)
 #endif
 
+#if WIRESHARK_VERSION_NUMBER >= 20000
+#define tvb_length_remaining tvb_reported_length_remaining
+#endif
+
 //*****************************************************************************
 // register_enum_values
 //*****************************************************************************
@@ -1072,8 +1076,12 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 
 		M_FATAL_IF_EQ(protocol_data.ws_data.subdissector_data.dissector_table, NULL);
 
+#if WIRESHARK_VERSION_NUMBER >= 20000
+		protocol_data.ws_data.subdissector_data.heur_dissector_list = register_heur_dissector_list(protocol_data.PROTOABBREV.c_str());
+#else
 		register_heur_dissector_list(protocol_data.PROTOABBREV.c_str(),
                                     &protocol_data.ws_data.subdissector_data.heur_dissector_list);
+#endif
 	}
 
 	/* Register configuration preferences */
@@ -1342,12 +1350,12 @@ static int    generic_stats_tree_packet(stats_tree      * st,
   M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), NULL);
   T_interpret_data  & last_msg_interpret_data = * tap_data.RCP_last_msg_interpret_data;
 
-#if WIRESHARK_VERSION_NUMBER < 10200
-// until revision 25084
-#define NEEDED_CAST_FOR_10X  (const guint8*)
-#else
+#if WIRESHARK_VERSION_NUMBER >= 10200
 // since revision 25716 (1.2.0 or before)
 #define NEEDED_CAST_FOR_10X
+#else
+// until revision 25084
+#define NEEDED_CAST_FOR_10X  (const guint8*)
 #endif
 
   {
@@ -1389,11 +1397,11 @@ static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_
 	stats_tree_register(NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
 						NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
 						NEEDED_CAST_FOR_10X (protocol_data.PROTOABBREV + "/Msg").c_str(),
-#if WIRESHARK_VERSION_NUMBER < 10300
-						// until revision 27407
-#else
+#if WIRESHARK_VERSION_NUMBER >= 10300
 						// since revision 28645 (1.3.5 or before)
 						0,
+#else
+						// until revision 27407
 #endif
 						generic_stats_tree_packet,
 						generic_stats_tree_init,
@@ -1521,9 +1529,18 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 		continue;
 	  }
 	  
+#if WIRESHARK_VERSION_NUMBER >= 20000
+      heur_dissector_add(parent_name.c_str(),
+						 P_protocol_ws_data->P_heuristic_fct,
+                         protocol_data.PROTONAME.c_str(),
+                         protocol_data.PROTOSHORTNAME.c_str(),
+						 P_protocol_ws_data->proto_generic,
+                         HEURISTIC_ENABLE);
+#else
       heur_dissector_add(parent_name.c_str(),
 						 P_protocol_ws_data->P_heuristic_fct,
 						 P_protocol_ws_data->proto_generic);
+#endif
   }
 
   // Check subdissector name
@@ -1957,7 +1974,9 @@ void    add_pinfo(const T_generic_protocol_data  & protocol_data,
 #if WIRESHARK_VERSION_NUMBER < 11200
   M_ADD_PINFO(ethertype);
 #endif
+#if WIRESHARK_VERSION_NUMBER < 20000
   M_ADD_PINFO(ipproto);
+#endif
 #if WIRESHARK_VERSION_NUMBER < 11200
   M_ADD_PINFO(ipxptype);
 #endif
