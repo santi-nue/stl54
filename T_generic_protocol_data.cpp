@@ -613,8 +613,13 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 
 	if (keyword == "DEBUG")
 	{
-		protocol_data.DEBUG = true;
+		protocol_data.DEBUG = E_debug_status_ON;
 //		set_debug(protocol_data.DEBUG);
+		continue;
+	}
+	else if (keyword == "DEBUG_NO_TIME")
+	{
+		protocol_data.DEBUG = E_debug_status_ON_NO_TIME;
 		continue;
 	}
 	else if (keyword == "PROTO_TYPE_DEFINITIONS")
@@ -762,7 +767,12 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 
 	if (result == "DEBUG")
 	{
-		debug_type_definitions.set(true);
+		debug_type_definitions.set(E_debug_status_ON);
+		continue;
+	}
+	else if (result == "DEBUG_NO_TIME")
+	{
+		debug_type_definitions.set(E_debug_status_ON_NO_TIME);
 		continue;
 	}
 	else if (result == "NETPDL")

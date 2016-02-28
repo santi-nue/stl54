@@ -245,7 +245,7 @@ void    fatal_pb (const string  & lhs,
 	M_STATE_print ("A", "     ", OSTREAM_OUTPUT_EXPR)
 
 #define M_STATE_base(PREFIX1,PREFIX2,OSTREAM_OUTPUT_EXPR)                     \
-	if (G_debug_state_output)                                                 \
+	if (C_trace::A_debug_status != E_debug_status_OFF)                        \
 	{                                                                         \
 		M_STATE_print (PREFIX1, PREFIX2, OSTREAM_OUTPUT_EXPR);                \
 	}
@@ -255,29 +255,35 @@ void    fatal_pb (const string  & lhs,
 	get_state_ostream() << OSTREAM_OUTPUT_EXPR << endl << flush
 
 
+
+enum E_debug_status
+{
+    E_debug_status_OFF,
+    E_debug_status_ON,
+    E_debug_status_ON_NO_TIME,
+};
+
+void            set_debug(E_debug_status    debug);
+E_debug_status  get_debug();
+
 class C_debug_set_temporary
 {
 public:
-	C_debug_set_temporary(bool  debug);
+	C_debug_set_temporary(E_debug_status  debug);
 	C_debug_set_temporary();
 	~C_debug_set_temporary();
 
-	void    set(bool  debug);
+	void    set(E_debug_status  debug);
 	void    unset();
 	void    forget();
 
 private:
 	C_debug_set_temporary(const C_debug_set_temporary  &);
 
-	bool    previous_value;
-	bool    value_modified;
+	E_debug_status    previous_value;
+	bool              value_modified;
 };
 
-void    set_debug(bool    debug);
-bool    get_debug();
-
-// Use previous functions.
-extern bool    G_debug_state_output;
 
 
 ostream  & get_state_ostream();
@@ -301,6 +307,9 @@ struct C_trace
 
 	const char  * A_function_name;
 	bool          A_must_do_leave_trace;
+
+
+    static E_debug_status   A_debug_status;
 };
 
 //****************************************************************************

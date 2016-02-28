@@ -188,11 +188,11 @@ public:
 private:
 
 	static void    output(
-		const long          ms_diff_ctor,
-		const int           nb_bytes,
-		const string      & decode_function,
-		const bool          debug,
-		const string      & what);
+		const long              ms_diff_ctor,
+		const int               nb_bytes,
+		const string          & decode_function,
+		const E_debug_status    debug,
+		const string          & what);
 
 	T_interpret_data    & A_interpret_data;
 	const char  * A_input_string;
@@ -254,11 +254,11 @@ C_perf_chrono::~C_perf_chrono()
 
 void
 C_perf_chrono::output(
-		const long          ms_diff_ctor,
-		const int           nb_bytes,
-		const string      & decode,
-		const bool          debug,
-		const string      & what)
+		const long              ms_diff_ctor,
+		const int               nb_bytes,
+		const string          & decode,
+		const E_debug_status    debug,
+		const string          & what)
 {
 	cout.width(5);
 	cout << ms_diff_ctor << " ms  ";
@@ -269,7 +269,7 @@ C_perf_chrono::output(
 	cout << decode;
 	cout << " ";
 
-	if (debug == false)
+	if (debug == E_debug_status_OFF)
 	{
 		cout << "     ";
 	}
@@ -285,9 +285,9 @@ C_perf_chrono::output(
 void
 C_perf_chrono::end()
 {
-	output(A_total_ms_no_decode, A_total_sizeof_bytes_no_decode, "      ", false, "sum of all times (do not compare with decode time)");
-	output(A_total_ms_decode, A_total_sizeof_bytes_decode, "decode", false, "sum of all times");
-	output(A_total_ms, A_total_sizeof_bytes, "all   ", false, "sum of all times");
+	output(A_total_ms_no_decode, A_total_sizeof_bytes_no_decode, "      ", E_debug_status_OFF, "sum of all times (do not compare with decode time)");
+	output(A_total_ms_decode   , A_total_sizeof_bytes_decode   , "decode", E_debug_status_OFF, "sum of all times");
+	output(A_total_ms          , A_total_sizeof_bytes          , "all   ", E_debug_status_OFF, "sum of all times");
 }
 
 //*****************************************************************************
@@ -3797,14 +3797,13 @@ void ut_interpret_bytes (const T_type_definitions  & type_definitions,
 		ostream       & os_err = oss;
 
 		if (idx_decode > 0)  { interpret_data.set_decode_function("decode_stream_nothing"); }
-		if (idx_debug > 0)   { set_debug(! get_debug()); }
+        C_debug_set_temporary  debug_set_temporary((idx_debug == 0) ? E_debug_status_OFF : E_debug_status_ON);
 		bool  result = ut_interpret_bytes_base (type_definitions,
 										in_byte_vector,
 										in_input_string,
 										os_out,
 										os_err,
 										interpret_data);
-		if (idx_debug > 0)   { set_debug(! get_debug()); }
 		if (idx_decode > 0)  { interpret_data.set_decode_function(""); }
 		if (result != true)
 		{
@@ -5172,7 +5171,7 @@ int   main(const int         argc,
 
 	if ((arg_idx < argc) && (strcmp(argv[arg_idx], "-debug") == 0))
 	{
-		set_debug(true);
+		set_debug(E_debug_status_ON);
 		++arg_idx;
 	}
 

@@ -1286,7 +1286,7 @@ void    cpp_proto_register_generic(void)
     set_state_ostream (ofs);
   }
 
-  C_debug_set_temporary    debug_register_main(true);
+  C_debug_set_temporary    debug_register_main(E_debug_status_ON_NO_TIME);
 
   trace_version_infos();
   trace_dirs();

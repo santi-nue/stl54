@@ -273,7 +273,7 @@ int   main (int  argc, const char * const  argv[])
 
     if (strcmp (argv[arg_idx], "-trace") == 0)
     {
-        set_debug (true);
+        set_debug (E_debug_status_ON);
         ++arg_idx;
     }
 

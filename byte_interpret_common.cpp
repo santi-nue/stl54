@@ -85,20 +85,18 @@ ostream  & set_state_ostream(ostream  & new_state_ostream)
 // ****************************************************************************
 // M_state_... trace flag.
 // ****************************************************************************
-bool    G_debug_state_output = false;
-
-void    set_debug(bool    debug)
+void    set_debug(E_debug_status    debug)
 {
-	G_debug_state_output = debug;
+	C_trace::A_debug_status = debug;
 }
 
-bool    get_debug()
+E_debug_status  get_debug()
 {
-	return  G_debug_state_output;
+	return  C_trace::A_debug_status;
 }
 
 
-C_debug_set_temporary::C_debug_set_temporary(bool  debug)
+C_debug_set_temporary::C_debug_set_temporary(E_debug_status  debug)
 	:previous_value(get_debug()),
 	 value_modified(false)
 {
@@ -117,7 +115,7 @@ C_debug_set_temporary::~C_debug_set_temporary()
 }
 
 void
-C_debug_set_temporary::set(bool  debug)
+C_debug_set_temporary::set(E_debug_status  debug)
 {
 	set_debug(debug);
 	value_modified = true;
@@ -140,6 +138,7 @@ C_debug_set_temporary::forget()
 // ****************************************************************************
 // M_state_... trace class.
 // ****************************************************************************
+E_debug_status  C_trace::A_debug_status = E_debug_status_OFF;
 
 C_trace::C_trace(const char  * function_name)
     :A_function_name(function_name),
@@ -169,33 +168,34 @@ C_trace::print_beginning_of_trace(      ostream  & os,
 {
 	os << prefix1 << " ";
 
-//#ifdef WIN32
-	T_perf_time  timeb_val;
+    if (A_debug_status == E_debug_status_ON)
+    {
+	    T_perf_time  timeb_val;
 
-	os << timeb_val << " ";
+	    os << timeb_val << " ";
 
-	if ((perf_time_val_last_trace_initialized) &&
-		(timeb_val != perf_time_val_last_trace))
-	{
-		long    diff_time_ms = perf_time_diff_ms(timeb_val, perf_time_val_last_trace);
-		if (diff_time_ms > 1)
-		{
-			char  time_str[99+1];
-			sprintf(time_str, "%4d ", diff_time_ms);
-			os << time_str;
-		}
-		else
-		{
-			os << "     ";
-		}
-	}
-	else
-	{
-		os << "     ";
-	}
-	perf_time_val_last_trace = timeb_val;
-	perf_time_val_last_trace_initialized = true;
-//#endif
+	    if ((perf_time_val_last_trace_initialized) &&
+		    (timeb_val != perf_time_val_last_trace))
+	    {
+		    long    diff_time_ms = perf_time_diff_ms(timeb_val, perf_time_val_last_trace);
+		    if (diff_time_ms > 1)
+		    {
+			    char  time_str[99+1];
+			    sprintf(time_str, "%4d ", diff_time_ms);
+			    os << time_str;
+		    }
+		    else
+		    {
+			    os << "     ";
+		    }
+	    }
+	    else
+	    {
+		    os << "     ";
+	    }
+	    perf_time_val_last_trace = timeb_val;
+	    perf_time_val_last_trace_initialized = true;
+    }
 
 	os << prefix2 << " "; 
 }

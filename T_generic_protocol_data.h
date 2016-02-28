@@ -201,7 +201,7 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
 
   string    wsgd_file_name;
 
-  bool      DEBUG;
+  E_debug_status  DEBUG;
 
   string    PROTONAME;
   string    PROTOSHORTNAME;
@@ -252,7 +252,7 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
 
   T_generic_protocol_data()
 	  :proto_idx(-1),
-	   DEBUG(false),
+	   DEBUG(E_debug_status_OFF),
 	   PACKET_CONTAINS_ONLY_1_MSG(false),
 	   PACKET_CONTAINS_ONLY_COMPLETE_MSG(false),
 	   MANAGE_WIRESHARK_PINFO(false),
