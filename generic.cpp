@@ -1187,10 +1187,12 @@ LC_TIME		Affects the behavior of strftime.
 }
 
 //*****************************************************************************
-// cpp_proto_register_generic2
+// cpp_proto__register_generic2
+// double _ needed to avoid wireshark build add proto_register_generic2
+//  into plugin_register
 //*****************************************************************************
 
-void    cpp_proto_register_generic2(void)
+void    cpp_proto__register_generic2(void)
 {
   vector<string>    wsgd_file_names;
   compute_wsgd_file_names(wsgd_file_names);
@@ -1316,7 +1318,7 @@ void    cpp_proto_register_generic(void)
 
   try
   {
-    cpp_proto_register_generic2();
+    cpp_proto__register_generic2();
   }
   catch(...)
   {
