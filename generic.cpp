@@ -1070,13 +1070,25 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 						protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str());
 
 		protocol_data.ws_data.subdissector_data.dissector_table =
+#if WIRESHARK_VERSION_NUMBER >= 20200
+			register_dissector_table(protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str(),
+									protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str(),
+									protocol_data.ws_data.proto_generic,
+									protocol_data.SUBPROTO_SUBFIELD_TYPE_WS,
+									BASE_DEC,
+									DISSECTOR_TABLE_ALLOW_DUPLICATE /*allow_dup ICIOA22 ???*/);
+#else
 			register_dissector_table(protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str(),
 									protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str(),
 								    protocol_data.SUBPROTO_SUBFIELD_TYPE_WS, BASE_DEC);
+#endif
 
 		M_FATAL_IF_EQ(protocol_data.ws_data.subdissector_data.dissector_table, NULL);
 
-#if WIRESHARK_VERSION_NUMBER >= 20000
+#if WIRESHARK_VERSION_NUMBER >= 20200
+		protocol_data.ws_data.subdissector_data.heur_dissector_list = register_heur_dissector_list(protocol_data.PROTOABBREV.c_str(),
+																								   protocol_data.ws_data.proto_generic);
+#elif WIRESHARK_VERSION_NUMBER >= 20000
 		protocol_data.ws_data.subdissector_data.heur_dissector_list = register_heur_dissector_list(protocol_data.PROTOABBREV.c_str());
 #else
 		register_heur_dissector_list(protocol_data.PROTOABBREV.c_str(),
@@ -1096,7 +1108,11 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 				  protocol_data.PROTOABBREV << " " <<
 				  P_protocol_ws_data->P_dissect_fct << " " <<
 				  P_protocol_ws_data->proto_generic);
+#if WIRESHARK_VERSION_NUMBER >= 20200
+	register_dissector(protocol_data.PROTOABBREV.c_str(), P_protocol_ws_data->P_dissect_fct, P_protocol_ws_data->proto_generic);
+#else
 	new_register_dissector(protocol_data.PROTOABBREV.c_str(), P_protocol_ws_data->P_dissect_fct, P_protocol_ws_data->proto_generic);
+#endif
 
 	protocol_data.ws_data.tap_data.proto_tap = register_tap(protocol_data.PROTOABBREV.c_str());
 	M_STATE_DEBUG("proto_tap=" << protocol_data.ws_data.tap_data.proto_tap);
@@ -1443,8 +1459,13 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
   // Create the dissector handle.
+#if WIRESHARK_VERSION_NUMBER >= 20200
+  P_protocol_ws_data->dissector_handle = create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
+                                                                 P_protocol_ws_data->proto_generic);
+#else
   P_protocol_ws_data->dissector_handle = new_create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
                                                                      P_protocol_ws_data->proto_generic);
+#endif
   M_FATAL_IF_EQ(P_protocol_ws_data->dissector_handle, NULL);
 
 
