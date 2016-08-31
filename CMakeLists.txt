@@ -27,7 +27,7 @@ set_module_info(generic 0 5 2 0)
 add_definitions(-DWIRESHARK_VERSION_NUMBER=20200)
 
 # Dyncall (for all : generic, byte_interpret & unitary_tests)
-set(DYNCALL_PATH dyncall-0.7-win32-msvc/dyncall)
+set(DYNCALL_PATH dyncall-0.7-${WIRESHARK_TARGET_PLATFORM}-msvc/dyncall)
 set(DYNCALL_INC_PATH ${DYNCALL_PATH}/include)
 set(DYNCALL_LIB_PATH ${DYNCALL_PATH}/lib)
 find_library(libdynload_LIBRARY libdynload_s PATHS ${DYNCALL_LIB_PATH})
@@ -130,7 +130,7 @@ CHECKAPI(
 
 
 
-find_library(libgmodule_LIBRARY gmodule-2.0)
+find_library(libgmodule_LIBRARY gmodule-2.0 PATHS ../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-2.2/gtk2/lib)
 
 # byte_interpret
 add_executable(byte_interpret byte_interpret_main.cpp ${DISSECTOR_CORE_SRC})
