@@ -1379,7 +1379,7 @@ static int    generic_stats_tree_packet(stats_tree      * st,
 	tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_id, 0, FALSE);
 
 	const string  str_msg_id = last_msg_interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
-	int           reqs_by_msg_id = tick_stat_node(st, NEEDED_CAST_FOR_10X str_msg_id.c_str(), tap_data.st_node_msg_id, TRUE);
+	/*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X str_msg_id.c_str(), tap_data.st_node_msg_id, TRUE);
   }
 
   if (protocol_data.MSG_TOTAL_LENGTH != "")
@@ -1388,7 +1388,7 @@ static int    generic_stats_tree_packet(stats_tree      * st,
 	tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_length, 0, FALSE);
 
 	C_value       val_length = compute_expression_no_io(protocol_data.type_definitions, last_msg_interpret_data, protocol_data.MSG_TOTAL_LENGTH);
-	int           reqs_by_msg_id = tick_stat_node(st, NEEDED_CAST_FOR_10X val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
+	/*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
   }
 
   return 1;
@@ -1814,25 +1814,25 @@ typedef enum {
 } address_type;
 #endif
 
-string    pinfo_address_to_string(const address  & address)
+string    pinfo_address_to_string(const address  & addr)
 {
-    string  str_address = "type=" + get_string(address.type);
+    string  str_address = "type=" + get_string(addr.type);
 	str_address += "  ";
-	for (int  idx_addr = 0; idx_addr < address.len; ++idx_addr)
+	for (int  idx_addr = 0; idx_addr < addr.len; ++idx_addr)
 	{
-		if (address.type == AT_ETHER)
+		if (addr.type == AT_ETHER)
 		{
 			if (idx_addr > 0)
 				str_address += ":";
 			char    tmp[99+1];
-			sprintf(tmp, "%02x", (unsigned int)((const unsigned char*)address.data)[idx_addr]);
+			sprintf(tmp, "%02x", (unsigned int)((const unsigned char*)addr.data)[idx_addr]);
 			str_address += tmp;
 		}
 		else
 		{
 			if (idx_addr > 0)
 				str_address += ".";
-			str_address += get_string((unsigned int)((const unsigned char*)address.data)[idx_addr]);
+			str_address += get_string((unsigned int)((const unsigned char*)addr.data)[idx_addr]);
 		}
 	}
 
