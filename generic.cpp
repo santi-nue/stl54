@@ -128,22 +128,22 @@ void    register_enum_values(T_generic_protocol_data  & protocol_data)
       M_STATE_DEBUG ("add enum value  enum_idx=" << enum_idx << "  enum_value_idx="  << enum_value_idx <<
                      "  (" << enum_name_val.value << ", " << enum_name_val.name << ")");
 
-	  value_string    value_string;
-	  value_string.value  = static_cast<const int>(enum_name_val.value);
-	  value_string.strptr = strdup (enum_name_val.name.c_str());
+	  value_string    vs;
+	  vs.value  = static_cast<const int>(enum_name_val.value);
+	  vs.strptr = strdup (enum_name_val.name.c_str());
 
-	  enum_value.value_strings.push_back(value_string);
+	  enum_value.value_strings.push_back(vs);
 
 	  ++enum_value_idx;
     }
 
     // Must add a last value_string with NULL ptr.
     {
-      value_string    value_string;
-      value_string.value  = 0;
-      value_string.strptr = NULL;
+      value_string    vs;
+      vs.value  = 0;
+      vs.strptr = NULL;
 
-      enum_value.value_strings.push_back(value_string);
+      enum_value.value_strings.push_back(vs);
 	}
 
     protocol_data.ws_data.enum_values_data.enum_values.push_back(enum_value);
@@ -165,7 +165,7 @@ void    register_fields_add_field_none(
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
+  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
   const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_filter_name_param;
   hf_register_info               hf = 
@@ -184,7 +184,7 @@ void    register_fields_add_field_none(
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
+  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
   const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
   hf_register_info               hf = 
@@ -203,7 +203,7 @@ void    register_fields_add_field_bytes(
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
+  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
   const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
   hf_register_info               hf = 
@@ -222,7 +222,7 @@ void    register_fields_add_field_string(
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
+  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
   const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
   hf_register_info               hf = 
@@ -242,7 +242,7 @@ void    register_fields_add_field_float(
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
+  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
   const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
   ftenum                         ws_size = field_bit_size<=32 ? FT_FLOAT : FT_DOUBLE;
@@ -265,7 +265,7 @@ void    register_fields_add_field_int(
 {
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, P_protocol_ws_data->fields_data.hf.size());
+  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
   const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
 
@@ -275,7 +275,7 @@ void    register_fields_add_field_int(
   int           field_byte_size = field_bit_size / 8;
 
   M_FATAL_IF_LT(field_byte_size, 1);
-  M_FATAL_IF_GT(field_byte_size, sizeof(ws_size_unsign)/sizeof(ws_size_unsign[0]));
+  M_FATAL_IF_GT(field_byte_size, (int)(sizeof(ws_size_unsign)/sizeof(ws_size_unsign[0])));
 
   // wireshark (proto.c) forbids enum with size > 4 bytes
   // NB: could have enum with size = 8 only
@@ -1008,44 +1008,44 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 
 #if WIRESHARK_VERSION_NUMBER >= 11200
 	{
-		ei_register_info   ei_register_info = 
+		ei_register_info   eri = 
 			{ &P_protocol_ws_data->expert_data.ei_malformed_comment,
 			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
 				PI_MALFORMED, PI_COMMENT, "comment", EXPFILL }};
 
-		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+		P_protocol_ws_data->expert_data.ei.push_back(eri);
 	}
 	{
-		ei_register_info   ei_register_info = 
+		ei_register_info   eri = 
 			{ &P_protocol_ws_data->expert_data.ei_malformed_chat,
 			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
 				PI_MALFORMED, PI_CHAT, "chat", EXPFILL }};
 
-		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+		P_protocol_ws_data->expert_data.ei.push_back(eri);
 	}
 	{
-		ei_register_info   ei_register_info = 
+		ei_register_info   eri = 
 			{ &P_protocol_ws_data->expert_data.ei_malformed_note,
 			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
 				PI_MALFORMED, PI_NOTE, "note", EXPFILL }};
 
-		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+		P_protocol_ws_data->expert_data.ei.push_back(eri);
 	}
 	{
-		ei_register_info   ei_register_info = 
+		ei_register_info   eri = 
 			{ &P_protocol_ws_data->expert_data.ei_malformed_warn,
 			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
 				PI_MALFORMED, PI_WARN, "warn", EXPFILL }};
 
-		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+		P_protocol_ws_data->expert_data.ei.push_back(eri);
 	}
 	{
-		ei_register_info   ei_register_info = 
+		ei_register_info   eri = 
 			{ &P_protocol_ws_data->expert_data.ei_malformed_error,
 			  { strdup(string(protocol_data.PROTOABBREV + ".malformed").c_str()),
 				PI_MALFORMED, PI_ERROR, "error", EXPFILL }};
 
-		P_protocol_ws_data->expert_data.ei.push_back(ei_register_info);
+		P_protocol_ws_data->expert_data.ei.push_back(eri);
 	}
 
 	M_STATE_DEBUG("expert_register_field_array " <<
@@ -2414,10 +2414,10 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  }
 
 	  // Intrepretation of the main type.
-	  string         str_interpret;
+	  string         str_interpret_main;
 	  if (protocol_data.MSG_MAIN_TYPE != "")
 	  {
-		  str_interpret = protocol_data.MSG_MAIN_TYPE;
+		  str_interpret_main = protocol_data.MSG_MAIN_TYPE;
 	  }
 	  else
 	  {
@@ -2435,22 +2435,22 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 			  {
 				  if (pinfo->srcport == parent.PARENT_SUBFIELD_VALUES_int[idx])
 				  {
-					  str_interpret = protocol_data.MSG_FROM_MAIN_TYPE;
+					  str_interpret_main = protocol_data.MSG_FROM_MAIN_TYPE;
 					  break;
 				  }
 				  else if (pinfo->destport == parent.PARENT_SUBFIELD_VALUES_int[idx])
 				  {
-					  str_interpret = protocol_data.MSG_TO_MAIN_TYPE;
+					  str_interpret_main = protocol_data.MSG_TO_MAIN_TYPE;
 					  break;
 				  }
 			  }
-			  if (str_interpret != "")
+			  if (str_interpret_main != "")
 				  break;
 		  }
-		  if (str_interpret == "")
+		  if (str_interpret_main == "")
 		  {
 			  // Port NOT found, choose FROM by default.
-			  str_interpret = protocol_data.MSG_FROM_MAIN_TYPE;
+			  str_interpret_main = protocol_data.MSG_FROM_MAIN_TYPE;
 			  // This could happen if user use Decode as.
 			  // How to warn the user about the problem ?
 			  // ATTENTION, this will warn the user for each dissection !!!
@@ -2462,13 +2462,13 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 			           "MSG_FROM_MAIN_TYPE has been taken.\n");
 		  }
 	  }
-	  str_interpret += " \"\" ;";
-	  istrstream           iss(str_interpret.c_str());
+	  str_interpret_main += " \"\" ;";
+	  istrstream           iss_main(str_interpret_main.c_str());
 
       bool    result = interpret_bytes (   protocol_data.type_definitions,
 										   in_out_P_bytes,
 										   in_out_sizeof_bytes,
-										   iss,
+										   iss_main,
 										   os,
 										   os,
 										   interpret_data);
