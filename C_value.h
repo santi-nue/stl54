@@ -44,7 +44,7 @@ struct C_value : public CT_debug_object_counter<C_value>
         E_type_float,
         E_type_string,
 		E_type_msg,        // not a simple type
-		E_type_struct      // not a simple type
+		E_type_struct      // not a simple type, not used ?
     };
 
 	typedef const void *    T_msg;

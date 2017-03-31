@@ -35,6 +35,28 @@ T_decode_stream_frame::synchronize()
 	{
 		reset();
 	}
+#if 0
+	else if (frame_data.get_remaining_bits() < decoded_data_bit_size)
+	{
+		// Some data has been read, and so can be removed
+		const long  move_bit_offset = frame_data.get_bit_offset();
+		const long  move_bit_size   = frame_data.get_remaining_bits();
+
+		if ((move_bit_offset % 8) == 0)
+		{
+			const long  move_byte_offset = move_bit_offset / 8;
+			const long  move_byte_size   = move_bit_size   / 8 + 1;
+
+			// Move entire bytes
+			memmove(&decoded_data[0], &decoded_data[move_byte_offset], move_byte_size);
+			decoded_data_bit_size = move_bit_size;
+			frame_data = T_frame_data(decoded_data, 0, decoded_data_bit_size);
+		}
+		else
+		{
+		}
+	}
+#endif
 }
 
 void

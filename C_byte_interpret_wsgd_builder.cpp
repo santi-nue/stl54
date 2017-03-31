@@ -556,7 +556,6 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 //*****************************************************************************
 
 #include "T_interpret_data.h"
-extern bool           G_inside_dissector;
 
 void
 C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_definitions */,
@@ -589,17 +588,12 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 			const C_value  * P_value_2 = interpret_data.get_P_value_of_read_variable (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_2);
 			const C_value  * P_value_3 = interpret_data.get_P_value_of_read_variable (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_3);
 
-			bool           inside_dissector_saved = G_inside_dissector;
 //			proto_tree   * root_tree_saved = A_interpret_wsgd.wsgd_msg_root_tree;
 			proto_tree   * tree = A_interpret_wsgd.wsgd_tree;
 			if (is_subproto)
 			{
 				// Change tree to set the root one.
 				tree = A_interpret_wsgd.wsgd_msg_root_tree;
-			}
-			else
-			{
-				G_inside_dissector = true;
 			}
 
 
@@ -609,6 +603,22 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 			{
 				dissector_to_call_handle = find_dissector(field_type_name.str_dissector.c_str());
 			}
+
+            if (is_insproto == true)
+            {
+                // col_set_fence forbid to clear, but still can add (a set becomes automatically a add)
+                //col_set_fence(A_interpret_wsgd.wsgd_pinfo->cinfo, COL_PROTOCOL);
+                //col_set_fence(A_interpret_wsgd.wsgd_pinfo->cinfo, COL_INFO);
+
+#if WIRESHARK_VERSION_NUMBER < 20200
+                // <= 2.0 : can not specify the column
+                col_set_writable(A_interpret_wsgd.wsgd_pinfo->cinfo, false);
+#else
+                // Seems to NOT work for destination and source
+                // Normally, I need only COL_PROTOCOL & COL_INFO
+                col_set_writable(A_interpret_wsgd.wsgd_pinfo->cinfo, -1/*all*/, false);
+#endif                
+            }
 
 			call_subdissector_or_data(protocol_data,
 									 dissector_to_call_handle,
@@ -621,8 +631,19 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 									 P_value_2,
 									 P_value_3);
 
+            if (is_insproto == true)
+            {
+                //col_clear_fence(A_interpret_wsgd.wsgd_pinfo->cinfo, COL_PROTOCOL);
+                //col_clear_fence(A_interpret_wsgd.wsgd_pinfo->cinfo, COL_INFO);
+
+#if WIRESHARK_VERSION_NUMBER < 20200
+                col_set_writable(A_interpret_wsgd.wsgd_pinfo->cinfo, true);
+#else
+                col_set_writable(A_interpret_wsgd.wsgd_pinfo->cinfo, -1/*all*/, true);
+#endif
+            }
+
 //			A_interpret_wsgd.wsgd_msg_root_tree = root_tree_saved;
-			G_inside_dissector = inside_dissector_saved;
 		}
 
 		return;
