@@ -1730,14 +1730,6 @@ proto_tree  * cpp_dissect_generic_add_tree(const int           proto_idx,
   return  proto_item_add_subtree(proto_item, P_protocol_ws_data->fields_data.ett_id[K_ANY_WSGD_FIELD_IDX]);
 }
 
-//*****************************************************************************
-// Flag to know if we are into an inside dissector (insproto).
-// In case of inside dissector, we must NOT change :
-// - COL_INFO
-// - COL_PROTOCOL
-//*****************************************************************************
-bool           G_inside_dissector = false;
-
 /******************************************************************************
  * cpp_dissect_generic_set_packet_id_str
  *****************************************************************************/
@@ -1750,8 +1742,6 @@ void    cpp_dissect_generic_set_packet_id_str(T_generic_protocol_data  & protoco
 {
   M_STATE_ENTER("cpp_dissect_generic_set_packet_id_str", packet_id_str);
 
-  if (G_inside_dissector == false)
-  {
     // ICIOA : do not print the port's names as tcp dissector does
     // must use get_tcp_port (or ...) from epan/addr_resolv.h
     // I choose to NOT do it (for now) :
@@ -1766,7 +1756,6 @@ void    cpp_dissect_generic_set_packet_id_str(T_generic_protocol_data  & protoco
 #else
     col_append_fstr(pinfo->cinfo, COL_INFO, " %s", packet_id_str.c_str());
 #endif
-  }
 }
 
 /******************************************************************************
@@ -2659,14 +2648,10 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
                  << pinfo << ", "
                  << tree << ")");
 
-  if (G_inside_dissector == false)
-  {
-    col_set_str(pinfo->cinfo, COL_PROTOCOL, protocol_data.PROTOSHORTNAME.c_str());
-
-    col_add_fstr(pinfo->cinfo, COL_INFO,
-                 "%d > %d",
-                 pinfo->srcport, pinfo->destport);
-  }
+  col_set_str(pinfo->cinfo, COL_PROTOCOL, protocol_data.PROTOSHORTNAME.c_str());
+  col_add_fstr(pinfo->cinfo, COL_INFO,
+               "%d > %d",
+               pinfo->srcport, pinfo->destport);
 
 
   gint    offset_where_dissection_stops = 0;
@@ -2693,11 +2678,6 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
 	else
 	{
 		M_STATE_DEBUG("Message entirely read (no desegmentation required)");
-		if (G_inside_dissector == false)
-		{
-//			if (check_col(pinfo->cinfo, COL_PROTOCOL))
-//		      col_set_str(pinfo->cinfo, COL_PROTOCOL, protocol_data.PROTOSHORTNAME.c_str());
-		}
 	}
 
 	offset_where_dissection_stops += sub_offset_where_dissection_stops;
