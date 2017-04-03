@@ -1,0 +1,38 @@
+
+###############################################################################
+# library
+###############################################################################
+
+const string  dev::winBaseDir = "..\..\";
+const string  dev::linuxBaseDir = "../../";
+
+const string  lib::wsutil =
+  system::os == "win"   ? dev::winBaseDir   + "wireshark-gtk2\libwsutil.dll" :
+  system::os == "linux" ? dev::linuxBaseDir + "wsutil/.libs/libwsutil.so" :
+  "os " + system::os + " unknow";
+
+###############################################################################
+# libwsutil str part
+###############################################################################
+
+library  lib::wsutil
+{
+  # gchar *ascii_strdown_inplace(gchar *str);
+  function  string  ascii_strdown_inplace (in_out string  str);
+
+  # gchar *ascii_strup_inplace(gchar *str);
+  function  string  ascii_strup_inplace   (in_out string  str);
+}
+
+struct T_test_library_wsutil_str
+{
+#  call ascii_strdown_inplace ("does not work, must be a variable");
+  var string  original = "Hello WORLD !";
+  var string  before = original;
+  var string  ret    = ascii_strdown_inplace (before);
+  var string  after  = before;
+  
+  var string  ret    = ascii_strup_inplace (before);
+  var string  after  = before;
+}  
+
