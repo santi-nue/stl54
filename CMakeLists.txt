@@ -27,13 +27,13 @@ set_module_info(generic 0 5 2 0)
 add_definitions(-DWIRESHARK_VERSION_NUMBER=20200)
 
 # Dyncall (for all : generic, byte_interpret & unitary_tests)
-set(DYNCALL_PATH dyncall-0.7-${WIRESHARK_TARGET_PLATFORM}-msvc/dyncall)
-set(DYNCALL_INC_PATH ${DYNCALL_PATH}/include)
-set(DYNCALL_LIB_PATH ${DYNCALL_PATH}/lib)
-find_library(libdynload_LIBRARY libdynload_s PATHS ${DYNCALL_LIB_PATH})
-find_library(libdyncall_LIBRARY libdyncall_s PATHS ${DYNCALL_LIB_PATH})
-add_definitions(-DBYTE_INTERPRET_USE_LIBRARY_DYNCALL)
-add_definitions(-I${DYNCALL_INC_PATH})
+#set(DYNCALL_PATH dyncall-0.7-${WIRESHARK_TARGET_PLATFORM}-msvc/dyncall)
+#set(DYNCALL_INC_PATH ${DYNCALL_PATH}/include)
+#set(DYNCALL_LIB_PATH ${DYNCALL_PATH}/lib)
+#find_library(libdynload_LIBRARY libdynload_s PATHS ${DYNCALL_LIB_PATH})
+#find_library(libdyncall_LIBRARY libdyncall_s PATHS ${DYNCALL_LIB_PATH})
+#add_definitions(-DBYTE_INTERPRET_USE_LIBRARY_DYNCALL)
+#add_definitions(-I${DYNCALL_INC_PATH})
 
 
 # Dissector core sources.

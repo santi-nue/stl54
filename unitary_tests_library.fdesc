@@ -3,11 +3,12 @@
 # library
 ###############################################################################
 
-const string  dev::winBaseDir = "..\..\";
+#const string  dev::winBaseDir = "..\..\";
+const string  dev::winBaseDir = "..\..\run\RelWithDebInfo\";
 const string  dev::linuxBaseDir = "../../";
 
 const string  lib::wsutil =
-  system::os == "win"   ? dev::winBaseDir   + "wireshark-gtk2\libwsutil.dll" :
+  system::os == "win"   ? dev::winBaseDir   + "libwsutil.dll" :
   system::os == "linux" ? dev::linuxBaseDir + "wsutil/.libs/libwsutil.so" :
   "os " + system::os + " unknow";
 

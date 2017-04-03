@@ -5097,7 +5097,11 @@ void    test_build_types_and_interpret_bytes()
 void    test_library()
 {
     T_type_definitions    type_definitions;
+#if WIRESHARK_VERSION_NUMBER >= 20200
     build_types ("unitary_tests_library.fdesc",
+#else
+    build_types ("unitary_tests_library.old_path.fdesc",
+#endif
                  type_definitions);
 
 	T_interpret_data      interpret_data;
