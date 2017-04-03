@@ -552,9 +552,199 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 }
 
 //*****************************************************************************
-// raw_data
+// C_packet_info_save_restore
+// Class to protect packet_info from modifications
+// Dedicated to insproto
+// 
+// ip/tcp/my_proto contains payload with ip/tcp/...
+//  So call_dissector(ip/tcp/...) which modify some packet_info data (e.g ports, ips ...)
+//  These modifications modify wireshark behavior on desegmentation (and ... ?)
 //*****************************************************************************
 
+class C_packet_info_save_restore
+{
+public:
+    C_packet_info_save_restore(packet_info& to_save_restore, bool must_save);
+    ~C_packet_info_save_restore();
+
+    void save();
+    void restore();
+
+private:
+    static
+    void partial_copy(packet_info& to, const packet_info& from);
+
+    packet_info&  A_to_save_restore;
+    bool          A_saved;
+    packet_info   A_save_packet_info;
+};
+
+C_packet_info_save_restore::C_packet_info_save_restore(packet_info& to_save_restore, bool must_save)
+    : A_to_save_restore(to_save_restore)
+    , A_saved(false)
+    , A_save_packet_info()
+{
+    if (must_save == true)
+        save();
+}
+
+C_packet_info_save_restore::~C_packet_info_save_restore()
+{
+    if (A_saved == true)
+        restore();
+}
+
+void
+C_packet_info_save_restore::partial_copy(packet_info& to, const packet_info& from)
+{
+#define M_PINFO_COPY(NAME)    to.NAME = from.NAME
+#define M_PINFO_COPY_ADDRESS(NAME)    copy_address_shallow(&to.NAME, &from.NAME)
+
+#if WIRESHARK_VERSION_NUMBER >= 20200
+    M_PINFO_COPY(num);
+    M_PINFO_COPY(abs_ts);
+    M_PINFO_COPY(vlan_id);
+#endif
+
+    M_PINFO_COPY(current_proto);
+    //M_PINFO_COPY(cinfo);
+    M_PINFO_COPY(rel_ts);
+    //M_PINFO_COPY(fd);
+    //M_PINFO_COPY(pseudo_header);
+    //M_PINFO_COPY(phdr);
+    //M_PINFO_COPY(data_src);
+    M_PINFO_COPY_ADDRESS(dl_src);
+    M_PINFO_COPY_ADDRESS(dl_dst);
+    M_PINFO_COPY_ADDRESS(net_src);
+    M_PINFO_COPY_ADDRESS(net_dst);
+    M_PINFO_COPY_ADDRESS(src);
+    M_PINFO_COPY_ADDRESS(dst);
+    M_PINFO_COPY(ctype);
+    M_PINFO_COPY(circuit_id);
+    M_PINFO_COPY(noreassembly_reason);
+    M_PINFO_COPY(fragmented);
+    M_PINFO_COPY(flags);
+    M_PINFO_COPY(fragmented);
+    M_PINFO_COPY(ptype);
+    M_PINFO_COPY(srcport);
+    M_PINFO_COPY(destport);
+    M_PINFO_COPY(match_uint);
+    M_PINFO_COPY(match_string);
+    M_PINFO_COPY(can_desegment);
+    M_PINFO_COPY(saved_can_desegment);
+    M_PINFO_COPY(desegment_offset);
+    M_PINFO_COPY(desegment_len);
+    M_PINFO_COPY(want_pdu_tracking);
+    M_PINFO_COPY(bytes_until_next_pdu);
+    M_PINFO_COPY(p2p_dir);
+    //M_PINFO_COPY(private_table);
+    //M_PINFO_COPY(layers);
+    M_PINFO_COPY(curr_layer_num);
+    M_PINFO_COPY(link_number);
+    M_PINFO_COPY(clnp_srcref);
+    M_PINFO_COPY(clnp_dstref);
+    M_PINFO_COPY(link_dir);
+    //M_PINFO_COPY(proto_data);
+    //M_PINFO_COPY(dependent_frames);
+    //M_PINFO_COPY(frame_end_routines);
+    //M_PINFO_COPY(epan);
+    //M_PINFO_COPY(heur_list_name);
+}
+
+void
+C_packet_info_save_restore::save()
+{
+    A_saved = true;
+
+    partial_copy(A_save_packet_info, A_to_save_restore);
+}
+
+void
+C_packet_info_save_restore::restore()
+{
+    if (A_saved != true)
+        return;
+    A_saved = false;
+
+    partial_copy(A_to_save_restore, A_save_packet_info);
+}
+
+//*****************************************************************************
+// C_columns_save_restore
+// Class to protect columns from modifications
+// Dedicated to insproto
+//*****************************************************************************
+
+class C_columns_save_restore
+{
+public:
+    C_columns_save_restore(packet_info& to_save_restore, bool must_save);
+    ~C_columns_save_restore();
+
+    void save();
+    void restore();
+
+private:
+    packet_info&  A_packet_info;
+    bool          A_saved;
+    gboolean      A_save_col_writable;
+};
+
+C_columns_save_restore::C_columns_save_restore(packet_info& to_save_restore, bool must_save)
+    : A_packet_info(to_save_restore)
+    , A_saved(false)
+    , A_save_col_writable(false)
+{
+    if (must_save == true)
+        save();
+}
+
+C_columns_save_restore::~C_columns_save_restore()
+{
+    restore();
+}
+
+void
+C_columns_save_restore::save()
+{
+    A_saved = true;
+
+    // col_set_fence forbid to clear, but still can add (a set becomes automatically a add)
+    //col_set_fence(A_packet_info.cinfo, COL_PROTOCOL);
+    //col_set_fence(A_packet_info.cinfo, COL_INFO);
+
+#if WIRESHARK_VERSION_NUMBER < 20200
+    // <= 2.0 : can not specify the column
+    A_save_col_writable = col_get_writable(A_packet_info.cinfo);
+    col_set_writable(A_packet_info.cinfo, false);
+#else
+    A_save_col_writable = col_get_writable(A_packet_info.cinfo, -1);
+    // Seems to NOT work for destination and source
+    // Normally, I need only COL_PROTOCOL & COL_INFO
+    col_set_writable(A_packet_info.cinfo, -1/*all*/, false);
+#endif                
+}
+
+void
+C_columns_save_restore::restore()
+{
+    if (A_saved != true)
+        return;
+    A_saved = false;
+
+    //col_clear_fence(A_packet_info.cinfo, COL_PROTOCOL);
+    //col_clear_fence(A_packet_info.cinfo, COL_INFO);
+
+#if WIRESHARK_VERSION_NUMBER < 20200
+    col_set_writable(A_packet_info.cinfo, A_save_col_writable);
+#else
+    col_set_writable(A_packet_info.cinfo, -1/*all*/, A_save_col_writable);
+#endif
+}
+
+//*****************************************************************************
+// raw_data
+//*****************************************************************************
 #include "T_interpret_data.h"
 
 void
@@ -604,21 +794,8 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 				dissector_to_call_handle = find_dissector(field_type_name.str_dissector.c_str());
 			}
 
-            if (is_insproto == true)
-            {
-                // col_set_fence forbid to clear, but still can add (a set becomes automatically a add)
-                //col_set_fence(A_interpret_wsgd.wsgd_pinfo->cinfo, COL_PROTOCOL);
-                //col_set_fence(A_interpret_wsgd.wsgd_pinfo->cinfo, COL_INFO);
-
-#if WIRESHARK_VERSION_NUMBER < 20200
-                // <= 2.0 : can not specify the column
-                col_set_writable(A_interpret_wsgd.wsgd_pinfo->cinfo, false);
-#else
-                // Seems to NOT work for destination and source
-                // Normally, I need only COL_PROTOCOL & COL_INFO
-                col_set_writable(A_interpret_wsgd.wsgd_pinfo->cinfo, -1/*all*/, false);
-#endif                
-            }
+            C_columns_save_restore      columns_save_restore(*A_interpret_wsgd.wsgd_pinfo, is_insproto);
+            C_packet_info_save_restore  packet_info_save_restore(*A_interpret_wsgd.wsgd_pinfo, is_insproto);
 
 			call_subdissector_or_data(protocol_data,
 									 dissector_to_call_handle,
@@ -631,17 +808,8 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 									 P_value_2,
 									 P_value_3);
 
-            if (is_insproto == true)
-            {
-                //col_clear_fence(A_interpret_wsgd.wsgd_pinfo->cinfo, COL_PROTOCOL);
-                //col_clear_fence(A_interpret_wsgd.wsgd_pinfo->cinfo, COL_INFO);
-
-#if WIRESHARK_VERSION_NUMBER < 20200
-                col_set_writable(A_interpret_wsgd.wsgd_pinfo->cinfo, true);
-#else
-                col_set_writable(A_interpret_wsgd.wsgd_pinfo->cinfo, -1/*all*/, true);
-#endif
-            }
+            columns_save_restore.restore();
+            packet_info_save_restore.restore();
 
 //			A_interpret_wsgd.wsgd_msg_root_tree = root_tree_saved;
 		}
