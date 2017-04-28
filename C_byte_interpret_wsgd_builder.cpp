@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -556,9 +556,14 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 // Class to protect packet_info from modifications
 // Dedicated to insproto
 // 
-// ip/tcp/my_proto contains payload with ip/tcp/...
-//  So call_dissector(ip/tcp/...) which modify some packet_info data (e.g ports, ips ...)
-//  These modifications modify wireshark behavior on desegmentation (and ... ?)
+// When we have ip/tcp/my_proto containing payload with ip/tcp/...
+//  we call_dissector(ip/tcp/...) which modify some packet_info data (e.g port, ip ...)
+// --> these modifications modify wireshark behavior on desegmentation (and ... ?)
+// Looks like https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=2345
+// Perhaps only src and dst fields are a problem
+//
+// I imagine that subproto have the same problem,
+//  but I imagine that subproto should not be used for this kind of scheme
 //*****************************************************************************
 
 class C_packet_info_save_restore
