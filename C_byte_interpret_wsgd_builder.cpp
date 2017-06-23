@@ -170,7 +170,11 @@ int     call_subdissector_or_data2(T_generic_protocol_data  & protocol_data,
   const int    offset = bit_offset / 8;
   const int    length_of_subdissector_data = bit_length_of_subdissector_data / 8;
 
+#if WIRESHARK_VERSION_NUMBER >= 20400
+  tvbuff_t  * next_tvb = tvb_new_subset_length_caplen(tvb, offset, length_of_subdissector_data, length_of_subdissector_data);
+#else
   tvbuff_t  * next_tvb = tvb_new_subset(tvb, offset, length_of_subdissector_data, length_of_subdissector_data);
+#endif
 
   /* If the user has a "Follow UDP Stream" window loading, pass a pointer
    * to the payload tvb through the tap system. */

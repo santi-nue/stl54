@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2017 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -55,7 +55,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#if WIRESHARK_VERSION_NUMBER >= 11200
+#include <epan/tvbuff.h>
+#if WIRESHARK_VERSION_NUMBER >= 20400
+#include <wsutil/filesystem.h>
+#include <wsutil/report_message.h>
+#elif WIRESHARK_VERSION_NUMBER >= 11200
 #include <wsutil/filesystem.h>
 #include <wsutil/report_err.h>
 #else
@@ -2659,7 +2663,11 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
   do
   {
 	// compute new tvb 
-	tvbuff_t  * sub_tvb = tvb_new_subset(tvb, offset_where_dissection_stops, -1, -1);
+#if WIRESHARK_VERSION_NUMBER >= 20400
+      tvbuff_t  * sub_tvb = tvb_new_subset_length_caplen(tvb, offset_where_dissection_stops, -1, -1);
+#else
+      tvbuff_t  * sub_tvb = tvb_new_subset(tvb, offset_where_dissection_stops, -1, -1);
+#endif
 
 	gint    sub_offset_where_dissection_stops = 
 						         dissect_generic_proto(protocol_data,

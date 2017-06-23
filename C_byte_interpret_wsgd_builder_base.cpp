@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,12 +30,11 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <epan/expert.h>
+#include <epan/tvbuff.h>
 #if WIRESHARK_VERSION_NUMBER >= 11200
 #include <wsutil/filesystem.h>
-#include <wsutil/report_err.h>
 #else
 #include <epan/filesystem.h>
-#include <epan/report_err.h>
 #endif
 #include <epan/conversation.h>
 #include <epan/tap.h>
