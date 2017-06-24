@@ -1,0 +1,4 @@
+
+# WIRESHARK_VERSION_NUMBER=<major><minor_on_2_digits><micro_on_2_digits>
+# Example for Wireshark 2.4.0
+add_definitions(-DWIRESHARK_VERSION_NUMBER=20400)

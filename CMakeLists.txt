@@ -24,7 +24,7 @@ include(WiresharkPlugin)
 # Plugin name and version info (major minor micro extra)
 set_module_info(generic 0 5 2 0)
 
-add_definitions(-DWIRESHARK_VERSION_NUMBER=20200)
+include(cmake_wireshark_version_number.cmake)
 
 # Dyncall (for all : generic, byte_interpret & unitary_tests)
 #set(DYNCALL_PATH dyncall-0.7-${WIRESHARK_TARGET_PLATFORM}-msvc/dyncall)
