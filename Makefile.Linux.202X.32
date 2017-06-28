@@ -821,6 +821,7 @@ EXTRA_DIST = \
 # wsgd Olivier Aveline 2010/01/10 add command "g++ -shared ..."
 all: all-am
 	g++ -shared  .libs/*.o $(BYTE_INTERPRET_ADD_OBJECTS)  -L/usr/local/lib  -pthread -Wl,-soname -Wl,generic.so -o .libs/generic.so
+	strip .libs/generic.so
 
 # wsgd Olivier Aveline 2010/01/10 add .cpp
 .SUFFIXES:
@@ -906,6 +907,7 @@ byte_interpret_OBJECTS = byte_interpret_main.o $(DISSECTOR_CORE_OBJECTS)
 # GLIB_LIBS mandatory for gmodule
 byte_interpret.x : $(byte_interpret_OBJECTS)
 	$(LINK)  $(conlibsdll)  $(byte_interpret_OBJECTS) $(BYTE_INTERPRET_ADD_OBJECTS) $(GLIB_LIBS) $(LIBS)
+	strip byte_interpret.x
 
 byte_interpret_clean:
 	rm -f $(byte_interpret_OBJECTS) byte_interpret.x
@@ -919,6 +921,7 @@ unitary_tests_OBJECTS = unitary_tests.lo $(am__objects_CORE_UT)
 # GLIB_LIBS mandatory for gmodule
 unitary_tests.x : $(unitary_tests_OBJECTS)
 	$(LINK)  $(conlibsdll)  $(unitary_tests_OBJECTS) $(BYTE_INTERPRET_ADD_OBJECTS) $(GLIB_LIBS) $(LIBS)
+	strip unitary_tests.x
 
 unit_test_clean:
 	rm -f $(unitary_tests_OBJECTS) unitary_tests.x unitary_tests.x.traces.txt
