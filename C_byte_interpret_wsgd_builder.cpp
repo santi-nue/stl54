@@ -607,7 +607,11 @@ void
 C_packet_info_save_restore::partial_copy(packet_info& to, const packet_info& from)
 {
 #define M_PINFO_COPY(NAME)    to.NAME = from.NAME
+#if WIRESHARK_VERSION_NUMBER >= 11200
 #define M_PINFO_COPY_ADDRESS(NAME)    copy_address_shallow(&to.NAME, &from.NAME)
+#else
+#define M_PINFO_COPY_ADDRESS(NAME)    COPY_ADDRESS_SHALLOW(&to.NAME, &from.NAME)
+#endif
 
 #if WIRESHARK_VERSION_NUMBER >= 20200
     M_PINFO_COPY(num);
@@ -617,8 +621,10 @@ C_packet_info_save_restore::partial_copy(packet_info& to, const packet_info& fro
 
     M_PINFO_COPY(current_proto);
     //M_PINFO_COPY(cinfo);
-    M_PINFO_COPY(rel_ts);
-    //M_PINFO_COPY(fd);
+#if WIRESHARK_VERSION_NUMBER >= 11200
+	M_PINFO_COPY(rel_ts);
+#endif
+	//M_PINFO_COPY(fd);
     //M_PINFO_COPY(pseudo_header);
     //M_PINFO_COPY(phdr);
     //M_PINFO_COPY(data_src);
@@ -648,8 +654,10 @@ C_packet_info_save_restore::partial_copy(packet_info& to, const packet_info& fro
     M_PINFO_COPY(p2p_dir);
     //M_PINFO_COPY(private_table);
     //M_PINFO_COPY(layers);
-    M_PINFO_COPY(curr_layer_num);
-    M_PINFO_COPY(link_number);
+#if WIRESHARK_VERSION_NUMBER >= 11200
+	M_PINFO_COPY(curr_layer_num);
+#endif
+	M_PINFO_COPY(link_number);
     M_PINFO_COPY(clnp_srcref);
     M_PINFO_COPY(clnp_dstref);
     M_PINFO_COPY(link_dir);
