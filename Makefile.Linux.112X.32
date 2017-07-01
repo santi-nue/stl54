@@ -816,6 +816,7 @@ EXTRA_DIST = \
 	CMakeLists.txt
 
 # wsgd Olivier Aveline 2010/01/10 add command "g++ -shared ..."
+# wsgd Olivier Aveline 2017/06/28 add strip ...
 all: all-am
 	g++ -shared  .libs/*.o $(BYTE_INTERPRET_ADD_OBJECTS)  -L/usr/local/lib  -pthread -Wl,-soname -Wl,generic.so -o .libs/generic.so
 	strip .libs/generic.so
