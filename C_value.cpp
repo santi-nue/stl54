@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -715,7 +715,7 @@ C_value::sprintf_values(const std::string      & printf_format,
 	// No parameters.
 	if (values_to_print.empty())
 	{
-		sprintf(tmp_str, printf_format.c_str());
+		strncpy(tmp_str, printf_format.c_str(), sizeof(tmp_str));
 		return  tmp_str;
 	}
 

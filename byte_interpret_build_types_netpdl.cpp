@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@
 // Why not something like :
 //  $hlen
 // because hlen is not an integer,
-//  it is just a "memory address inside the packet with an associated size/mask)
+//  it is just a memory address inside the packet with an associated size/mask
 // 
 // manage very low level type
 // e.g. from tcp.xml :
@@ -199,7 +199,7 @@ void    update_field_type_name_with_showtemplate(
 									const T_type_definitions  & type_definitions,
 										  T_field_type_name   & field_type_name,
 									const char                * showtemplate,
-									const long                  bit_size = -1)
+									const long                  UNUSED(bit_size) = -1)
 {
 	if (showtemplate == NULL_PTR)
 		return;
@@ -454,8 +454,8 @@ void  netpdl_manage_format_fields_field_bit(T_type_definitions  & type_definitio
 //*****************************************************************************
 
 void  netpdl_manage_format_fields_field_line(T_type_definitions  & type_definitions,
-												 T_field_type_name   & field_type_name,
-												 TiXmlElement        * element)
+											 T_field_type_name   & field_type_name,
+											 TiXmlElement        * element)
 {
 	M_STATE_ENTER("netpdl_manage_format_fields_field_line", element);
 
@@ -471,8 +471,8 @@ void  netpdl_manage_format_fields_field_line(T_type_definitions  & type_definiti
 // ICIOA  (example tcp.xml)
 //*****************************************************************************
 
-void  netpdl_manage_format_fields_field_padding(T_type_definitions  & type_definitions,
-												T_field_type_name   & field_type_name,
+void  netpdl_manage_format_fields_field_padding(T_type_definitions  & UNUSED(type_definitions),
+												T_field_type_name   & UNUSED(field_type_name),
 												TiXmlElement       *& element)
 {
 	M_STATE_ENTER("netpdl_manage_format_fields_field_padding", element);
@@ -900,7 +900,7 @@ void    netpdl_manage_main_file(T_type_definitions  & type_definitions,
 	M_FATAL_IF_FALSE(root != NULL);
 
 	{
-		TiXmlElement  * element = root->FirstChildElement("execute-code");
+		/*TiXmlElement  * element =*/ root->FirstChildElement("execute-code");
 		// Do not manage  at this time
 	}
 

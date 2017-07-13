@@ -683,7 +683,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			if (false) { }
 			M_READ_SIMPLE_TYPE_BASE(final_type.c_str(),bit_size,signed int,32,"signed int", false);
 //			M_READ_SIMPLE_TYPE_BASE(final_type.c_str(),bit_size,signed int,32,"signed int", S_ICIOA_in_bitfield);
-/*			field_type_name.basic_type_bit_size = TYPE_BIT_SIZE; /* ce champ est deja calcule dans post_build_field_base MAIS pas suffisant pb sur les bitfield  */ \
+//			field_type_name.basic_type_bit_size = TYPE_BIT_SIZE;  // ce champ est deja calcule dans post_build_field_base MAIS pas suffisant pb sur les bitfield
 			}
 			else
 			{
@@ -1130,7 +1130,7 @@ void    wsgd_report_failure(string    str)
   str += "\n";
   str += "\n";
   str += "More information could be available at http://wsgd.free.fr/";
-  report_failure(str.c_str());
+  report_failure(str.c_str(), "silly arg to avoid compiler warning, so must not appear");
 }
 
 //*****************************************************************************
@@ -1726,22 +1726,22 @@ void    cpp_proto_reg_handoff_generic()
  *****************************************************************************/
 
 proto_tree  * cpp_dissect_generic_add_tree(const int           proto_idx,
-										         proto_item  * proto_item)
+										         proto_item  * item)
 {
   T_generic_protocol_data    & protocol_data = get_protocol_data(proto_idx);
   T_generic_protocol_ws_data        * P_protocol_ws_data = &protocol_data.ws_data;
 
-  return  proto_item_add_subtree(proto_item, P_protocol_ws_data->fields_data.ett_id[K_ANY_WSGD_FIELD_IDX]);
+  return  proto_item_add_subtree(item, P_protocol_ws_data->fields_data.ett_id[K_ANY_WSGD_FIELD_IDX]);
 }
 
 /******************************************************************************
  * cpp_dissect_generic_set_packet_id_str
  *****************************************************************************/
 
-void    cpp_dissect_generic_set_packet_id_str(T_generic_protocol_data  & protocol_data,
-											        tvbuff_t     * tvb,
+void    cpp_dissect_generic_set_packet_id_str(T_generic_protocol_data  & UNUSED(protocol_data),
+													tvbuff_t     * UNUSED(tvb),
 												    packet_info  * pinfo,
-												    proto_tree   * tree,
+													proto_tree   * UNUSED(tree),
 										      const string       & packet_id_str)
 {
   M_STATE_ENTER("cpp_dissect_generic_set_packet_id_str", packet_id_str);
@@ -1768,7 +1768,7 @@ void    cpp_dissect_generic_set_packet_id_str(T_generic_protocol_data  & protoco
 
 proto_item  * cpp_dissect_generic_set_packet_summary_str(T_generic_protocol_data  & protocol_data,
 														       tvbuff_t     * tvb,
-															   packet_info  * pinfo,
+															   packet_info  * UNUSED(pinfo),
 															   proto_tree   * tree,
 										                 const string  & packet_summary_str)
 {
@@ -1851,7 +1851,7 @@ string    pinfo_nstime_to_string(const nstime_t  & nstime)
 // pinfo definition could change depending on wireshark version.
 //*****************************************************************************
 
-void    add_pinfo(const T_generic_protocol_data  & protocol_data,
+void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
 				  const packet_info              * pinfo,
 				        T_interpret_data         & interpret_data)
 {
@@ -2224,7 +2224,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  istrstream           iss(str_interpret.c_str());
 
 	  C_byte_interpret_wsgd_builder_base  wsgd_builder(proto_idx, tvb, pinfo, tree, tree);
-	  C_interpret_builder_set_temporary   interpret_builder_set_temporary(&wsgd_builder);
+	  C_interpret_builder_set_temporary   interpret_builder_set_temporary2(&wsgd_builder);
 
 	  if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG)
 	  {
@@ -2341,7 +2341,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  size_t               in_out_sizeof_bytes = length_raw_data;
 
 	  C_byte_interpret_wsgd_builder      wsgd_builder(proto_idx, tvb, pinfo, tree, msg_root_tree);
-	  C_interpret_builder_set_temporary  interpret_builder_set_temporary(&wsgd_builder);
+	  C_interpret_builder_set_temporary  interpret_builder_set_temporary2(&wsgd_builder);
 
 	  // Check that the packet identifier has been found.
 	  if (MSG_ID_FIELD_NAME == "")

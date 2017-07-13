@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -181,7 +181,7 @@ C_trace::print_beginning_of_trace(      ostream  & os,
 		    if (diff_time_ms > 1)
 		    {
 			    char  time_str[99+1];
-			    sprintf(time_str, "%4d ", diff_time_ms);
+			    sprintf(time_str, "%4ld ", diff_time_ms);
 			    os << time_str;
 		    }
 		    else

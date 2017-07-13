@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,9 +53,6 @@ using namespace std;
 // T_interpret_data
 //*****************************************************************************
 
-static T_interpret_data  * S_P_interpret_data = NULL;    // recursive call ok
-
-
 void    swap(T_interpret_data  & lhs,
 			 T_interpret_data  & rhs)
 {
@@ -72,6 +69,8 @@ void    swap(T_interpret_data  & lhs,
 // C_interpret_data_set_temporary
 //*****************************************************************************
 #if 0
+static T_interpret_data  * S_P_interpret_data = NULL;    // recursive call ok
+
 C_interpret_data_set_temporary::C_interpret_data_set_temporary(T_interpret_data  & interpret_data)
 	:previous_value(S_P_interpret_data),
 	 value_modified(false)

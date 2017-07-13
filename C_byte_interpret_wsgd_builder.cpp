@@ -39,7 +39,7 @@ int     dissector_try_heuristic(  T_generic_protocol_data  & protocol_data,
 								  tvbuff_t                 * next_tvb,
 								  packet_info              * pinfo,
 								  proto_tree               * tree,
-							const int                        bit_length_of_subdissector_data)
+							const int                        UNUSED(bit_length_of_subdissector_data))
 {
     T_generic_protocol_subdissector_data  & subdissector_data = protocol_data.ws_data.subdissector_data;
 
@@ -113,7 +113,7 @@ int     dissector_try_value(      T_generic_protocol_data  & protocol_data,
 								  tvbuff_t                 * next_tvb,
 								  packet_info              * pinfo,
 								  proto_tree               * tree,
-							const int                        bit_length_of_subdissector_data,
+							const int                        UNUSED(bit_length_of_subdissector_data),
 							const C_value                  * P_value)
 {
   int  dissector_result = 0;    // means nothing done (no value or dissector not found)

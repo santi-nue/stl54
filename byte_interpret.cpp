@@ -1519,8 +1519,8 @@ bool    decoder_utf16be (const T_type_definitions      & UNUSED(type_definitions
 
 			if ((byte2 & 0xfc) == 0xd8)
 			{
-				T_byte  byte3 = in_out_frame_data.read_1_byte();
-				T_byte  byte4 = in_out_frame_data.read_1_byte();
+				/*T_byte  byte3 =*/ in_out_frame_data.read_1_byte();
+				/*T_byte  byte4 = */ in_out_frame_data.read_1_byte();
 			}
 		}
 
@@ -1568,8 +1568,8 @@ bool    decoder_utf16le (const T_type_definitions      & UNUSED(type_definitions
 
 			if ((byte2 & 0xfc) == 0xd8)
 			{
-				T_byte  byte3 = in_out_frame_data.read_1_byte();
-				T_byte  byte4 = in_out_frame_data.read_1_byte();
+				/*T_byte  byte3 =*/ in_out_frame_data.read_1_byte();
+				/*T_byte  byte4 =*/ in_out_frame_data.read_1_byte();
 			}
 		}
 
@@ -1614,20 +1614,20 @@ bool    decoder_utf8 (   const T_type_definitions      & UNUSED(type_definitions
 		{
 			if ((byte1 & 0xF0) == 0xF0)
 			{
-				T_byte  byte2 = in_out_frame_data.read_1_byte();
-				T_byte  byte3 = in_out_frame_data.read_1_byte();
-				T_byte  byte4 = in_out_frame_data.read_1_byte();
+				/*T_byte  byte2 =*/ in_out_frame_data.read_1_byte();
+				/*T_byte  byte3 =*/ in_out_frame_data.read_1_byte();
+				/*T_byte  byte4 =*/ in_out_frame_data.read_1_byte();
 			}
 			else
 			{
 				if ((byte1 & 0xE0) == 0xE0)
 				{
-					T_byte  byte2 = in_out_frame_data.read_1_byte();
-					T_byte  byte3 = in_out_frame_data.read_1_byte();
+					/*T_byte  byte2 =*/ in_out_frame_data.read_1_byte();
+					/*T_byte  byte3 =*/ in_out_frame_data.read_1_byte();
 				}
 				else
 				{
-					T_byte  byte2 = in_out_frame_data.read_1_byte();
+					/*T_byte  byte2 =*/ in_out_frame_data.read_1_byte();
 				}
 			}
  
@@ -4701,7 +4701,7 @@ string    simple_value_to_attribute_value_main (
 						 const T_type_definitions  & type_definitions,
 						       T_interpret_data    & interpret_data,
                                   const C_value            & value,
-                                  const string             & final_type,
+								  const string             & UNUSED(final_type),
 								  const T_field_type_name  & field_type_name,
 								        T_attribute_value  & attribute_value,
 								        bool               & no_error)
@@ -5640,6 +5640,7 @@ M_FCT_READ_SIMPLE_TYPE (schar,    8,   signed char)
 M_FCT_READ_SIMPLE_TYPE (uchar,    8, unsigned char)
 M_FCT_READ_SIMPLE_TYPE (msg,      1, unsigned char)
 
+#undef  M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT
 #define M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)
 M_FCT_READ_SIMPLE_TYPE (spare,    8, unsigned char)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -707,8 +707,8 @@ ostream &  operator<< (ostream & os,
 
 C_value    string_to_numeric(const T_type_definitions  & type_definitions,
 							 const string              & str_to_convert_to_numeric,
-							 const string              & field_name,
-							 const char                * attr)
+							 const string              & UNUSED(field_name),
+							 const char                * UNUSED(attr))
 {
 	C_value    val = str_to_convert_to_numeric;
 

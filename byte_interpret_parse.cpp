@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -447,7 +447,7 @@ bool    append_to_string_until (istream       & is,
 	{
 		// Remove all blanks at the end.
 		string::size_type  idx = result.size() - 1;
-		while (idx >=0)
+		while (idx >= 0)
 		{
 			if (isspace(result[idx]) == 0)
 			{

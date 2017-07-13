@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2163,10 +2163,10 @@ void    build_function (const E_override            must_override,
 #ifdef BYTE_INTERPRET_USE_PLUGIN
 #include <gmodule.h>
 
-void    build_plugin_output (const E_override            must_override,
-                        const string              & key_word,
-                              istream             & is,
-                              T_type_definitions  & type_definitions)
+void    build_plugin_output (const E_override            UNUSED(must_override),
+                             const string              & key_word,
+                                   istream             & is,
+                                   T_type_definitions  & type_definitions)
 {
 	M_STATE_ENTER ("build_plugin_output", "");
 
