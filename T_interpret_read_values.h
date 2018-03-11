@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2018 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,10 +31,8 @@ using namespace std;
 #include "C_reference_counter_ptr.h"
 #include "T_attribute_value.h"
 
-// ICIOA new
 #include "T_interpret_value.h"
-//#define USE_IVTREE
-#define USE_IVVECTOR
+
 
 //*****************************************************************************
 // T_interpret_read_values
@@ -128,7 +126,7 @@ struct T_interpret_read_values : public C_reference_counter,
 					  const std::string                var_name_dst);
 
 
-// ICIOA ivvector begin 
+	// Variable group (ie struct ...)
 	void    read_variable_group_begin(const std::string  & name);
 	void    read_variable_group_end();
 	void    global_variable_group_begin();    // only 1 global group and at the beginning
@@ -148,7 +146,7 @@ private:
 	int                          A_msg_pinfo_idx_end;
 	int                          A_msg_other_idx_begin;    // other data start after global and pinfo
 	std::string                  A_current_path;
-// ICIOA ivvector end 
+
 
 	// ICIOA msg
 	T_attribute_value            A_this_msg_attribute_value;

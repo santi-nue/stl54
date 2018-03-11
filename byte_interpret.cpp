@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2018 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -2645,7 +2645,7 @@ bool    frame_to_field_other(
 
 			if (is_a_group_and_not_inline)
 			{
-				interpret_data.read_variable_group_begin(data_simple_array_name);    // ivvector
+				interpret_data.read_variable_group_begin(data_simple_array_name);
 
 				if (interpret_data.must_output ())
 				{
@@ -2784,7 +2784,7 @@ bool    frame_to_field_other(
 
 			if (is_a_group_and_not_inline)
 			{
-				interpret_data.read_variable_group_end();    // ivvector
+				interpret_data.read_variable_group_end();
 
 				if (interpret_data.must_output ())
 				{

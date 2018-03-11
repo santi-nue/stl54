@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2018 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -973,8 +973,6 @@ void    swap(T_interpret_read_values  & lhs,
 
 
 
-// ICIOA ivvector begin
-#if 1
 void
 T_interpret_read_values::read_variable_group_begin(const std::string        & name)
 {
@@ -1047,5 +1045,3 @@ T_interpret_read_values::pinfo_variable_group_end()
 	A_msg_other_idx_begin = A_msg_pinfo_idx_end;
 	read_variable_group_end();
 }
-#endif
-// ICIOA ivvector end 

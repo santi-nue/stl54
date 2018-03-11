@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2017 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2018 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -1855,87 +1855,6 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
 				  const packet_info              * pinfo,
 				        T_interpret_data         & interpret_data)
 {
-#ifdef USE_IVTREE
-#define M_ADD_PINFO(NAME)                                             \
-	interpret_data.add_read_variable("pinfo." #NAME, #NAME, pinfo->NAME)
-
-#define M_ADD_PINFO_STR(NAME)                                             \
-	interpret_data.add_read_variable("pinfo." #NAME, #NAME, pinfo->NAME ? pinfo->NAME : "")
-
-#define M_ADD_PINFO_ADDRESS(NAME)                                             \
-	interpret_data.add_read_variable("pinfo." #NAME, #NAME, pinfo_address_to_string(pinfo->NAME).c_str())
-
-#define M_ADD_PINFO_ADDRESS(NAME)                                             \
-	interpret_data.add_read_variable("pinfo." #NAME, #NAME, pinfo_address_to_string(pinfo->NAME).c_str())
-
-#define M_ADD_PINFO_FD(NAME)                                             \
-	interpret_data.add_read_variable("pinfo.fd." #NAME, #NAME, pinfo->fd->NAME)
-
-#define M_ADD_PINFO_FD_NSTIME(NAME)                                             \
-	interpret_data.add_enter_node(#NAME);                                       \
-/*	interpret_data.add_read_variable("pinfo.fd." #NAME, #NAME, pinfo_nstime_to_string(pinfo->fd->NAME));  */ \
-	interpret_data.add_read_variable("pinfo.fd." #NAME  ".secs",  "secs", pinfo->fd->NAME.secs);  \
-	interpret_data.add_read_variable("pinfo.fd." #NAME ".nsecs", "nsecs", pinfo->fd->NAME.nsecs);  \
-	interpret_data.leave_node()
-
-
-
-	interpret_data.add_enter_node("pinfo");
-
-  M_ADD_PINFO(current_proto);
-//  M_ADD_PINFO();  // column_info *cinfo;		/* Column formatting information */
-  if (pinfo->fd != NULL_PTR)  // frame_data*
-  {
-	interpret_data.add_enter_node("fd");
-
-	M_ADD_PINFO_FD(num);         /* Frame number */
-	M_ADD_PINFO_FD(pkt_len);     /* Packet length */
-	M_ADD_PINFO_FD(cap_len);     /* Amount actually captured */
-	M_ADD_PINFO_FD(cum_bytes);   /* Cumulative bytes into the capture */
-    M_ADD_PINFO_FD_NSTIME(abs_ts);      /* Absolute timestamp */
-    M_ADD_PINFO_FD_NSTIME(rel_ts);      /* Relative timestamp (yes, it can be negative) */
-    M_ADD_PINFO_FD_NSTIME(del_dis_ts);  /* Delta timestamp to previous displayed frame (yes, it can be negative) */
-    M_ADD_PINFO_FD_NSTIME(del_cap_ts);  /* Delta timestamp to previous captured frame (yes, it can be negative) */
-	M_ADD_PINFO_FD(file_off);    /* File offset */
-
-	interpret_data.leave_node();
-  }
-//  M_ADD_PINFO();  // union wtap_pseudo_header *pseudo_header;
-//  M_ADD_PINFO();  // GSList *data_src;		/* Frame data sources */
-  M_ADD_PINFO_ADDRESS(dl_src);		/* link-layer source address */
-  M_ADD_PINFO_ADDRESS(dl_dst);		/* link-layer destination address */
-  M_ADD_PINFO_ADDRESS(net_src);		/* network-layer source address */
-  M_ADD_PINFO_ADDRESS(net_dst);		/* network-layer destination address */
-  M_ADD_PINFO_ADDRESS(src);			/* source address (net if present, DL otherwise )*/
-  M_ADD_PINFO_ADDRESS(dst);			/* destination address (net if present, DL otherwise )*/
-  M_ADD_PINFO(ethertype);
-  M_ADD_PINFO(ipproto);
-  M_ADD_PINFO(ipxptype);
-
-  // In wireshark 1.1.z, there is a new field here.
-  // So, all following fields are not at the same place.
-
-  // wireshark version is "x.y.z<anything>"
-  const char  * version_compil = VERSION;
-  const char  * version_exec   = epan_get_version();
-  if (strncmp(version_compil, version_exec, 4) == 0)
-  {
-	  M_ADD_PINFO(ctype);               /* type of circuit, for protocols with a VC identifier */
-	  M_ADD_PINFO(circuit_id);
-	  M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
-	  M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
-#if WIRESHARK_VERSION_NUMBER < 10800
-	  M_ADD_PINFO(in_error_pkt);        /* TRUE if we're inside an {ICMP,CLNP,...} error packet */
-#endif
-	  M_ADD_PINFO(ptype);               /* type of the following two port numbers */
-	  M_ADD_PINFO(srcport);
-	  M_ADD_PINFO(destport);
-	  M_ADD_PINFO(match_port);
-	  M_ADD_PINFO_STR(match_string);
-  }
-
-	interpret_data.leave_node();
-#else
 	interpret_data.pinfo_variable_group_begin();
 
 #define M_ADD_PINFO(NAME)                                             \
@@ -2004,21 +1923,20 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
   const char  * version_exec   = epan_get_version();
   if (strncmp(version_compil, version_exec, 4) == 0)
   {
-  M_ADD_PINFO(ctype);               /* type of circuit, for protocols with a VC identifier */
-  M_ADD_PINFO(circuit_id);
-  M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
-  M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
+	M_ADD_PINFO(ctype);               /* type of circuit, for protocols with a VC identifier */
+	M_ADD_PINFO(circuit_id);
+	M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
+	M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
 #if WIRESHARK_VERSION_NUMBER < 10800
-  M_ADD_PINFO(in_error_pkt);        /* TRUE if we're inside an {ICMP,CLNP,...} error packet */
+	M_ADD_PINFO(in_error_pkt);        /* TRUE if we're inside an {ICMP,CLNP,...} error packet */
 #endif
-  M_ADD_PINFO(ptype);               /* type of the following two port numbers */
-  M_ADD_PINFO(srcport);
-  M_ADD_PINFO(destport);
+	M_ADD_PINFO(ptype);               /* type of the following two port numbers */
+	M_ADD_PINFO(srcport);
+	M_ADD_PINFO(destport);
 #if WIRESHARK_VERSION_NUMBER < 11200
-  M_ADD_PINFO(match_port);
+	M_ADD_PINFO(match_port);
 #endif
-  M_ADD_PINFO_STR(match_string);
-#endif
+	M_ADD_PINFO_STR(match_string);
   }
 
   interpret_data.pinfo_variable_group_end();
