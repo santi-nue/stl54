@@ -1937,6 +1937,35 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
 	M_ADD_PINFO(match_port);
 #endif
 	M_ADD_PINFO_STR(match_string);
+
+#if WIRESHARK_VERSION_NUMBER >= 20400
+	M_ADD_PINFO(can_desegment);
+	M_ADD_PINFO(saved_can_desegment);
+	M_ADD_PINFO(desegment_offset);
+	M_ADD_PINFO(desegment_len);
+	M_ADD_PINFO(want_pdu_tracking);
+	M_ADD_PINFO(bytes_until_next_pdu);
+	M_ADD_PINFO(p2p_dir);
+	// layers
+	M_ADD_PINFO(curr_layer_num);
+	M_ADD_PINFO(link_number);
+	M_ADD_PINFO(clnp_srcref);
+	M_ADD_PINFO(clnp_dstref);
+	M_ADD_PINFO(link_dir);
+	//{
+	//	interpret_data.read_variable_group_begin("proto_data");
+	//	GSList*  next = pinfo->proto_data;
+	//	while (next != nullptr)
+	//	{
+	//		gpointer data = next->data;
+	//		if (data != nullptr)
+	//		{
+	//		}
+	//		next = next->next;
+	//	}
+	//	interpret_data.read_variable_group_end();
+	//}
+#endif
   }
 
   interpret_data.pinfo_variable_group_end();
