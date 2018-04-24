@@ -1947,6 +1947,35 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
 	M_ADD_PINFO(bytes_until_next_pdu);
 	M_ADD_PINFO(p2p_dir);
 	// layers
+//	if (pinfo->layers != nullptr)
+//	{
+//		//interpret_data.read_variable_group_begin("layers");
+//		wmem_list_frame_t * layer_current = wmem_list_head(pinfo->layers);
+//		int layer_current_idx = 0;
+//		while (layer_current != nullptr)
+//		{
+//			const void * layer_data = wmem_list_frame_data(layer_current);
+//			if (layer_data != nullptr)
+//			{
+//				const int   proto_id = GPOINTER_TO_UINT(layer_data);
+//				const char* proto_name = proto_get_protocol_filter_name(proto_id);
+//#if 0
+//				// Good display format but NOT possible to use it
+//				const std::string  variable_name = "layers[" + get_string(layer_current_idx) + "]";
+//#else
+//				// Possible to use (but only with hard-coded value !!!)
+//				const std::string  variable_name = "layers" + get_string(layer_current_idx) + "";
+//				interpret_data.read_variable_group_begin(variable_name);
+//#endif
+//				interpret_data.add_read_variable(variable_name, "id", get_string(proto_id));
+//				interpret_data.add_read_variable(variable_name, "name", ((proto_name != nullptr) ? proto_name : "?"));
+//				interpret_data.read_variable_group_end();
+//			}
+//			layer_current = wmem_list_frame_next(layer_current);
+//			++layer_current_idx;
+//		}
+//		//interpret_data.read_variable_group_end();
+//	}
 	M_ADD_PINFO(curr_layer_num);
 	M_ADD_PINFO(link_number);
 	M_ADD_PINFO(clnp_srcref);
