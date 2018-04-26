@@ -634,8 +634,10 @@ C_packet_info_save_restore::partial_copy(packet_info& to, const packet_info& fro
     M_PINFO_COPY_ADDRESS(net_dst);
     M_PINFO_COPY_ADDRESS(src);
     M_PINFO_COPY_ADDRESS(dst);
+#if WIRESHARK_VERSION_NUMBER < 20600
     M_PINFO_COPY(ctype);
     M_PINFO_COPY(circuit_id);
+#endif
     M_PINFO_COPY(noreassembly_reason);
     M_PINFO_COPY(fragmented);
     M_PINFO_COPY(flags);

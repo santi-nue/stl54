@@ -912,14 +912,16 @@ int   get_wsgd_files_in_dir (const string          & dir_name,
 // compute_wsgd_file_names
 //*****************************************************************************
 
-void    compute_wsgd_file_names (vector<string>  & wsgd_file_names)
+void    compute_wsgd_file_names(vector<string>  & wsgd_file_names)
 {
 
-#define M_SEARCH_IN_DIR(DIR)                                                \
+#define M_SEARCH_IN_DIR_SUBDIR(DIR,SUBDIR)                                  \
 {                                                                           \
-	const char  * dir_name = DIR;                                           \
-	if (dir_name != NULL)                                                   \
+	const char  * p_dir_name = DIR;                                         \
+	if (p_dir_name != NULL)                                                 \
 	{                                                                       \
+		std::string  dir_name = p_dir_name;                                 \
+		dir_name += SUBDIR;                                                 \
 		get_wsgd_files_in_dir(dir_name, wsgd_file_names);                   \
 		if (wsgd_file_names.empty() == false)                               \
 		{                                                                   \
@@ -929,11 +931,19 @@ void    compute_wsgd_file_names (vector<string>  & wsgd_file_names)
 	}                                                                       \
 }
 
+#define M_SEARCH_IN_DIR(DIR)               M_SEARCH_IN_DIR_SUBDIR(DIR, "")
+#define M_SEARCH_IN_DIR_EPAN(DIR)          M_SEARCH_IN_DIR_SUBDIR(DIR, "/epan")
+
 	M_SEARCH_IN_DIR(getenv("WIRESHARK_GENERIC_DISSECTOR_DIR"));
 	M_SEARCH_IN_DIR(get_profiles_dir());
 	M_SEARCH_IN_DIR(get_persdatafile_dir());
 	M_SEARCH_IN_DIR(get_datafile_dir());
+#if WIRESHARK_VERSION_NUMBER >= 20600
+	M_SEARCH_IN_DIR_EPAN(get_plugins_dir_with_version());
+	M_SEARCH_IN_DIR_EPAN(get_plugins_pers_dir_with_version());
+#else
 	M_SEARCH_IN_DIR(get_plugin_dir());
+#endif
 	M_SEARCH_IN_DIR(get_progfile_dir());
 	M_SEARCH_IN_DIR(".");
 }
@@ -1157,12 +1167,17 @@ void    trace_version_infos()
 
 void    trace_dirs()
 {
-  M_STATE_DEBUG ("get_progfile_dir     = " << get_progfile_dir());
-  M_STATE_DEBUG ("get_plugin_dir       = " << get_plugin_dir());
-  M_STATE_DEBUG ("get_datafile_dir     = " << get_datafile_dir());
-  M_STATE_DEBUG ("get_systemfile_dir   = " << get_systemfile_dir());
-  M_STATE_DEBUG ("get_profiles_dir     = " << get_profiles_dir());
-  M_STATE_DEBUG ("get_persdatafile_dir = " << get_persdatafile_dir());
+  M_STATE_DEBUG ("get_progfile_dir                  = " << get_progfile_dir());
+#if WIRESHARK_VERSION_NUMBER >= 20600
+  M_STATE_DEBUG ("get_plugins_dir_with_version      = " << get_plugins_dir_with_version());
+  M_STATE_DEBUG ("get_plugins_pers_dir_with_version = " << get_plugins_pers_dir_with_version());
+#else
+  M_STATE_DEBUG ("get_plugin_dir                    = " << get_plugin_dir());
+#endif
+  M_STATE_DEBUG ("get_datafile_dir                  = " << get_datafile_dir());
+  M_STATE_DEBUG ("get_systemfile_dir                = " << get_systemfile_dir());
+  M_STATE_DEBUG ("get_profiles_dir                  = " << get_profiles_dir());
+  M_STATE_DEBUG ("get_persdatafile_dir              = " << get_persdatafile_dir());
 }
 
 //*****************************************************************************
@@ -1923,8 +1938,10 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
   const char  * version_exec   = epan_get_version();
   if (strncmp(version_compil, version_exec, 4) == 0)
   {
+#if WIRESHARK_VERSION_NUMBER < 20600
 	M_ADD_PINFO(ctype);               /* type of circuit, for protocols with a VC identifier */
 	M_ADD_PINFO(circuit_id);
+#endif
 	M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
 	M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
 #if WIRESHARK_VERSION_NUMBER < 10800

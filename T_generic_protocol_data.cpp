@@ -753,7 +753,11 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 
   {
 	  protocol_data.type_definitions.map_const_value["shark::progfile_dir"]     = get_progfile_dir();
+#if WIRESHARK_VERSION_NUMBER < 20600
 	  protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugin_dir();
+#else
+	  protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugins_dir_with_version();
+#endif
 	  protocol_data.type_definitions.map_const_value["shark::datafile_dir"]     = get_datafile_dir();
 	  protocol_data.type_definitions.map_const_value["shark::systemfile_dir"]   = get_systemfile_dir();
 	  protocol_data.type_definitions.map_const_value["shark::profiles_dir"]     = get_profiles_dir();
