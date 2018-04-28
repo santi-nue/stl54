@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2018 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,6 +55,28 @@ bool    read_data (      T_frame_data  & in_out_frame_data,
                    const size_t          TYPE_IMPL_BIT_SIZE,
 				   const bool            must_invert_bytes,
 				   const bool            is_signed_integer);
+
+//*****************************************************************************
+// float print format :
+// - 8.8275e+020		WIN32 before 20600
+// - 8.8275e+20			others
+//*****************************************************************************
+
+#if WIRESHARK_VERSION_NUMBER < 20600
+#if defined WIN32
+#define FLOAT_PRINT_FORMAT_EXP_XXX
+#endif
+#endif
+
+//*****************************************************************************
+// strtod accept/reject hexadecimal as float
+//*****************************************************************************
+
+#if WIRESHARK_VERSION_NUMBER < 20600
+#if defined WIN32
+#define STRDOD_REJECT_HEXADECIMAL_AS_FLOAT
+#endif
+#endif
 
 //*****************************************************************************
 //*****************************************************************************
@@ -1421,7 +1443,7 @@ void    test_get_number()
 	M_TEST_INT_FLT(" 32",   32,   32.0);
 	M_TEST_INT_FLT(" -132", -132, -132.0);
 
-#if defined WIN32
+#if defined STRDOD_REJECT_HEXADECIMAL_AS_FLOAT
 	// VC++ strtod reject hexadecimal
 	M_TEST_INT(  "0xa32",  0xa32);
 	M_TEST_INT( " 0Xa32",  0xa32);
@@ -3679,7 +3701,7 @@ void    test_value_printf()
 	M_TEST_OK("0%o",  123, "0173");
 	M_TEST_OK("%s",   123, "123");
 	M_TEST_OK("%f",   123.0, "123.000000");     // NB: do not care about precise format
-#if defined WIN32
+#ifdef FLOAT_PRINT_FORMAT_EXP_XXX
 	M_TEST_OK("%e",   123.0, "1.230000e+002");  // NB: do not care about precise format
 #else
 	M_TEST_OK("%e",   123.0, "1.230000e+02");  // NB: do not care about precise format
@@ -3691,7 +3713,7 @@ void    test_value_printf()
 
 	M_TEST_OK("%s",   -123, "-123");
 	M_TEST_OK("%f",   -123.0, "-123.000000");     // NB: do not care about precise format
-#if defined WIN32
+#ifdef FLOAT_PRINT_FORMAT_EXP_XXX
 	M_TEST_OK("%e",   -123.0, "-1.230000e+002");  // NB: do not care about precise format
 #else
 	M_TEST_OK("%e",   -123.0, "-1.230000e+02");  // NB: do not care about precise format
@@ -3934,7 +3956,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 	M_TEST_SIMPLE("e23f6a77cbf367a9", "int64  val ;", "val = -2143877834849687639");
 
 	// ATTENTION : NOT really checked
-#if defined WIN32
+#ifdef FLOAT_PRINT_FORMAT_EXP_XXX
 	M_TEST_SIMPLE("e23f6a77", "float32  val ;", "val = -8.8275e+020");
 #else
 	M_TEST_SIMPLE("e23f6a77", "float32  val ;", "val = -8.8275e+20");
@@ -3975,7 +3997,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 
 	// float
 	// ATTENTION : NOT really checked
-#if defined WIN32
+#ifdef FLOAT_PRINT_FORMAT_EXP_XXX
 	M_TEST_SIMPLE("776a3fe2", "float32  val ;", "val = -8.8275e+020");
 #else
 	M_TEST_SIMPLE("776a3fe2", "float32  val ;", "val = -8.8275e+20");
