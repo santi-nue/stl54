@@ -126,7 +126,7 @@ CHECKAPI(
 
 
 
-find_library(libgmodule_LIBRARY gmodule-2.0 PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-2.2/gtk2/lib)
+find_library(libgmodule_LIBRARY gmodule-2.0 PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-2.6/gtk2/lib)
 
 # byte_interpret
 add_executable(byte_interpret byte_interpret_main.cpp ${DISSECTOR_CORE_SRC})
