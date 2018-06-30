@@ -815,21 +815,8 @@ string    build_field (istream                           & is,
 		// ICIOA tout mettre dans une expression ?
 
 		// Read function parameters.
-		string    fct_parameters;
-		M_FATAL_IF_FALSE (read_token_parameters(is, fct_parameters, E_parser_cfg_parameters));
-		if ((fct_parameters[0] != '(') ||
-			(fct_parameters[fct_parameters.size()-1] != ')'))
-		{
-			M_FATAL_COMMENT("Expecting ( and ) for function parameters " << fct_parameters);
-		}
-
-		// Remove ( and ).
-		fct_parameters.erase(0, 1);
-		fct_parameters.erase(fct_parameters.size()-1);
-
-		// Split on ,.
 		vector<string>  fct_parameters_vector;
-		string_to_words(fct_parameters, fct_parameters_vector, K_parser_cfg_parameters);
+		M_FATAL_IF_FALSE(read_token_parameters_vector(is, fct_parameters_vector, E_parser_cfg_parameters));
 
 		for (int  idx_parameters = 0; idx_parameters < fct_parameters_vector.size(); ++idx_parameters)
 		{
@@ -1079,15 +1066,15 @@ string    build_field (istream                           & is,
 			const T_function_definition  * P_fct_def = type_definitions.get_P_function(decoder_function_name);
 			if (P_fct_def == NULL)
 			{
-				M_FATAL_COMMENT(field_type_name.name << " is not a function.");
+				M_FATAL_COMMENT(decoder_function_name << " is not a function.");
 			}
 			if (P_fct_def->get_function_parameters().size() != 2)
 			{
-				M_FATAL_COMMENT(field_type_name.name << " must have 2 parameters.");
+				M_FATAL_COMMENT(decoder_function_name << " must have 2 parameters.");
 			}
 			if (P_fct_def->return_type != "void")
 			{
-				M_FATAL_COMMENT(field_type_name.name << " must not return anything.");
+				M_FATAL_COMMENT(decoder_function_name << " must not return anything.");
 			}
 		}
 
@@ -2000,26 +1987,11 @@ void    build_function_prototype (
 
 	build_types_context_type_begin(function_name);
 
-    string  function_parameters;
-    M_FATAL_IF_FALSE (read_token_parameters (is, function_parameters));
+	vector<string>  parameters;
+	M_FATAL_IF_FALSE(read_token_parameters_vector(is, parameters));
 	// ICIOA mettre les parametres dans une/des expressions
-
-	if ((function_parameters == "") ||
-		(function_parameters[0] != '(') ||
-		(function_parameters[function_parameters.size()-1] != ')'))
+	
 	{
-		M_FATAL_COMMENT("Bad function parameters specification (" << function_parameters << ")");
-	}
-
-	{
-		// Remove ( and ).
-		function_parameters.erase(0, 1);
-		function_parameters.erase(function_parameters.size()-1);
-
-		// Split on ,.
-		vector<string>    parameters;
-		string_to_words(function_parameters, parameters, K_parser_cfg_parameters);
-
 		// Get type and name.
 		bool    is_parameter_default_value_mandatory = false;
 		for (unsigned int   idx = 0; idx < parameters.size(); ++idx)

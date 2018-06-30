@@ -307,3 +307,32 @@ bool       read_token_field_name (
 	return  result;
 }
 
+//*****************************************************************************
+// read_token_parameters_vector
+//*****************************************************************************
+
+bool   read_token_parameters_vector(istream				  & is,
+									vector<string>		  & fct_parameters_vector,
+									const E_parser_cfg		parser_cfg)
+{
+	string    fct_parameters;
+	bool      ret = read_token_parameters(is, fct_parameters, parser_cfg);
+
+	if (ret == true)
+	{
+		if ((fct_parameters[0] != '(') ||
+			(fct_parameters[fct_parameters.size() - 1] != ')'))
+		{
+			M_FATAL_COMMENT("Expecting ( and ) for function parameters " << fct_parameters);
+		}
+
+		// Remove ( and ).
+		fct_parameters.erase(0, 1);
+		fct_parameters.erase(fct_parameters.size() - 1);
+
+		// Split on ,.
+		string_to_words(fct_parameters, fct_parameters_vector, K_parser_cfg_parameters);
+	}
+
+	return ret;
+}

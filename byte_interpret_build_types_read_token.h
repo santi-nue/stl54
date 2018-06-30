@@ -156,6 +156,15 @@ bool       read_token_simple_word_or_string (
 #define read_token_enum_symbolic     read_token_left_any
 
 //*****************************************************************************
+// read_token_parameters_vector
+// (param1, ..., paramN)
+//*****************************************************************************
+
+bool   read_token_parameters_vector(istream				  & is,
+									vector<string>		  & fct_parameters_vector,
+									const E_parser_cfg		parser_cfg = K_parser_cfg_normal);
+
+//*****************************************************************************
 // read_token_function_name
 // Accept "" and nil.
 //*****************************************************************************
