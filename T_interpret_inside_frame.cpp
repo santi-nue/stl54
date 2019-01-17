@@ -138,7 +138,7 @@ C_decode_stream_frame_set_temporary_if_necessary::C_decode_stream_frame_set_temp
 {
 	// For now, we reject possible already set decode_stream_frame :
 	// - generic.cpp does NOT need it
-	// - UT does not need it (...interpret_bytes check there is no remaining data in it)S
+	// - UT does not need it (...interpret_bytes check there is no remaining data in it)
 	M_FATAL_IF_NE(interpret_inside_frame.get_P_decode_stream_frame(), NULL);
 
 //	if (interpret_inside_frame.get_P_decode_stream_frame() == NULL)
