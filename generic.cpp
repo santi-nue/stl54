@@ -1584,6 +1584,16 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 #endif
   }
 
+  // Declare decode as dissectors
+  for (auto  decode_as_iter  = protocol_data.ADD_FOR_DECODE_AS_TABLES.begin();
+	         decode_as_iter != protocol_data.ADD_FOR_DECODE_AS_TABLES.end();
+	       ++decode_as_iter)
+  {
+	  const string  & decode_as_table_name = *decode_as_iter;
+
+	  dissector_add_for_decode_as(decode_as_table_name.c_str(), P_protocol_ws_data->dissector_handle);
+  }
+
   // Check subdissector name
   vector<string>  & vector_subdissector_name = protocol_data.type_definitions.vector_subdissector_name;
   for (vector<string>::const_iterator

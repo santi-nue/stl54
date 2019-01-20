@@ -1,4 +1,5 @@
 
+2019/01/20  Add : ADD_FOR_DECODE_AS_TABLE <table_name>
 2017/06/28  Fix : compatibility with wireshark 1.10.X
 2017/04/03  Fix : desegmentation problem with insproto ip/tcp when a new pdu start in the same packet
 2015/09/11  Fix : functions can have parameters int40, uint40, int48 and uint48

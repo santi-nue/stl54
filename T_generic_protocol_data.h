@@ -223,6 +223,8 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
   vector<string>    PARENTS_HEURISTIC;
   string            HEURISTIC_FUNCTION;
 
+  vector<string>    ADD_FOR_DECODE_AS_TABLES;
+
   string            SUBPROTO_SUBFIELD;
   string            SUBPROTO_SUBFIELD_PARAM;
   string            SUBPROTO_SUBFIELD_PARAM_UI;

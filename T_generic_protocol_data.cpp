@@ -651,6 +651,12 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 		protocol_data.PARENTS_HEURISTIC.push_back(parent_name);
 	}
 	M_READ_VALUE(HEURISTIC_FUNCTION)
+	else if (keyword == "ADD_FOR_DECODE_AS_TABLE")
+	{
+		string   table_name;
+		ifs >> table_name;
+		protocol_data.ADD_FOR_DECODE_AS_TABLES.push_back(table_name);
+	}
 
     else if (keyword == "SUBFIELD")
 	{
