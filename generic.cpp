@@ -1585,7 +1585,8 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
   }
 
   // Declare decode as dissectors
-  for (auto  decode_as_iter  = protocol_data.ADD_FOR_DECODE_AS_TABLES.begin();
+  for (vector<string>::const_iterator
+			 decode_as_iter  = protocol_data.ADD_FOR_DECODE_AS_TABLES.begin();
 	         decode_as_iter != protocol_data.ADD_FOR_DECODE_AS_TABLES.end();
 	       ++decode_as_iter)
   {
