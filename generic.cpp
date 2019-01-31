@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2018 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -96,12 +96,12 @@ extern "C" {
 
 void    register_enum_values(T_generic_protocol_data  & protocol_data)
 {
-  M_STATE_ENTER ("register_enum_values", "proto_idx=" << protocol_data.proto_idx);
+  M_TRACE_ENTER ("register_enum_values", "proto_idx=" << protocol_data.proto_idx);
 
   T_type_definitions  & type_definitions = protocol_data.type_definitions;
   T_map_enum_definition_representation  & map_enum_definition_representation = type_definitions.map_enum_definition_representation;
 
-  M_STATE_DEBUG ("max_nb_of_enums=" << map_enum_definition_representation.size());
+  M_TRACE_DEBUG ("max_nb_of_enums=" << map_enum_definition_representation.size());
 
   int   enum_idx = 0;
   for (T_map_enum_definition_representation::iterator
@@ -115,7 +115,7 @@ void    register_enum_values(T_generic_protocol_data  & protocol_data)
 
 	const T_enum_definition                 & definition = definition_representation.definition;
 
-    M_STATE_DEBUG ("add enum  enum_idx=" << enum_idx <<
+    M_TRACE_DEBUG ("add enum  enum_idx=" << enum_idx <<
                    "  name=" << enum_type_name <<
                    "  nb_values=" << definition.size());
 
@@ -129,7 +129,7 @@ void    register_enum_values(T_generic_protocol_data  & protocol_data)
     {
 	  const T_enum_name_val  & enum_name_val = *iter_value;
 
-      M_STATE_DEBUG ("add enum value  enum_idx=" << enum_idx << "  enum_value_idx="  << enum_value_idx <<
+      M_TRACE_DEBUG ("add enum value  enum_idx=" << enum_idx << "  enum_value_idx="  << enum_value_idx <<
                      "  (" << enum_name_val.value << ", " << enum_name_val.name << ")");
 
 	  value_string    vs;
@@ -340,7 +340,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 										T_field_type_name                & field_type_name,
 								  const string                           & data_type)
 {
-  M_STATE_ENTER ("register_fields_field_type_name",
+  M_TRACE_ENTER ("register_fields_field_type_name",
                  "proto_idx=" << protocol_data.proto_idx << "  " <<
                  "field_idx=" << field_idx << "  " <<
 				 "field_type_name.type=" << field_type_name.type << "  " <<
@@ -390,7 +390,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 		{
 			// ajout champ none (size inconnue)
 			field_type_name.wsgd_field_idx = field_idx;
-			M_STATE_DEBUG ("add_field_none("
+			M_TRACE_DEBUG ("add_field_none("
 			   << protocol_data.proto_idx << ", "
 			   << field_idx << ", "
 			   << field_type_name.name << ") switch");
@@ -433,7 +433,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			{
 				// ajout champ none (size inconnue)
 				field_type_name.wsgd_field_idx = field_idx;
-				M_STATE_DEBUG ("add_field_none("
+				M_TRACE_DEBUG ("add_field_none("
 				   << protocol_data.proto_idx << ", "
 				   << field_idx << ", "
 				   << field_type_name.name << ") struct");
@@ -473,7 +473,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			{
 				// ajout champ none (size inconnue)
 				field_type_name.wsgd_field_idx = field_idx;
-				M_STATE_DEBUG ("add_field_none("
+				M_TRACE_DEBUG ("add_field_none("
 				   << protocol_data.proto_idx << ", "
 				   << field_idx << ", "
 				   << field_type_name.name << ") bitfield");
@@ -530,7 +530,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			                                                                  \
 		if (field_type_name.must_force_manage_as_biggest_float())             \
 		{                                                                     \
-			M_STATE_DEBUG ("PROMOTION add_field_float("                       \
+			M_TRACE_DEBUG ("PROMOTION add_field_float("                       \
 			   << protocol_data.proto_idx << ", "                             \
 			   << field_idx << ", "                                           \
 			   << field_type_name.name << ", "                                \
@@ -543,7 +543,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 		}                                                                     \
 		else if (strncmp(TYPE_NAME, "float", 5) == 0)                         \
 		{                                                                     \
-			M_STATE_DEBUG ("add_field_float("                                 \
+			M_TRACE_DEBUG ("add_field_float("                                 \
 			   << protocol_data.proto_idx << ", "                             \
 			   << field_idx << ", "                                           \
 			   << field_type_name.name << ", "                                \
@@ -557,7 +557,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 		else if (field_type_name.must_force_manage_as_biggest_int())          \
 		{                                                                     \
 		    bool  is_signed = (is_enum == true) ? is_enum_signed : true;      \
-			M_STATE_DEBUG ("PROMOTION add_field_int("                         \
+			M_TRACE_DEBUG ("PROMOTION add_field_int("                         \
 			   << protocol_data.proto_idx << ", "                             \
 			   << field_idx << ", "                                           \
 			   << field_type_name.name << ", "                                \
@@ -573,7 +573,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 		}                                                                     \
 		else                                                                  \
 		{                                                                     \
-			M_STATE_DEBUG ("add_field_int("                                   \
+			M_TRACE_DEBUG ("add_field_int("                                   \
 			   << protocol_data.proto_idx << ", "                             \
 			   << field_idx << ", "                                           \
 			   << field_type_name.name << ", "                                \
@@ -625,7 +625,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 
 		// ajout champ str
         field_type_name.wsgd_field_idx = field_idx;
-		M_STATE_DEBUG ("add_field_string("
+		M_TRACE_DEBUG ("add_field_string("
 		   << protocol_data.proto_idx << ", "
 		   << field_idx << ", "
 		   << field_type_name.name << ")");
@@ -639,7 +639,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 
 		// ajout champ none (size inconnue)
         field_type_name.wsgd_field_idx = field_idx;
-		M_STATE_DEBUG ("add_field_none("
+		M_TRACE_DEBUG ("add_field_none("
 		   << protocol_data.proto_idx << ", "
 		   << field_idx << ", "
 		   << field_type_name.name << ") " << final_type);
@@ -689,7 +689,7 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
 			{
 			/* bsew uintXX intXX */
 	        field_type_name.wsgd_field_idx = field_idx;
-			M_STATE_DEBUG ("BIT add_field_int("
+			M_TRACE_DEBUG ("BIT add_field_int("
 			   << protocol_data.proto_idx << ", "
 			   << field_idx << ", "
 			   << field_type_name.name << ", "
@@ -800,7 +800,7 @@ void    register_fields_switch_definition(T_generic_protocol_data      & protoco
 
 void    register_fields(T_generic_protocol_data  & protocol_data)
 {
-  M_STATE_ENTER ("register_fields", "proto_idx=" << protocol_data.proto_idx);
+  M_TRACE_ENTER ("register_fields", "proto_idx=" << protocol_data.proto_idx);
 
   T_type_definitions       & type_definitions = protocol_data.type_definitions;
 
@@ -892,8 +892,8 @@ void    register_fields(T_generic_protocol_data  & protocol_data)
     fields_data.ett_id[idx] = -1;
     fields_data.ett[idx]    = &fields_data.ett_id[idx];
 
-//	M_STATE_DEBUG("hf[" << idx << "].p_id  = " << &fields_data.hf_id[idx]);
-//	M_STATE_DEBUG("ett[" << idx << "].p_id  = " << &fields_data.ett_id[idx]);
+//	M_TRACE_DEBUG("hf[" << idx << "].p_id  = " << &fields_data.hf_id[idx]);
+//	M_TRACE_DEBUG("ett[" << idx << "].p_id  = " << &fields_data.ett_id[idx]);
   }
 }
 
@@ -964,7 +964,7 @@ void    prefs_apply_cb(void)
 void    cpp_proto_register_generic(const string   & wsgd_file_name,
 								   const int        proto_idx)
 {
-  M_STATE_ENTER ("cpp_proto_register_generic", "wsgd_file_name=" << wsgd_file_name);
+  M_TRACE_ENTER ("cpp_proto_register_generic", "wsgd_file_name=" << wsgd_file_name);
 
 	T_generic_protocol_data  & protocol_data = new_protocol_data(proto_idx);
 
@@ -981,7 +981,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 		M_FATAL_COMMENT("Protocol " << protocol_data.PROTOABBREV << " already exist");
 	}
 
-	M_STATE_DEBUG("proto_register_protocol " <<
+	M_TRACE_DEBUG("proto_register_protocol " <<
                   protocol_data.PROTONAME << " " <<
 				  protocol_data.PROTOSHORTNAME << " " <<
 				  protocol_data.PROTOABBREV);
@@ -996,7 +996,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 
 	T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-	M_STATE_DEBUG("proto_register_field_array " <<
+	M_TRACE_DEBUG("proto_register_field_array " <<
                   P_protocol_ws_data->proto_generic << " " <<
 				  &P_protocol_ws_data->fields_data.hf[0] << " " <<
 				  P_protocol_ws_data->fields_data.hf.size());
@@ -1007,14 +1007,14 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 	{
 		for (int idx = 0; idx < P_protocol_ws_data->fields_data.hf.size(); ++idx)
 		{
-			M_STATE_DEBUG("hf[" << idx << "].p_id=" << P_protocol_ws_data->fields_data.hf[idx].p_id <<
+			M_TRACE_DEBUG("hf[" << idx << "].p_id=" << P_protocol_ws_data->fields_data.hf[idx].p_id <<
 			              "  &hf_id[" << idx << "]=" << &P_protocol_ws_data->fields_data.hf_id[idx] <<
 					      "   hf_id[" << idx << "]=" <<  P_protocol_ws_data->fields_data.hf_id[idx]);
 		}
 	}
 #endif
 
-	M_STATE_DEBUG("proto_register_subtree_array " <<
+	M_TRACE_DEBUG("proto_register_subtree_array " <<
 				  &P_protocol_ws_data->fields_data.ett[0] << " " <<
 				  P_protocol_ws_data->fields_data.ett.size());
 	proto_register_subtree_array (&P_protocol_ws_data->fields_data.ett[0],
@@ -1062,7 +1062,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 		P_protocol_ws_data->expert_data.ei.push_back(eri);
 	}
 
-	M_STATE_DEBUG("expert_register_field_array " <<
+	M_TRACE_DEBUG("expert_register_field_array " <<
 				  &P_protocol_ws_data->expert_data.ei[0] << " " <<
 				  P_protocol_ws_data->expert_data.ei.size());
 
@@ -1079,7 +1079,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 		protocol_data.SUBPROTO_SUBFIELD_PARAM    = protocol_data.PROTOABBREV    + "." + protocol_data.SUBPROTO_SUBFIELD;
 		protocol_data.SUBPROTO_SUBFIELD_PARAM_UI = protocol_data.PROTOSHORTNAME + " " + protocol_data.SUBPROTO_SUBFIELD;
 
-        M_STATE_DEBUG ("register_dissector_table " <<
+        M_TRACE_DEBUG ("register_dissector_table " <<
 						protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str() << " " <<
 						protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str());
 
@@ -1117,7 +1117,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 	    "Try to decode a packet using an heuristic sub-dissector before using a sub-dissector registered to a specific port",
 		&protocol_data.ws_data.subdissector_data.try_heuristic_first);
 
-	M_STATE_DEBUG("new_register_dissector " <<
+	M_TRACE_DEBUG("new_register_dissector " <<
 				  protocol_data.PROTOABBREV << " " <<
 				  P_protocol_ws_data->P_dissect_fct << " " <<
 				  P_protocol_ws_data->proto_generic);
@@ -1128,7 +1128,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 #endif
 
 	protocol_data.ws_data.tap_data.proto_tap = register_tap(protocol_data.PROTOABBREV.c_str());
-	M_STATE_DEBUG("proto_tap=" << protocol_data.ws_data.tap_data.proto_tap);
+	M_TRACE_DEBUG("proto_tap=" << protocol_data.ws_data.tap_data.proto_tap);
 }
 
 //*****************************************************************************
@@ -1149,15 +1149,15 @@ void    wsgd_report_failure(string    str)
 
 void    trace_version_infos()
 {
-  M_STATE_DEBUG ("wireshark version                 = " << epan_get_version());
-  M_STATE_DEBUG ("wsgd generation data :");
-  M_STATE_DEBUG ("- wireshark compilation version   = " << VERSION);
-  M_STATE_DEBUG ("- WIRESHARK_VERSION_NUMBER        = " << WIRESHARK_VERSION_NUMBER);
-  M_STATE_DEBUG ("- compilation date                = " << __DATE__);
+  M_TRACE_DEBUG ("wireshark version                 = " << epan_get_version());
+  M_TRACE_DEBUG ("wsgd generation data :");
+  M_TRACE_DEBUG ("- wireshark compilation version   = " << VERSION);
+  M_TRACE_DEBUG ("- WIRESHARK_VERSION_NUMBER        = " << WIRESHARK_VERSION_NUMBER);
+  M_TRACE_DEBUG ("- compilation date                = " << __DATE__);
 #ifdef MSC_VER_REQUIRED
-  M_STATE_DEBUG ("- compiler                        = " << "Visual C++ " << MSC_VER_REQUIRED);
+  M_TRACE_DEBUG ("- compiler                        = " << "Visual C++ " << MSC_VER_REQUIRED);
 #elif defined(__GNUC__)
-  M_STATE_DEBUG ("- compiler                        = " << "gcc " << __GNUC__);
+  M_TRACE_DEBUG ("- compiler                        = " << "gcc " << __GNUC__);
 #endif
 }
 
@@ -1167,17 +1167,17 @@ void    trace_version_infos()
 
 void    trace_dirs()
 {
-  M_STATE_DEBUG ("get_progfile_dir                  = " << get_progfile_dir());
+  M_TRACE_DEBUG ("get_progfile_dir                  = " << get_progfile_dir());
 #if WIRESHARK_VERSION_NUMBER >= 20600
-  M_STATE_DEBUG ("get_plugins_dir_with_version      = " << get_plugins_dir_with_version());
-  M_STATE_DEBUG ("get_plugins_pers_dir_with_version = " << get_plugins_pers_dir_with_version());
+  M_TRACE_DEBUG ("get_plugins_dir_with_version      = " << get_plugins_dir_with_version());
+  M_TRACE_DEBUG ("get_plugins_pers_dir_with_version = " << get_plugins_pers_dir_with_version());
 #else
-  M_STATE_DEBUG ("get_plugin_dir                    = " << get_plugin_dir());
+  M_TRACE_DEBUG ("get_plugin_dir                    = " << get_plugin_dir());
 #endif
-  M_STATE_DEBUG ("get_datafile_dir                  = " << get_datafile_dir());
-  M_STATE_DEBUG ("get_systemfile_dir                = " << get_systemfile_dir());
-  M_STATE_DEBUG ("get_profiles_dir                  = " << get_profiles_dir());
-  M_STATE_DEBUG ("get_persdatafile_dir              = " << get_persdatafile_dir());
+  M_TRACE_DEBUG ("get_datafile_dir                  = " << get_datafile_dir());
+  M_TRACE_DEBUG ("get_systemfile_dir                = " << get_systemfile_dir());
+  M_TRACE_DEBUG ("get_profiles_dir                  = " << get_profiles_dir());
+  M_TRACE_DEBUG ("get_persdatafile_dir              = " << get_persdatafile_dir());
 }
 
 //*****************************************************************************
@@ -1188,12 +1188,12 @@ void    trace_dirs()
 
 void    trace_locales()
 {
-  M_STATE_DEBUG ("locale LC_ALL         = " << setlocale(LC_ALL, NULL));
-  M_STATE_DEBUG ("locale LC_COLLATE     = " << setlocale(LC_COLLATE, NULL));
-  M_STATE_DEBUG ("locale LC_CTYPE       = " << setlocale(LC_CTYPE, NULL));
-  M_STATE_DEBUG ("locale LC_MONETARY    = " << setlocale(LC_MONETARY, NULL));
-  M_STATE_DEBUG ("locale LC_NUMERIC     = " << setlocale(LC_NUMERIC, NULL));
-  M_STATE_DEBUG ("locale LC_TIME        = " << setlocale(LC_TIME, NULL));
+  M_TRACE_DEBUG ("locale LC_ALL         = " << setlocale(LC_ALL, NULL));
+  M_TRACE_DEBUG ("locale LC_COLLATE     = " << setlocale(LC_COLLATE, NULL));
+  M_TRACE_DEBUG ("locale LC_CTYPE       = " << setlocale(LC_CTYPE, NULL));
+  M_TRACE_DEBUG ("locale LC_MONETARY    = " << setlocale(LC_MONETARY, NULL));
+  M_TRACE_DEBUG ("locale LC_NUMERIC     = " << setlocale(LC_NUMERIC, NULL));
+  M_TRACE_DEBUG ("locale LC_TIME        = " << setlocale(LC_TIME, NULL));
 #if 0
 LC_ALL		The entire locale.
 LC_COLLATE	Affects the behavior of strcoll and strxfrm.
@@ -1328,7 +1328,7 @@ void    cpp_proto_register_generic(void)
   trace_dirs();
   trace_locales();
 
-  M_STATE_ENTER ("cpp_proto_register_generic", "");
+  M_TRACE_ENTER ("cpp_proto_register_generic", "");
 
   // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
   // change the locale for LC_NUMERIC (so 0.236 is a valid number)
@@ -1354,7 +1354,7 @@ static void    generic_stats_tree_init(stats_tree  * st)
 {
   T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
   C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
-  M_STATE_ENTER ("generic_stats_tree_init", st->cfg->name);
+  M_TRACE_ENTER ("generic_stats_tree_init", st->cfg->name);
 
   T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
 
@@ -1376,7 +1376,7 @@ static int    generic_stats_tree_packet(stats_tree      * st,
 {
   T_generic_protocol_data  & protocol_data = *(T_generic_protocol_data*)p;
   C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
-  M_STATE_ENTER ("generic_stats_tree_packet", st->cfg->name <<
+  M_TRACE_ENTER ("generic_stats_tree_packet", st->cfg->name <<
 				 "  pinfo=" << pinfo <<
 				 "  edt=" << edt <<
 				 "  p=" << p);
@@ -1403,7 +1403,7 @@ static int    generic_stats_tree_packet(stats_tree      * st,
 
   if (protocol_data.MSG_TOTAL_LENGTH != "")
   {
-    M_STATE_ERROR("st_node_msg_length=" << tap_data.st_node_msg_length);
+    M_TRACE_ERROR("st_node_msg_length=" << tap_data.st_node_msg_length);
 	tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_length, 0, FALSE);
 
 	C_value       val_length = compute_expression_no_io(protocol_data.type_definitions, last_msg_interpret_data, protocol_data.MSG_TOTAL_LENGTH);
@@ -1418,7 +1418,7 @@ static void    generic_stats_tree_cleanup(stats_tree  * st)
 {
   T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
   C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
-  M_STATE_ENTER ("generic_stats_tree_cleanup", st->cfg->name);
+  M_TRACE_ENTER ("generic_stats_tree_cleanup", st->cfg->name);
 
 #if 0
 	st_node_packets = stats_tree_create_node(st, st_str_packets, 0, TRUE);
@@ -1429,7 +1429,7 @@ static void    generic_stats_tree_cleanup(stats_tree  * st)
 
 static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_data)
 {
-  M_STATE_ENTER ("register_generic_stats_trees", "");
+  M_TRACE_ENTER ("register_generic_stats_trees", "");
 	stats_tree_register(NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
 						NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
 						NEEDED_CAST_FOR_10X (protocol_data.PROTOABBREV + "/Msg").c_str(),
@@ -1458,8 +1458,8 @@ bool  is_an_heuristic_dissector(const string &  parent_name)
 //  if (heur_dissector_list != NULL)
 //    result = true;
 
-  M_STATE_WARNING ("wsgd is NOT able to check if " << parent_name << " is an heuristic dissector");
-  M_STATE_WARNING ("--> If it is NOT an heuristic dissector, it will NOT work and perhaps crash");
+  M_TRACE_WARNING ("wsgd is NOT able to check if " << parent_name << " is an heuristic dissector");
+  M_TRACE_WARNING ("--> If it is NOT an heuristic dissector, it will NOT work and perhaps crash");
   bool  result = true;
 #endif
 
@@ -1474,7 +1474,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 {
   C_debug_set_temporary    debug_handoff_main(protocol_data.DEBUG);
 
-  M_STATE_ENTER ("cpp_proto_reg_handoff_generic", protocol_data.proto_idx);
+  M_TRACE_ENTER ("cpp_proto_reg_handoff_generic", protocol_data.proto_idx);
 
   T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
@@ -1498,7 +1498,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 	  const T_generic_protocol_data::T_parent  & parent = * parent_iter;
 
 	  // Add dissector for each PARENT_SUBFIELD_VALUES.
-	  M_STATE_DEBUG ("PARENT_SUBFIELD = " << parent.PARENT_SUBFIELD.c_str());
+	  M_TRACE_DEBUG ("PARENT_SUBFIELD = " << parent.PARENT_SUBFIELD.c_str());
 
 	  // Check that PARENT_SUBFIELD exist.
 	  if (find_dissector_table(parent.PARENT_SUBFIELD.c_str()) == NULL)
@@ -1514,7 +1514,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 
 	  for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_int.size(); ++idx)
 	  {
-		M_STATE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_int[idx]);
+		M_TRACE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_int[idx]);
 
 		dissector_add_uint(parent.PARENT_SUBFIELD.c_str(),
 					  parent.PARENT_SUBFIELD_VALUES_int[idx],
@@ -1525,7 +1525,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 	    int    value_low  = parent.PARENT_SUBFIELD_RANGES_int[idx].first;
 		int    value_high = parent.PARENT_SUBFIELD_RANGES_int[idx].second;
 
-		M_STATE_DEBUG ("PARENT_SUBFIELD_RANGE = " << value_low << " - " << value_high);
+		M_TRACE_DEBUG ("PARENT_SUBFIELD_RANGE = " << value_low << " - " << value_high);
 
 		for (int  value = value_low; value <= value_high; ++value)
 		{
@@ -1536,7 +1536,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 	  }
 	  for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_str.size(); ++idx)
 	  {
-		M_STATE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_str[idx]);
+		M_TRACE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_str[idx]);
 
 		dissector_add_string(parent.PARENT_SUBFIELD.c_str(),
 							 parent.PARENT_SUBFIELD_VALUES_str[idx].c_str(),
@@ -1626,7 +1626,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
   // Statistics
   register_generic_stats_trees(protocol_data);
 
-  M_STATE_DEBUG ("Leave cpp_proto_reg_handoff_generic " << protocol_data.proto_idx);
+  M_TRACE_DEBUG ("Leave cpp_proto_reg_handoff_generic " << protocol_data.proto_idx);
 }
 
 //*****************************************************************************
@@ -1664,7 +1664,7 @@ ostream &  get_interpret_ostream()
 void    proto_init_routine(T_generic_protocol_data  & protocol_data)
 {
 	C_debug_set_temporary      debug_dissect_main(protocol_data.DEBUG);
-	M_STATE_ENTER ("proto_init_routine", protocol_data.PROTOABBREV);
+	M_TRACE_ENTER ("proto_init_routine", protocol_data.PROTOABBREV);
 
 
 	// Begin/load a new capture/file or ...
@@ -1696,7 +1696,7 @@ void    proto_init_routine(T_generic_protocol_data  & protocol_data)
 		{
 			// must report
 			string    str_report = protocol_data.PROTOABBREV + " : Generic dissector is not able to interpret the global data";
-			M_STATE_FATAL (str_report);
+			M_TRACE_FATAL (str_report);
 			wsgd_report_failure(str_report.c_str());
 		}
 
@@ -1770,7 +1770,7 @@ void    cpp_dissect_generic_set_packet_id_str(T_generic_protocol_data  & UNUSED(
 													proto_tree   * UNUSED(tree),
 										      const string       & packet_id_str)
 {
-  M_STATE_ENTER("cpp_dissect_generic_set_packet_id_str", packet_id_str);
+  M_TRACE_ENTER("cpp_dissect_generic_set_packet_id_str", packet_id_str);
 
     // ICIOA : do not print the port's names as tcp dissector does
     // must use get_tcp_port (or ...) from epan/addr_resolv.h
@@ -2092,7 +2092,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
                                   proto_tree   * msg_root_tree,
 							const long           msg_number_inside_packet)
 {
-  M_STATE_ENTER ("cpp_dissect_generic", protocol_data.PROTOABBREV << " ("
+  M_TRACE_ENTER ("cpp_dissect_generic", protocol_data.PROTOABBREV << " ("
      << pinfo->fd->num << "/"
      << msg_number_inside_packet << ", "
      << tvb << ", "
@@ -2104,7 +2104,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
   proto_tree   * tree = msg_root_tree;
 
   const int                  proto_idx = protocol_data.proto_idx;
-  M_STATE_DEBUG ("proto_idx = " << proto_idx);
+  M_TRACE_DEBUG ("proto_idx = " << proto_idx);
   ostream                  & os = get_interpret_ostream();
 
   // It could be mandatory to interpret the entire msg (even if msg_root_tree is NULL)
@@ -2175,7 +2175,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  else
 	  {
 		  RCP_interpret_data = new T_interpret_data;
-		  M_STATE_DEBUG ("GLOBAL_DATA new T_interpret_data=" << RCP_interpret_data.get());
+		  M_TRACE_DEBUG ("GLOBAL_DATA new T_interpret_data=" << RCP_interpret_data.get());
 	  }
 	  // Save global data pointer
 	  RCP_prev_global_interpret_data = RCP_prev_saved_interpret_data;
@@ -2190,7 +2190,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
   if (! RCP_interpret_data)
   {
 	  RCP_interpret_data = new T_interpret_data;
-	  M_STATE_DEBUG ("new T_interpret_data=" << RCP_interpret_data.get());
+	  M_TRACE_DEBUG ("new T_interpret_data=" << RCP_interpret_data.get());
   }
   T_interpret_data                & interpret_data = * RCP_interpret_data;
 
@@ -2247,7 +2247,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 														interpret_data);
 	  if (result == false)
 	  {
-		  M_STATE_WARNING ("Error during interpret_bytes for the header, could be not enough data");
+		  M_TRACE_WARNING ("Error during interpret_bytes for the header, could be not enough data");
 		  return  0;
 	  }
 
@@ -2257,19 +2257,19 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 	  {
 		  // The header has been entirely read, but the MSG_ID_FIELD_NAME has NOT been found !!!
 		  // ICIOA user NOT warned !!!
-		  M_STATE_FATAL ("Did NOT find " << protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME)");
+		  M_TRACE_FATAL ("Did NOT find " << protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME)");
 		  return  0;
 	  }
 
 	  // Retrieve the MSG_ID value
 	  MSG_ID_FIELD_NAME = interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
-	  M_STATE_DEBUG ("MSG_ID_FIELD_NAME = " << MSG_ID_FIELD_NAME);
+	  M_TRACE_DEBUG ("MSG_ID_FIELD_NAME = " << MSG_ID_FIELD_NAME);
 
 	  string    msg_id;
 	  if (protocol_data.MSG_TITLE != "")
 	  {
 		  string    MSG_TITLE = interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_TITLE);
-		  M_STATE_DEBUG ("MSG_TITLE = " << MSG_TITLE);
+		  M_TRACE_DEBUG ("MSG_TITLE = " << MSG_TITLE);
 		  msg_id = "[" + MSG_TITLE + "]";
 	  }
 	  else
@@ -2328,7 +2328,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
                                          ++iter)
 	  {
 		  const string    MSG_SUMMARY_SUBSIDIARY_FIELD_NAME = interpret_data.get_full_str_value_of_read_variable(*iter);
-		  M_STATE_DEBUG ("MSG_SUMMARY_SUBSIDIARY_FIELD_NAME = " << MSG_SUMMARY_SUBSIDIARY_FIELD_NAME);
+		  M_TRACE_DEBUG ("MSG_SUMMARY_SUBSIDIARY_FIELD_NAME = " << MSG_SUMMARY_SUBSIDIARY_FIELD_NAME);
 
 		  summary += *iter;
 		  summary += ": ";
@@ -2354,7 +2354,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 		  // - bad MSG_HEADER_TYPE specified (checked at initialization)
 		  // - bad MSG_ID_FIELD_NAME specified
 		  // - too small packet (checked before IF MSG_HEADER_LENGTH has been set)
-		  M_STATE_FATAL (protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) NOT found");
+		  M_TRACE_FATAL (protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) NOT found");
 		  const string         str_interpret = "fatal  \"value of " + protocol_data.MSG_ID_FIELD_NAME + " (MSG_ID_FIELD_NAME) NOT found into " + protocol_data.MSG_HEADER_TYPE + " (MSG_HEADER_TYPE)\" ;";
 
 	      interpret_bytes (				   protocol_data.type_definitions,
@@ -2478,7 +2478,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 		if ((P_where_to_save_interpret_data == NULL) &&
 			(protocol_data.GLOBAL_DATA_TYPE != ""))
 		{
-		  M_STATE_DEBUG ("GLOBAL_DATA saved_interpreted_datas.push_back");
+		  M_TRACE_DEBUG ("GLOBAL_DATA saved_interpreted_datas.push_back");
 
 		  protocol_data.ws_data.global_data.saved_interpreted_datas.push_back(T_generic_protocol_saved_interpreted_data());
 		  T_generic_protocol_saved_interpreted_data  & saved_interpreted_data = protocol_data.ws_data.global_data.saved_interpreted_datas.back();
@@ -2589,7 +2589,7 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
                                   proto_tree   * tree,
 							const long           msg_number_inside_packet)
 {
-  M_STATE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
+  M_TRACE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
 			     << pinfo->fd->num << "/"
                  << msg_number_inside_packet << ", "
                  << tvb << ", "
@@ -2600,7 +2600,7 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
 	  (length_raw_data < protocol_data.MSG_HEADER_LENGTH))
   {
     // Not an error, wait for the next segment.
-    M_STATE_DEBUG("Not enougth data (" << length_raw_data << ") to read the header. Wait for the next segment.");
+    M_TRACE_DEBUG("Not enougth data (" << length_raw_data << ") to read the header. Wait for the next segment.");
     pinfo->desegment_offset = 0;             /* Start at beginning next time */
     pinfo->desegment_len = DESEGMENT_ONE_MORE_SEGMENT;
     return  0;
@@ -2608,7 +2608,7 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
 
   gint  result = 0;
 
-  M_STATE_DEBUG ("wsgd_debug dissect+ " << protocol_data.PROTOABBREV << " ("
+  M_TRACE_DEBUG ("wsgd_debug dissect+ " << protocol_data.PROTOABBREV << " ("
 			     << pinfo->fd->num << "/"
                  << msg_number_inside_packet << ") "
                  << C_debug_object_counter::get_debug_string());
@@ -2625,16 +2625,16 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
   }
   catch(std::exception& e)
   {
-    M_STATE_FATAL("Unexpected exception " << e.what());
+    M_TRACE_FATAL("Unexpected exception " << e.what());
     result = 0;
   }
   catch(...)
   {
-    M_STATE_FATAL("Unexpected unknow exception.");
+    M_TRACE_FATAL("Unexpected unknow exception.");
     result = 0;
   }
 
-  M_STATE_DEBUG ("wsgd_debug dissect- " << protocol_data.PROTOABBREV << " ("
+  M_TRACE_DEBUG ("wsgd_debug dissect- " << protocol_data.PROTOABBREV << " ("
 			     << pinfo->fd->num << "/"
                  << msg_number_inside_packet << ") "
                  << C_debug_object_counter::get_debug_string());
@@ -2650,7 +2650,7 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
   T_generic_protocol_data  & protocol_data = get_protocol_data(proto_idx);
   C_debug_set_temporary      debug_dissect_main(protocol_data.DEBUG);
 
-  M_STATE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
+  M_TRACE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
                  << proto_idx << ", "
                  << tvb << ", "
                  << pinfo << ", "
@@ -2683,13 +2683,13 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
 													   msg_number_inside_packet);
 	if (pinfo->desegment_len != 0)
 	{
-	    M_STATE_DEBUG("Not enougth data to read the message. Wait for the next segment.");
+	    M_TRACE_DEBUG("Not enougth data to read the message. Wait for the next segment.");
 
 		pinfo->desegment_offset += offset_where_dissection_stops;
 	}
 	else
 	{
-		M_STATE_DEBUG("Message entirely read (no desegmentation required)");
+		M_TRACE_DEBUG("Message entirely read (no desegmentation required)");
 	}
 
 	offset_where_dissection_stops += sub_offset_where_dissection_stops;
@@ -2728,7 +2728,7 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
   T_generic_protocol_data  & protocol_data = get_protocol_data(proto_idx);
   C_debug_set_temporary      debug_dissect_main(protocol_data.DEBUG);
 
-  M_STATE_ENTER ("heuristic_generic_proto", protocol_data.PROTOABBREV << " ("
+  M_TRACE_ENTER ("heuristic_generic_proto", protocol_data.PROTOABBREV << " ("
                  << proto_idx << ", "
                  << tvb << ", "
                  << pinfo << ", "
@@ -2768,12 +2768,12 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
 	  }
 	  catch(std::exception& e)
 	  {
-		M_STATE_FATAL("Unexpected exception " << e.what());
+		M_TRACE_FATAL("Unexpected exception " << e.what());
 		return  false;
 	  }
 	  catch(...)
 	  {
-		  M_STATE_FATAL("Unexpected unknow exception.");
+		  M_TRACE_FATAL("Unexpected unknow exception.");
 		  return  false;
 	  }
   }

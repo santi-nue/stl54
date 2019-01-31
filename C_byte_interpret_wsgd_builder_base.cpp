@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -126,7 +126,7 @@ proto_item  * cpp_dissect_generic_add_item(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item",
+  M_TRACE_ENTER("cpp_dissect_generic_add_item",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size);
@@ -202,7 +202,7 @@ proto_item  * cpp_dissect_generic_add_item_string(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item_string",
+  M_TRACE_ENTER("cpp_dissect_generic_add_item_string",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size <<
@@ -253,7 +253,7 @@ proto_item  * cpp_dissect_generic_add_item_uint32(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item_uint32",
+  M_TRACE_ENTER("cpp_dissect_generic_add_item_uint32",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size <<
@@ -304,7 +304,7 @@ proto_item  * cpp_dissect_generic_add_item_int32(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item_int32",
+  M_TRACE_ENTER("cpp_dissect_generic_add_item_int32",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size <<
@@ -355,7 +355,7 @@ proto_item  * cpp_dissect_generic_add_item_uint64(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item_uint64",
+  M_TRACE_ENTER("cpp_dissect_generic_add_item_uint64",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size <<
@@ -406,7 +406,7 @@ proto_item  * cpp_dissect_generic_add_item_int64(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item_int64",
+  M_TRACE_ENTER("cpp_dissect_generic_add_item_int64",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size <<
@@ -457,7 +457,7 @@ proto_item  * cpp_dissect_generic_add_item_float(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item_float",
+  M_TRACE_ENTER("cpp_dissect_generic_add_item_float",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size <<
@@ -508,7 +508,7 @@ proto_item  * cpp_dissect_generic_add_item_double(const int     proto_idx,
 
   M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset,field_bit_size);
 
-  M_STATE_ENTER("cpp_dissect_generic_add_item_double",
+  M_TRACE_ENTER("cpp_dissect_generic_add_item_double",
                 "proto_idx=" << proto_idx <<
 				"  field_idx=" << field_idx <<
 				"  field_bit_size=" << field_bit_size <<
@@ -606,13 +606,13 @@ C_byte_interpret_wsgd_builder_base::missing_data(const T_type_definitions  & /* 
 	}
 	else
 	{
-		M_STATE_INFO ("missing_data  bit_offset=" << in_out_frame_data.get_bit_offset_into_initial_frame());
+		M_TRACE_INFO ("missing_data  bit_offset=" << in_out_frame_data.get_bit_offset_into_initial_frame());
 
         const T_attribute_value *  P_attr_MSG_ID_FIELD_NAME = interpret_data.get_P_attribute_value_of_read_variable (protocol_data.MSG_ID_FIELD_NAME);
 		if (P_attr_MSG_ID_FIELD_NAME == NULL)
 		{
 			// Perhaps the header has not been entirely read ?
-			M_STATE_WARNING ("Did NOT find " << protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) ?");
+			M_TRACE_WARNING ("Did NOT find " << protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) ?");
 		}
 		else if (P_attr_MSG_ID_FIELD_NAME->has_error() == true)
 		{
@@ -620,7 +620,7 @@ C_byte_interpret_wsgd_builder_base::missing_data(const T_type_definitions  & /* 
 			// I suppose it is not a 1st segment,
 			//  I could NOT do anything with it,
 			//  I must ignore it.
-			M_STATE_FATAL ("Did NOT recognize the message");
+			M_TRACE_FATAL ("Did NOT recognize the message");
 			string    text = "Did NOT recognize the message, perhaps a message segment ?";
 			cpp_dissect_generic_add_item(A_interpret_wsgd.proto_idx,
 										 A_interpret_wsgd.wsgd_tvb,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -218,39 +218,39 @@ void    fatal_pb (const string  & lhs,
 // Traces
 //****************************************************************************
 
-#define M_STATE_ENTER(function_name,OSTREAM_OUTPUT_EXPR)                      \
+#define M_TRACE_ENTER(function_name,OSTREAM_OUTPUT_EXPR)                      \
 	C_trace    M_trace(function_name);                                        \
-	M_STATE_base (" ", "Enter", function_name << " " << OSTREAM_OUTPUT_EXPR)
+	M_TRACE_base (" ", "Enter", function_name << " " << OSTREAM_OUTPUT_EXPR)
 
-#define M_STATE_ENTER_NO_LEAVE(function_name,OSTREAM_OUTPUT_EXPR)             \
-	M_STATE_ENTER(function_name,OSTREAM_OUTPUT_EXPR);                         \
+#define M_TRACE_ENTER_NO_LEAVE(function_name,OSTREAM_OUTPUT_EXPR)             \
+	M_TRACE_ENTER(function_name,OSTREAM_OUTPUT_EXPR);                         \
 	M_trace.leave_trace_done()
 
-#define M_STATE_LEAVE(OSTREAM_OUTPUT_EXPR)                      \
-	M_STATE_base (" ", "Leave", M_trace.A_function_name << " " << OSTREAM_OUTPUT_EXPR);  \
+#define M_TRACE_LEAVE(OSTREAM_OUTPUT_EXPR)                      \
+	M_TRACE_base (" ", "Leave", M_trace.A_function_name << " " << OSTREAM_OUTPUT_EXPR);  \
 	M_trace.leave_trace_done()
 
 
-#define M_STATE_DEBUG(OSTREAM_OUTPUT_EXPR)                                    \
-	M_STATE_base (" ", "     ", OSTREAM_OUTPUT_EXPR)
-#define M_STATE_INFO(OSTREAM_OUTPUT_EXPR)                                     \
-	M_STATE_base ("i", "     ", OSTREAM_OUTPUT_EXPR)
-#define M_STATE_WARNING(OSTREAM_OUTPUT_EXPR)                                  \
-	M_STATE_print ("W", "     ", OSTREAM_OUTPUT_EXPR)
-#define M_STATE_ERROR(OSTREAM_OUTPUT_EXPR)                                    \
-	M_STATE_print ("E", "     ", OSTREAM_OUTPUT_EXPR)
-#define M_STATE_FATAL(OSTREAM_OUTPUT_EXPR)                                    \
-	M_STATE_print ("F", "     ", OSTREAM_OUTPUT_EXPR)
-#define M_STATE_ASSERT(OSTREAM_OUTPUT_EXPR)                                   \
-	M_STATE_print ("A", "     ", OSTREAM_OUTPUT_EXPR)
+#define M_TRACE_DEBUG(OSTREAM_OUTPUT_EXPR)                                    \
+	M_TRACE_base (" ", "     ", OSTREAM_OUTPUT_EXPR)
+#define M_TRACE_INFO(OSTREAM_OUTPUT_EXPR)                                     \
+	M_TRACE_base ("i", "     ", OSTREAM_OUTPUT_EXPR)
+#define M_TRACE_WARNING(OSTREAM_OUTPUT_EXPR)                                  \
+	M_TRACE_print ("W", "     ", OSTREAM_OUTPUT_EXPR)
+#define M_TRACE_ERROR(OSTREAM_OUTPUT_EXPR)                                    \
+	M_TRACE_print ("E", "     ", OSTREAM_OUTPUT_EXPR)
+#define M_TRACE_FATAL(OSTREAM_OUTPUT_EXPR)                                    \
+	M_TRACE_print ("F", "     ", OSTREAM_OUTPUT_EXPR)
+#define M_TRACE_ASSERT(OSTREAM_OUTPUT_EXPR)                                   \
+	M_TRACE_print ("A", "     ", OSTREAM_OUTPUT_EXPR)
 
-#define M_STATE_base(PREFIX1,PREFIX2,OSTREAM_OUTPUT_EXPR)                     \
+#define M_TRACE_base(PREFIX1,PREFIX2,OSTREAM_OUTPUT_EXPR)                     \
 	if (C_trace::A_debug_status != E_debug_status_OFF)                        \
 	{                                                                         \
-		M_STATE_print (PREFIX1, PREFIX2, OSTREAM_OUTPUT_EXPR);                \
+		M_TRACE_print (PREFIX1, PREFIX2, OSTREAM_OUTPUT_EXPR);                \
 	}
 
-#define M_STATE_print(PREFIX1,PREFIX2,OSTREAM_OUTPUT_EXPR)                    \
+#define M_TRACE_print(PREFIX1,PREFIX2,OSTREAM_OUTPUT_EXPR)                    \
 	C_trace::print_beginning_of_trace(get_state_ostream(), PREFIX1, PREFIX2); \
 	get_state_ostream() << OSTREAM_OUTPUT_EXPR << endl << flush
 
@@ -290,7 +290,7 @@ ostream  & get_state_ostream();
 ostream  & set_state_ostream(ostream  & new_state_ostream);
 
 
-//#define M_STATE_print(OSTREAM_OUTPUT_EXPR)
+//#define M_TRACE_print(OSTREAM_OUTPUT_EXPR)
 
 struct C_trace
 {

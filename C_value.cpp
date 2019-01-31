@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -375,7 +375,7 @@ C_value::as_string () const
 void
 C_value::to_numeric()
 {
-	M_STATE_ENTER("to_numeric", "");
+	M_TRACE_ENTER("to_numeric", "");
 
 	promote();
 
@@ -388,7 +388,7 @@ C_value::to_numeric()
 void
 C_value::to_int(int  base)
 {
-	M_STATE_ENTER("to_int", "");
+	M_TRACE_ENTER("to_int", "");
 
 	if (A_type == E_type_float)
 	{
@@ -423,7 +423,7 @@ C_value::to_int(int  base)
 void
 C_value::to_float()
 {
-	M_STATE_ENTER("to_float", "");
+	M_TRACE_ENTER("to_float", "");
 
 	if (A_type == E_type_integer)
 	{
@@ -483,7 +483,7 @@ char    get_format_percent_letter(const char  * str)
 void
 C_value::format(const string  & display)
 {
-	M_STATE_ENTER("format", "display=" << display << "  type=" << A_type << "  str=" << A_str);
+	M_TRACE_ENTER("format", "display=" << display << "  type=" << A_type << "  str=" << A_str);
 
 	char    tmp_str[999+1];
 
@@ -559,7 +559,7 @@ C_value::format(const string  & display)
 		else
 		{
 			// Error, unexpected display string
-			M_STATE_ERROR("format bad display " << display);
+			M_TRACE_ERROR("format bad display " << display);
 		}
 	}
 }
@@ -571,7 +571,7 @@ C_value::format(const string  & display)
 void
 C_value::format_reset()
 {
-	M_STATE_ENTER("format_reset", "");
+	M_TRACE_ENTER("format_reset", "");
 
 	if (A_type == E_type_float)
 	{
@@ -708,7 +708,7 @@ C_value
 C_value::sprintf_values(const std::string      & printf_format,
 	                    const vector<C_value>  & values_to_print)
 {
-	M_STATE_ENTER("sprintf_values", "printf_format=" << printf_format);
+	M_TRACE_ENTER("sprintf_values", "printf_format=" << printf_format);
 
 	char    tmp_str[999+1];
 
@@ -779,7 +779,7 @@ C_value::sprintf_values(const std::string      & printf_format,
 		strncpy(tmp_str_format, &printf_format[idx_begin], idx_format-idx_begin);
 		tmp_str_format[idx_format-idx_begin] = '\0';
 
-		M_STATE_DEBUG("str=" << tmp_str << "  " <<
+		M_TRACE_DEBUG("str=" << tmp_str << "  " <<
 					  "str_format=" << tmp_str_format << "  " <<
 					  "idx_begin=" << idx_begin << "  " <<
 					  "idx_format=" << idx_format << "  " <<

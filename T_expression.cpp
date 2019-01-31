@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -574,7 +574,7 @@ T_expression::build_expression_words(
 
 	for (string::size_type  idx = 0; idx < words.size (); ++idx)
     {
-        M_STATE_ERROR ("words[" << idx << "] = " << words[idx]);
+        M_TRACE_ERROR ("words[" << idx << "] = " << words[idx]);
     }
     M_FATAL_COMMENT ("Bad expression (" << words_to_string(words) << ")");
 }
@@ -587,7 +587,7 @@ T_expression::build_expression_str(
 						 const T_type_definitions  & type_definitions,
 						 const std::string         & in_str)
 {
-	M_STATE_ENTER("build_expression_str", in_str);
+	M_TRACE_ENTER("build_expression_str", in_str);
 
 	if (A_original_string_expression.empty())
 	{
@@ -680,7 +680,7 @@ T_expression::build_expression_array(
 						 const T_type_definitions  & type_definitions,
 						 const std::string         & in_str)
 {
-	M_STATE_ENTER("build_expression_array", in_str);
+	M_TRACE_ENTER("build_expression_array", in_str);
 
 	// Compute the value of each array index.
 	string    left_part;
@@ -711,7 +711,7 @@ T_expression::build_expression_array(
 	A_type = E_type_variable;
 	A_variable_or_function_name = reduced_variable_name;
 
-	M_STATE_DEBUG("A_variable_or_function_name=" << A_variable_or_function_name);
+	M_TRACE_DEBUG("A_variable_or_function_name=" << A_variable_or_function_name);
 }
 
 //*****************************************************************************
@@ -721,7 +721,7 @@ void
 T_expression::pre_compute_expression(
 						 const T_type_definitions      & type_definitions)
 {
-	M_STATE_ENTER("pre_compute_expression", *this);
+	M_TRACE_ENTER("pre_compute_expression", *this);
 
 	if (A_value_alreay_computed == true)
 	{
@@ -747,7 +747,7 @@ T_expression::pre_compute_expression(
 				true /* pre_compute */,
 				pre_compute_result_do_not_care);
 
-	M_STATE_LEAVE(*this);
+	M_TRACE_LEAVE(*this);
 }
 
 std::ostream &  operator<< (std::ostream    & os,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2018 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -888,7 +888,7 @@ bool    read_data (      T_frame_data  & in_out_frame_data,
 {
     if (in_out_frame_data.can_move_bit_forward(TYPE_BIT_SIZE) != true)
     {
-        M_STATE_FATAL ("Not enough bits ("
+        M_TRACE_FATAL ("Not enough bits ("
                << in_out_frame_data.get_remaining_bits() << " instead of " << TYPE_BIT_SIZE
                << ") for read " << TYPE_NAME
                << " (" << TYPE_IMPL_STR << ") !");
@@ -1047,7 +1047,7 @@ void    frame_append_data(T_decode_stream_frame  * P_decode_stream_frame,
 						  long long                data,
 						  int                      data_bit_size)
 {
-	M_STATE_ENTER ("frame_append_data", "data=" << data << "  data_bit_size=" << data_bit_size);
+	M_TRACE_ENTER ("frame_append_data", "data=" << data << "  data_bit_size=" << data_bit_size);
 
 	if (P_decode_stream_frame == NULL)
 	{
@@ -1071,7 +1071,7 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("frame_append_data", "");
+	M_TRACE_ENTER ("frame_append_data", "");
 
 	if (field_type_name.fct_parameters.size() != 2)
 	{
@@ -1102,7 +1102,7 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
 								   data_name, data_simple_name, os_out, os_err);
 	if (obj_value.get_type() == C_value::E_type_integer)
 	{
-//		M_STATE_DEBUG("obj_value.external_type=" << obj_value.get_external_type());
+//		M_TRACE_DEBUG("obj_value.external_type=" << obj_value.get_external_type());
 		M_FATAL_IF_EQ(obj_value.get_external_type_bit_size(), 0);
 
 		frame_append_data(P_decode_stream_frame,
@@ -1138,7 +1138,7 @@ bool    frame_append_data_array (
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("frame_append_data_array", "");
+	M_TRACE_ENTER ("frame_append_data_array", "");
 
 	if (field_type_name.fct_parameters.size() != 3)
 	{
@@ -1233,7 +1233,7 @@ bool    frame_append_hexa_data (
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("frame_append_hexa_data", "");
+	M_TRACE_ENTER ("frame_append_hexa_data", "");
 
 	if (field_type_name.fct_parameters.size() != 2)
 	{
@@ -1313,7 +1313,7 @@ bool    decoder_aes (    const T_type_definitions      & UNUSED(type_definitions
                                ostream                 & UNUSED(os_out),
                                ostream                 & UNUSED(os_err))
 {
-	M_STATE_ENTER ("decoder_aes", nb_of_bits_needed);
+	M_TRACE_ENTER ("decoder_aes", nb_of_bits_needed);
 
 	while (nb_of_bits_needed > 0)
 	{
@@ -1422,7 +1422,7 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
                                ostream                 & UNUSED(os_out),
                                ostream                 & UNUSED(os_err))
 {
-	M_STATE_ENTER ("decoder_base64", nb_of_bits_needed_ll);
+	M_TRACE_ENTER ("decoder_base64", nb_of_bits_needed_ll);
 
 	int  nb_of_bits_needed = nb_of_bits_needed_ll;
 
@@ -1437,7 +1437,7 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
 		// Copy 6 bit data into frame.
 		decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded1), 6);
 		nb_of_bits_needed -= 6;
-//		M_STATE_DEBUG ("xxxx 1) -6 = ", nb_of_bits_needed);
+//		M_TRACE_DEBUG ("xxxx 1) -6 = ", nb_of_bits_needed);
 
 		if ((byte_encoded4 == '=') && (byte_encoded3 == '='))
 		{
@@ -1448,13 +1448,13 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
 
 			decode_stream_frame.write_less_1_byte(val, nb_of_bits_available);
 			nb_of_bits_needed -= nb_of_bits_available;
-//			M_STATE_DEBUG ("xx== 2) -2 = ", nb_of_bits_needed);
+//			M_TRACE_DEBUG ("xx== 2) -2 = ", nb_of_bits_needed);
 		}
 		else if (byte_encoded4 == '=')
 		{
 			decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded2), 6);
 			nb_of_bits_needed -= 6;
-//			M_STATE_DEBUG ("xxx= 2) -6 = ", nb_of_bits_needed);
+//			M_TRACE_DEBUG ("xxx= 2) -6 = ", nb_of_bits_needed);
 
 			const int  nb_of_bits_available = 4;
 
@@ -1463,19 +1463,19 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
 
 			decode_stream_frame.write_less_1_byte(val, nb_of_bits_available);
 			nb_of_bits_needed -= nb_of_bits_available;
-//			M_STATE_DEBUG ("xxx= 3) -4 = ", nb_of_bits_needed);
+//			M_TRACE_DEBUG ("xxx= 3) -4 = ", nb_of_bits_needed);
 		}
 		else
 		{
 			decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded2), 6);
 			nb_of_bits_needed -= 6;
-//			M_STATE_DEBUG ("xxxx 2) -6 = ", nb_of_bits_needed);
+//			M_TRACE_DEBUG ("xxxx 2) -6 = ", nb_of_bits_needed);
 			decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded3), 6);
 			nb_of_bits_needed -= 6;
-//			M_STATE_DEBUG ("xxxx 3) -6 = ", nb_of_bits_needed);
+//			M_TRACE_DEBUG ("xxxx 3) -6 = ", nb_of_bits_needed);
 			decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded4), 6);
 			nb_of_bits_needed -= 6;
-//			M_STATE_DEBUG ("xxxx 4) -6 = ", nb_of_bits_needed);
+//			M_TRACE_DEBUG ("xxxx 4) -6 = ", nb_of_bits_needed);
 		}
 	}
 
@@ -1499,7 +1499,7 @@ bool    decoder_utf16be (const T_type_definitions      & UNUSED(type_definitions
                                ostream                 & UNUSED(os_out),
                                ostream                 & UNUSED(os_err))
 {
-	M_STATE_ENTER ("decoder_utf16be", nb_of_bits_needed);
+	M_TRACE_ENTER ("decoder_utf16be", nb_of_bits_needed);
 
 	if ((nb_of_bits_needed % 8) != 0)
 	{
@@ -1549,7 +1549,7 @@ bool    decoder_utf16le (const T_type_definitions      & UNUSED(type_definitions
                                ostream                 & UNUSED(os_out),
                                ostream                 & UNUSED(os_err))
 {
-	M_STATE_ENTER ("decoder_utf16le", nb_of_bits_needed);
+	M_TRACE_ENTER ("decoder_utf16le", nb_of_bits_needed);
 
 	if ((nb_of_bits_needed % 8) != 0)
 	{
@@ -1598,7 +1598,7 @@ bool    decoder_utf8 (   const T_type_definitions      & UNUSED(type_definitions
                                ostream                 & UNUSED(os_out),
                                ostream                 & UNUSED(os_err))
 {
-	M_STATE_ENTER ("decoder_utf8", nb_of_bits_needed);
+	M_TRACE_ENTER ("decoder_utf8", nb_of_bits_needed);
 
 	if ((nb_of_bits_needed % 8) != 0)
 	{
@@ -1794,7 +1794,7 @@ void    decode_data_size (
                    const char                   * UNUSED(TYPE_NAME),
                    const int                      TYPE_BIT_SIZE)  // could be decorelated of TYPE_NAME
 {
-	M_STATE_ENTER ("decode_data_size", interpret_data.get_decode_function() << " " << TYPE_BIT_SIZE);
+	M_TRACE_ENTER ("decode_data_size", interpret_data.get_decode_function() << " " << TYPE_BIT_SIZE);
 
 	C_interpret_decode_in_progress  idip(interpret_data);
 
@@ -1858,8 +1858,8 @@ void    decode_data_bytes_until (
                    const char                   * p_ending_char_1,
 				   const char                   * p_ending_char_2)
 {
-	M_STATE_ENTER ("decode_data_bytes_until", interpret_data.get_decode_function());
-//	M_STATE_DEBUG("p_ending_char_x "
+	M_TRACE_ENTER ("decode_data_bytes_until", interpret_data.get_decode_function());
+//	M_TRACE_DEBUG("p_ending_char_x "
 //				       << (const void *)p_ending_char_1 << " and "
 //				       << (const void *)p_ending_char_2);
 
@@ -1921,13 +1921,13 @@ void    decode_data_bytes_until (
 			while (decode_stream_frame.frame_data.can_move_1_byte_forward() == true)
 			{
 				const T_byte  decoded_byte = decode_stream_frame.frame_data.read_1_byte();
-//				M_STATE_DEBUG("Decoded byte " << (int)decoded_byte << " 0x" << hex << (int)decoded_byte);
+//				M_TRACE_DEBUG("Decoded byte " << (int)decoded_byte << " 0x" << hex << (int)decoded_byte);
 
 				if ((decoded_byte == ending_char_1) ||
 					(decoded_byte == ending_char_2))
 				{
 					is_final_character_found = true;
-//					M_STATE_DEBUG("found");
+//					M_TRACE_DEBUG("found");
 					break;
 				}
 			}
@@ -1937,7 +1937,7 @@ void    decode_data_bytes_until (
 
 			if (is_final_character_found == true)
 			{
-//				M_STATE_DEBUG("found so break");
+//				M_TRACE_DEBUG("found so break");
 				break;
 			}
 		}
@@ -1995,7 +1995,7 @@ void    read_decode_data (
 		else
 		{
 			// Not enough data into inside_frame, so use decoder to fill it
-			M_STATE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
+			M_TRACE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
 
 			decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
 							  field_type_name, data_name, data_simple_name,
@@ -2096,7 +2096,7 @@ bool    frame_to_field_deep_break(
                                ostream               & UNUSED(os_out),
                                ostream               & UNUSED(os_err))
 {
-	M_STATE_ENTER ("frame_to_field_deep_break", "");
+	M_TRACE_ENTER ("frame_to_field_deep_break", "");
 
 	throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_deep_break, "deep_break called outside any loop");
 
@@ -2117,7 +2117,7 @@ bool    frame_to_field_deep_continue(
                                ostream               & UNUSED(os_out),
                                ostream               & UNUSED(os_err))
 {
-	M_STATE_ENTER ("frame_to_field_deep_continue", "");
+	M_TRACE_ENTER ("frame_to_field_deep_continue", "");
 
 	throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_deep_continue, "deep_continue called outside any loop");
 
@@ -2138,7 +2138,7 @@ bool    frame_to_field_break(
                                ostream               & UNUSED(os_out),
                                ostream               & UNUSED(os_err))
 {
-	M_STATE_ENTER ("frame_to_field_break", "");
+	M_TRACE_ENTER ("frame_to_field_break", "");
 
 	throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_break, "break called outside a loop");
 
@@ -2159,7 +2159,7 @@ bool    frame_to_field_continue(
                                ostream               & UNUSED(os_out),
                                ostream               & UNUSED(os_err))
 {
-	M_STATE_ENTER ("frame_to_field_continue", "");
+	M_TRACE_ENTER ("frame_to_field_continue", "");
 
 	throw  C_byte_interpret_exception_loop(M_WHERE, E_byte_interpret_exception_loop_continue, "continue called outside a loop");
 
@@ -2180,7 +2180,7 @@ bool    frame_to_field_return(
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_field_return", "data_name=" << data_name);
+	M_TRACE_ENTER ("frame_to_field_return", "data_name=" << data_name);
 
 	const T_expression  & return_expression = field_type_name.get_return_expression();
 
@@ -2215,7 +2215,7 @@ bool    frame_to_field_while(
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_field_while", "data_name=" << data_name);
+	M_TRACE_ENTER ("frame_to_field_while", "data_name=" << data_name);
 
     const string  & type = field_type_name.type;
 
@@ -2274,7 +2274,7 @@ bool    frame_to_field_loop_size(
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_field_loop_size", "data_name=" << data_name);
+	M_TRACE_ENTER ("frame_to_field_loop_size", "data_name=" << data_name);
 
     const string  & type = field_type_name.type;
 
@@ -2339,7 +2339,7 @@ bool    frame_to_field_loop_nb_times(
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_field_loop_nb_times", "data_name=" << data_name);
+	M_TRACE_ENTER ("frame_to_field_loop_nb_times", "data_name=" << data_name);
 
 	const T_expression  & condition_expression = field_type_name.get_condition_expression();
 
@@ -2393,7 +2393,7 @@ bool    frame_to_field_if(
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_field_if", "data_name=" << data_name);
+	M_TRACE_ENTER ("frame_to_field_if", "data_name=" << data_name);
 
 	const T_expression  & condition_expression = field_type_name.get_condition_expression();
 
@@ -2445,12 +2445,12 @@ bool    frame_to_field_other(
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_field_other", "data_name=" << data_name);
+	M_TRACE_ENTER ("frame_to_field_other", "data_name=" << data_name);
 
     const string  & type = field_type_name.type;
     const string  & name = field_type_name.name;
 
-	M_STATE_DEBUG ("type=" << type << "  name=" << name);
+	M_TRACE_DEBUG ("type=" << type << "  name=" << name);
 
 	string    new_data_name = data_name;
 
@@ -2534,7 +2534,7 @@ bool    frame_to_field_other(
 				number_of_elements_before_LONG_MAX = number_of_elements;
 			}
 
-			M_STATE_DEBUG("[" << array_idx << "]  " <<
+			M_TRACE_DEBUG("[" << array_idx << "]  " <<
 						  "array_size=" << array_sizes[array_idx] << "  " <<
 						  "number_of_elements=" << number_of_elements);
 
@@ -2832,7 +2832,7 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_field", "data_name=" << data_name);
+	M_TRACE_ENTER ("frame_to_field", "data_name=" << data_name);
 
 	if (field_type_name.pf_frame_to_field == NULL)
 	{
@@ -2874,7 +2874,7 @@ bool    frame_to_fields (const T_type_definitions    & type_definitions,
                                ostream               & os_out,
                                ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_fields", "");
+	M_TRACE_ENTER ("frame_to_fields", "");
 
 	for (T_struct_fields::size_type  idx = 0;
                                      idx < struct_fields.size ();
@@ -2911,7 +2911,7 @@ bool    frame_to_struct_base (const T_type_definitions    & type_definitions,
                                ostream               & os_err,
 							   bool                    must_catch_return)
 {
-	M_STATE_ENTER ("frame_to_struct_base", "must_catch_return=" << must_catch_return);
+	M_TRACE_ENTER ("frame_to_struct_base", "must_catch_return=" << must_catch_return);
 
 	bool    result = true;
 
@@ -3045,7 +3045,7 @@ bool    frame_to_bitfield_inline (const T_type_definitions    & type_definitions
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("frame_to_bitfield_inline", "");
+	M_TRACE_ENTER ("frame_to_bitfield_inline", "");
 
 	bool                is_little_endian = interpret_data.is_little_endian();
 
@@ -3137,7 +3137,7 @@ bool    frame_to_switch (const T_type_definitions      & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("frame_to_switch", "");
+	M_TRACE_ENTER ("frame_to_switch", "");
 
 	const T_switch_cases       & switch_cases = switch_def.switch_cases;
 
@@ -3279,7 +3279,7 @@ void    post_treatment_value_display (
 	}
 	else if (field_type_name.str_display_expression != "")
 	{
-//		M_STATE_ENTER ("post_treatment_value", "display expression");
+//		M_TRACE_ENTER ("post_treatment_value", "display expression");
 
 		// Add this value into the interpret_data (to be accessible inside compute_expression).
 		T_interpret_read_values::T_id  this_id = interpret_data.add_read_variable("this", "this", value);
@@ -3457,7 +3457,7 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 							   bool                      pre_compute,
 							   bool                    & pre_compute_result)
 {
-	M_STATE_ENTER ("frame_to_function_base", "");
+	M_TRACE_ENTER ("frame_to_function_base", "");
 
 	// Check return_value_indicator.
 	if (return_value_indicator == E_return_value_mandatory)
@@ -3873,7 +3873,7 @@ C_value    T_expression_compute_function (const T_type_definitions    & type_def
 							   bool                      pre_compute,
 							   bool                    & pre_compute_result)
 {
-	M_STATE_ENTER ("T_expression_compute_function", "");
+	M_TRACE_ENTER ("T_expression_compute_function", "");
 
 	C_value    return_value;
 
@@ -3953,7 +3953,7 @@ bool    frame_to_function (const T_type_definitions    & type_definitions,
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER ("frame_to_function", "");
+	M_TRACE_ENTER ("frame_to_function", "");
 
 	bool  result = false;
 	if (field_type_name.name == "frame_append_data")
@@ -4909,7 +4909,7 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 {
 	const string   & final_type = field_type_name.type;
 
-	M_STATE_ENTER ("frame_to_string", final_type);
+	M_TRACE_ENTER ("frame_to_string", final_type);
 
 	M_FATAL_IF_FALSE ((final_type == "string") ||
 					  (final_type == "string_nl"));
@@ -4971,7 +4971,7 @@ bool    frame_to_string (const T_type_definitions    & type_definitions,
 			else
 			{
 				// Not enough data into inside_frame, so use decoder to fill it
-				M_STATE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
+				M_TRACE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
 
 				decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
 								  field_type_name, data_name, data_simple_name,
@@ -5195,7 +5195,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 {
 	const string   & final_type = field_type_name.type;
 
-	M_STATE_ENTER ("frame_to_raw", final_type);
+	M_TRACE_ENTER ("frame_to_raw", final_type);
 
 	M_FATAL_IF_FALSE ((final_type == "raw") ||
 					  (final_type == "subproto") ||
@@ -5263,7 +5263,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 			else
 			{
 				// Not enough data into inside_frame, so use decoder to fill it
-				M_STATE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
+				M_TRACE_ENTER ("read_decode_data must_decode_stream", TYPE_BIT_SIZE);
 
 				decode_data_size (type_definitions, in_out_frame_data_param, interpret_data,
 								  field_type_name, data_name, data_simple_name,
@@ -5528,7 +5528,7 @@ bool    frame_to_any_ ## TYPE_NAME                                            \
                             ostream               & os_out,                   \
                             ostream               & os_err)                   \
 {                                                                             \
-	M_STATE_ENTER ("frame_to_any_" #TYPE_NAME,                                \
+	M_TRACE_ENTER ("frame_to_any_" #TYPE_NAME,                                \
 	               (field_type_name.is_a_variable() ? "var " : "") <<         \
                    "data_type=" << field_type_name.type << " data_name=" << data_name); \
 	const string                            & final_type = field_type_name.type;        \
@@ -6599,7 +6599,7 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
                             ostream               & os_out,
                             ostream               & os_err)
 {
-	M_STATE_ENTER ("frame_to_any",
+	M_TRACE_ENTER ("frame_to_any",
                    "data_type=" << field_type_name.type << " data_name=" << data_name);
 
 	// Will forget data if asked.
@@ -6660,7 +6660,7 @@ bool    frame_to_main (const T_type_definitions  & type_definitions,
                              ostream             & os_out,
                              ostream             & os_err)
 {
-	M_STATE_ENTER ("frame_to_main",
+	M_TRACE_ENTER ("frame_to_main",
                    "sizeof_bits=" << in_out_frame_data.get_remaining_bits() <<
 				   " last_extracted_word=" << last_extracted_word);
 
@@ -6695,7 +6695,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
                                ostream             & os_err,
 							   T_interpret_data    & interpret_data)
 {
-	M_STATE_ENTER ("interpret_bytes",
+	M_TRACE_ENTER ("interpret_bytes",
                    "sizeof_bytes=" << in_out_sizeof_bytes);
 
   // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
@@ -6770,7 +6770,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
 		const long  inside_frame_remaining_bits = interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits();
 		if (inside_frame_remaining_bits != 0)
 		{
-			M_STATE_ERROR("inside_frame_remaining_bits=" << inside_frame_remaining_bits << " should be zero"); 
+			M_TRACE_ERROR("inside_frame_remaining_bits=" << inside_frame_remaining_bits << " should be zero"); 
 			result = false;
 		}
 	}
@@ -6858,7 +6858,7 @@ bool    build_types_and_interpret_bytes (
                         ostream             & os_out,
                         ostream             & os_err)
 {
-	M_STATE_ENTER ("build_types_and_interpret_bytes",
+	M_TRACE_ENTER ("build_types_and_interpret_bytes",
                    "sizeof_bits=" << in_out_frame_data.get_remaining_bits());
 
   // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
@@ -6905,7 +6905,7 @@ bool    build_types_and_interpret_bytes (
 	const long  inside_frame_remaining_bits = interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits();
 	if (inside_frame_remaining_bits != 0)
 	{
-		M_STATE_ERROR("inside_frame_remaining_bits=" << inside_frame_remaining_bits << " should be zero"); 
+		M_TRACE_ERROR("inside_frame_remaining_bits=" << inside_frame_remaining_bits << " should be zero"); 
 		result = false;
 	}
   }

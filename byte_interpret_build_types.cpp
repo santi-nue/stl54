@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -121,7 +121,7 @@ void    build_alias (const E_override            must_override,
                            istream             & is,
                            T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_alias", "");
+	M_TRACE_ENTER ("build_alias", "");
 
     M_ASSERT_EQ (key_word, "alias");
 
@@ -202,7 +202,7 @@ void    check_field_name(      T_field_type_name  & field_type_name,
 													  str_parameter) == E_rc_ok)
 	{
 		field_type_name.name = simple_name;
-		M_STATE_DEBUG(str_parameter);
+		M_TRACE_DEBUG(str_parameter);
 
 		if (strncmp(str_parameter.c_str(), "name=", 5) == 0)         // display name
 		{
@@ -308,7 +308,7 @@ void    post_build_field_base (
                        T_field_type_name_base            & field_type_name,
 					   E_field_scope                       field_scope)
 {
-	M_STATE_ENTER ("post_build_field_base", field_type_name.type << "  " << field_type_name.name);
+	M_TRACE_ENTER ("post_build_field_base", field_type_name.type << "  " << field_type_name.name);
 
 	if ((field_type_name.type == "padding_bits") ||
 		(field_type_name.type == "msg"))
@@ -330,7 +330,7 @@ void    post_build_field_base (
 														  str_display_or_transform) == E_rc_ok)
 		{
 			field_type_name.type = type_definitions.get_final_type (simple_type);
-			M_STATE_DEBUG(str_display_or_transform);
+			M_TRACE_DEBUG(str_display_or_transform);
 
 			if ((strncmp(str_display_or_transform.c_str(), "q=", 2) == 0) ||
 				(strncmp(str_display_or_transform.c_str(), "o=", 2) == 0))
@@ -471,7 +471,7 @@ void    post_build_field_base (
 														  simple_type,
 														  str_size_or_parameter) == E_rc_ok)
 			{
-				M_STATE_DEBUG(str_size_or_parameter);
+				M_TRACE_DEBUG(str_size_or_parameter);
 				type_definitions.set_field_type(field_type_name, simple_type);
 				type_definitions.set_field_type_size_or_parameter(field_type_name, str_size_or_parameter);
 			}
@@ -659,7 +659,7 @@ string    build_field (istream                           & is,
 				 const char                              * return_type,
 					   bool                                read_next_token = true)
 {
-	M_STATE_ENTER ("build_field", first_word);
+	M_TRACE_ENTER ("build_field", first_word);
 
 	M_FATAL_IF_EQ (first_word, "");
 
@@ -1271,7 +1271,7 @@ const char *  build_struct_fields (
 			       E_field_scope                       field_scope,
 			 const char                              * return_type)
 {
-	M_STATE_ENTER ("build_struct_fields", "");
+	M_TRACE_ENTER ("build_struct_fields", "");
 
     if (end_flag2 == NULL_PTR)
         end_flag2 = end_flag1;
@@ -1315,7 +1315,7 @@ void    build_struct_base ( istream              & is,
 							T_struct_definition  & struct_definition,
                       const char                 * return_type)
 {
-	M_STATE_ENTER ("build_struct_base", "");
+	M_TRACE_ENTER ("build_struct_base", "");
 
     string  open_brace_or_print;
     M_FATAL_IF_FALSE (read_token_key_word (is, open_brace_or_print));
@@ -1370,7 +1370,7 @@ string    build_struct_unnamed (
                             istream             & is,
                             T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_struct_unnamed", "");
+	M_TRACE_ENTER ("build_struct_unnamed", "");
 
     const string  struct_name = "wsgd_struct_unnamed_" + get_string(++ICIOA_struct_unnamed_counter);
 
@@ -1414,7 +1414,7 @@ void    build_struct (const E_override            must_override,
                             istream             & is,
                             T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_struct", "");
+	M_TRACE_ENTER ("build_struct", "");
 
 	M_ASSERT_EQ (key_word, "struct");
 
@@ -1447,7 +1447,7 @@ void    build_const (const E_override            must_override,
                            istream             & is,
                            T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_const", "");
+	M_TRACE_ENTER ("build_const", "");
 
     M_ASSERT_EQ (key_word, "const");
 
@@ -1496,7 +1496,7 @@ void    build_bitfield_unnamed (
                         const T_type_definitions     & type_definitions,
                               T_bitfield_definition  & def_rep)
 {
-	M_STATE_ENTER ("build_bitfield_unnamed", "key_word=" << key_word);
+	M_TRACE_ENTER ("build_bitfield_unnamed", "key_word=" << key_word);
 
 	long    sizeof_bitfield_total = 0;
 	if (strncmp(key_word.c_str (), "bitfield", 8) == 0)
@@ -1606,7 +1606,7 @@ void    build_bitfield (const E_override            must_override,
                               istream             & is,
                               T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_bitfield", "key_word=" << key_word);
+	M_TRACE_ENTER ("build_bitfield", "key_word=" << key_word);
 
 	string  bitfield_name;
     M_FATAL_IF_FALSE (read_token_type_simple (is, bitfield_name));
@@ -1648,7 +1648,7 @@ void    build_enum (const E_override            must_override,
                           istream             & is,
                           T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_enum", "key_word=" << key_word);
+	M_TRACE_ENTER ("build_enum", "key_word=" << key_word);
 
     T_map_enum_definition_representation  & map_enum_def_rep = type_definitions.map_enum_definition_representation;
 
@@ -1786,7 +1786,7 @@ void    build_switch_unnamed (
 							T_switch_definition  & switch_def,
                       const char                 * return_type)
 {
-	M_STATE_ENTER ("build_switch_unnamed", "");
+	M_TRACE_ENTER ("build_switch_unnamed", "");
 
     bool const  is_switch_expr = switch_def.is_switch_expr;
 	M_ASSERT_EQ (key_word, "switch");
@@ -1934,7 +1934,7 @@ void    build_switch (const E_override            must_override,
                             istream             & is,
                             T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_switch", "");
+	M_TRACE_ENTER ("build_switch", "");
 
 //	M_ASSERT_EQ (key_word, "switch");
 	string    key_word = key_word_param;
@@ -1977,7 +1977,7 @@ void    build_function_prototype (
 							  string                           & function_name,
                         const T_type_definitions               & type_definitions)
 {
-	M_STATE_ENTER ("build_function_prototype", "");
+	M_TRACE_ENTER ("build_function_prototype", "");
 
 	M_ASSERT_EQ (key_word, "function");
 
@@ -2080,7 +2080,7 @@ void    build_function_after_prototype (
 					    const string                           & function_name,
                               T_type_definitions               & type_definitions)
 {
-	M_STATE_ENTER ("build_function_after_prototype", "");
+	M_TRACE_ENTER ("build_function_after_prototype", "");
 
 	build_types_context_type_begin(function_name);
 
@@ -2116,7 +2116,7 @@ void    build_function (const E_override            must_override,
                               istream             & is,
                               T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_function", "");
+	M_TRACE_ENTER ("build_function", "");
 
     T_function_definition    function_def;
     string                   function_name;
@@ -2140,7 +2140,7 @@ void    build_plugin_output (const E_override            UNUSED(must_override),
                                    istream             & is,
                                    T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_plugin_output", "");
+	M_TRACE_ENTER ("build_plugin_output", "");
 
 	M_ASSERT_EQ (key_word.compare(0, 14, "plugin{output}"), 0);
 
@@ -2160,7 +2160,7 @@ void    build_plugin_output (const E_override            UNUSED(must_override),
 											  key_word_base,
 											  key_word_extend) == E_rc_ok)
 		{
-			M_STATE_DEBUG(key_word_extend);
+			M_TRACE_DEBUG(key_word_extend);
 
 			if (strncmp(key_word_extend.c_str(), "user_data=", 10) == 0)
 			{
@@ -2182,80 +2182,80 @@ void    build_plugin_output (const E_override            UNUSED(must_override),
 		const char  * error = g_module_error ();
 		M_FATAL_COMMENT(filename << " not found or not a readable libray : " << error);
     }
-	M_STATE_DEBUG(filename << " found");
+	M_TRACE_DEBUG(filename << " found");
 
     gpointer       gp;
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_begin", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_begin_cb = (T_byte_interpret_plugin_output_begin_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_begin found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_begin found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_value_integer", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_value_integer_cb = (T_byte_interpret_plugin_output_value_integer_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_value_integer found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_value_integer found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_value_float", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_value_float_cb = (T_byte_interpret_plugin_output_value_float_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_value_float found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_value_float found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_value_string", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_value_string_cb = (T_byte_interpret_plugin_output_value_string_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_value_string found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_value_string found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_raw_data", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_raw_data_cb = (T_byte_interpret_plugin_output_raw_data_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_raw_data found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_raw_data found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_group_begin", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_group_begin_cb = (T_byte_interpret_plugin_output_group_begin_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_group_begin found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_group_begin found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_group_append_text", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_group_append_text_cb = (T_byte_interpret_plugin_output_group_append_text_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_group_append_text found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_group_append_text found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_group_end", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_group_end_cb = (T_byte_interpret_plugin_output_group_end_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_group_end found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_group_end found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_error", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_error_cb = (T_byte_interpret_plugin_output_error_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_error found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_error found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_missing_data", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_missing_data_cb = (T_byte_interpret_plugin_output_missing_data_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_missing_data found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_missing_data found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_cmd_error", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_cmd_error_cb = (T_byte_interpret_plugin_output_cmd_error_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_cmd_error found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_cmd_error found");
     }
 
     if (g_module_symbol(handle, "byte_interpret_plugin_output_cmd_print", &gp))
     {
 		plugin_def.byte_interpret_plugin_output_cmd_print_cb = (T_byte_interpret_plugin_output_cmd_print_cb)gp;
-		M_STATE_DEBUG("byte_interpret_plugin_output_cmd_print found");
+		M_TRACE_DEBUG("byte_interpret_plugin_output_cmd_print found");
     }
 
 
@@ -2287,7 +2287,7 @@ void    build_library  (const E_override            must_override,
                               istream             & is,
                               T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_library", "");
+	M_TRACE_ENTER ("build_library", "");
 
 	M_ASSERT_EQ (key_word, "library");
 
@@ -2345,7 +2345,7 @@ void    build_library  (const E_override            must_override,
 		ifstream              ifs (library_filename.c_str());
 		if (!ifs)
 		{
-			M_STATE_DEBUG(library_filename << " not found");
+			M_TRACE_DEBUG(library_filename << " not found");
 			libraries_not_found += " >";
 			libraries_not_found += library_filename;
 			libraries_not_found += "<";
@@ -2355,7 +2355,7 @@ void    build_library  (const E_override            must_override,
 		void  * DLLib_handle = dlLoadLibrary (library_filename.c_str());
 		if (DLLib_handle == NULL)
 		{
-			M_STATE_DEBUG(library_filename << " not a loadable library");
+			M_TRACE_DEBUG(library_filename << " not a loadable library");
 			libraries_not_loadable += " >";
 			libraries_not_loadable += library_filename;
 			libraries_not_loadable += "<";
@@ -2384,7 +2384,7 @@ void    build_library  (const E_override            must_override,
 		M_FATAL_COMMENT(oss.str());
 	}
 
-	M_STATE_DEBUG(P_library_def->full_name << " is a loadable library");
+	M_TRACE_DEBUG(P_library_def->full_name << " is a loadable library");
 
 	read_token_key_word_specified(is, "{");
 
@@ -2408,7 +2408,7 @@ void    build_library  (const E_override            must_override,
 		{
 			M_FATAL_COMMENT(library_function_def.name << " not found into " << P_library_def->full_name << " library");
 		}
-		M_STATE_DEBUG(library_function_def.name << " found into " << P_library_def->full_name << " library");
+		M_TRACE_DEBUG(library_function_def.name << " found into " << P_library_def->full_name << " library");
 
 		function_def.idx_library_function_def = P_library_def->library_functions.size();
 		function_def.P_library_def = P_library_def;
@@ -2434,7 +2434,7 @@ void    use_non_portable_types (const string              & key_word,
 								      istream             & is,
                                       T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("use_non_portable_types", "");
+	M_TRACE_ENTER ("use_non_portable_types", "");
 
     {
 #define M_ADD_ALIAS_MATCH_SIZE(TYPE,PORTABLE_TYPE_NAME,PORTABLE_TYPE_SIZE)    \
@@ -2483,7 +2483,7 @@ void    use_non_portable_types (const string              & key_word,
 string    build_types_no_include (istream             & is,
                                   T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_types_no_include", "");
+	M_TRACE_ENTER ("build_types_no_include", "");
 
 	string    key_word;
     while (read_token_left_any (is, key_word))
@@ -2596,7 +2596,7 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 	if (type_definitions.map_enum_definition_representation.empty() == false)
 		return;
 
-	M_STATE_ENTER ("build_types_begin", "");
+	M_TRACE_ENTER ("build_types_begin", "");
 
 	// bool type definitions
 	build_types_no_include_str("enum8     bool8   { false 0  true 1 }", type_definitions);
@@ -2765,7 +2765,7 @@ void    build_types_finalize(T_type_definitions  & type_definitions,
 
 void    build_types_finalize(T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER("build_types_finalize", "");
+	M_TRACE_ENTER("build_types_finalize", "");
 
   {
     T_map_struct_definition  & map_struct_definition = type_definitions.map_struct_definition;
@@ -2845,7 +2845,7 @@ void    build_types_finalize(T_type_definitions  & type_definitions)
 string    build_types2 (istream             & is,
                        T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_types", "");
+	M_TRACE_ENTER ("build_types", "");
 
 	build_types_begin (type_definitions);
 
@@ -2876,7 +2876,7 @@ string    build_types2 (istream             & is,
 				M_FATAL_COMMENT("Impossible to open file " << full_file_name);
 			}
 
-            M_STATE_INFO ("include " << file_name);
+            M_TRACE_INFO ("include " << file_name);
 
 			// Save include_directory (and restore it in destructor).
 			C_byte_interpret_append_include_directory  biaid;
@@ -2932,7 +2932,7 @@ string    build_types (istream             & is,
 void      build_types (const string              & file_name,
                              T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_types", file_name);
+	M_TRACE_ENTER ("build_types", file_name);
 
 	// Open the types definitions file.
 	ifstream    ifs(file_name.c_str());

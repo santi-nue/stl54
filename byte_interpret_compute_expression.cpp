@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -138,7 +138,7 @@ C_value    compute_expression (
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER("compute_expression", in_str);
+	M_TRACE_ENTER("compute_expression", in_str);
 
 	T_expression    expression;
 	expression.build_expression(type_definitions, in_str);
@@ -206,7 +206,7 @@ string    compute_expressions_in_array (
                                ostream                 & os_out,
                                ostream                 & os_err)
 {
-	M_STATE_ENTER("compute_expressions_in_array", in_str);
+	M_TRACE_ENTER("compute_expressions_in_array", in_str);
 
 	// Compute the value of each array index.
 	string    simple_type = in_str;
@@ -229,7 +229,7 @@ string    compute_expressions_in_array (
 
 	const string  result = simple_type + str_arrays_result;
 
-	M_STATE_DEBUG("result=" << result);
+	M_TRACE_DEBUG("result=" << result);
 	return  result;
 }
 

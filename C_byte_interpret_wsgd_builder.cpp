@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,7 +120,7 @@ int     dissector_try_value(      T_generic_protocol_data  & protocol_data,
 
   if (P_value != NULL)
   {
-    M_STATE_DEBUG ("subdissector try *P_value_x=" << P_value->as_string());
+    M_TRACE_DEBUG ("subdissector try *P_value_x=" << P_value->as_string());
     T_generic_protocol_subdissector_data  & subdissector_data = protocol_data.ws_data.subdissector_data;
 	if (protocol_data.SUBPROTO_SUBFIELD_TYPE_WS == FT_STRING)
 	{
@@ -154,7 +154,7 @@ int     call_subdissector_or_data2(T_generic_protocol_data  & protocol_data,
 							const C_value                  * P_value_2,
 							const C_value                  * P_value_3)
 {
-  M_STATE_ENTER ("call_subdissector_or_data", bit_length_of_subdissector_data);
+  M_TRACE_ENTER ("call_subdissector_or_data", bit_length_of_subdissector_data);
 
   T_generic_protocol_subdissector_data  & subdissector_data = protocol_data.ws_data.subdissector_data;
 
@@ -201,7 +201,7 @@ int     call_subdissector_or_data2(T_generic_protocol_data  & protocol_data,
 
   if (subdissector_data.try_heuristic_first)
   {
-    M_STATE_DEBUG ("subdissector try heuristic first");
+    M_TRACE_DEBUG ("subdissector try heuristic first");
     const int  dissector_result = dissector_try_heuristic(protocol_data, next_tvb,  pinfo, tree, bit_length_of_subdissector_data);
     if (dissector_result != 0)
       return  dissector_result;
@@ -225,13 +225,13 @@ int     call_subdissector_or_data2(T_generic_protocol_data  & protocol_data,
 
   if (!subdissector_data.try_heuristic_first)
   {
-    M_STATE_DEBUG ("subdissector try heuristic");
+    M_TRACE_DEBUG ("subdissector try heuristic");
     const int  dissector_result = dissector_try_heuristic(protocol_data, next_tvb,  pinfo, tree, bit_length_of_subdissector_data);
     if (dissector_result != 0)
       return  dissector_result;
   }
 
-  M_STATE_DEBUG ("subdissector not found ?");
+  M_TRACE_DEBUG ("subdissector not found ?");
 
   return  call_dissector(T_generic_protocol_subdissector_data::data_handle, next_tvb, pinfo, tree);
 }
@@ -269,7 +269,7 @@ void    call_subdissector_or_data(T_generic_protocol_data  & protocol_data,
 	const int     desegment_offset = pinfo->desegment_offset;
 	const guint32 desegment_len    = pinfo->desegment_len;
 
-	M_STATE_DEBUG("result=" << dissector_result <<
+	M_TRACE_DEBUG("result=" << dissector_result <<
 		          "  offset=" << desegment_offset << " (was " << desegment_offset_prev << ")" <<
 		          "  len=" << desegment_len << " (was " << desegment_len_prev << ")"
 				  );
@@ -307,7 +307,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 										const bool                  is_little_endian,
 										const bool                  error)
 {
-	M_STATE_ENTER("interpret_builder_value",
+	M_TRACE_ENTER("interpret_builder_value",
                   "data_name=" << data_name <<
 				  "  data_simple_name=" << data_simple_name <<
 				  "  data_value=" << data_value <<
@@ -344,11 +344,11 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 #endif
 	const int       error_code = error ? PI_ERROR : 0;
 
-	M_STATE_DEBUG ("wsgd add item = " << text);
+	M_TRACE_DEBUG ("wsgd add item = " << text);
 
 	if (field_type_name.must_force_manage_as_biggest_float())
 	{
-		M_STATE_DEBUG ("PROMOTION wsgd add item double = " << text);
+		M_TRACE_DEBUG ("PROMOTION wsgd add item double = " << text);
 		cpp_dissect_generic_add_item_double(A_interpret_wsgd.proto_idx,
 									 A_interpret_wsgd.wsgd_tvb,
 									 A_interpret_wsgd.wsgd_pinfo,
@@ -373,7 +373,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 
 			if (final_type[0] != 'u')
 			{
-				M_STATE_DEBUG ("PROMOTION wsgd add item int32 = " << text);
+				M_TRACE_DEBUG ("PROMOTION wsgd add item int32 = " << text);
 				cpp_dissect_generic_add_item_int32(A_interpret_wsgd.proto_idx,
 											 A_interpret_wsgd.wsgd_tvb,
 											 A_interpret_wsgd.wsgd_pinfo,
@@ -388,7 +388,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 			}
 			else
 			{
-				M_STATE_DEBUG ("PROMOTION wsgd add item uint32 = " << text);
+				M_TRACE_DEBUG ("PROMOTION wsgd add item uint32 = " << text);
 				cpp_dissect_generic_add_item_uint32(A_interpret_wsgd.proto_idx,
 											 A_interpret_wsgd.wsgd_tvb,
 											 A_interpret_wsgd.wsgd_pinfo,
@@ -404,7 +404,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 		}
 		else
 		{
-			M_STATE_DEBUG ("PROMOTION wsgd add item int64 = " << text);
+			M_TRACE_DEBUG ("PROMOTION wsgd add item int64 = " << text);
 			cpp_dissect_generic_add_item_int64(A_interpret_wsgd.proto_idx,
 										 A_interpret_wsgd.wsgd_tvb,
 										 A_interpret_wsgd.wsgd_pinfo,
@@ -426,7 +426,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 		{
 			if (type_bit_size <= 32)
 			{
-				M_STATE_DEBUG ("bsew PROMOTION wsgd add item int32 = " << text);
+				M_TRACE_DEBUG ("bsew PROMOTION wsgd add item int32 = " << text);
 				cpp_dissect_generic_add_item_int32(A_interpret_wsgd.proto_idx,
 											 A_interpret_wsgd.wsgd_tvb,
 											 A_interpret_wsgd.wsgd_pinfo,
@@ -441,7 +441,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 			}
 			else
 			{
-				M_STATE_DEBUG ("bsew PROMOTION wsgd add item int64 = " << text);
+				M_TRACE_DEBUG ("bsew PROMOTION wsgd add item int64 = " << text);
 				cpp_dissect_generic_add_item_int64(A_interpret_wsgd.proto_idx,
 											 A_interpret_wsgd.wsgd_tvb,
 											 A_interpret_wsgd.wsgd_pinfo,
@@ -459,7 +459,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 		{
 			if (type_bit_size <= 32)
 			{
-				M_STATE_DEBUG ("bsew PROMOTION wsgd add item uint32 = " << text);
+				M_TRACE_DEBUG ("bsew PROMOTION wsgd add item uint32 = " << text);
 				cpp_dissect_generic_add_item_uint32(A_interpret_wsgd.proto_idx,
 											 A_interpret_wsgd.wsgd_tvb,
 											 A_interpret_wsgd.wsgd_pinfo,
@@ -474,7 +474,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 			}
 			else
 			{
-				M_STATE_DEBUG ("bsew PROMOTION wsgd add item uint64 = " << text);
+				M_TRACE_DEBUG ("bsew PROMOTION wsgd add item uint64 = " << text);
 				cpp_dissect_generic_add_item_uint64(A_interpret_wsgd.proto_idx,
 											 A_interpret_wsgd.wsgd_tvb,
 											 A_interpret_wsgd.wsgd_pinfo,
@@ -776,7 +776,7 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 										const int                   type_bit_size,
 										const E_raw_data_type       raw_data_type)
 {
-	M_STATE_ENTER("interpret_builder_raw_data",
+	M_TRACE_ENTER("interpret_builder_raw_data",
                   "data_name=" << data_name <<
 				  "  data_simple_name=" << data_simple_name
 				  );
@@ -838,7 +838,7 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 
 //	const string    text = data_simple_name;    // new array management
 
-	M_STATE_DEBUG ("wsgd add item raw data");
+	M_TRACE_DEBUG ("wsgd add item raw data");
 
 	{
 		// Ajout d'un item.
@@ -866,7 +866,7 @@ C_byte_interpret_wsgd_builder::group_begin(const T_type_definitions  & /* type_d
 										const string              & data_name,
 										const string              & data_simple_name)
 {
-	M_STATE_ENTER("interpret_builder_group_begin",
+	M_TRACE_ENTER("interpret_builder_group_begin",
                   "data_name=" << data_name << "  "
 				  "data_simple_name=" << data_simple_name );
 
@@ -887,7 +887,7 @@ C_byte_interpret_wsgd_builder::group_begin(const T_type_definitions  & /* type_d
 		(field_type_name.type == "string_nl"))
 		return;
 
-	M_STATE_DEBUG ("wsgd       add item & tree");
+	M_TRACE_DEBUG ("wsgd       add item & tree");
 
 	T_wsgd_group_data  & group_data = A_wsgd_group_data.back();
 
@@ -938,7 +938,7 @@ C_byte_interpret_wsgd_builder::group_append_text(const T_type_definitions  & /* 
 										   const string              & data_simple_name,
 										   const string              & text)
 {
-	M_STATE_ENTER("interpret_builder_group_append_text",
+	M_TRACE_ENTER("interpret_builder_group_append_text",
                   "data_name=" << data_name <<
 				  "  data_simple_name=" << data_simple_name <<
 				  "  text=" << text);
@@ -962,7 +962,7 @@ C_byte_interpret_wsgd_builder::group_end(const T_type_definitions  & /* type_def
 										   const string              & data_simple_name,
 										   const int                   type_bit_size)
 {
-	M_STATE_ENTER("interpret_builder_group_end",
+	M_TRACE_ENTER("interpret_builder_group_end",
                   "data_name=" << data_name <<
 				  "  data_simple_name=" << data_simple_name <<
 				  "  type_bit_size=" << type_bit_size);

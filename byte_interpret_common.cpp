@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -150,7 +150,7 @@ C_trace::~C_trace()
 {
 	if (A_must_do_leave_trace)
 	{
-		M_STATE_base(" ", "Leave", A_function_name);
+		M_TRACE_base(" ", "Leave", A_function_name);
 	}
 }
 
@@ -225,7 +225,7 @@ void    fatal_pb (const string  & lhs,
 	const char  * oss_str = oss.str ();
     oss.freeze (false);           /* avoid memory leak */
 
-    M_STATE_FATAL(oss_str);
+    M_TRACE_FATAL(oss_str);
     throw  C_byte_interpret_exception(M_WHERE, E_byte_interpret_exception_fatal, oss_str);
 }
 
@@ -244,7 +244,7 @@ int   get_files_in_dir (const string          & dir_name,
 						      vector<string>  & file_names,
 						const bool              full_name_required)
 {
-  M_STATE_ENTER ("get_files_in_dir",
+  M_TRACE_ENTER ("get_files_in_dir",
                  "dir_name=" << dir_name <<
 				 "  begin_file_name=" << begin_file_name <<
 				 "  end_file_name=" << end_file_name);
@@ -259,7 +259,7 @@ int   get_files_in_dir (const string          & dir_name,
   hFindFile = FindFirstFile (filter.c_str(),&FindData);
   if (hFindFile == INVALID_HANDLE_VALUE)
   {
-    M_STATE_ERROR("filter " << filter << " not found");
+    M_TRACE_ERROR("filter " << filter << " not found");
     return  -1;
   }
 
@@ -288,7 +288,7 @@ int   get_files_in_dir (const string          & dir_name,
 
   if (dir == NULL)
   {
-    M_STATE_ERROR("dir " << dir_name << " not found");
+    M_TRACE_ERROR("dir " << dir_name << " not found");
     return  -1;
   }
 

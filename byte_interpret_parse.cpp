@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2017 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -258,7 +258,7 @@ bool    append_to_string_until_base (istream       & is,
                           const char            end_of_str,
                           const E_parser_cfg    parser_cfg)
 {
-	M_STATE_ENTER ("append_to_string_until",
+	M_TRACE_ENTER ("append_to_string_until",
 				   "result=" << result <<
 				   " end_of_str=" << int(end_of_str));
 
@@ -633,7 +633,7 @@ void    istream_hexa_dump_to_frame (
 void    bin_file_to_frame (const string         & file_name,
                                  T_byte_vector  & frame)
 {
-	M_STATE_ENTER ("bin_file_to_frame", file_name);
+	M_TRACE_ENTER ("bin_file_to_frame", file_name);
 
     // Compute size of the file.
     size_t       size_file = 0;
@@ -947,7 +947,7 @@ void    promote_printf_string_to_64bits(string   & printf_string)
 		{
 			if (idx_any == printf_string.size())
 			{
-				M_STATE_ERROR("bad printf format string gives >" << printf_string << "< ");
+				M_TRACE_ERROR("bad printf format string gives >" << printf_string << "< ");
 				return;
 			}
 
@@ -976,7 +976,7 @@ void    promote_printf_string_to_64bits(string   & printf_string)
 
 	if (printf_string.size() != size_before)
 	{
-		M_STATE_DEBUG("promote_printf_string_to_64bits gives >" << printf_string << "<");
+		M_TRACE_DEBUG("promote_printf_string_to_64bits gives >" << printf_string << "<");
 	}
 }
 

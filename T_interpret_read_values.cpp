@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2018 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -133,7 +133,7 @@ void
 T_interpret_read_values::set_read_variable (const string             & var_name,
                                             const T_attribute_value  & in_value)
 {
-	M_STATE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.transformed.as_string());
+	M_TRACE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.transformed.as_string());
 
 	T_attribute_value  * P_attr = const_cast<T_attribute_value*>(get_P_attribute_value_of_read_variable(var_name));
     if (P_attr == NULL)
@@ -148,7 +148,7 @@ T_interpret_read_values::set_read_variable (const string             & var_name,
 void    
 T_interpret_read_values::sup_read_variable (T_id    var_id)
 {
-	M_STATE_ENTER("sup_read_variable", A_current_path << " " << var_id);
+	M_TRACE_ENTER("sup_read_variable", A_current_path << " " << var_id);
 
 	if ((var_id < 0) ||
 		(var_id >= A_msg.size()))
@@ -197,7 +197,7 @@ T_interpret_read_values::sup_read_variables (int     nb_of_var, T_id    var_id[]
 void
 T_interpret_read_values::sup_all_read_variables_after (T_id    var_id)
 {
-	M_STATE_ENTER("sup_all_read_variables_after", var_id);
+	M_TRACE_ENTER("sup_all_read_variables_after", var_id);
 
 	if (var_id >= A_msg.size())
 	{
@@ -212,7 +212,7 @@ T_interpret_read_values::add_read_variable (const string             & /* var_na
                                             const string             & var_name_short,
                                             const T_attribute_value  & in_value)
 {
-	M_STATE_ENTER("add_read_variable", A_current_path << " " << var_name_short);
+	M_TRACE_ENTER("add_read_variable", A_current_path << " " << var_name_short);
 
 	if (A_current_path == "")
 	{
@@ -239,7 +239,7 @@ T_interpret_read_values::T_id
 T_interpret_read_values::add_ref_variable(const string  & ref_name,
 										  const string  & var_name)
 {
-	M_STATE_ENTER("add_ref_variable", A_current_path << " " << ref_name << " -> " << var_name);
+	M_TRACE_ENTER("add_ref_variable", A_current_path << " " << ref_name << " -> " << var_name);
 
 	T_id                       var_id;
 	const T_attribute_value  * P_attribute_value = get_P_attribute_value_of_read_variable(var_name, var_id);
@@ -477,7 +477,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 			T_interpret_read_values  * this_not_const = const_cast<T_interpret_read_values*>(this);
 			this_not_const->A_this_msg_attribute_value_used = true;
 			var_id = -1;
-			M_STATE_DEBUG("A_this_msg_attribute_value_used=" << A_this_msg_attribute_value_used);
+			M_TRACE_DEBUG("A_this_msg_attribute_value_used=" << A_this_msg_attribute_value_used);
 			return  & A_this_msg_attribute_value;
 		}
 	}
@@ -633,7 +633,7 @@ T_interpret_read_values::duplicate_multiple_values(
 					  const std::string                var_name_src,
 					  const std::string                var_name_dst)
 {
-	M_STATE_ENTER("duplicate_multiple_values", "src=" << var_name_src << "  dst=" << var_name_dst);
+	M_TRACE_ENTER("duplicate_multiple_values", "src=" << var_name_src << "  dst=" << var_name_dst);
 
 	int   var_idx_min = -1;
 	int   var_idx_max = -1;
@@ -695,7 +695,7 @@ T_interpret_read_values::copy_multiple_values(
 					        int                        dest_idx_begin,
 					  const int                        dest_idx_end)
 {
-	M_STATE_ENTER("copy_multiple_values", var_name_with_star);
+	M_TRACE_ENTER("copy_multiple_values", var_name_with_star);
 
 	const string::size_type  pos_star = var_name_with_star.find('*');
 
@@ -758,7 +758,7 @@ T_interpret_read_values::copy_multiple_values(
 		}
 	}
 
-	M_STATE_LEAVE("from nb_values_src=" << interpret_read_values_src.A_msg.size() <<
+	M_TRACE_LEAVE("from nb_values_src=" << interpret_read_values_src.A_msg.size() <<
 				  " nb_of_values_copied=" << nb_of_values_copied <<
 				  " gives nb_values_dst=" << A_msg.size());
 }
@@ -768,7 +768,7 @@ T_interpret_read_values::get_multiple_P_attribute_value_of_read_variable (
 							const string               & var_name_with_star,
 								  T_var_name_P_values  & name_values) const
 {
-	M_STATE_ENTER("get_multiple_P_attribute_value_of_read_variable", var_name_with_star);
+	M_TRACE_ENTER("get_multiple_P_attribute_value_of_read_variable", var_name_with_star);
 
 	const string::size_type  pos_star = var_name_with_star.find('*');
 
@@ -845,7 +845,7 @@ T_interpret_read_values::get_full_str_value_of_read_variable (const string  & va
 void    
 T_interpret_read_values::reset()
 {
-	M_STATE_ENTER("reset", "");
+	M_TRACE_ENTER("reset", "");
 
 	A_msg.clear();
 	A_current_path = "";
@@ -863,7 +863,7 @@ T_interpret_read_values::reset()
 void    
 T_interpret_read_values::reset_short_names()
 {
-	M_STATE_ENTER("reset_short_names", "");
+	M_TRACE_ENTER("reset_short_names", "");
 // fonction a supprimer
 }
 
@@ -873,7 +873,7 @@ T_interpret_read_values::reset_short_names()
 void
 T_interpret_read_values::reset_position_offset_sizes()
 {
-	M_STATE_ENTER("reset_position_offset_sizes", "");
+	M_TRACE_ENTER("reset_position_offset_sizes", "");
 
 	// Reset position size.
 	// Not used once the msg is finished.
@@ -899,20 +899,20 @@ T_interpret_read_values::reset_position_offset_sizes()
 void
 T_interpret_read_values::msg_is_ended()
 {
-	M_STATE_ENTER("msg_is_ended", "");
+	M_TRACE_ENTER("msg_is_ended", "");
 
 	// Check there is some global data.
 	if (A_msg_global_idx_end <= A_msg_global_idx_begin)
 	{
 		// No global data, so nothing to do, this object will be deleted (or reseted)
-		M_STATE_LEAVE("No global data  A_msg_global_idx_begin=" << A_msg_global_idx_begin << "  A_msg_global_idx_end=" << A_msg_global_idx_end);
+		M_TRACE_LEAVE("No global data  A_msg_global_idx_begin=" << A_msg_global_idx_begin << "  A_msg_global_idx_end=" << A_msg_global_idx_end);
 		return;
 	}
 
 	// Check this_msg has been used
 	if (A_this_msg_attribute_value_used == false)
 	{
-		M_STATE_DEBUG("Remove all data (except global) : from idx " << A_msg_global_idx_end << " to " << A_msg.size()-1);
+		M_TRACE_DEBUG("Remove all data (except global) : from idx " << A_msg_global_idx_end << " to " << A_msg.size()-1);
 
 		// We can remove every data (except global)
 		//  because they will NOT be accessed (through this_msg in global)
@@ -930,7 +930,7 @@ T_interpret_read_values::msg_is_ended()
 		// this_msg has been used.
 		// It could have been save inside global data.
 		// So can not remove any data.
-		M_STATE_DEBUG("this_msg has been used");
+		M_TRACE_DEBUG("this_msg has been used");
 	}
 
 	// position and size are no more necessary
@@ -976,7 +976,7 @@ void    swap(T_interpret_read_values  & lhs,
 void
 T_interpret_read_values::read_variable_group_begin(const std::string        & name)
 {
-	M_STATE_ENTER("read_variable_group_begin", A_current_path << " " << name);
+	M_TRACE_ENTER("read_variable_group_begin", A_current_path << " " << name);
 
 	if (A_current_path != "")
 	{
@@ -989,7 +989,7 @@ T_interpret_read_values::read_variable_group_begin(const std::string        & na
 void
 T_interpret_read_values::read_variable_group_end()
 {
-	M_STATE_ENTER("read_variable_group_end", A_current_path);
+	M_TRACE_ENTER("read_variable_group_end", A_current_path);
 
 	M_FATAL_IF_EQ(A_current_path, "");
 
@@ -1007,7 +1007,7 @@ T_interpret_read_values::read_variable_group_end()
 void
 T_interpret_read_values::global_variable_group_begin()
 {
-	M_STATE_ENTER("global_variable_group_begin", A_current_path);
+	M_TRACE_ENTER("global_variable_group_begin", A_current_path);
 
 	// global must be at root level
 	M_FATAL_IF_NE(A_current_path, "");
@@ -1019,7 +1019,7 @@ T_interpret_read_values::global_variable_group_begin()
 void
 T_interpret_read_values::global_variable_group_end()
 {
-	M_STATE_ENTER("global_variable_group_end", A_current_path);
+	M_TRACE_ENTER("global_variable_group_end", A_current_path);
 	A_msg_global_idx_end = A_msg.size();
 	A_msg_other_idx_begin = A_msg_global_idx_end;
 	read_variable_group_end();
@@ -1028,7 +1028,7 @@ T_interpret_read_values::global_variable_group_end()
 void
 T_interpret_read_values::pinfo_variable_group_begin()
 {
-	M_STATE_ENTER("pinfo_variable_group_begin", A_current_path);
+	M_TRACE_ENTER("pinfo_variable_group_begin", A_current_path);
 
 	// pinfo must be at root level
 	M_FATAL_IF_NE(A_current_path, "");
@@ -1040,7 +1040,7 @@ T_interpret_read_values::pinfo_variable_group_begin()
 void
 T_interpret_read_values::pinfo_variable_group_end()
 {
-	M_STATE_ENTER("pinfo_variable_group_end", A_current_path);
+	M_TRACE_ENTER("pinfo_variable_group_end", A_current_path);
 	A_msg_pinfo_idx_end = A_msg.size();
 	A_msg_other_idx_begin = A_msg_pinfo_idx_end;
 	read_variable_group_end();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,18 +79,18 @@ C_interpret_builder_set_temporary::forget()
 
 
 //*****************************************************************************
-// 
+// M_TRACE_CHECK
 //*****************************************************************************
 
 #if 1
 #define M_TRACE_CHECK()
 #else
-#define M_TRACE_CHECK()        \
-{        \
-	if (data_simple_name != field_type_name.name)        \
-	{        \
-		M_STATE_INFO("data_simple_name(" << data_simple_name << ") != field_type_name.name(" << field_type_name.name << ")");        \
-	}        \
+#define M_TRACE_CHECK()        							\
+{        												\
+	if (data_simple_name != field_type_name.name)       \
+	{        											\
+		M_TRACE_INFO("data_simple_name(" << data_simple_name << ") != field_type_name.name(" << field_type_name.name << ")");        \
+	}        											\
 }
 #endif
 
@@ -166,7 +166,7 @@ void    interpret_builder_value(const T_type_definitions  & type_definitions,
 			{
 				if (plugin.byte_interpret_plugin_output_value_float_cb != NULL)
 				{
-					M_STATE_ENTER ("byte_interpret_plugin_output_value_float_cb", "");
+					M_TRACE_ENTER ("byte_interpret_plugin_output_value_float_cb", "");
 					(*plugin.byte_interpret_plugin_output_value_float_cb)(
 						NULL,
 						NULL,
@@ -183,7 +183,7 @@ void    interpret_builder_value(const T_type_definitions  & type_definitions,
 			{
 				if (plugin.byte_interpret_plugin_output_value_integer_cb != NULL)
 				{
-					M_STATE_ENTER ("byte_interpret_plugin_output_value_integer_cb", "");
+					M_TRACE_ENTER ("byte_interpret_plugin_output_value_integer_cb", "");
 					(*plugin.byte_interpret_plugin_output_value_integer_cb)(
 						NULL,
 						NULL,
@@ -200,7 +200,7 @@ void    interpret_builder_value(const T_type_definitions  & type_definitions,
 			{
 				if (plugin.byte_interpret_plugin_output_value_string_cb != NULL)
 				{
-					M_STATE_ENTER ("byte_interpret_plugin_output_value_string_cb", "");
+					M_TRACE_ENTER ("byte_interpret_plugin_output_value_string_cb", "");
 					(*plugin.byte_interpret_plugin_output_value_string_cb)(
 						NULL,
 						NULL,

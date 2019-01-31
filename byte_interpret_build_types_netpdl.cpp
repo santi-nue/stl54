@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -260,7 +260,7 @@ void  netpdl_manage_format_fields_field_fixed(T_type_definitions  & type_definit
 											  T_field_type_name   & field_type_name,
 											  TiXmlElement        * element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_field_fixed", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_field_fixed", element);
 
 	const char  * name         = element->Attribute("name");
 //	const char  * longname     = element->Attribute("longname");
@@ -300,7 +300,7 @@ void  netpdl_manage_format_fields_field_variable(T_type_definitions  & type_defi
 												 T_field_type_name   & field_type_name,
 												 TiXmlElement        * element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_field_variable", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_field_variable", element);
 
 	const char  * name = element->Attribute("name");
 	const char  * expr = element->Attribute("expr");
@@ -323,7 +323,7 @@ void  netpdl_manage_format_fields_field_bit(T_type_definitions  & type_definitio
 											T_field_type_name   & field_type_name,
 											TiXmlElement       *& element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_field_bit", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_field_bit", element);
 
 	const long  bit_size_1st = get_bit_size_TiXmlElement(element);
 	long long   bit_mask_previous = 0;
@@ -353,7 +353,7 @@ void  netpdl_manage_format_fields_field_bit(T_type_definitions  & type_definitio
 				const char  * value = element->Value();
 				if (strcmp(value, "field") != 0)
 				{
-					M_STATE_DEBUG("Next element is not a field");
+					M_TRACE_DEBUG("Next element is not a field");
 					break;
 				}
 			}
@@ -364,7 +364,7 @@ void  netpdl_manage_format_fields_field_bit(T_type_definitions  & type_definitio
 				M_FATAL_IF_EQ(type, NULL_PTR);
 				if (strcmp(type, "bit") != 0)
 				{
-					M_STATE_DEBUG("Next element is not a field bit");
+					M_TRACE_DEBUG("Next element is not a field bit");
 					break;
 				}
 			}
@@ -374,7 +374,7 @@ void  netpdl_manage_format_fields_field_bit(T_type_definitions  & type_definitio
 				const long  bit_size = get_bit_size_TiXmlElement(element);
 				if (bit_size != bit_size_1st)
 				{
-					M_STATE_DEBUG("Next element has not the same size");
+					M_TRACE_DEBUG("Next element has not the same size");
 					break;
 				}
 			}
@@ -395,14 +395,14 @@ void  netpdl_manage_format_fields_field_bit(T_type_definitions  & type_definitio
 			// Check the current mask has no common part with previous mask.
 			if (bit_mask & bit_mask_previous)
 			{
-				M_STATE_DEBUG("Next element have a common part of the bit mask");
+				M_TRACE_DEBUG("Next element have a common part of the bit mask");
 				break;
 			}
 
 			// Check the current mask is < to the previous mask.
 			if (bit_mask >= bit_mask_previous)
 			{
-				M_STATE_DEBUG("Next element has a bigger bit mask");
+				M_TRACE_DEBUG("Next element has a bigger bit mask");
 				break;
 			}
 
@@ -441,7 +441,7 @@ void  netpdl_manage_format_fields_field_bit(T_type_definitions  & type_definitio
 
 		update_field_type_name_with_showtemplate(type_definitions, bit_field_type_name, element);
 
-		M_STATE_DEBUG("Add field bit element " << bit_field_type_name.name << " = " << bit_field_type_name.new_expression.get_original_string_expression());
+		M_TRACE_DEBUG("Add field bit element " << bit_field_type_name.name << " = " << bit_field_type_name.new_expression.get_original_string_expression());
 
 		bitfield_definition.fields_definition.push_back(bit_field_type_name);
 	}
@@ -457,7 +457,7 @@ void  netpdl_manage_format_fields_field_line(T_type_definitions  & type_definiti
 											 T_field_type_name   & field_type_name,
 											 TiXmlElement        * element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_field_line", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_field_line", element);
 
 	const char  * name = element->Attribute("name");
 	M_FATAL_IF_EQ(name, NULL_PTR);
@@ -475,8 +475,8 @@ void  netpdl_manage_format_fields_field_padding(T_type_definitions  & UNUSED(typ
 												T_field_type_name   & UNUSED(field_type_name),
 												TiXmlElement       *& element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_field_padding", element);
-	M_STATE_ERROR("do not how to manage padding");  // ICIOA
+	M_TRACE_ENTER("netpdl_manage_format_fields_field_padding", element);
+	M_TRACE_ERROR("do not how to manage padding");  // ICIOA
 
 	const char  * align = element->Attribute("align");
 	M_FATAL_IF_EQ(align, NULL_PTR);
@@ -500,7 +500,7 @@ void  netpdl_manage_format_fields_field(T_type_definitions  & type_definitions,
 										T_field_type_name   & field_type_name,
 										TiXmlElement       *& element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_field", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_field", element);
 
 	const char  * type = element->Attribute("type");
 	M_FATAL_IF_EQ(type, NULL_PTR);
@@ -542,7 +542,7 @@ void  netpdl_manage_format_fields_block(T_type_definitions  & type_definitions,
 										T_field_type_name   & field_type_name,
 										TiXmlElement        * element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_block", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_block", element);
 
 	const char  * name = element->Attribute("name");
 	M_FATAL_IF_EQ(name, NULL_PTR);
@@ -563,7 +563,7 @@ void  netpdl_manage_format_fields_includeblk(T_type_definitions  & type_definiti
 											 T_field_type_name   & field_type_name,
 											 TiXmlElement        * element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_includeblk", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_includeblk", element);
 
 	const char  * name = element->Attribute("name");
 	M_FATAL_IF_EQ(name, NULL_PTR);
@@ -582,7 +582,7 @@ void  netpdl_manage_format_fields_loop(T_type_definitions  & type_definitions,
 									   T_field_type_name   & field_type_name,
 									   TiXmlElement        * element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_loop", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_loop", element);
 
 	const char  * type = element->Attribute("type");
 	const char  * expr = element->Attribute("expr");
@@ -625,7 +625,7 @@ void  netpdl_manage_format_fields_loopctrl(T_type_definitions  & type_definition
 										   T_field_type_name   & field_type_name,
 										   TiXmlElement        * element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_loopctrl", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_loopctrl", element);
 
 	const char  * type = element->Attribute("type");
 	M_FATAL_IF_EQ(type, NULL_PTR);
@@ -641,7 +641,7 @@ void  netpdl_manage_format_fields_if(T_type_definitions  & type_definitions,
 									 T_field_type_name   & field_type_name,
 									 TiXmlElement        * element)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_if", element);
+	M_TRACE_ENTER("netpdl_manage_format_fields_if", element);
 
 	const char  * expr = element->Attribute("expr");
 	M_FATAL_IF_EQ(expr, NULL_PTR);
@@ -676,7 +676,7 @@ void  netpdl_manage_format_fields_switch(T_type_definitions  & type_definitions,
 										 T_field_type_name   & field_type_name,
 										 TiXmlElement        * root)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields_switch", root);
+	M_TRACE_ENTER("netpdl_manage_format_fields_switch", root);
 
 	const char  * expr = root->Attribute("expr");
 	M_FATAL_IF_EQ(expr, NULL_PTR);
@@ -739,7 +739,7 @@ void  netpdl_manage_format_fields(T_type_definitions   & type_definitions,
 								  T_struct_fields      & struct_fields,
 								  TiXmlElement         * root)
 {
-	M_STATE_ENTER("netpdl_manage_format_fields", root);
+	M_TRACE_ENTER("netpdl_manage_format_fields", root);
 
 	for (TiXmlElement  * element  = root->FirstChildElement();
 		                 element != NULL_PTR;
@@ -784,7 +784,7 @@ void  netpdl_manage_format_fields(T_type_definitions   & type_definitions,
 
 		if (field_type_name.type.empty())    // ICIOA
 		{
-			M_STATE_ERROR("field_type_name.type is empty");
+			M_TRACE_ERROR("field_type_name.type is empty");
 			continue;
 		}
 
@@ -799,7 +799,7 @@ void  netpdl_manage_format_fields(T_type_definitions   & type_definitions,
 void  netpdl_manage_format_block(T_type_definitions  & type_definitions,
 								 TiXmlElement        * root)
 {
-	M_STATE_ENTER("netpdl_manage_format_block", root);
+	M_TRACE_ENTER("netpdl_manage_format_block", root);
 
 	const char  * name = root->Attribute("name");
 	const string  struct_name = normalize_type_name(name);
@@ -820,7 +820,7 @@ void  netpdl_manage_format_block(T_type_definitions  & type_definitions,
 void  netpdl_manage_format(T_type_definitions  & type_definitions,
 						   TiXmlElement        * root)
 {
-	M_STATE_ENTER("netpdl_manage_format", root);
+	M_TRACE_ENTER("netpdl_manage_format", root);
 
 	// Some struct ...
 	for (TiXmlElement  * element_block  = root->FirstChildElement("block");
@@ -881,7 +881,7 @@ void  netpdl_manage_format(T_type_definitions  & type_definitions,
 void    netpdl_manage_main_file(T_type_definitions  & type_definitions,
 						  const string              & full_file_name)
 {
-	M_STATE_ENTER("netpdl_manage_main_file", full_file_name);
+	M_TRACE_ENTER("netpdl_manage_main_file", full_file_name);
 
 	TiXmlDocument   doc(full_file_name.c_str());
 	bool loadOkay = doc.LoadFile();
@@ -922,7 +922,7 @@ void    netpdl_manage_main_file(T_type_definitions  & type_definitions,
 bool      build_netpdl_types (const string              & main_file_name,
                                     T_type_definitions  & type_definitions)
 {
-	M_STATE_ENTER ("build_netpdl_types", main_file_name);
+	M_TRACE_ENTER ("build_netpdl_types", main_file_name);
 
 	netpdl_manage_main_file(type_definitions,
                             byte_interpret_get_include_directory() + "/" + main_file_name);

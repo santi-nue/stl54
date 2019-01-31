@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2018 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -3766,7 +3766,7 @@ bool    ut_interpret_bytes_base (const T_type_definitions  & type_definitions,
 	size_t            sizeof_bytes = in_byte_vector.size();
 
 	bool  result = false;
-	M_STATE_WARNING("enter ut_interpret_bytes_base " << conditions << "  for " << in_input_string);
+	M_TRACE_WARNING("enter ut_interpret_bytes_base " << conditions << "  for " << in_input_string);
 	get_state_ostream() << flush;
 	{
 		C_perf_chrono  perf_chrono(interpret_data, in_input_string.c_str(), sizeof_bytes);
@@ -3778,7 +3778,7 @@ bool    ut_interpret_bytes_base (const T_type_definitions  & type_definitions,
 									os_err,
 									interpret_data);
 	}
-	M_STATE_WARNING("leave ut_interpret_bytes_base " << conditions << "  for " << in_input_string);
+	M_TRACE_WARNING("leave ut_interpret_bytes_base " << conditions << "  for " << in_input_string);
 
 	M_TEST_EQ(result, true);
 	// Check no remaining input
@@ -4295,7 +4295,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 
 	for (int  idx_tst = 0; idx_tst < 10; ++idx_tst)
 	{
-		M_STATE_WARNING("msg.size=" << interpret_data.DEBUG_get_msg().size());
+		M_TRACE_WARNING("msg.size=" << interpret_data.DEBUG_get_msg().size());
 		ut_interpret_bytes(type_definitions,
   					   "4249472d5245515545535453" "4249472d5245515545535453"
   					   "4249472d5245515545535453" "4249472d5245515545535453"
@@ -4776,7 +4776,7 @@ void    test_interpret_simple_uint8_array(const int  max_iter = 1)
 
 	for (int  idx_tst = 0; idx_tst < max_iter; ++idx_tst)
 	{
-		M_STATE_WARNING("msg.size=" << interpret_data.DEBUG_get_msg().size());
+		M_TRACE_WARNING("msg.size=" << interpret_data.DEBUG_get_msg().size());
   	ut_interpret_bytes(type_definitions,
   					   "4249472d5245515545535453" "4249472d5245515545535453"
   					   "4249472d5245515545535453" "4249472d5245515545535453"

@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -274,7 +274,7 @@ int   S_proto_idx_dissect_in_progress = -1;
 static gint                                                                               \
 dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *)       \
 {                                                                                         \
-	M_STATE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
+	M_TRACE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
                                                                                           \
 	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
 	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
@@ -290,7 +290,7 @@ dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tr
 static gboolean                                                                           \
 heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *)     \
 {                                                                                         \
-	M_STATE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
+	M_TRACE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
                                                                                           \
 	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
 	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
@@ -306,7 +306,7 @@ heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *
 static gint                                                                               \
 dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)       \
 {                                                                                         \
-	M_STATE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
+	M_TRACE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
                                                                                           \
 	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
 	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
@@ -322,7 +322,7 @@ dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tr
 static gboolean                                                                           \
 heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)     \
 {                                                                                         \
-	M_STATE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
+	M_TRACE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
                                                                                           \
 	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
 	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
@@ -459,7 +459,7 @@ T_generic_protocol_data  & get_protocol_data_from_proto_abbrev(const char  * pro
 
 void    set_max_nb_of_protocol_data(const int   max_nb)
 {
-  M_STATE_ENTER("set_max_nb_of_protocol_data", max_nb);
+  M_TRACE_ENTER("set_max_nb_of_protocol_data", max_nb);
 
   M_FATAL_IF_LT(max_nb, 0);
 
@@ -522,7 +522,7 @@ void    add_initial_types (T_generic_protocol_data  & protocol_data)
 void    read_file_wsgd (const string                       & wsgd_file_name,
 						      T_generic_protocol_data  & protocol_data)
 {
-  M_STATE_ENTER ("read_file_wsgd", wsgd_file_name);
+  M_TRACE_ENTER ("read_file_wsgd", wsgd_file_name);
   ifstream              ifs (wsgd_file_name.c_str());
   if (!ifs)
   {
@@ -534,7 +534,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   else if (keyword == #NAME)  {                              \
     check_not_already_initialized(VARIABLE);                 \
     ifs >> VARIABLE;                                         \
-    M_STATE_DEBUG (#NAME << " = " << VARIABLE);              \
+    M_TRACE_DEBUG (#NAME << " = " << VARIABLE);              \
   }
 
 #define M_READ_VALUE(NAME)                                   \
@@ -554,7 +554,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
     else {                                                   \
 	  M_FATAL_COMMENT("Bad value for " #NAME);               \
 	}                                                        \
-    M_STATE_DEBUG (#NAME << " = " << VARIABLE);              \
+    M_TRACE_DEBUG (#NAME << " = " << VARIABLE);              \
   }
 
 // bool
@@ -602,7 +602,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
     {                                                       \
         protocol_data.NAME.erase(NAME_size-1);              \
     }                                                       \
-    M_STATE_DEBUG (#NAME << " = " << protocol_data.NAME);   \
+    M_TRACE_DEBUG (#NAME << " = " << protocol_data.NAME);   \
   }
 
   // Read the 1st part of the file (until PROTO_TYPE_DEFINITIONS).
@@ -634,7 +634,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 	{
 		protocol_data.PARENTS.push_back(T_generic_protocol_data::T_parent());
 		ifs >> protocol_data.PARENTS.back().PARENT_SUBFIELD;
-	    M_STATE_DEBUG ("PARENT_SUBFIELD = " << protocol_data.PARENTS.back().PARENT_SUBFIELD);
+	    M_TRACE_DEBUG ("PARENT_SUBFIELD = " << protocol_data.PARENTS.back().PARENT_SUBFIELD);
 	}
 	M_READ_STRINGS(PARENT_SUBFIELD_VALUES,PARENTS.back().PARENT_SUBFIELD_VALUES_str)
     else if (keyword == "PARENT_SUBFIELD_RANGE")
@@ -721,7 +721,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 	M_READ_VALUE(MSG_TITLE)
     else if (keyword == "PACKET_ID_FIELD_TYPE")
 	{
-		M_STATE_ERROR("PACKET_ID_FIELD_TYPE is no more used -> remove it");
+		M_TRACE_ERROR("PACKET_ID_FIELD_TYPE is no more used -> remove it");
 		string  do_not_care;
 	    ifs >> do_not_care;
 	}

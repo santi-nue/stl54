@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -191,7 +191,7 @@ bool       read_token_simple_word_check_unexpected (
 	{
 		if (strpbrk(str_result.c_str(), P_unexpected_char) != NULL)
 		{
-			M_STATE_ERROR("read_token_simple_word unexpected character into " << str_result);
+			M_TRACE_ERROR("read_token_simple_word unexpected character into " << str_result);
 			return  false;
 		}
 	}
@@ -226,7 +226,7 @@ bool       read_token_key_word (
 
 	if (strchr(str_result.c_str(), '{') != NULL)
 	{
-		M_STATE_ERROR("read_token_simple_word unexpected character into " << str_result);
+		M_TRACE_ERROR("read_token_simple_word unexpected character into " << str_result);
 		return  false;
 	}
 
