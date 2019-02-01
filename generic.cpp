@@ -96,64 +96,64 @@ extern "C" {
 
 void    register_enum_values(T_generic_protocol_data  & protocol_data)
 {
-  M_TRACE_ENTER ("register_enum_values", "proto_idx=" << protocol_data.proto_idx);
+    M_TRACE_ENTER ("register_enum_values", "proto_idx=" << protocol_data.proto_idx);
 
-  T_type_definitions  & type_definitions = protocol_data.type_definitions;
-  T_map_enum_definition_representation  & map_enum_definition_representation = type_definitions.map_enum_definition_representation;
+    T_type_definitions  & type_definitions = protocol_data.type_definitions;
+    T_map_enum_definition_representation  & map_enum_definition_representation = type_definitions.map_enum_definition_representation;
 
-  M_TRACE_DEBUG ("max_nb_of_enums=" << map_enum_definition_representation.size());
+    M_TRACE_DEBUG ("max_nb_of_enums=" << map_enum_definition_representation.size());
 
-  int   enum_idx = 0;
-  for (T_map_enum_definition_representation::iterator
+    int   enum_idx = 0;
+    for (T_map_enum_definition_representation::iterator
                              iter  = map_enum_definition_representation.begin();
                              iter != map_enum_definition_representation.end();
                            ++iter)
-  {
-    const string                      & enum_type_name = iter->first;
-    T_enum_definition_representation  & definition_representation = iter->second;
-    definition_representation.wsgd_enum_values_idx = enum_idx;
+    {
+        const string                      & enum_type_name = iter->first;
+        T_enum_definition_representation  & definition_representation = iter->second;
+        definition_representation.wsgd_enum_values_idx = enum_idx;
 
-    const T_enum_definition                 & definition = definition_representation.definition;
+        const T_enum_definition                 & definition = definition_representation.definition;
 
-    M_TRACE_DEBUG ("add enum  enum_idx=" << enum_idx <<
-                   "  name=" << enum_type_name <<
-                   "  nb_values=" << definition.size());
+        M_TRACE_DEBUG ("add enum  enum_idx=" << enum_idx <<
+                       "  name=" << enum_type_name <<
+                       "  nb_values=" << definition.size());
 
-    T_generic_protocol_enum_value  enum_value;
+        T_generic_protocol_enum_value  enum_value;
 
-    int     enum_value_idx = 0;
-    for (T_enum_definition::const_iterator
+        int     enum_value_idx = 0;
+        for (T_enum_definition::const_iterator
                              iter_value  = definition.begin();
                              iter_value != definition.end();
                            ++iter_value)
-    {
-      const T_enum_name_val  & enum_name_val = *iter_value;
+        {
+            const T_enum_name_val  & enum_name_val = *iter_value;
 
-      M_TRACE_DEBUG ("add enum value  enum_idx=" << enum_idx << "  enum_value_idx="  << enum_value_idx <<
-                     "  (" << enum_name_val.value << ", " << enum_name_val.name << ")");
+            M_TRACE_DEBUG ("add enum value  enum_idx=" << enum_idx << "  enum_value_idx="  << enum_value_idx <<
+                            "  (" << enum_name_val.value << ", " << enum_name_val.name << ")");
 
-      value_string    vs;
-      vs.value  = static_cast<const int>(enum_name_val.value);
-      vs.strptr = strdup (enum_name_val.name.c_str());
+            value_string    vs;
+            vs.value  = static_cast<const int>(enum_name_val.value);
+            vs.strptr = strdup (enum_name_val.name.c_str());
 
-      enum_value.value_strings.push_back(vs);
+            enum_value.value_strings.push_back(vs);
 
-      ++enum_value_idx;
+            ++enum_value_idx;
+        }
+
+        // Must add a last value_string with NULL ptr.
+        {
+            value_string    vs;
+            vs.value  = 0;
+            vs.strptr = NULL;
+
+            enum_value.value_strings.push_back(vs);
+        }
+
+        protocol_data.ws_data.enum_values_data.enum_values.push_back(enum_value);
+
+        ++enum_idx;
     }
-
-    // Must add a last value_string with NULL ptr.
-    {
-      value_string    vs;
-      vs.value  = 0;
-      vs.strptr = NULL;
-
-      enum_value.value_strings.push_back(vs);
-    }
-
-    protocol_data.ws_data.enum_values_data.enum_values.push_back(enum_value);
-
-    ++enum_idx;
-  }
 }
 
 //*****************************************************************************
@@ -161,156 +161,156 @@ void    register_enum_values(T_generic_protocol_data  & protocol_data)
 //*****************************************************************************
 
 void    register_fields_add_field_none(
-                                         T_generic_protocol_data  & protocol_data,
+                                         T_generic_protocol_data      & protocol_data,
                                    const int                            field_idx,
                                    const char                         * field_name,
                                    const char                         * field_filter_name_param,
                                    const char                         * field_extended_name)
 {
-  T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
+    M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_filter_name_param;
-  hf_register_info               hf = 
+    const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_filter_name_param;
+    hf_register_info               hf = 
         { NULL,    // initialized later
         { strdup(field_name),
-          strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
-          strdup(field_extended_name), HFILL }};
+            strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
+            strdup(field_extended_name), HFILL }};
 
-  P_protocol_ws_data->fields_data.hf.push_back(hf);
+    P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
 
 void    register_fields_add_field_none(
-                                         T_generic_protocol_data  & protocol_data,
+                                         T_generic_protocol_data      & protocol_data,
                                    const int                            field_idx,
                                    const T_field_type_name            & field_name)
 {
-  T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
+    M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
-  hf_register_info               hf = 
+    const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
+    hf_register_info               hf = 
         { NULL,    // initialized later
         { strdup(field_name.get_display_name().c_str()),
-          strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
-          strdup(field_name.get_extended_name().c_str()), HFILL }};
+            strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
+            strdup(field_name.get_extended_name().c_str()), HFILL }};
 
-  P_protocol_ws_data->fields_data.hf.push_back(hf);
+    P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
 
 void    register_fields_add_field_bytes(
-                                         T_generic_protocol_data  & protocol_data,
+                                         T_generic_protocol_data      & protocol_data,
                                    const int                            field_idx,
                                    const T_field_type_name            & field_name)
 {
-  T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
+    M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
-  hf_register_info               hf = 
+    const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
+    hf_register_info               hf = 
         { NULL,    // initialized later
         { strdup(field_name.get_display_name().c_str()),
-          strdup(filter_field_name.c_str()), FT_BYTES, BASE_NONE, NULL, 0x0,
-          strdup(field_name.get_extended_name().c_str()), HFILL }};
+            strdup(filter_field_name.c_str()), FT_BYTES, BASE_NONE, NULL, 0x0,
+            strdup(field_name.get_extended_name().c_str()), HFILL }};
 
-  P_protocol_ws_data->fields_data.hf.push_back(hf);
+    P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
 
 void    register_fields_add_field_string(
-                                         T_generic_protocol_data  & protocol_data,
+                                         T_generic_protocol_data      & protocol_data,
                                    const int                            field_idx,
                                    const T_field_type_name            & field_name)
 {
-  T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
+    M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
-  hf_register_info               hf = 
+    const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
+    hf_register_info               hf = 
         { NULL,    // initialized later
         { strdup(field_name.get_display_name().c_str()),
-          strdup(filter_field_name.c_str()), FT_STRING, BASE_NONE, NULL, 0x0,
-          strdup(field_name.get_extended_name().c_str()), HFILL }};
+            strdup(filter_field_name.c_str()), FT_STRING, BASE_NONE, NULL, 0x0,
+            strdup(field_name.get_extended_name().c_str()), HFILL }};
 
-  P_protocol_ws_data->fields_data.hf.push_back(hf);
+    P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
 
 void    register_fields_add_field_float(
-                                         T_generic_protocol_data  & protocol_data,
+                                         T_generic_protocol_data      & protocol_data,
                                    const int                            field_idx,
                                    const T_field_type_name            & field_name,
                                    const int                            field_bit_size)
 {
-  T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
+    M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
-  ftenum                         ws_size = field_bit_size<=32 ? FT_FLOAT : FT_DOUBLE;
-  hf_register_info               hf = 
+    const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
+    ftenum                         ws_size = field_bit_size<=32 ? FT_FLOAT : FT_DOUBLE;
+    hf_register_info               hf = 
         { NULL,    // initialized later
         { strdup(field_name.get_display_name().c_str()),
-          strdup(filter_field_name.c_str()), ws_size, BASE_NONE, NULL, 0x0,
-          strdup(field_name.get_extended_name().c_str()), HFILL }};
+            strdup(filter_field_name.c_str()), ws_size, BASE_NONE, NULL, 0x0,
+            strdup(field_name.get_extended_name().c_str()), HFILL }};
 
-  P_protocol_ws_data->fields_data.hf.push_back(hf);
+    P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
 
 void    register_fields_add_field_int(
-                                         T_generic_protocol_data  & protocol_data,
+                                         T_generic_protocol_data      & protocol_data,
                                    const int                            field_idx,
                                    const T_field_type_name            & field_name,
                                    const int                            field_bit_size,
                                    const bool                           is_signed,
                                    const int                            enum_idx)
 {
-  T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
+    M_FATAL_IF_NE(field_idx, (int)P_protocol_ws_data->fields_data.hf.size());
 
-  const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
+    const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
 
-  const ftenum    ws_size_unsign[] = { FT_UINT8, FT_UINT16, FT_UINT24, FT_UINT32, FT_NONE, FT_NONE, FT_NONE, FT_UINT64 };
-  const ftenum    ws_size_signed[] = {  FT_INT8,  FT_INT16,  FT_INT24,  FT_INT32, FT_NONE, FT_NONE, FT_NONE,  FT_INT64 };
+    const ftenum    ws_size_unsign[] = { FT_UINT8, FT_UINT16, FT_UINT24, FT_UINT32, FT_NONE, FT_NONE, FT_NONE, FT_UINT64 };
+    const ftenum    ws_size_signed[] = {  FT_INT8,  FT_INT16,  FT_INT24,  FT_INT32, FT_NONE, FT_NONE, FT_NONE,  FT_INT64 };
 
-  int           field_byte_size = field_bit_size / 8;
+    int           field_byte_size = field_bit_size / 8;
 
-  M_FATAL_IF_LT(field_byte_size, 1);
-  M_FATAL_IF_GT(field_byte_size, (int)(sizeof(ws_size_unsign)/sizeof(ws_size_unsign[0])));
+    M_FATAL_IF_LT(field_byte_size, 1);
+    M_FATAL_IF_GT(field_byte_size, (int)(sizeof(ws_size_unsign)/sizeof(ws_size_unsign[0])));
 
-  // wireshark (proto.c) forbids enum with size > 4 bytes
-  // NB: could have enum with size = 8 only
-  //      with must_force_manage_as_biggest_int and so
-  //      in case of var (i.e. not a field read inside the packet)
-  if (enum_idx >= 0)
-      field_byte_size = 4;
+    // wireshark (proto.c) forbids enum with size > 4 bytes
+    // NB: could have enum with size = 8 only
+    //      with must_force_manage_as_biggest_int and so
+    //      in case of var (i.e. not a field read inside the packet)
+    if (enum_idx >= 0)
+        field_byte_size = 4;
 
-  ftenum                         ws_size;
-  if (is_signed)
-  {
-    ws_size = ws_size_signed[field_byte_size - 1];
-  }
-  else
-  {
-    ws_size = ws_size_unsign[field_byte_size - 1];
-  }
-  M_FATAL_IF_EQ(ws_size, FT_NONE);
+    ftenum                         ws_size;
+    if (is_signed)
+    {
+        ws_size = ws_size_signed[field_byte_size - 1];
+    }
+    else
+    {
+        ws_size = ws_size_unsign[field_byte_size - 1];
+    }
+    M_FATAL_IF_EQ(ws_size, FT_NONE);
 
-  hf_register_info               hf = 
+    hf_register_info               hf = 
         { NULL,    // initialized later
         { strdup(field_name.get_display_name().c_str()),
-          strdup(filter_field_name.c_str()), ws_size, BASE_DEC, NULL, 0x0,
-          strdup(field_name.get_extended_name().c_str()), HFILL }};
+            strdup(filter_field_name.c_str()), ws_size, BASE_DEC, NULL, 0x0,
+            strdup(field_name.get_extended_name().c_str()), HFILL }};
 
-  if (enum_idx >= 0)
-  {
-    hf.hfinfo.strings = VALS(&P_protocol_ws_data->enum_values_data.enum_values[enum_idx].value_strings[0]);
-  }
+    if (enum_idx >= 0)
+    {
+        hf.hfinfo.strings = VALS(&P_protocol_ws_data->enum_values_data.enum_values[enum_idx].value_strings[0]);
+    }
 
-  P_protocol_ws_data->fields_data.hf.push_back(hf);
+    P_protocol_ws_data->fields_data.hf.push_back(hf);
 }
 
 //*****************************************************************************
@@ -335,47 +335,47 @@ void    register_fields_switch_definition(T_generic_protocol_data      & protoco
                                           int                          & field_idx,
                                           T_switch_definition          & switch_definition);
 
-void    register_fields_field_type_name(T_generic_protocol_data      & protocol_data,
+void    register_fields_field_type_name(T_generic_protocol_data          & protocol_data,
                                         int                              & field_idx,
                                         T_field_type_name                & field_type_name,
                                   const string                           & data_type)
 {
-  M_TRACE_ENTER ("register_fields_field_type_name",
-                 "proto_idx=" << protocol_data.proto_idx << "  " <<
-                 "field_idx=" << field_idx << "  " <<
-                 "field_type_name.type=" << field_type_name.type << "  " <<
-                 "field_type_name.name=" << field_type_name.name << "  " <<
-                 "data_type=" << data_type << "  ");
+    M_TRACE_ENTER ("register_fields_field_type_name",
+                    "proto_idx=" << protocol_data.proto_idx << "  " <<
+                    "field_idx=" << field_idx << "  " <<
+                    "field_type_name.type=" << field_type_name.type << "  " <<
+                    "field_type_name.name=" << field_type_name.name << "  " <<
+                    "data_type=" << data_type << "  ");
 
-  T_type_definitions       & type_definitions = protocol_data.type_definitions;
+    T_type_definitions       & type_definitions = protocol_data.type_definitions;
 
-  string    final_type = data_type;
+    string    final_type = data_type;
     M_FATAL_IF_NE(data_type, field_type_name.type);
 
-  // Ignore commands (not a field).
-  if ((final_type == "debug_print") || (final_type == "print"))  return;
-  if (final_type == "chat")                                      return;
-  if (final_type == "note")                                      return;
-  if (final_type == "warning")                                   return;
-  if (final_type == "error")                                     return;
-  if (final_type == "fatal")                                     return;
-  if (final_type == "output")                                    return;
-  if (final_type == "byte_order")                                return;
-  if (final_type == "decoder")                                   return;
-  if (final_type == "save_position")                             return;
-  if (final_type == "goto_position")                             return;
-  if (final_type == "move_position_bytes")                       return;
-  if (final_type == "move_position_bits")                        return;
-  if (final_type == "check_eof_distance_bytes")                  return;
-  if (final_type == "check_eof_distance_bits")                   return;
-  if (final_type == "chrono")                                    return;
-  if (final_type == "set")                                       return;
-  if (final_type == "call")                                      return;
-  if (final_type == "deep_break")                                return;
-  if (final_type == "deep_continue")                             return;
-  if (final_type == "break")                                     return;
-  if (final_type == "continue")                                  return;
-  if (final_type == "return")                                    return;
+    // Ignore commands (not a field).
+    if ((final_type == "debug_print") || (final_type == "print"))  return;
+    if (final_type == "chat")                                      return;
+    if (final_type == "note")                                      return;
+    if (final_type == "warning")                                   return;
+    if (final_type == "error")                                     return;
+    if (final_type == "fatal")                                     return;
+    if (final_type == "output")                                    return;
+    if (final_type == "byte_order")                                return;
+    if (final_type == "decoder")                                   return;
+    if (final_type == "save_position")                             return;
+    if (final_type == "goto_position")                             return;
+    if (final_type == "move_position_bytes")                       return;
+    if (final_type == "move_position_bits")                        return;
+    if (final_type == "check_eof_distance_bytes")                  return;
+    if (final_type == "check_eof_distance_bits")                   return;
+    if (final_type == "chrono")                                    return;
+    if (final_type == "set")                                       return;
+    if (final_type == "call")                                      return;
+    if (final_type == "deep_break")                                return;
+    if (final_type == "deep_continue")                             return;
+    if (final_type == "break")                                     return;
+    if (final_type == "continue")                                  return;
+    if (final_type == "return")                                    return;
 
     // array ? Not specifically managed.
 
@@ -391,13 +391,13 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
             // ajout champ none (size inconnue)
             field_type_name.wsgd_field_idx = field_idx;
             M_TRACE_DEBUG ("add_field_none("
-               << protocol_data.proto_idx << ", "
-               << field_idx << ", "
-               << field_type_name.name << ") switch");
+                << protocol_data.proto_idx << ", "
+                << field_idx << ", "
+                << field_type_name.name << ") switch");
 
             register_fields_add_field_none(protocol_data,
-                                               field_idx,
-                                               field_type_name);
+                                                field_idx,
+                                                field_type_name);
             ++field_idx;
         }
         if (final_type == "switch")
@@ -434,13 +434,13 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
                 // ajout champ none (size inconnue)
                 field_type_name.wsgd_field_idx = field_idx;
                 M_TRACE_DEBUG ("add_field_none("
-                   << protocol_data.proto_idx << ", "
-                   << field_idx << ", "
-                   << field_type_name.name << ") struct");
+                    << protocol_data.proto_idx << ", "
+                    << field_idx << ", "
+                    << field_type_name.name << ") struct");
 
                 register_fields_add_field_none(protocol_data,
-                                               field_idx,
-                                               field_type_name);
+                                                field_idx,
+                                                field_type_name);
                 ++field_idx;
 
                 if (P_struct->is_a_field_struct())
@@ -474,13 +474,13 @@ void    register_fields_field_type_name(T_generic_protocol_data      & protocol_
                 // ajout champ none (size inconnue)
                 field_type_name.wsgd_field_idx = field_idx;
                 M_TRACE_DEBUG ("add_field_none("
-                   << protocol_data.proto_idx << ", "
-                   << field_idx << ", "
-                   << field_type_name.name << ") bitfield");
+                    << protocol_data.proto_idx << ", "
+                    << field_idx << ", "
+                    << field_type_name.name << ") bitfield");
 
                 register_fields_add_field_none(protocol_data,
-                                                   field_idx,
-                                                   field_type_name);
+                                                    field_idx,
+                                                    field_type_name);
                 ++field_idx;
             }
             if (final_type == "bitfield")
@@ -727,23 +727,23 @@ void    register_fields_struct_fields(T_generic_protocol_data  & protocol_data,
                              iter_field != struct_fields.end();
                            ++iter_field)
     {
-      T_field_type_name  & field_type_name = *iter_field;
+        T_field_type_name  & field_type_name = *iter_field;
 
-      if ((field_type_name.type != "if") &&
-          (field_type_name.type != "while") &&
-          (field_type_name.type != "do_while") &&
-          (field_type_name.type != "loop_size_bytes") &&
-          (field_type_name.type != "loop_size_bits") &&
-          (field_type_name.type != "loop_nb_times"))
-      {
-        register_fields_field_type_name(protocol_data, field_idx, field_type_name, field_type_name.type);
-        continue;
-      }
+        if ((field_type_name.type != "if") &&
+            (field_type_name.type != "while") &&
+            (field_type_name.type != "do_while") &&
+            (field_type_name.type != "loop_size_bytes") &&
+            (field_type_name.type != "loop_size_bits") &&
+            (field_type_name.type != "loop_nb_times"))
+        {
+            register_fields_field_type_name(protocol_data, field_idx, field_type_name, field_type_name.type);
+            continue;
+        }
 
-      // if or any loop
-      if (field_type_name.P_sub_struct)
-          register_fields_struct_definition(protocol_data, field_idx, *field_type_name.P_sub_struct);
-      register_fields_struct_fields(protocol_data, field_idx, field_type_name.sub_struct_2);
+        // if or any loop
+        if (field_type_name.P_sub_struct)
+            register_fields_struct_definition(protocol_data, field_idx, *field_type_name.P_sub_struct);
+        register_fields_struct_fields(protocol_data, field_idx, field_type_name.sub_struct_2);
     }
 }
 
@@ -767,10 +767,10 @@ void    register_fields_bitfield_definition(T_generic_protocol_data      & proto
                                           int                          & field_idx,
                                           T_bitfield_definition          & bitfield_definition)
 {
-  register_fields_field_type_name(protocol_data, field_idx, bitfield_definition.master_field, bitfield_definition.master_field.type);
-S_ICIOA_in_bitfield = true;
-  register_fields_struct_fields(protocol_data, field_idx, bitfield_definition.fields_definition);
-S_ICIOA_in_bitfield = false;
+    register_fields_field_type_name(protocol_data, field_idx, bitfield_definition.master_field, bitfield_definition.master_field.type);
+    S_ICIOA_in_bitfield = true;
+    register_fields_struct_fields(protocol_data, field_idx, bitfield_definition.fields_definition);
+    S_ICIOA_in_bitfield = false;
 }
 
 //*****************************************************************************
@@ -781,17 +781,17 @@ void    register_fields_switch_definition(T_generic_protocol_data      & protoco
                                           int                          & field_idx,
                                           T_switch_definition          & switch_definition)
 {
-  T_switch_cases       & switch_cases = switch_definition.switch_cases;
+    T_switch_cases       & switch_cases = switch_definition.switch_cases;
 
-  for (T_switch_cases::iterator
-                         sw_iter  = switch_cases.begin();
-                         sw_iter != switch_cases.end();
-                       ++sw_iter)
-  {
-    T_struct_fields  & struct_fields = sw_iter->fields;
+    for (T_switch_cases::iterator
+                            sw_iter  = switch_cases.begin();
+                            sw_iter != switch_cases.end();
+                          ++sw_iter)
+    {
+        T_struct_fields  & struct_fields = sw_iter->fields;
 
-    register_fields_struct_fields(protocol_data, field_idx, struct_fields);
-  }
+        register_fields_struct_fields(protocol_data, field_idx, struct_fields);
+    }
 }
 
 //*****************************************************************************
@@ -800,101 +800,101 @@ void    register_fields_switch_definition(T_generic_protocol_data      & protoco
 
 void    register_fields(T_generic_protocol_data  & protocol_data)
 {
-  M_TRACE_ENTER ("register_fields", "proto_idx=" << protocol_data.proto_idx);
+    M_TRACE_ENTER ("register_fields", "proto_idx=" << protocol_data.proto_idx);
 
-  T_type_definitions       & type_definitions = protocol_data.type_definitions;
+    T_type_definitions       & type_definitions = protocol_data.type_definitions;
 
-  int   field_idx = 0;
+    int   field_idx = 0;
 
-  // whole or any data
-  M_FATAL_IF_NE(field_idx, K_WHOLE_WSGD_FIELD_IDX);
-  M_FATAL_IF_NE(field_idx, K_ANY_WSGD_FIELD_IDX);
-  register_fields_add_field_none(protocol_data, field_idx, "data", "data", "data");
-  ++field_idx;
-
-  // pseudo field to do a coloring rule or a display filter on it
-  // I do not know how to code a coloring rule.
-  // -> must do it manually at this time.
-  if (K_ERROR_WSGD_FIELD_IDX != K_ANY_WSGD_FIELD_IDX)
-  {
-    M_FATAL_IF_NE(field_idx, K_ERROR_WSGD_FIELD_IDX);
-    register_fields_add_field_none(protocol_data, field_idx, "error_in_packet", "error_in_packet", "error_in_packet");
+    // whole or any data
+    M_FATAL_IF_NE(field_idx, K_WHOLE_WSGD_FIELD_IDX);
+    M_FATAL_IF_NE(field_idx, K_ANY_WSGD_FIELD_IDX);
+    register_fields_add_field_none(protocol_data, field_idx, "data", "data", "data");
     ++field_idx;
-  }
 
-  {
-    T_map_struct_definition  & map_struct_definition = type_definitions.map_struct_definition;
-    for (T_map_struct_definition::iterator
-                             iter  = map_struct_definition.begin();
-                             iter != map_struct_definition.end();
-                           ++iter)
+    // pseudo field to do a coloring rule or a display filter on it
+    // I do not know how to code a coloring rule.
+    // -> must do it manually at this time.
+    if (K_ERROR_WSGD_FIELD_IDX != K_ANY_WSGD_FIELD_IDX)
     {
-      T_struct_definition  & struct_definition = iter->second;
-
-      register_fields_struct_definition(protocol_data, field_idx, struct_definition);
+        M_FATAL_IF_NE(field_idx, K_ERROR_WSGD_FIELD_IDX);
+        register_fields_add_field_none(protocol_data, field_idx, "error_in_packet", "error_in_packet", "error_in_packet");
+        ++field_idx;
     }
-  }
 
-  {
-    T_map_bitfield_definition  & map_bitfield_definition = type_definitions.map_bitfield_definition;
-    for (T_map_bitfield_definition::iterator
-                             iter  = map_bitfield_definition.begin();
-                             iter != map_bitfield_definition.end();
-                           ++iter)
     {
-      T_bitfield_definition  & bitfield_definition = iter->second;
+        T_map_struct_definition  & map_struct_definition = type_definitions.map_struct_definition;
+        for (T_map_struct_definition::iterator
+                                    iter  = map_struct_definition.begin();
+                                    iter != map_struct_definition.end();
+                                  ++iter)
+        {
+            T_struct_definition  & struct_definition = iter->second;
 
-      register_fields_bitfield_definition(protocol_data, field_idx, bitfield_definition);
+            register_fields_struct_definition(protocol_data, field_idx, struct_definition);
+        }
     }
-  }
 
-  {
-    T_map_switch_definition  & map_switch_definition = type_definitions.map_switch_definition;
-    for (T_map_switch_definition::iterator
-                             iter  = map_switch_definition.begin();
-                             iter != map_switch_definition.end();
-                           ++iter)
     {
-      T_switch_definition  & switch_definition = iter->second;
+        T_map_bitfield_definition  & map_bitfield_definition = type_definitions.map_bitfield_definition;
+        for (T_map_bitfield_definition::iterator
+                                    iter  = map_bitfield_definition.begin();
+                                    iter != map_bitfield_definition.end();
+                                  ++iter)
+        {
+            T_bitfield_definition  & bitfield_definition = iter->second;
 
-      register_fields_switch_definition(protocol_data, field_idx, switch_definition);
+            register_fields_bitfield_definition(protocol_data, field_idx, bitfield_definition);
+        }
     }
-  }
 
-  {
-    T_map_function_definition  & map_function_definition = type_definitions.map_function_definition;
-    for (T_map_function_definition::iterator
-                             iter  = map_function_definition.begin();
-                             iter != map_function_definition.end();
-                           ++iter)
     {
-      T_function_definition  & function_definition = iter->second;
+        T_map_switch_definition  & map_switch_definition = type_definitions.map_switch_definition;
+        for (T_map_switch_definition::iterator
+                                    iter  = map_switch_definition.begin();
+                                    iter != map_switch_definition.end();
+                                  ++iter)
+        {
+            T_switch_definition  & switch_definition = iter->second;
 
-      register_fields_struct_fields(protocol_data, field_idx, function_definition.fields);
+            register_fields_switch_definition(protocol_data, field_idx, switch_definition);
+        }
     }
-  }
 
-  T_generic_protocol_ws_data         * P_protocol_ws_data = &protocol_data.ws_data;
-  T_generic_protocol_fields_data  & fields_data = P_protocol_ws_data->fields_data;
+    {
+        T_map_function_definition  & map_function_definition = type_definitions.map_function_definition;
+        for (T_map_function_definition::iterator
+                                    iter  = map_function_definition.begin();
+                                    iter != map_function_definition.end();
+                                  ++iter)
+        {
+            T_function_definition  & function_definition = iter->second;
 
-  fields_data.hf_id.resize(fields_data.hf.size());
-  fields_data.ett.resize(fields_data.hf.size());
-  fields_data.ett_id.resize(fields_data.ett.size());
+            register_fields_struct_fields(protocol_data, field_idx, function_definition.fields);
+        }
+    }
 
-  // WARNING_ADDRESSES
-  // Must NOT be done before,
-  //  because the addresses of hf_id[idx] and ett_id[idx] could change
-  //  when the size of the vector change
-  for (uint  idx = 0; idx < fields_data.hf.size(); ++idx)
-  {
-    fields_data.hf_id[idx]    = -1;
-    fields_data.hf[idx].p_id  = &fields_data.hf_id[idx];
-    fields_data.ett_id[idx] = -1;
-    fields_data.ett[idx]    = &fields_data.ett_id[idx];
+    T_generic_protocol_ws_data         * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_fields_data     & fields_data = P_protocol_ws_data->fields_data;
 
-//	M_TRACE_DEBUG("hf[" << idx << "].p_id  = " << &fields_data.hf_id[idx]);
-//	M_TRACE_DEBUG("ett[" << idx << "].p_id  = " << &fields_data.ett_id[idx]);
-  }
+    fields_data.hf_id.resize(fields_data.hf.size());
+    fields_data.ett.resize(fields_data.hf.size());
+    fields_data.ett_id.resize(fields_data.ett.size());
+
+    // WARNING_ADDRESSES
+    // Must NOT be done before,
+    //  because the addresses of hf_id[idx] and ett_id[idx] could change
+    //  when the size of the vector change
+    for (uint  idx = 0; idx < fields_data.hf.size(); ++idx)
+    {
+        fields_data.hf_id[idx]    = -1;
+        fields_data.hf[idx].p_id  = &fields_data.hf_id[idx];
+        fields_data.ett_id[idx] = -1;
+        fields_data.ett[idx]    = &fields_data.ett_id[idx];
+
+//      M_TRACE_DEBUG("hf[" << idx << "].p_id  = " << &fields_data.hf_id[idx]);
+//      M_TRACE_DEBUG("ett[" << idx << "].p_id  = " << &fields_data.ett_id[idx]);
+    }
 }
 
 //*****************************************************************************
@@ -904,8 +904,8 @@ void    register_fields(T_generic_protocol_data  & protocol_data)
 int   get_wsgd_files_in_dir (const string          & dir_name,
                                    vector<string>  & file_names)
 {
-  // true to have the full name (including directory name).
-  return  get_files_in_dir(dir_name, "", ".wsgd", file_names, true);
+    // true to have the full name (including directory name).
+    return  get_files_in_dir(dir_name, "", ".wsgd", file_names, true);
 }
 
 //*****************************************************************************
@@ -964,7 +964,7 @@ void    prefs_apply_cb(void)
 void    cpp_proto_register_generic(const string   & wsgd_file_name,
                                    const int        proto_idx)
 {
-  M_TRACE_ENTER ("cpp_proto_register_generic", "wsgd_file_name=" << wsgd_file_name);
+    M_TRACE_ENTER ("cpp_proto_register_generic", "wsgd_file_name=" << wsgd_file_name);
 
     T_generic_protocol_data  & protocol_data = new_protocol_data(proto_idx);
 
@@ -1137,10 +1137,10 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 
 void    wsgd_report_failure(string    str)
 {
-  str += "\n";
-  str += "\n";
-  str += "More information could be available at http://wsgd.free.fr/";
-  report_failure(str.c_str(), "silly arg to avoid compiler warning, so must not appear");
+    str += "\n";
+    str += "\n";
+    str += "More information could be available at http://wsgd.free.fr/";
+    report_failure(str.c_str(), "silly arg to avoid compiler warning, so must not appear");
 }
 
 //*****************************************************************************
@@ -1149,15 +1149,15 @@ void    wsgd_report_failure(string    str)
 
 void    trace_version_infos()
 {
-  M_TRACE_DEBUG ("wireshark version                 = " << epan_get_version());
-  M_TRACE_DEBUG ("wsgd generation data :");
-  M_TRACE_DEBUG ("- wireshark compilation version   = " << VERSION);
-  M_TRACE_DEBUG ("- WIRESHARK_VERSION_NUMBER        = " << WIRESHARK_VERSION_NUMBER);
-  M_TRACE_DEBUG ("- compilation date                = " << __DATE__);
+    M_TRACE_DEBUG ("wireshark version                 = " << epan_get_version());
+    M_TRACE_DEBUG ("wsgd generation data :");
+    M_TRACE_DEBUG ("- wireshark compilation version   = " << VERSION);
+    M_TRACE_DEBUG ("- WIRESHARK_VERSION_NUMBER        = " << WIRESHARK_VERSION_NUMBER);
+    M_TRACE_DEBUG ("- compilation date                = " << __DATE__);
 #ifdef MSC_VER_REQUIRED
-  M_TRACE_DEBUG ("- compiler                        = " << "Visual C++ " << MSC_VER_REQUIRED);
+    M_TRACE_DEBUG ("- compiler                        = " << "Visual C++ " << MSC_VER_REQUIRED);
 #elif defined(__GNUC__)
-  M_TRACE_DEBUG ("- compiler                        = " << "gcc " << __GNUC__);
+    M_TRACE_DEBUG ("- compiler                        = " << "gcc " << __GNUC__);
 #endif
 }
 
@@ -1167,17 +1167,17 @@ void    trace_version_infos()
 
 void    trace_dirs()
 {
-  M_TRACE_DEBUG ("get_progfile_dir                  = " << get_progfile_dir());
+    M_TRACE_DEBUG ("get_progfile_dir                  = " << get_progfile_dir());
 #if WIRESHARK_VERSION_NUMBER >= 20600
-  M_TRACE_DEBUG ("get_plugins_dir_with_version      = " << get_plugins_dir_with_version());
-  M_TRACE_DEBUG ("get_plugins_pers_dir_with_version = " << get_plugins_pers_dir_with_version());
+    M_TRACE_DEBUG ("get_plugins_dir_with_version      = " << get_plugins_dir_with_version());
+    M_TRACE_DEBUG ("get_plugins_pers_dir_with_version = " << get_plugins_pers_dir_with_version());
 #else
-  M_TRACE_DEBUG ("get_plugin_dir                    = " << get_plugin_dir());
+    M_TRACE_DEBUG ("get_plugin_dir                    = " << get_plugin_dir());
 #endif
-  M_TRACE_DEBUG ("get_datafile_dir                  = " << get_datafile_dir());
-  M_TRACE_DEBUG ("get_systemfile_dir                = " << get_systemfile_dir());
-  M_TRACE_DEBUG ("get_profiles_dir                  = " << get_profiles_dir());
-  M_TRACE_DEBUG ("get_persdatafile_dir              = " << get_persdatafile_dir());
+    M_TRACE_DEBUG ("get_datafile_dir                  = " << get_datafile_dir());
+    M_TRACE_DEBUG ("get_systemfile_dir                = " << get_systemfile_dir());
+    M_TRACE_DEBUG ("get_profiles_dir                  = " << get_profiles_dir());
+    M_TRACE_DEBUG ("get_persdatafile_dir              = " << get_persdatafile_dir());
 }
 
 //*****************************************************************************
@@ -1188,12 +1188,12 @@ void    trace_dirs()
 
 void    trace_locales()
 {
-  M_TRACE_DEBUG ("locale LC_ALL         = " << setlocale(LC_ALL, NULL));
-  M_TRACE_DEBUG ("locale LC_COLLATE     = " << setlocale(LC_COLLATE, NULL));
-  M_TRACE_DEBUG ("locale LC_CTYPE       = " << setlocale(LC_CTYPE, NULL));
-  M_TRACE_DEBUG ("locale LC_MONETARY    = " << setlocale(LC_MONETARY, NULL));
-  M_TRACE_DEBUG ("locale LC_NUMERIC     = " << setlocale(LC_NUMERIC, NULL));
-  M_TRACE_DEBUG ("locale LC_TIME        = " << setlocale(LC_TIME, NULL));
+    M_TRACE_DEBUG ("locale LC_ALL         = " << setlocale(LC_ALL, NULL));
+    M_TRACE_DEBUG ("locale LC_COLLATE     = " << setlocale(LC_COLLATE, NULL));
+    M_TRACE_DEBUG ("locale LC_CTYPE       = " << setlocale(LC_CTYPE, NULL));
+    M_TRACE_DEBUG ("locale LC_MONETARY    = " << setlocale(LC_MONETARY, NULL));
+    M_TRACE_DEBUG ("locale LC_NUMERIC     = " << setlocale(LC_NUMERIC, NULL));
+    M_TRACE_DEBUG ("locale LC_TIME        = " << setlocale(LC_TIME, NULL));
 #if 0
 LC_ALL		The entire locale.
 LC_COLLATE	Affects the behavior of strcoll and strxfrm.
@@ -1212,64 +1212,64 @@ LC_TIME		Affects the behavior of strftime.
 
 void    cpp_proto__register_generic2(void)
 {
-  vector<string>    wsgd_file_names;
-  compute_wsgd_file_names(wsgd_file_names);
+    vector<string>    wsgd_file_names;
+    compute_wsgd_file_names(wsgd_file_names);
 
-  set_max_nb_of_protocol_data(wsgd_file_names.size());
+    set_max_nb_of_protocol_data(wsgd_file_names.size());
 
-  int   proto_idx = 0;
-  for (vector<string>::const_iterator  iter  = wsgd_file_names.begin();
-                                       iter != wsgd_file_names.end();
-                                     ++iter)
-  {
-    const string   & wsgd_file_name = *iter;
-
-    build_types_context_reset();
-
-    try
+    int   proto_idx = 0;
+    for (vector<string>::const_iterator  iter  = wsgd_file_names.begin();
+                                         iter != wsgd_file_names.end();
+                                        ++iter)
     {
-#if 0
-        string    wsgd_file_name_short = wsgd_file_name;
+        const string   & wsgd_file_name = *iter;
+
+        build_types_context_reset();
+
+        try
         {
-            const string::size_type  idx_last_dir = wsgd_file_name_short.find_last_of("/\\");
-            if (idx_last_dir != string::npos)
+#if 0
+            string    wsgd_file_name_short = wsgd_file_name;
             {
-                wsgd_file_name_short.erase(0, idx_last_dir+1);
+                const string::size_type  idx_last_dir = wsgd_file_name_short.find_last_of("/\\");
+                if (idx_last_dir != string::npos)
+                {
+                    wsgd_file_name_short.erase(0, idx_last_dir+1);
+                }
             }
+
+            build_types_context_include_file_open (wsgd_file_name_short);
+#endif
+            cpp_proto_register_generic(wsgd_file_name, proto_idx);
+//	    	build_types_context_include_file_close(wsgd_file_name_short);
+        }
+        catch(C_byte_interpret_exception  & error_str)
+        {
+            get_protocol_data(proto_idx).proto_is_NOT_usable();
+            wsgd_report_failure(
+                        "Generic dissector did NOT succeed to read/interpret/register :\n" +
+                        wsgd_file_name + " \n"
+                        "\n"
+                        "The given protocol is NOT available.\n"
+                        "\n" +
+                        build_types_context_where() +
+                        "\n" +
+                        error_str.get_explanation());
+        }
+        catch(...)
+        {
+            get_protocol_data(proto_idx).proto_is_NOT_usable();
+            wsgd_report_failure(
+                        "Generic dissector did NOT succeed to read/interpret/register :\n" +
+                        wsgd_file_name + " \n"
+                        "\n"
+                        "The given protocol is NOT available.\n" +
+                        "\n" +
+                        build_types_context_where());
         }
 
-        build_types_context_include_file_open (wsgd_file_name_short);
-#endif
-        cpp_proto_register_generic(wsgd_file_name, proto_idx);
-//		build_types_context_include_file_close(wsgd_file_name_short);
+        ++proto_idx;
     }
-    catch(C_byte_interpret_exception  & error_str)
-    {
-        get_protocol_data(proto_idx).proto_is_NOT_usable();
-        wsgd_report_failure(
-                    "Generic dissector did NOT succeed to read/interpret/register :\n" +
-                    wsgd_file_name + " \n"
-                    "\n"
-                    "The given protocol is NOT available.\n"
-                    "\n" +
-                    build_types_context_where() +
-                    "\n" +
-                    error_str.get_explanation());
-    }
-    catch(...)
-    {
-        get_protocol_data(proto_idx).proto_is_NOT_usable();
-        wsgd_report_failure(
-                    "Generic dissector did NOT succeed to read/interpret/register :\n" +
-                    wsgd_file_name + " \n"
-                    "\n"
-                    "The given protocol is NOT available.\n" +
-                    "\n" +
-                    build_types_context_where());
-    }
-
-    ++proto_idx;
-  }
 }
 
 //*****************************************************************************
@@ -1277,7 +1277,6 @@ void    cpp_proto__register_generic2(void)
 //*****************************************************************************
 string    get_traces_file_name()
 {
-
     string  traces_file_name = "";
 
     const char *  dir = getenv("WIRESHARK_GENERIC_DISSECTOR_TRACES_DIR");
@@ -1317,33 +1316,33 @@ string    get_traces_file_name()
 extern "C"
 void    cpp_proto_register_generic(void)
 {
-  {
-    static ofstream    ofs (get_traces_file_name().c_str());
-    set_state_ostream (ofs);
-  }
+    {
+        static ofstream    ofs (get_traces_file_name().c_str());
+        set_state_ostream (ofs);
+    }
 
-  C_debug_set_temporary    debug_register_main(E_debug_status_ON_NO_TIME);
+    C_debug_set_temporary    debug_register_main(E_debug_status_ON_NO_TIME);
 
-  trace_version_infos();
-  trace_dirs();
-  trace_locales();
+    trace_version_infos();
+    trace_dirs();
+    trace_locales();
 
-  M_TRACE_ENTER ("cpp_proto_register_generic", "");
+    M_TRACE_ENTER ("cpp_proto_register_generic", "");
 
-  // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
-  // change the locale for LC_NUMERIC (so 0.236 is a valid number)
-  const char  * locale_save = setlocale(LC_NUMERIC, "C");
+    // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
+    // change the locale for LC_NUMERIC (so 0.236 is a valid number)
+    const char  * locale_save = setlocale(LC_NUMERIC, "C");
 
-  try
-  {
-    cpp_proto__register_generic2();
-  }
-  catch(...)
-  {
-  }
+    try
+    {
+        cpp_proto__register_generic2();
+    }
+    catch(...)
+    {
+    }
 
-  // restore the saved locale
-  setlocale(LC_NUMERIC, locale_save);
+    // restore the saved locale
+    setlocale(LC_NUMERIC, locale_save);
 }
 
 //*****************************************************************************
@@ -1352,17 +1351,17 @@ void    cpp_proto_register_generic(void)
 
 static void    generic_stats_tree_init(stats_tree  * st)
 {
-  T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
-  C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
-  M_TRACE_ENTER ("generic_stats_tree_init", st->cfg->name);
+    T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
+    C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
+    M_TRACE_ENTER ("generic_stats_tree_init", st->cfg->name);
 
-  T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
+    T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
 
-  tap_data.st_node_msg_id = stats_tree_create_node(st, tap_data.st_str_msg_id, 0, TRUE);
-  if (protocol_data.MSG_TOTAL_LENGTH != "")
-  {
-    tap_data.st_node_msg_length = stats_tree_create_node(st, tap_data.st_str_msg_length, 0, TRUE);
-  }
+    tap_data.st_node_msg_id = stats_tree_create_node(st, tap_data.st_str_msg_id, 0, TRUE);
+    if (protocol_data.MSG_TOTAL_LENGTH != "")
+    {
+        tap_data.st_node_msg_length = stats_tree_create_node(st, tap_data.st_str_msg_length, 0, TRUE);
+    }
 #if 0
     st_node_packets = stats_tree_create_node(st, st_str_packets, 0, TRUE);
     st_node_packet_types = stats_tree_create_pivot(st, st_str_packet_types, st_node_packets);
@@ -1374,17 +1373,17 @@ static int    generic_stats_tree_packet(stats_tree      * st,
                                         epan_dissect_t  * edt,
                                   const void            * p)
 {
-  T_generic_protocol_data  & protocol_data = *(T_generic_protocol_data*)p;
-  C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
-  M_TRACE_ENTER ("generic_stats_tree_packet", st->cfg->name <<
-                 "  pinfo=" << pinfo <<
-                 "  edt=" << edt <<
-                 "  p=" << p);
+    T_generic_protocol_data  & protocol_data = *(T_generic_protocol_data*)p;
+    C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
+    M_TRACE_ENTER ("generic_stats_tree_packet", st->cfg->name <<
+                    "  pinfo=" << pinfo <<
+                    "  edt=" << edt <<
+                    "  p=" << p);
 
-  T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
+    T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
 
-  M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), NULL);
-  T_interpret_data  & last_msg_interpret_data = * tap_data.RCP_last_msg_interpret_data;
+    M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), NULL);
+    T_interpret_data  & last_msg_interpret_data = * tap_data.RCP_last_msg_interpret_data;
 
 #if WIRESHARK_VERSION_NUMBER >= 10200
 // since revision 25716 (1.2.0 or before)
@@ -1394,31 +1393,31 @@ static int    generic_stats_tree_packet(stats_tree      * st,
 #define NEEDED_CAST_FOR_10X  (const guint8*)
 #endif
 
-  {
-    tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_id, 0, FALSE);
+    {
+        tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_id, 0, FALSE);
 
-    const string  str_msg_id = last_msg_interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
-    /*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X str_msg_id.c_str(), tap_data.st_node_msg_id, TRUE);
-  }
+        const string  str_msg_id = last_msg_interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
+        /*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X str_msg_id.c_str(), tap_data.st_node_msg_id, TRUE);
+    }
 
-  if (protocol_data.MSG_TOTAL_LENGTH != "")
-  {
-    M_TRACE_ERROR("st_node_msg_length=" << tap_data.st_node_msg_length);
-    tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_length, 0, FALSE);
+    if (protocol_data.MSG_TOTAL_LENGTH != "")
+    {
+        M_TRACE_ERROR("st_node_msg_length=" << tap_data.st_node_msg_length);
+        tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_length, 0, FALSE);
 
-    C_value       val_length = compute_expression_no_io(protocol_data.type_definitions, last_msg_interpret_data, protocol_data.MSG_TOTAL_LENGTH);
-    /*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
-  }
+        C_value       val_length = compute_expression_no_io(protocol_data.type_definitions, last_msg_interpret_data, protocol_data.MSG_TOTAL_LENGTH);
+        /*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
+    }
 
-  return 1;
+    return 1;
 }
 
 #if 0
 static void    generic_stats_tree_cleanup(stats_tree  * st)
 {
-  T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
-  C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
-  M_TRACE_ENTER ("generic_stats_tree_cleanup", st->cfg->name);
+    T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
+    C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
+    M_TRACE_ENTER ("generic_stats_tree_cleanup", st->cfg->name);
 
 #if 0
     st_node_packets = stats_tree_create_node(st, st_str_packets, 0, TRUE);
@@ -1429,7 +1428,7 @@ static void    generic_stats_tree_cleanup(stats_tree  * st)
 
 static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_data)
 {
-  M_TRACE_ENTER ("register_generic_stats_trees", "");
+    M_TRACE_ENTER ("register_generic_stats_trees", "");
     stats_tree_register(NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
                         NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
                         NEEDED_CAST_FOR_10X (protocol_data.PROTOABBREV + "/Msg").c_str(),
@@ -1450,17 +1449,17 @@ static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_
 bool  is_an_heuristic_dissector(const string &  parent_name)
 {
 #if WIRESHARK_VERSION_NUMBER >= 11200
-  bool  result = has_heur_dissector_list(parent_name.c_str());
+    bool  result = has_heur_dissector_list(parent_name.c_str());
 #else
-// Will NOT work : find_heur_dissector_list is not accessible (ie NOT exported)
-//  bool  result = false;
-//  heur_dissector_list_t *  heur_dissector_list = find_heur_dissector_list(parent_name.c_str());
-//  if (heur_dissector_list != NULL)
-//    result = true;
+    // Will NOT work : find_heur_dissector_list is not accessible (ie NOT exported)
+    //  bool  result = false;
+    //  heur_dissector_list_t *  heur_dissector_list = find_heur_dissector_list(parent_name.c_str());
+    //  if (heur_dissector_list != NULL)
+    //    result = true;
 
-  M_TRACE_WARNING ("wsgd is NOT able to check if " << parent_name << " is an heuristic dissector");
-  M_TRACE_WARNING ("--> If it is NOT an heuristic dissector, it will NOT work and perhaps crash");
-  bool  result = true;
+    M_TRACE_WARNING ("wsgd is NOT able to check if " << parent_name << " is an heuristic dissector");
+    M_TRACE_WARNING ("--> If it is NOT an heuristic dissector, it will NOT work and perhaps crash");
+    bool  result = true;
 #endif
 
    return  result;
@@ -1472,161 +1471,161 @@ bool  is_an_heuristic_dissector(const string &  parent_name)
 
 void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_data)
 {
-  C_debug_set_temporary    debug_handoff_main(protocol_data.DEBUG);
+    C_debug_set_temporary    debug_handoff_main(protocol_data.DEBUG);
 
-  M_TRACE_ENTER ("cpp_proto_reg_handoff_generic", protocol_data.proto_idx);
+    M_TRACE_ENTER ("cpp_proto_reg_handoff_generic", protocol_data.proto_idx);
 
-  T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
-  // Create the dissector handle.
+    // Create the dissector handle.
 #if WIRESHARK_VERSION_NUMBER >= 20200
-  P_protocol_ws_data->dissector_handle = create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
-                                                                 P_protocol_ws_data->proto_generic);
+    P_protocol_ws_data->dissector_handle = create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
+                                                                   P_protocol_ws_data->proto_generic);
 #else
-  P_protocol_ws_data->dissector_handle = new_create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
-                                                                     P_protocol_ws_data->proto_generic);
+    P_protocol_ws_data->dissector_handle = new_create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
+                                                                       P_protocol_ws_data->proto_generic);
 #endif
-  M_FATAL_IF_EQ(P_protocol_ws_data->dissector_handle, NULL);
+    M_FATAL_IF_EQ(P_protocol_ws_data->dissector_handle, NULL);
 
 
-  // Declare parent dissectors
-  for (vector<T_generic_protocol_data::T_parent>::const_iterator
-                                    parent_iter  = protocol_data.PARENTS.begin();
-                                    parent_iter != protocol_data.PARENTS.end();
-                                  ++parent_iter)
-  {
-      const T_generic_protocol_data::T_parent  & parent = * parent_iter;
+    // Declare parent dissectors
+    for (vector<T_generic_protocol_data::T_parent>::const_iterator
+                                parent_iter  = protocol_data.PARENTS.begin();
+                                parent_iter != protocol_data.PARENTS.end();
+                              ++parent_iter)
+    {
+        const T_generic_protocol_data::T_parent  & parent = * parent_iter;
 
-      // Add dissector for each PARENT_SUBFIELD_VALUES.
-      M_TRACE_DEBUG ("PARENT_SUBFIELD = " << parent.PARENT_SUBFIELD.c_str());
+        // Add dissector for each PARENT_SUBFIELD_VALUES.
+        M_TRACE_DEBUG ("PARENT_SUBFIELD = " << parent.PARENT_SUBFIELD.c_str());
 
-      // Check that PARENT_SUBFIELD exist.
-      if (find_dissector_table(parent.PARENT_SUBFIELD.c_str()) == NULL)
-      {
-        wsgd_report_failure(
-                    "Generic dissector did NOT succeed to attach " + protocol_data.PROTONAME +
-                    " to its PARENT_SUBFIELD " + parent.PARENT_SUBFIELD +
-                    " (because it does NOT exist).\n" 
-                    "\n"
-                    "The given protocol will NOT be called (at least automatically).\n");
-        continue;
-      }
-
-      for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_int.size(); ++idx)
-      {
-        M_TRACE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_int[idx]);
-
-        dissector_add_uint(parent.PARENT_SUBFIELD.c_str(),
-                      parent.PARENT_SUBFIELD_VALUES_int[idx],
-                      P_protocol_ws_data->dissector_handle);
-      }
-      for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_RANGES_int.size(); ++idx)
-      {
-        int    value_low  = parent.PARENT_SUBFIELD_RANGES_int[idx].first;
-        int    value_high = parent.PARENT_SUBFIELD_RANGES_int[idx].second;
-
-        M_TRACE_DEBUG ("PARENT_SUBFIELD_RANGE = " << value_low << " - " << value_high);
-
-        for (int  value = value_low; value <= value_high; ++value)
-        {
-          dissector_add_uint(parent.PARENT_SUBFIELD.c_str(),
-                      value,
-                      P_protocol_ws_data->dissector_handle);
-        }
-      }
-      for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_str.size(); ++idx)
-      {
-        M_TRACE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_str[idx]);
-
-        dissector_add_string(parent.PARENT_SUBFIELD.c_str(),
-                             parent.PARENT_SUBFIELD_VALUES_str[idx].c_str(),
-                             P_protocol_ws_data->dissector_handle);
-      }
-  }
-
-  // Declare heuristic dissectors
-  for (vector<string>::const_iterator
-                                    parent_iter  = protocol_data.PARENTS_HEURISTIC.begin();
-                                    parent_iter != protocol_data.PARENTS_HEURISTIC.end();
-                                  ++parent_iter)
-  {
-      const string  & parent_name = *parent_iter;
-
-      if (is_an_heuristic_dissector(parent_name) != true)
-      {
-        if (find_dissector_table(parent_name.c_str()) == NULL)
+        // Check that PARENT_SUBFIELD exist.
+        if (find_dissector_table(parent.PARENT_SUBFIELD.c_str()) == NULL)
         {
             wsgd_report_failure(
-                        "Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
-                        " (because it does NOT exist).\n");
+                        "Generic dissector did NOT succeed to attach " + protocol_data.PROTONAME +
+                        " to its PARENT_SUBFIELD " + parent.PARENT_SUBFIELD +
+                        " (because it does NOT exist).\n" 
+                        "\n"
+                        "The given protocol will NOT be called (at least automatically).\n");
+            continue;
         }
-        else
+
+        for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_int.size(); ++idx)
         {
-            wsgd_report_failure(
-                        "Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
-                        " (because it is NOT an heuristic dissector).\n");
+            M_TRACE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_int[idx]);
+
+            dissector_add_uint(parent.PARENT_SUBFIELD.c_str(),
+                               parent.PARENT_SUBFIELD_VALUES_int[idx],
+                               P_protocol_ws_data->dissector_handle);
         }
+        for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_RANGES_int.size(); ++idx)
+        {
+            int    value_low  = parent.PARENT_SUBFIELD_RANGES_int[idx].first;
+            int    value_high = parent.PARENT_SUBFIELD_RANGES_int[idx].second;
+
+            M_TRACE_DEBUG ("PARENT_SUBFIELD_RANGE = " << value_low << " - " << value_high);
+
+            for (int  value = value_low; value <= value_high; ++value)
+            {
+                dissector_add_uint(parent.PARENT_SUBFIELD.c_str(),
+                                   value,
+                                   P_protocol_ws_data->dissector_handle);
+            }
+        }
+        for (uint  idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_str.size(); ++idx)
+        {
+            M_TRACE_DEBUG ("PARENT_SUBFIELD_VALUE = " << parent.PARENT_SUBFIELD_VALUES_str[idx]);
+
+            dissector_add_string(parent.PARENT_SUBFIELD.c_str(),
+                                 parent.PARENT_SUBFIELD_VALUES_str[idx].c_str(),
+                                 P_protocol_ws_data->dissector_handle);
+        }
+    }
+
+    // Declare heuristic dissectors
+    for (vector<string>::const_iterator
+                                parent_iter  = protocol_data.PARENTS_HEURISTIC.begin();
+                                parent_iter != protocol_data.PARENTS_HEURISTIC.end();
+                              ++parent_iter)
+    {
+        const string  & parent_name = *parent_iter;
+
+        if (is_an_heuristic_dissector(parent_name) != true)
+        {
+            if (find_dissector_table(parent_name.c_str()) == NULL)
+            {
+                wsgd_report_failure(
+                            "Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
+                            " (because it does NOT exist).\n");
+            }
+            else
+            {
+                wsgd_report_failure(
+                            "Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
+                            " (because it is NOT an heuristic dissector).\n");
+            }
         
-        continue;
-      }
+            continue;
+        }
       
 #if WIRESHARK_VERSION_NUMBER >= 20000
-      heur_dissector_add(parent_name.c_str(),
-                         P_protocol_ws_data->P_heuristic_fct,
-                         protocol_data.PROTONAME.c_str(),
-                         protocol_data.PROTOSHORTNAME.c_str(),
-                         P_protocol_ws_data->proto_generic,
-                         HEURISTIC_ENABLE);
+        heur_dissector_add(parent_name.c_str(),
+                            P_protocol_ws_data->P_heuristic_fct,
+                            protocol_data.PROTONAME.c_str(),
+                            protocol_data.PROTOSHORTNAME.c_str(),
+                            P_protocol_ws_data->proto_generic,
+                            HEURISTIC_ENABLE);
 #else
-      heur_dissector_add(parent_name.c_str(),
-                         P_protocol_ws_data->P_heuristic_fct,
-                         P_protocol_ws_data->proto_generic);
+        heur_dissector_add(parent_name.c_str(),
+                            P_protocol_ws_data->P_heuristic_fct,
+                            P_protocol_ws_data->proto_generic);
 #endif
-  }
+    }
 
-  // Declare decode as dissectors
-  for (vector<string>::const_iterator
-             decode_as_iter  = protocol_data.ADD_FOR_DECODE_AS_TABLES.begin();
-             decode_as_iter != protocol_data.ADD_FOR_DECODE_AS_TABLES.end();
-           ++decode_as_iter)
-  {
-      const string  & decode_as_table_name = *decode_as_iter;
+    // Declare decode as dissectors
+    for (vector<string>::const_iterator
+            decode_as_iter  = protocol_data.ADD_FOR_DECODE_AS_TABLES.begin();
+            decode_as_iter != protocol_data.ADD_FOR_DECODE_AS_TABLES.end();
+          ++decode_as_iter)
+    {
+        const string  & decode_as_table_name = *decode_as_iter;
 
-      dissector_add_for_decode_as(decode_as_table_name.c_str(), P_protocol_ws_data->dissector_handle);
-  }
+        dissector_add_for_decode_as(decode_as_table_name.c_str(), P_protocol_ws_data->dissector_handle);
+    }
 
-  // Check subdissector name
-  vector<string>  & vector_subdissector_name = protocol_data.type_definitions.vector_subdissector_name;
-  for (vector<string>::const_iterator
-                                    subdissector_iter  = vector_subdissector_name.begin();
-                                    subdissector_iter != vector_subdissector_name.end();
-                                  ++subdissector_iter)
-  {
-      const string  & subdissector_name = *subdissector_iter;
+    // Check subdissector name
+    vector<string>  & vector_subdissector_name = protocol_data.type_definitions.vector_subdissector_name;
+    for (vector<string>::const_iterator
+                                subdissector_iter  = vector_subdissector_name.begin();
+                                subdissector_iter != vector_subdissector_name.end();
+                              ++subdissector_iter)
+    {
+        const string  & subdissector_name = *subdissector_iter;
 
-      dissector_handle_t  dissector_handle = find_dissector(subdissector_name.c_str());
-      if (dissector_handle == NULL)
-      {
-        wsgd_report_failure(
-                    "Generic dissector did NOT succeed to find subdissector " + subdissector_name +
-                    " (because it does NOT exist).\n" 
-                    "\n"
-                    "Explicit calls to this subdissector will NOT work.\n");
-      }
-      if (false)  // comment savoir qu'il est désactivé ?
-      {
-        wsgd_report_failure(
-                    "Generic dissector will NOT succeed to call subdissector " + subdissector_name +
-                    " because it has been deactivated.\n" 
-                    "\n"
-                    "Explicit calls to this subdissector will NOT work.\n");
-      }
-  }
+        dissector_handle_t  dissector_handle = find_dissector(subdissector_name.c_str());
+        if (dissector_handle == NULL)
+        {
+            wsgd_report_failure(
+                        "Generic dissector did NOT succeed to find subdissector " + subdissector_name +
+                        " (because it does NOT exist).\n" 
+                        "\n"
+                        "Explicit calls to this subdissector will NOT work.\n");
+        }
+        if (false)  // comment savoir qu'il est désactivé ?
+        {
+            wsgd_report_failure(
+                        "Generic dissector will NOT succeed to call subdissector " + subdissector_name +
+                        " because it has been deactivated.\n" 
+                        "\n"
+                        "Explicit calls to this subdissector will NOT work.\n");
+        }
+    }
 
-  // Statistics
-  register_generic_stats_trees(protocol_data);
+    // Statistics
+    register_generic_stats_trees(protocol_data);
 
-  M_TRACE_DEBUG ("Leave cpp_proto_reg_handoff_generic " << protocol_data.proto_idx);
+    M_TRACE_DEBUG ("Leave cpp_proto_reg_handoff_generic " << protocol_data.proto_idx);
 }
 
 //*****************************************************************************
@@ -1635,16 +1634,16 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 
 ostream &  get_interpret_ostream()
 {
-  if (get_debug())
-  {
-    return  get_state_ostream();
-  }
-  else
-  {
-    static ostrstream              oss;
-    oss.freeze();
-    return  oss;
-  }
+    if (get_debug())
+    {
+        return  get_state_ostream();
+    }
+    else
+    {
+        static ostrstream              oss;
+        oss.freeze();
+        return  oss;
+    }
 }
 
 //*****************************************************************************
@@ -1754,10 +1753,10 @@ void    cpp_proto_reg_handoff_generic()
 proto_tree  * cpp_dissect_generic_add_tree(const int           proto_idx,
                                                  proto_item  * item)
 {
-  T_generic_protocol_data    & protocol_data = get_protocol_data(proto_idx);
-  T_generic_protocol_ws_data        * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
+    T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
 
-  return  proto_item_add_subtree(item, P_protocol_ws_data->fields_data.ett_id[K_ANY_WSGD_FIELD_IDX]);
+    return  proto_item_add_subtree(item, P_protocol_ws_data->fields_data.ett_id[K_ANY_WSGD_FIELD_IDX]);
 }
 
 /******************************************************************************
@@ -1770,7 +1769,7 @@ void    cpp_dissect_generic_set_packet_id_str(T_generic_protocol_data  & UNUSED(
                                                     proto_tree   * UNUSED(tree),
                                               const string       & packet_id_str)
 {
-  M_TRACE_ENTER("cpp_dissect_generic_set_packet_id_str", packet_id_str);
+    M_TRACE_ENTER("cpp_dissect_generic_set_packet_id_str", packet_id_str);
 
     // ICIOA : do not print the port's names as tcp dissector does
     // must use get_tcp_port (or ...) from epan/addr_resolv.h
@@ -1798,12 +1797,12 @@ proto_item  * cpp_dissect_generic_set_packet_summary_str(T_generic_protocol_data
                                                                proto_tree   * tree,
                                                          const string  & packet_summary_str)
 {
-  T_generic_protocol_ws_data   * P_protocol_ws_data = &protocol_data.ws_data;
+    T_generic_protocol_ws_data   * P_protocol_ws_data = &protocol_data.ws_data;
 
-  proto_item  * generic_item = proto_tree_add_protocol_format(tree, P_protocol_ws_data->proto_generic, tvb, 0, -1,
+    proto_item  * generic_item = proto_tree_add_protocol_format(tree, P_protocol_ws_data->proto_generic, tvb, 0, -1,
             "%s, %s",
             protocol_data.PROTONAME.c_str(), packet_summary_str.c_str());
-  return  generic_item;
+    return  generic_item;
 }
 
 
@@ -1903,77 +1902,77 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
     interpret_data.add_read_variable(#NAME ".secs", #NAME ".secs", pinfo->fd->NAME.secs);  \
     interpret_data.add_read_variable(#NAME ".nsecs", #NAME ".nsecs", pinfo->fd->NAME.nsecs)
 
-  M_ADD_PINFO(current_proto);
+    M_ADD_PINFO(current_proto);
 //  M_ADD_PINFO();  // column_info *cinfo;		/* Column formatting information */
-  if (pinfo->fd != NULL_PTR)  // frame_data*
-  {
-    interpret_data.read_variable_group_begin("fd");
-    M_ADD_PINFO_FD(num);         /* Frame number */
-    M_ADD_PINFO_FD(pkt_len);     /* Packet length */
-    M_ADD_PINFO_FD(cap_len);     /* Amount actually captured */
-    M_ADD_PINFO_FD(cum_bytes);   /* Cumulative bytes into the capture */
-    M_ADD_PINFO_FD_NSTIME(abs_ts);      /* Absolute timestamp */
+    if (pinfo->fd != NULL_PTR)  // frame_data*
+    {
+        interpret_data.read_variable_group_begin("fd");
+        M_ADD_PINFO_FD(num);         /* Frame number */
+        M_ADD_PINFO_FD(pkt_len);     /* Packet length */
+        M_ADD_PINFO_FD(cap_len);     /* Amount actually captured */
+        M_ADD_PINFO_FD(cum_bytes);   /* Cumulative bytes into the capture */
+        M_ADD_PINFO_FD_NSTIME(abs_ts);      /* Absolute timestamp */
 #if WIRESHARK_VERSION_NUMBER < 11200
-    M_ADD_PINFO_FD_NSTIME(rel_ts);      /* Relative timestamp (yes, it can be negative) */
+        M_ADD_PINFO_FD_NSTIME(rel_ts);      /* Relative timestamp (yes, it can be negative) */
 #endif
 #if WIRESHARK_VERSION_NUMBER < 11000
-    M_ADD_PINFO_FD_NSTIME(del_dis_ts);  /* Delta timestamp to previous displayed frame (yes, it can be negative) */
-    M_ADD_PINFO_FD_NSTIME(del_cap_ts);  /* Delta timestamp to previous captured frame (yes, it can be negative) */
+        M_ADD_PINFO_FD_NSTIME(del_dis_ts);  /* Delta timestamp to previous displayed frame (yes, it can be negative) */
+        M_ADD_PINFO_FD_NSTIME(del_cap_ts);  /* Delta timestamp to previous captured frame (yes, it can be negative) */
 #endif
-    M_ADD_PINFO_FD(file_off);    /* File offset */
-    interpret_data.read_variable_group_end();
-  }
+        M_ADD_PINFO_FD(file_off);    /* File offset */
+        interpret_data.read_variable_group_end();
+    }
 //  M_ADD_PINFO();  // union wtap_pseudo_header *pseudo_header;
 //  M_ADD_PINFO();  // GSList *data_src;		/* Frame data sources */
-  M_ADD_PINFO_ADDRESS(dl_src);		/* link-layer source address */
-  M_ADD_PINFO_ADDRESS(dl_dst);		/* link-layer destination address */
-  M_ADD_PINFO_ADDRESS(net_src);		/* network-layer source address */
-  M_ADD_PINFO_ADDRESS(net_dst);		/* network-layer destination address */
-  M_ADD_PINFO_ADDRESS(src);			/* source address (net if present, DL otherwise )*/
-  M_ADD_PINFO_ADDRESS(dst);			/* destination address (net if present, DL otherwise )*/
+    M_ADD_PINFO_ADDRESS(dl_src);		/* link-layer source address */
+    M_ADD_PINFO_ADDRESS(dl_dst);		/* link-layer destination address */
+    M_ADD_PINFO_ADDRESS(net_src);		/* network-layer source address */
+    M_ADD_PINFO_ADDRESS(net_dst);		/* network-layer destination address */
+    M_ADD_PINFO_ADDRESS(src);			/* source address (net if present, DL otherwise )*/
+    M_ADD_PINFO_ADDRESS(dst);			/* destination address (net if present, DL otherwise )*/
 #if WIRESHARK_VERSION_NUMBER < 11200
-  M_ADD_PINFO(ethertype);
+    M_ADD_PINFO(ethertype);
 #endif
 #if WIRESHARK_VERSION_NUMBER < 20000
-  M_ADD_PINFO(ipproto);
+    M_ADD_PINFO(ipproto);
 #endif
 #if WIRESHARK_VERSION_NUMBER < 11200
-  M_ADD_PINFO(ipxptype);
+    M_ADD_PINFO(ipxptype);
 #endif
 
-  // In wireshark 1.1.z, there is a new field here.
-  // So, all following fields are not at the same place.
+    // In wireshark 1.1.z, there is a new field here.
+    // So, all following fields are not at the same place.
 
-  // wireshark version is "x.y.z<anything>"
-  const char  * version_compil = VERSION;
-  const char  * version_exec   = epan_get_version();
-  if (strncmp(version_compil, version_exec, 4) == 0)
-  {
+    // wireshark version is "x.y.z<anything>"
+    const char  * version_compil = VERSION;
+    const char  * version_exec   = epan_get_version();
+    if (strncmp(version_compil, version_exec, 4) == 0)
+    {
 #if WIRESHARK_VERSION_NUMBER < 20600
-    M_ADD_PINFO(ctype);               /* type of circuit, for protocols with a VC identifier */
-    M_ADD_PINFO(circuit_id);
+        M_ADD_PINFO(ctype);               /* type of circuit, for protocols with a VC identifier */
+        M_ADD_PINFO(circuit_id);
 #endif
-    M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
-    M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
+        M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
+        M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
 #if WIRESHARK_VERSION_NUMBER < 10800
-    M_ADD_PINFO(in_error_pkt);        /* TRUE if we're inside an {ICMP,CLNP,...} error packet */
+        M_ADD_PINFO(in_error_pkt);        /* TRUE if we're inside an {ICMP,CLNP,...} error packet */
 #endif
-    M_ADD_PINFO(ptype);               /* type of the following two port numbers */
-    M_ADD_PINFO(srcport);
-    M_ADD_PINFO(destport);
+        M_ADD_PINFO(ptype);               /* type of the following two port numbers */
+        M_ADD_PINFO(srcport);
+        M_ADD_PINFO(destport);
 #if WIRESHARK_VERSION_NUMBER < 11200
-    M_ADD_PINFO(match_port);
+        M_ADD_PINFO(match_port);
 #endif
-    M_ADD_PINFO_STR(match_string);
+        M_ADD_PINFO_STR(match_string);
 
 #if WIRESHARK_VERSION_NUMBER >= 20400
-    M_ADD_PINFO(can_desegment);
-    M_ADD_PINFO(saved_can_desegment);
-    M_ADD_PINFO(desegment_offset);
-    M_ADD_PINFO(desegment_len);
-    M_ADD_PINFO(want_pdu_tracking);
-    M_ADD_PINFO(bytes_until_next_pdu);
-    M_ADD_PINFO(p2p_dir);
+        M_ADD_PINFO(can_desegment);
+        M_ADD_PINFO(saved_can_desegment);
+        M_ADD_PINFO(desegment_offset);
+        M_ADD_PINFO(desegment_len);
+        M_ADD_PINFO(want_pdu_tracking);
+        M_ADD_PINFO(bytes_until_next_pdu);
+        M_ADD_PINFO(p2p_dir);
     // layers
 //	if (pinfo->layers != nullptr)
 //	{
@@ -2004,28 +2003,28 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
 //		}
 //		//interpret_data.read_variable_group_end();
 //	}
-    M_ADD_PINFO(curr_layer_num);
-    M_ADD_PINFO(link_number);
-    M_ADD_PINFO(clnp_srcref);
-    M_ADD_PINFO(clnp_dstref);
-    M_ADD_PINFO(link_dir);
-    //{
-    //	interpret_data.read_variable_group_begin("proto_data");
-    //	GSList*  next = pinfo->proto_data;
-    //	while (next != nullptr)
-    //	{
-    //		gpointer data = next->data;
-    //		if (data != nullptr)
-    //		{
-    //		}
-    //		next = next->next;
-    //	}
-    //	interpret_data.read_variable_group_end();
-    //}
+        M_ADD_PINFO(curr_layer_num);
+        M_ADD_PINFO(link_number);
+        M_ADD_PINFO(clnp_srcref);
+        M_ADD_PINFO(clnp_dstref);
+        M_ADD_PINFO(link_dir);
+        //{
+        //	interpret_data.read_variable_group_begin("proto_data");
+        //	GSList*  next = pinfo->proto_data;
+        //	while (next != nullptr)
+        //	{
+        //		gpointer data = next->data;
+        //		if (data != nullptr)
+        //		{
+        //		}
+        //		next = next->next;
+        //	}
+        //	interpret_data.read_variable_group_end();
+        //}
 #endif
-  }
+    }
 
-  interpret_data.pinfo_variable_group_end();
+    interpret_data.pinfo_variable_group_end();
 }
 
 //*****************************************************************************
@@ -2085,482 +2084,482 @@ void    update_pinfo_ports(const T_generic_protocol_data  & protocol_data,
 //*****************************************************************************
 
 gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
-                                  tvbuff_t     * tvb,
-                            const void         * ptr_raw_data,
-                            const int            length_raw_data,
-                                  packet_info  * pinfo,
-                                  proto_tree   * msg_root_tree,
-                            const long           msg_number_inside_packet)
+                                  tvbuff_t                 * tvb,
+                            const void                     * ptr_raw_data,
+                            const int                        length_raw_data,
+                                  packet_info              * pinfo,
+                                  proto_tree               * msg_root_tree,
+                            const long                       msg_number_inside_packet)
 {
-  M_TRACE_ENTER ("cpp_dissect_generic", protocol_data.PROTOABBREV << " ("
-     << pinfo->fd->num << "/"
-     << msg_number_inside_packet << ", "
-     << tvb << ", "
-     << ptr_raw_data << ", "
-     << length_raw_data << ", "
-     << pinfo << ", "
-     << msg_root_tree << ")");
+    M_TRACE_ENTER ("cpp_dissect_generic", protocol_data.PROTOABBREV << " ("
+        << pinfo->fd->num << "/"
+        << msg_number_inside_packet << ", "
+        << tvb << ", "
+        << ptr_raw_data << ", "
+        << length_raw_data << ", "
+        << pinfo << ", "
+        << msg_root_tree << ")");
 
-  proto_tree   * tree = msg_root_tree;
+    proto_tree   * tree = msg_root_tree;
 
-  const int                  proto_idx = protocol_data.proto_idx;
-  M_TRACE_DEBUG ("proto_idx = " << proto_idx);
-  ostream                  & os = get_interpret_ostream();
+    const int                  proto_idx = protocol_data.proto_idx;
+    M_TRACE_DEBUG ("proto_idx = " << proto_idx);
+    ostream                  & os = get_interpret_ostream();
 
-  // It could be mandatory to interpret the entire msg (even if msg_root_tree is NULL)
-  bool      mandatory_to_interpret_the_entire_msg = false;
-  if (protocol_data.GLOBAL_DATA_TYPE != "")
-  {
-      mandatory_to_interpret_the_entire_msg = true;
-  }
+    // It could be mandatory to interpret the entire msg (even if msg_root_tree is NULL)
+    bool      mandatory_to_interpret_the_entire_msg = false;
+    if (protocol_data.GLOBAL_DATA_TYPE != "")
+    {
+        mandatory_to_interpret_the_entire_msg = true;
+    }
 
-  // interpret data.
-  // ATTENTION, we must NOT create a new interpret_data if it already exist into global data.
-  //  because it could be referenced by its memory address into other global data.
-  // This is the current implementation of msg type. Not a good idea, but ...
-  T_RCP_interpret_data              RCP_interpret_data;
+    // interpret data.
+    // ATTENTION, we must NOT create a new interpret_data if it already exist into global data.
+    //  because it could be referenced by its memory address into other global data.
+    // This is the current implementation of msg type. Not a good idea, but ...
+    T_RCP_interpret_data              RCP_interpret_data;
 
-  // Global data.
-  T_generic_protocol_saved_interpreted_data  * P_where_to_save_interpret_data = NULL;
-  T_RCP_interpret_data                         RCP_prev_global_interpret_data = NULL;
-  if (protocol_data.GLOBAL_DATA_TYPE != "")
-  {
-      // Search for previous msg
-      T_RCP_interpret_data    RCP_prev_saved_interpret_data = NULL;
+    // Global data.
+    T_generic_protocol_saved_interpreted_data  * P_where_to_save_interpret_data = NULL;
+    T_RCP_interpret_data                         RCP_prev_global_interpret_data = NULL;
+    if (protocol_data.GLOBAL_DATA_TYPE != "")
+    {
+        // Search for previous msg
+        T_RCP_interpret_data    RCP_prev_saved_interpret_data = NULL;
 
-      // Compute P_prev_saved_interpret_data
-      // Compute P_where_to_save_interpret_data
-      const long                packet_number = pinfo->fd->num;
-      for (vector<T_generic_protocol_saved_interpreted_data>::reverse_iterator
-              rev_iter  = protocol_data.ws_data.global_data.saved_interpreted_datas.rbegin();
-              rev_iter != protocol_data.ws_data.global_data.saved_interpreted_datas.rend();
-            ++rev_iter)
-      {
-          T_generic_protocol_saved_interpreted_data  & saved_interpreted_data = *rev_iter;
+        // Compute P_prev_saved_interpret_data
+        // Compute P_where_to_save_interpret_data
+        const long                packet_number = pinfo->fd->num;
+        for (vector<T_generic_protocol_saved_interpreted_data>::reverse_iterator
+                rev_iter  = protocol_data.ws_data.global_data.saved_interpreted_datas.rbegin();
+                rev_iter != protocol_data.ws_data.global_data.saved_interpreted_datas.rend();
+              ++rev_iter)
+        {
+            T_generic_protocol_saved_interpreted_data  & saved_interpreted_data = *rev_iter;
 
-          if ((saved_interpreted_data.packet_number == packet_number) &&
-              (saved_interpreted_data.msg_number_inside_packet == msg_number_inside_packet))
-          {
-              // Found
-              P_where_to_save_interpret_data = & saved_interpreted_data;
+            if ((saved_interpreted_data.packet_number == packet_number) &&
+                (saved_interpreted_data.msg_number_inside_packet == msg_number_inside_packet))
+            {
+                // Found
+                P_where_to_save_interpret_data = & saved_interpreted_data;
 
-              ++rev_iter;
-              if (rev_iter != protocol_data.ws_data.global_data.saved_interpreted_datas.rend())
-              {
-                  RCP_prev_saved_interpret_data = rev_iter->RCP_interpret_data;
-              }
+                ++rev_iter;
+                if (rev_iter != protocol_data.ws_data.global_data.saved_interpreted_datas.rend())
+                {
+                    RCP_prev_saved_interpret_data = rev_iter->RCP_interpret_data;
+                }
 
-              break;
-          }
-          else if (saved_interpreted_data.packet_number < packet_number)
-          {
-              // Not found
-              RCP_prev_saved_interpret_data = rev_iter->RCP_interpret_data;
-              break;
-          }
-          else if ((saved_interpreted_data.packet_number == packet_number) &&
-                   (saved_interpreted_data.msg_number_inside_packet < msg_number_inside_packet))
-          {
-              // Not found
-              RCP_prev_saved_interpret_data = rev_iter->RCP_interpret_data;
-              break;
-          }
-      }
+                break;
+            }
+            else if (saved_interpreted_data.packet_number < packet_number)
+            {
+                // Not found
+                RCP_prev_saved_interpret_data = rev_iter->RCP_interpret_data;
+                break;
+            }
+            else if ((saved_interpreted_data.packet_number == packet_number) &&
+                    (saved_interpreted_data.msg_number_inside_packet < msg_number_inside_packet))
+            {
+                // Not found
+                RCP_prev_saved_interpret_data = rev_iter->RCP_interpret_data;
+                break;
+            }
+        }
 
-      if (P_where_to_save_interpret_data != NULL)
-      {
-          RCP_interpret_data = P_where_to_save_interpret_data->RCP_interpret_data;
-          RCP_interpret_data->reset();
-      }
-      else
-      {
-          RCP_interpret_data = new T_interpret_data;
-          M_TRACE_DEBUG ("GLOBAL_DATA new T_interpret_data=" << RCP_interpret_data.get());
-      }
-      // Save global data pointer
-      RCP_prev_global_interpret_data = RCP_prev_saved_interpret_data;
-      if (RCP_prev_global_interpret_data.get() == NULL)
-      {
-          RCP_prev_global_interpret_data = protocol_data.ws_data.global_data.RCP_initialized_data;
-      }
-      RCP_interpret_data->copy_global_values(*RCP_prev_global_interpret_data);
-  }
+        if (P_where_to_save_interpret_data != NULL)
+        {
+            RCP_interpret_data = P_where_to_save_interpret_data->RCP_interpret_data;
+            RCP_interpret_data->reset();
+        }
+        else
+        {
+            RCP_interpret_data = new T_interpret_data;
+            M_TRACE_DEBUG ("GLOBAL_DATA new T_interpret_data=" << RCP_interpret_data.get());
+        }
+        // Save global data pointer
+        RCP_prev_global_interpret_data = RCP_prev_saved_interpret_data;
+        if (RCP_prev_global_interpret_data.get() == NULL)
+        {
+            RCP_prev_global_interpret_data = protocol_data.ws_data.global_data.RCP_initialized_data;
+        }
+        RCP_interpret_data->copy_global_values(*RCP_prev_global_interpret_data);
+    }
 
-  // interpret data.
-  if (! RCP_interpret_data)
-  {
-      RCP_interpret_data = new T_interpret_data;
-      M_TRACE_DEBUG ("new T_interpret_data=" << RCP_interpret_data.get());
-  }
-  T_interpret_data                & interpret_data = * RCP_interpret_data;
+    // interpret data.
+    if (! RCP_interpret_data)
+    {
+        RCP_interpret_data = new T_interpret_data;
+        M_TRACE_DEBUG ("new T_interpret_data=" << RCP_interpret_data.get());
+    }
+    T_interpret_data                & interpret_data = * RCP_interpret_data;
 
-  // pinfo is wireshark internal data.
-  if (protocol_data.MANAGE_WIRESHARK_PINFO == true)
-  {
-      add_pinfo(protocol_data, pinfo, interpret_data);
-  }
+    // pinfo is wireshark internal data.
+    if (protocol_data.MANAGE_WIRESHARK_PINFO == true)
+    {
+        add_pinfo(protocol_data, pinfo, interpret_data);
+    }
 
-  // create this_msg variable
-  if (protocol_data.GLOBAL_DATA_TYPE != "")
-  {
-      interpret_data.add_this_msg();
-  }
+    // create this_msg variable
+    if (protocol_data.GLOBAL_DATA_TYPE != "")
+    {
+        interpret_data.add_this_msg();
+    }
 
-  // No wireshark output.
-  C_interpret_builder_set_temporary  interpret_builder_set_temporary(NULL);
+    // No wireshark output.
+    C_interpret_builder_set_temporary  interpret_builder_set_temporary(NULL);
 
-  string    summary;
-  string    MSG_ID_FIELD_NAME;
+    string    summary;
+    string    MSG_ID_FIELD_NAME;
 
-  // Read MSG_HEADER_TYPE.
-  // Retrieve the MSG_ID value
-  // -> set the packet_id_str
-  // -> init summary
-  {
-      // Read MSG_HEADER_TYPE.
-      const T_byte       * in_out_P_bytes = static_cast<const T_byte *>(ptr_raw_data);
-      size_t               in_out_sizeof_bytes = length_raw_data;
+    // Read MSG_HEADER_TYPE.
+    // Retrieve the MSG_ID value
+    // -> set the packet_id_str
+    // -> init summary
+    {
+        // Read MSG_HEADER_TYPE.
+        const T_byte       * in_out_P_bytes = static_cast<const T_byte *>(ptr_raw_data);
+        size_t               in_out_sizeof_bytes = length_raw_data;
 
-      // NB: do not set a name to the variable
-      //      because the name will be mandatory everywhere in the code and/or wsgd file
-      //      for MSG_ID_FIELD_NAME, MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES and MSG_MAIN_TYPE
-      const string         str_interpret = protocol_data.MSG_HEADER_TYPE + " " + "\"\" ;";
-      istrstream           iss(str_interpret.c_str());
+        // NB: do not set a name to the variable
+        //      because the name will be mandatory everywhere in the code and/or wsgd file
+        //      for MSG_ID_FIELD_NAME, MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES and MSG_MAIN_TYPE
+        const string         str_interpret = protocol_data.MSG_HEADER_TYPE + " " + "\"\" ;";
+        istrstream           iss(str_interpret.c_str());
 
-      C_byte_interpret_wsgd_builder_base  wsgd_builder(proto_idx, tvb, pinfo, tree, tree);
-      C_interpret_builder_set_temporary   interpret_builder_set_temporary2(&wsgd_builder);
+        C_byte_interpret_wsgd_builder_base  wsgd_builder(proto_idx, tvb, pinfo, tree, tree);
+        C_interpret_builder_set_temporary   interpret_builder_set_temporary2(&wsgd_builder);
 
-      if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG)
-      {
+        if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG)
+        {
         // All the input data is present.
         wsgd_builder.set_is_input_data_complete(true);
-      }
+        }
 
-      // returns false if NOT enough bytes -> DESEGMENT managed by wsgd_builder.
-      // NB: returns true even if MSG_HEADER_TYPE is unknown !
-      bool    result = interpret_bytes (protocol_data.type_definitions,
+        // returns false if NOT enough bytes -> DESEGMENT managed by wsgd_builder.
+        // NB: returns true even if MSG_HEADER_TYPE is unknown !
+        bool    result = interpret_bytes (protocol_data.type_definitions,
                                                         in_out_P_bytes,
                                                         in_out_sizeof_bytes,
                                                         iss,
                                                         os,
                                                         os,
                                                         interpret_data);
-      if (result == false)
-      {
-          M_TRACE_WARNING ("Error during interpret_bytes for the header, could be not enough data");
-          return  0;
-      }
-
-      const T_attribute_value *  P_attr_MSG_ID_FIELD_NAME = interpret_data.get_P_attribute_value_of_read_variable (protocol_data.MSG_ID_FIELD_NAME);
-
-      if (P_attr_MSG_ID_FIELD_NAME == NULL)
-      {
-          // The header has been entirely read, but the MSG_ID_FIELD_NAME has NOT been found !!!
-          // ICIOA user NOT warned !!!
-          M_TRACE_FATAL ("Did NOT find " << protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME)");
-          return  0;
-      }
-
-      // Retrieve the MSG_ID value
-      MSG_ID_FIELD_NAME = interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
-      M_TRACE_DEBUG ("MSG_ID_FIELD_NAME = " << MSG_ID_FIELD_NAME);
-
-      string    msg_id;
-      if (protocol_data.MSG_TITLE != "")
-      {
-          string    MSG_TITLE = interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_TITLE);
-          M_TRACE_DEBUG ("MSG_TITLE = " << MSG_TITLE);
-          msg_id = "[" + MSG_TITLE + "]";
-      }
-      else
-      {
-          msg_id = "[" + MSG_ID_FIELD_NAME + "]";
-      }
-
-      // -> set the packet_id_str
-      cpp_dissect_generic_set_packet_id_str(protocol_data, tvb, pinfo, tree, msg_id);
-
-      /* Update the pinfo ports */
-      update_pinfo_ports(protocol_data, pinfo, interpret_data);
-
-
-      if ((tree == NULL) && (mandatory_to_interpret_the_entire_msg != true))
-      {
-          if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG &&
-              protocol_data.PACKET_CONTAINS_ONLY_1_MSG)
-              return length_raw_data;
-
-          if (protocol_data.MSG_TOTAL_LENGTH != "")
-          {
-              C_value  msg_total_length = compute_expression_no_io(protocol_data.type_definitions, interpret_data, protocol_data.MSG_TOTAL_LENGTH);
-              if (length_raw_data < msg_total_length.get_int())
-              {
-                  // Not an error, wait for the next segment.
-                  pinfo->desegment_offset = 0;             /* Start at beginning next time */
-                  pinfo->desegment_len = msg_total_length.get_int() - length_raw_data;
-                  return  0;
-              }
-              else
-              {
-                  pinfo->desegment_len = 0;			// 2011/05/15
-                  return  msg_total_length.get_int();
-              }
-          }
-
-          // I do not know the size of the message.
-          // I must interpret it completely to know where it ends
-          //  (and so where start the next message) !
-          mandatory_to_interpret_the_entire_msg = true;
-      }
-
-      // -> init summary
-      summary += protocol_data.MSG_ID_FIELD_NAME;
-      summary += ": ";
-      summary += MSG_ID_FIELD_NAME;
-      summary += "  ";
-  }
-
-  if (tree || mandatory_to_interpret_the_entire_msg)
-  {
-      // Retrieve all the MSG_SUMMARY_SUBSIDIARY values and complete summary.
-      for (vector<string>::const_iterator  iter  = protocol_data.MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES.begin();
-                                           iter != protocol_data.MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES.end();
-                                         ++iter)
-      {
-          const string    MSG_SUMMARY_SUBSIDIARY_FIELD_NAME = interpret_data.get_full_str_value_of_read_variable(*iter);
-          M_TRACE_DEBUG ("MSG_SUMMARY_SUBSIDIARY_FIELD_NAME = " << MSG_SUMMARY_SUBSIDIARY_FIELD_NAME);
-
-          summary += *iter;
-          summary += ": ";
-          summary += MSG_SUMMARY_SUBSIDIARY_FIELD_NAME;
-          summary += "  ";
-      }
-
-      // Set first item.
-      proto_item  * proto_item = cpp_dissect_generic_set_packet_summary_str(protocol_data, tvb, pinfo, tree, summary);
-      tree = cpp_dissect_generic_add_tree(proto_idx, proto_item);
-
-      // Read MSG_MAIN_TYPE.
-      const T_byte       * in_out_P_bytes = static_cast<const T_byte *>(ptr_raw_data);
-      size_t               in_out_sizeof_bytes = length_raw_data;
-
-      C_byte_interpret_wsgd_builder      wsgd_builder(proto_idx, tvb, pinfo, tree, msg_root_tree);
-      C_interpret_builder_set_temporary  interpret_builder_set_temporary2(&wsgd_builder);
-
-      // Check that the packet identifier has been found.
-      if (MSG_ID_FIELD_NAME == "")
-      {
-          // Could happen if :
-          // - bad MSG_HEADER_TYPE specified (checked at initialization)
-          // - bad MSG_ID_FIELD_NAME specified
-          // - too small packet (checked before IF MSG_HEADER_LENGTH has been set)
-          M_TRACE_FATAL (protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) NOT found");
-          const string         str_interpret = "fatal  \"value of " + protocol_data.MSG_ID_FIELD_NAME + " (MSG_ID_FIELD_NAME) NOT found into " + protocol_data.MSG_HEADER_TYPE + " (MSG_HEADER_TYPE)\" ;";
-
-          interpret_bytes (				   protocol_data.type_definitions,
-                                           in_out_P_bytes,
-                                           in_out_sizeof_bytes,
-                                           str_interpret,
-                                           os,
-                                           os,
-                                           interpret_data);
-//		  return  0;
-      }
-
-      // Manage MSG_TOTAL_LENGTH
-      // More or less tested.
-      size_t    sizeof_bytes_NOT_given_to_interpretor = 0;
-      if (protocol_data.MSG_TOTAL_LENGTH != "")
-      {
-        C_value  msg_total_length = compute_expression_no_io(protocol_data.type_definitions, interpret_data, protocol_data.MSG_TOTAL_LENGTH);
-        if (length_raw_data < msg_total_length.get_int())
+        if (result == false)
         {
-          // Not an error, wait for the next segment.
-          pinfo->desegment_offset = 0;             /* Start at beginning next time */
-          pinfo->desegment_len = msg_total_length.get_int() - length_raw_data;
-          return  0;
+            M_TRACE_WARNING ("Error during interpret_bytes for the header, could be not enough data");
+            return  0;
         }
 
-        // Reduce the interpretor accessible data.
-        in_out_sizeof_bytes = msg_total_length.get_int();
-        sizeof_bytes_NOT_given_to_interpretor = length_raw_data - msg_total_length.get_int();
+        const T_attribute_value *  P_attr_MSG_ID_FIELD_NAME = interpret_data.get_P_attribute_value_of_read_variable (protocol_data.MSG_ID_FIELD_NAME);
 
-        // All the input data is present.
-        wsgd_builder.set_is_input_data_complete(true);
-      }
-
-      if ((sizeof_bytes_NOT_given_to_interpretor > 0) && (protocol_data.PACKET_CONTAINS_ONLY_1_MSG))
-      {
-          // The packet seems to contains more than 1 msg or
-          //  MSG_TOTAL_LENGTH is not good or
-          //  message is not good.
-      }
-
-      if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG)
-      {
-        // All the input data is present.
-        wsgd_builder.set_is_input_data_complete(true);
-      }
-
-      if (RCP_prev_global_interpret_data.get() != NULL)
-      {
-          // global data could have been modified by header
-          // Since we read again the header, must start with the original values
-          interpret_data.copy_global_values(*RCP_prev_global_interpret_data);
-      }
-
-      // Intrepretation of the main type.
-      string         str_interpret_main;
-      if (protocol_data.MSG_MAIN_TYPE != "")
-      {
-          str_interpret_main = protocol_data.MSG_MAIN_TYPE;
-      }
-      else
-      {
-          // Must choose the main type depending on the source port and the dest port.
-          // 2009/03/14 : these tests work only above a protocol which fills srcport and destport.
-          // Will NOT work above my own proto.
-          for (vector<T_generic_protocol_data::T_parent>::const_iterator
-                                    parent_iter  = protocol_data.PARENTS.begin();
-                                    parent_iter != protocol_data.PARENTS.end();
-                                  ++parent_iter)
-          {
-              const T_generic_protocol_data::T_parent  & parent = * parent_iter;
-
-              for (int   idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_int.size(); ++idx)
-              {
-                  if (pinfo->srcport == parent.PARENT_SUBFIELD_VALUES_int[idx])
-                  {
-                      str_interpret_main = protocol_data.MSG_FROM_MAIN_TYPE;
-                      break;
-                  }
-                  else if (pinfo->destport == parent.PARENT_SUBFIELD_VALUES_int[idx])
-                  {
-                      str_interpret_main = protocol_data.MSG_TO_MAIN_TYPE;
-                      break;
-                  }
-              }
-              if (str_interpret_main != "")
-                  break;
-          }
-          if (str_interpret_main == "")
-          {
-              // Port NOT found, choose FROM by default.
-              str_interpret_main = protocol_data.MSG_FROM_MAIN_TYPE;
-              // This could happen if user use Decode as.
-              // How to warn the user about the problem ?
-              // ATTENTION, this will warn the user for each dissection !!!
-              // -> static value to avoid another call (or too much call) ?
-              // -> How to know if it is the same capture or Decode as operation ?
-              wsgd_report_failure("Generic dissector is NOT able to choose between MSG_FROM_MAIN_TYPE and MSG_TO_MAIN_TYPE.\n"
-                       "This could happen if you have choose Decode as for a packet with source and dest ports not into PARENT_SUBFIELD_VALUES.\n"
-                       "\n"
-                       "MSG_FROM_MAIN_TYPE has been taken.\n");
-          }
-      }
-      str_interpret_main += " \"\" ;";
-      istrstream           iss_main(str_interpret_main.c_str());
-
-      bool    result = interpret_bytes (   protocol_data.type_definitions,
-                                           in_out_P_bytes,
-                                           in_out_sizeof_bytes,
-                                           iss_main,
-                                           os,
-                                           os,
-                                           interpret_data);
-
-    const int   proto_item_len = length_raw_data - in_out_sizeof_bytes - sizeof_bytes_NOT_given_to_interpretor;
-    proto_item_set_len(proto_item, proto_item_len);
-
-    // Global data and Tap.
-    if (result == true)
-    {
-        if ((P_where_to_save_interpret_data == NULL) &&
-            (protocol_data.GLOBAL_DATA_TYPE != ""))
+        if (P_attr_MSG_ID_FIELD_NAME == NULL)
         {
-          M_TRACE_DEBUG ("GLOBAL_DATA saved_interpreted_datas.push_back");
-
-          protocol_data.ws_data.global_data.saved_interpreted_datas.push_back(T_generic_protocol_saved_interpreted_data());
-          T_generic_protocol_saved_interpreted_data  & saved_interpreted_data = protocol_data.ws_data.global_data.saved_interpreted_datas.back();
-          saved_interpreted_data.packet_number = pinfo->fd->num;
-          saved_interpreted_data.msg_number_inside_packet = msg_number_inside_packet;
-
-          P_where_to_save_interpret_data = & saved_interpreted_data;
+            // The header has been entirely read, but the MSG_ID_FIELD_NAME has NOT been found !!!
+            // ICIOA user NOT warned !!!
+            M_TRACE_FATAL ("Did NOT find " << protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME)");
+            return  0;
         }
 
-        if (P_where_to_save_interpret_data != NULL)
+        // Retrieve the MSG_ID value
+        MSG_ID_FIELD_NAME = interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
+        M_TRACE_DEBUG ("MSG_ID_FIELD_NAME = " << MSG_ID_FIELD_NAME);
+
+        string    msg_id;
+        if (protocol_data.MSG_TITLE != "")
         {
-            P_where_to_save_interpret_data->RCP_interpret_data = RCP_interpret_data;
+            string    MSG_TITLE = interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_TITLE);
+            M_TRACE_DEBUG ("MSG_TITLE = " << MSG_TITLE);
+            msg_id = "[" + MSG_TITLE + "]";
+        }
+        else
+        {
+            msg_id = "[" + MSG_ID_FIELD_NAME + "]";
         }
 
-        protocol_data.ws_data.tap_data.RCP_last_msg_interpret_data = RCP_interpret_data;
+        // -> set the packet_id_str
+        cpp_dissect_generic_set_packet_id_str(protocol_data, tvb, pinfo, tree, msg_id);
 
-        tap_queue_packet(protocol_data.ws_data.tap_data.proto_tap, pinfo, &protocol_data);
+        /* Update the pinfo ports */
+        update_pinfo_ports(protocol_data, pinfo, interpret_data);
+
+
+        if ((tree == NULL) && (mandatory_to_interpret_the_entire_msg != true))
+        {
+            if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG &&
+                protocol_data.PACKET_CONTAINS_ONLY_1_MSG)
+                return length_raw_data;
+
+            if (protocol_data.MSG_TOTAL_LENGTH != "")
+            {
+                C_value  msg_total_length = compute_expression_no_io(protocol_data.type_definitions, interpret_data, protocol_data.MSG_TOTAL_LENGTH);
+                if (length_raw_data < msg_total_length.get_int())
+                {
+                    // Not an error, wait for the next segment.
+                    pinfo->desegment_offset = 0;             /* Start at beginning next time */
+                    pinfo->desegment_len = msg_total_length.get_int() - length_raw_data;
+                    return  0;
+                }
+                else
+                {
+                    pinfo->desegment_len = 0;			// 2011/05/15
+                    return  msg_total_length.get_int();
+                }
+            }
+
+            // I do not know the size of the message.
+            // I must interpret it completely to know where it ends
+            //  (and so where start the next message) !
+            mandatory_to_interpret_the_entire_msg = true;
+        }
+
+        // -> init summary
+        summary += protocol_data.MSG_ID_FIELD_NAME;
+        summary += ": ";
+        summary += MSG_ID_FIELD_NAME;
+        summary += "  ";
     }
 
-    // Verify that the entire message has been dissect.
-    // Only if interpretation result is ok.
-    // If not, I suppose that an error is already displayed. 
-    if ((result == true) && (in_out_sizeof_bytes > 0))
+    if (tree || mandatory_to_interpret_the_entire_msg)
     {
-      if ((protocol_data.PACKET_CONTAINS_ONLY_1_MSG) || (protocol_data.MSG_TOTAL_LENGTH != ""))
-      {
-        const string         str_interpret = "error  \"" + get_string(in_out_sizeof_bytes) + " bytes NOT read into message\" ;";
-        istrstream           iss(str_interpret.c_str());
+        // Retrieve all the MSG_SUMMARY_SUBSIDIARY values and complete summary.
+        for (vector<string>::const_iterator  iter  = protocol_data.MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES.begin();
+                                             iter != protocol_data.MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES.end();
+                                           ++iter)
+        {
+            const string    MSG_SUMMARY_SUBSIDIARY_FIELD_NAME = interpret_data.get_full_str_value_of_read_variable(*iter);
+            M_TRACE_DEBUG ("MSG_SUMMARY_SUBSIDIARY_FIELD_NAME = " << MSG_SUMMARY_SUBSIDIARY_FIELD_NAME);
 
-        interpret_bytes ( 				   protocol_data.type_definitions,
-                                           in_out_P_bytes,
-                                           in_out_sizeof_bytes,
-                                           iss,
-                                           os,
-                                           os,
-                                           interpret_data);
-      }
+            summary += *iter;
+            summary += ": ";
+            summary += MSG_SUMMARY_SUBSIDIARY_FIELD_NAME;
+            summary += "  ";
+        }
+
+        // Set first item.
+        proto_item  * proto_item = cpp_dissect_generic_set_packet_summary_str(protocol_data, tvb, pinfo, tree, summary);
+        tree = cpp_dissect_generic_add_tree(proto_idx, proto_item);
+
+        // Read MSG_MAIN_TYPE.
+        const T_byte       * in_out_P_bytes = static_cast<const T_byte *>(ptr_raw_data);
+        size_t               in_out_sizeof_bytes = length_raw_data;
+
+        C_byte_interpret_wsgd_builder      wsgd_builder(proto_idx, tvb, pinfo, tree, msg_root_tree);
+        C_interpret_builder_set_temporary  interpret_builder_set_temporary2(&wsgd_builder);
+
+        // Check that the packet identifier has been found.
+        if (MSG_ID_FIELD_NAME == "")
+        {
+            // Could happen if :
+            // - bad MSG_HEADER_TYPE specified (checked at initialization)
+            // - bad MSG_ID_FIELD_NAME specified
+            // - too small packet (checked before IF MSG_HEADER_LENGTH has been set)
+            M_TRACE_FATAL (protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) NOT found");
+            const string         str_interpret = "fatal  \"value of " + protocol_data.MSG_ID_FIELD_NAME + " (MSG_ID_FIELD_NAME) NOT found into " + protocol_data.MSG_HEADER_TYPE + " (MSG_HEADER_TYPE)\" ;";
+
+            interpret_bytes (				   protocol_data.type_definitions,
+                                            in_out_P_bytes,
+                                            in_out_sizeof_bytes,
+                                            str_interpret,
+                                            os,
+                                            os,
+                                            interpret_data);
+//          return  0;
+        }
+
+        // Manage MSG_TOTAL_LENGTH
+        // More or less tested.
+        size_t    sizeof_bytes_NOT_given_to_interpretor = 0;
+        if (protocol_data.MSG_TOTAL_LENGTH != "")
+        {
+            C_value  msg_total_length = compute_expression_no_io(protocol_data.type_definitions, interpret_data, protocol_data.MSG_TOTAL_LENGTH);
+            if (length_raw_data < msg_total_length.get_int())
+            {
+                // Not an error, wait for the next segment.
+                pinfo->desegment_offset = 0;             /* Start at beginning next time */
+                pinfo->desegment_len = msg_total_length.get_int() - length_raw_data;
+                return  0;
+            }
+
+            // Reduce the interpretor accessible data.
+            in_out_sizeof_bytes = msg_total_length.get_int();
+            sizeof_bytes_NOT_given_to_interpretor = length_raw_data - msg_total_length.get_int();
+
+            // All the input data is present.
+            wsgd_builder.set_is_input_data_complete(true);
+        }
+
+        if ((sizeof_bytes_NOT_given_to_interpretor > 0) && (protocol_data.PACKET_CONTAINS_ONLY_1_MSG))
+        {
+            // The packet seems to contains more than 1 msg or
+            //  MSG_TOTAL_LENGTH is not good or
+            //  message is not good.
+        }
+
+        if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG)
+        {
+            // All the input data is present.
+            wsgd_builder.set_is_input_data_complete(true);
+        }
+
+        if (RCP_prev_global_interpret_data.get() != NULL)
+        {
+            // global data could have been modified by header
+            // Since we read again the header, must start with the original values
+            interpret_data.copy_global_values(*RCP_prev_global_interpret_data);
+        }
+
+        // Intrepretation of the main type.
+        string         str_interpret_main;
+        if (protocol_data.MSG_MAIN_TYPE != "")
+        {
+            str_interpret_main = protocol_data.MSG_MAIN_TYPE;
+        }
+        else
+        {
+            // Must choose the main type depending on the source port and the dest port.
+            // 2009/03/14 : these tests work only above a protocol which fills srcport and destport.
+            // Will NOT work above my own proto.
+            for (vector<T_generic_protocol_data::T_parent>::const_iterator
+                                      parent_iter  = protocol_data.PARENTS.begin();
+                                      parent_iter != protocol_data.PARENTS.end();
+                                    ++parent_iter)
+            {
+                const T_generic_protocol_data::T_parent  & parent = * parent_iter;
+
+                for (int   idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_int.size(); ++idx)
+                {
+                    if (pinfo->srcport == parent.PARENT_SUBFIELD_VALUES_int[idx])
+                    {
+                        str_interpret_main = protocol_data.MSG_FROM_MAIN_TYPE;
+                        break;
+                    }
+                    else if (pinfo->destport == parent.PARENT_SUBFIELD_VALUES_int[idx])
+                    {
+                        str_interpret_main = protocol_data.MSG_TO_MAIN_TYPE;
+                        break;
+                    }
+                }
+                if (str_interpret_main != "")
+                    break;
+            }
+            if (str_interpret_main == "")
+            {
+                // Port NOT found, choose FROM by default.
+                str_interpret_main = protocol_data.MSG_FROM_MAIN_TYPE;
+                // This could happen if user use Decode as.
+                // How to warn the user about the problem ?
+                // ATTENTION, this will warn the user for each dissection !!!
+                // -> static value to avoid another call (or too much call) ?
+                // -> How to know if it is the same capture or Decode as operation ?
+                wsgd_report_failure("Generic dissector is NOT able to choose between MSG_FROM_MAIN_TYPE and MSG_TO_MAIN_TYPE.\n"
+                        "This could happen if you have choose Decode as for a packet with source and dest ports not into PARENT_SUBFIELD_VALUES.\n"
+                        "\n"
+                        "MSG_FROM_MAIN_TYPE has been taken.\n");
+            }
+        }
+        str_interpret_main += " \"\" ;";
+        istrstream           iss_main(str_interpret_main.c_str());
+
+        bool    result = interpret_bytes (   protocol_data.type_definitions,
+                                            in_out_P_bytes,
+                                            in_out_sizeof_bytes,
+                                            iss_main,
+                                            os,
+                                            os,
+                                            interpret_data);
+
+        const int   proto_item_len = length_raw_data - in_out_sizeof_bytes - sizeof_bytes_NOT_given_to_interpretor;
+        proto_item_set_len(proto_item, proto_item_len);
+
+        // Global data and Tap.
+        if (result == true)
+        {
+            if ((P_where_to_save_interpret_data == NULL) &&
+                (protocol_data.GLOBAL_DATA_TYPE != ""))
+            {
+                M_TRACE_DEBUG ("GLOBAL_DATA saved_interpreted_datas.push_back");
+
+                protocol_data.ws_data.global_data.saved_interpreted_datas.push_back(T_generic_protocol_saved_interpreted_data());
+                T_generic_protocol_saved_interpreted_data  & saved_interpreted_data = protocol_data.ws_data.global_data.saved_interpreted_datas.back();
+                saved_interpreted_data.packet_number = pinfo->fd->num;
+                saved_interpreted_data.msg_number_inside_packet = msg_number_inside_packet;
+
+                P_where_to_save_interpret_data = & saved_interpreted_data;
+            }
+
+            if (P_where_to_save_interpret_data != NULL)
+            {
+                P_where_to_save_interpret_data->RCP_interpret_data = RCP_interpret_data;
+            }
+
+            protocol_data.ws_data.tap_data.RCP_last_msg_interpret_data = RCP_interpret_data;
+
+            tap_queue_packet(protocol_data.ws_data.tap_data.proto_tap, pinfo, &protocol_data);
+        }
+
+        // Verify that the entire message has been dissect.
+        // Only if interpretation result is ok.
+        // If not, I suppose that an error is already displayed. 
+        if ((result == true) && (in_out_sizeof_bytes > 0))
+        {
+            if ((protocol_data.PACKET_CONTAINS_ONLY_1_MSG) || (protocol_data.MSG_TOTAL_LENGTH != ""))
+            {
+                const string         str_interpret = "error  \"" + get_string(in_out_sizeof_bytes) + " bytes NOT read into message\" ;";
+                istrstream           iss(str_interpret.c_str());
+
+                interpret_bytes ( 				   protocol_data.type_definitions,
+                                                    in_out_P_bytes,
+                                                    in_out_sizeof_bytes,
+                                                    iss,
+                                                    os,
+                                                    os,
+                                                    interpret_data);
+            }
+        }
+
+        // Verify that the entire packet has been dissect.
+        // Only if interpretation result is ok.
+        // If not, I suppose that an error is already displayed. 
+        if ((result == true) && (sizeof_bytes_NOT_given_to_interpretor > 0))
+        {
+            if (protocol_data.PACKET_CONTAINS_ONLY_1_MSG)
+            {
+            const string         str_interpret = "error  \"" + get_string(sizeof_bytes_NOT_given_to_interpretor) + " bytes NOT read into packet\" ;";
+            istrstream           iss(str_interpret.c_str());
+
+            interpret_bytes ( 				   protocol_data.type_definitions,
+                                                in_out_P_bytes,
+                                                in_out_sizeof_bytes,
+                                                iss,
+                                                os,
+                                                os,
+                                                interpret_data);
+            }
+            // ICIOA ne fonctionne pas
+            // Y a-t-il un moyen pour que wireshark re-appelle le dissector ???
+            // je ne crois pas, il faut se rappeler soi-même
+
+            // 2009/03/03 en testant MSG_TOTAL_LENGTH, il semble bien que le dissector est appelé plusieurs fois.
+            // appele 1 fois de plus MAIS pas plus ???
+            // -> voir offset de tvbbuf ???
+            // tvb_reported_length & tvb_reported_length_remaining ???
+            pinfo->desegment_offset = length_raw_data - sizeof_bytes_NOT_given_to_interpretor;
+            pinfo->desegment_len = 0;		// 2011/05/15 
+//          pinfo->desegment_len = 10;         // ICIOA essai avec une taille de msg en dur -> dissector non rappele
+//          pinfo->desegment_len = DESEGMENT_ONE_MORE_SEGMENT;    // ICIOA -> dissector non rappele
+        }
+
+        if (result == true)
+        {
+            // Msg is ended, some data are no more necessary
+            interpret_data.msg_is_ended();
+        }
+
+        return  proto_item_len;
     }
 
-    // Verify that the entire packet has been dissect.
-    // Only if interpretation result is ok.
-    // If not, I suppose that an error is already displayed. 
-    if ((result == true) && (sizeof_bytes_NOT_given_to_interpretor > 0))
-    {
-      if (protocol_data.PACKET_CONTAINS_ONLY_1_MSG)
-      {
-        const string         str_interpret = "error  \"" + get_string(sizeof_bytes_NOT_given_to_interpretor) + " bytes NOT read into packet\" ;";
-        istrstream           iss(str_interpret.c_str());
-
-        interpret_bytes ( 				   protocol_data.type_definitions,
-                                           in_out_P_bytes,
-                                           in_out_sizeof_bytes,
-                                           iss,
-                                           os,
-                                           os,
-                                           interpret_data);
-      }
-      // ICIOA ne fonctionne pas
-      // Y a-t-il un moyen pour que wireshark re-appelle le dissector ???
-      // je ne crois pas, il faut se rappeler soi-même
-
-      // 2009/03/03 en testant MSG_TOTAL_LENGTH, il semble bien que le dissector est appelé plusieurs fois.
-        // appele 1 fois de plus MAIS pas plus ???
-        // -> voir offset de tvbbuf ???
-        // tvb_reported_length & tvb_reported_length_remaining ???
-      pinfo->desegment_offset = length_raw_data - sizeof_bytes_NOT_given_to_interpretor;
-      pinfo->desegment_len = 0;		// 2011/05/15 
-//	  pinfo->desegment_len = 10;         // ICIOA essai avec une taille de msg en dur -> dissector non rappele
-//	  pinfo->desegment_len = DESEGMENT_ONE_MORE_SEGMENT;    // ICIOA -> dissector non rappele
-    }
-
-    if (result == true)
-    {
-        // Msg is ended, some data are no more necessary
-        interpret_data.msg_is_ended();
-    }
-
-    return  proto_item_len;
-  }
-
-  M_FATAL_COMMENT("Bug in the software");
-  return  0;  // avoid compiler warning
+    M_FATAL_COMMENT("Bug in the software");
+    return  0;  // avoid compiler warning
 }
 
 //*****************************************************************************
@@ -2589,56 +2588,56 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
                                   proto_tree   * tree,
                             const long           msg_number_inside_packet)
 {
-  M_TRACE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
-                 << pinfo->fd->num << "/"
-                 << msg_number_inside_packet << ", "
-                 << tvb << ", "
-                 << pinfo << ", "
-                 << tree << ")");
+    M_TRACE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
+                    << pinfo->fd->num << "/"
+                    << msg_number_inside_packet << ", "
+                    << tvb << ", "
+                    << pinfo << ", "
+                    << tree << ")");
 
-  if ((protocol_data.MSG_HEADER_LENGTH > 0) &&
-      (length_raw_data < protocol_data.MSG_HEADER_LENGTH))
-  {
-    // Not an error, wait for the next segment.
-    M_TRACE_DEBUG("Not enougth data (" << length_raw_data << ") to read the header. Wait for the next segment.");
-    pinfo->desegment_offset = 0;             /* Start at beginning next time */
-    pinfo->desegment_len = DESEGMENT_ONE_MORE_SEGMENT;
-    return  0;
-  }
+    if ((protocol_data.MSG_HEADER_LENGTH > 0) &&
+        (length_raw_data < protocol_data.MSG_HEADER_LENGTH))
+    {
+        // Not an error, wait for the next segment.
+        M_TRACE_DEBUG("Not enougth data (" << length_raw_data << ") to read the header. Wait for the next segment.");
+        pinfo->desegment_offset = 0;             /* Start at beginning next time */
+        pinfo->desegment_len = DESEGMENT_ONE_MORE_SEGMENT;
+        return  0;
+    }
 
-  gint  result = 0;
+    gint  result = 0;
 
-  M_TRACE_DEBUG ("wsgd_debug dissect+ " << protocol_data.PROTOABBREV << " ("
-                 << pinfo->fd->num << "/"
-                 << msg_number_inside_packet << ") "
-                 << C_debug_object_counter::get_debug_string());
+    M_TRACE_DEBUG ("wsgd_debug dissect+ " << protocol_data.PROTOABBREV << " ("
+                    << pinfo->fd->num << "/"
+                    << msg_number_inside_packet << ") "
+                    << C_debug_object_counter::get_debug_string());
 
-  try
-  {
-    result = cpp_dissect_generic(protocol_data,
-                              tvb,
-                              ptr_raw_data,
-                              length_raw_data,
-                              pinfo,
-                              tree,
-                              msg_number_inside_packet);
-  }
-  catch(std::exception& e)
-  {
-    M_TRACE_FATAL("Unexpected exception " << e.what());
-    result = 0;
-  }
-  catch(...)
-  {
-    M_TRACE_FATAL("Unexpected unknow exception.");
-    result = 0;
-  }
+    try
+    {
+        result = cpp_dissect_generic(protocol_data,
+                                    tvb,
+                                    ptr_raw_data,
+                                    length_raw_data,
+                                    pinfo,
+                                    tree,
+                                    msg_number_inside_packet);
+    }
+    catch(std::exception& e)
+    {
+        M_TRACE_FATAL("Unexpected exception " << e.what());
+        result = 0;
+    }
+    catch(...)
+    {
+        M_TRACE_FATAL("Unexpected unknow exception.");
+        result = 0;
+    }
 
-  M_TRACE_DEBUG ("wsgd_debug dissect- " << protocol_data.PROTOABBREV << " ("
-                 << pinfo->fd->num << "/"
-                 << msg_number_inside_packet << ") "
-                 << C_debug_object_counter::get_debug_string());
-  return  result;
+    M_TRACE_DEBUG ("wsgd_debug dissect- " << protocol_data.PROTOABBREV << " ("
+                    << pinfo->fd->num << "/"
+                    << msg_number_inside_packet << ") "
+                    << C_debug_object_counter::get_debug_string());
+    return  result;
 }
 
 //*****************************************************************************
@@ -2647,73 +2646,73 @@ gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
 gint
 dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
 {
-  T_generic_protocol_data  & protocol_data = get_protocol_data(proto_idx);
-  C_debug_set_temporary      debug_dissect_main(protocol_data.DEBUG);
+    T_generic_protocol_data  & protocol_data = get_protocol_data(proto_idx);
+    C_debug_set_temporary      debug_dissect_main(protocol_data.DEBUG);
 
-  M_TRACE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
-                 << proto_idx << ", "
-                 << tvb << ", "
-                 << pinfo << ", "
-                 << tree << ")");
+    M_TRACE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
+                    << proto_idx << ", "
+                    << tvb << ", "
+                    << pinfo << ", "
+                    << tree << ")");
 
-  col_set_str(pinfo->cinfo, COL_PROTOCOL, protocol_data.PROTOSHORTNAME.c_str());
-  col_add_fstr(pinfo->cinfo, COL_INFO,
-               "%d > %d",
-               pinfo->srcport, pinfo->destport);
+    col_set_str(pinfo->cinfo, COL_PROTOCOL, protocol_data.PROTOSHORTNAME.c_str());
+    col_add_fstr(pinfo->cinfo, COL_INFO,
+                "%d > %d",
+                pinfo->srcport, pinfo->destport);
 
 
-  gint    offset_where_dissection_stops = 0;
-  long    msg_number_inside_packet = 0;
-  do
-  {
-    // compute new tvb 
+    gint    offset_where_dissection_stops = 0;
+    long    msg_number_inside_packet = 0;
+    do
+    {
+        // compute new tvb 
 #if WIRESHARK_VERSION_NUMBER >= 20400
-      tvbuff_t  * sub_tvb = tvb_new_subset_length_caplen(tvb, offset_where_dissection_stops, -1, -1);
+        tvbuff_t  * sub_tvb = tvb_new_subset_length_caplen(tvb, offset_where_dissection_stops, -1, -1);
 #else
-      tvbuff_t  * sub_tvb = tvb_new_subset(tvb, offset_where_dissection_stops, -1, -1);
+        tvbuff_t  * sub_tvb = tvb_new_subset(tvb, offset_where_dissection_stops, -1, -1);
 #endif
 
-    gint    sub_offset_where_dissection_stops = 
-                                 dissect_generic_proto(protocol_data,
-                                                       sub_tvb,
-                                                       tvb_get_ptr(sub_tvb, 0, -1),
-                                                       tvb_length_remaining(sub_tvb, 0),
-                                                       pinfo,
-                                                       tree,
-                                                       msg_number_inside_packet);
-    if (pinfo->desegment_len != 0)
+        gint    sub_offset_where_dissection_stops = 
+                                        dissect_generic_proto(protocol_data,
+                                                            sub_tvb,
+                                                            tvb_get_ptr(sub_tvb, 0, -1),
+                                                            tvb_length_remaining(sub_tvb, 0),
+                                                            pinfo,
+                                                            tree,
+                                                            msg_number_inside_packet);
+        if (pinfo->desegment_len != 0)
+        {
+            M_TRACE_DEBUG("Not enougth data to read the message. Wait for the next segment.");
+
+            pinfo->desegment_offset += offset_where_dissection_stops;
+        }
+        else
+        {
+            M_TRACE_DEBUG("Message entirely read (no desegmentation required)");
+        }
+
+        offset_where_dissection_stops += sub_offset_where_dissection_stops;
+        ++msg_number_inside_packet;
+
+        // Stop the loop if 
+        if ((pinfo->desegment_len != 0) ||										// Message not entirely read
+            (offset_where_dissection_stops >= tvb_length_remaining(tvb, 0)) ||	// No more data to read
+            (protocol_data.PACKET_CONTAINS_ONLY_1_MSG) ||						// Only 1 msg per packet
+            (sub_offset_where_dissection_stops <= 0))							// Nothing has been read
+        {
+            break;
+        }
+    } while (true);
+
+
+
+    if ((pinfo->desegment_len != 0) && (offset_where_dissection_stops == 0))
     {
-        M_TRACE_DEBUG("Not enougth data to read the message. Wait for the next segment.");
-
-        pinfo->desegment_offset += offset_where_dissection_stops;
+        // to avoid tshark 1.12.0 rc2 crash (rejects return 0 when desegment asked)
+//      return tvb_length(tvb);
+        return  1;
     }
-    else
-    {
-        M_TRACE_DEBUG("Message entirely read (no desegmentation required)");
-    }
-
-    offset_where_dissection_stops += sub_offset_where_dissection_stops;
-    ++msg_number_inside_packet;
-
-    // Stop the loop if 
-    if ((pinfo->desegment_len != 0) ||										// Message not entirely read
-        (offset_where_dissection_stops >= tvb_length_remaining(tvb, 0)) ||	// No more data to read
-        (protocol_data.PACKET_CONTAINS_ONLY_1_MSG) ||						// Only 1 msg per packet
-        (sub_offset_where_dissection_stops <= 0))							// Nothing has been read
-    {
-        break;
-    }
-  } while (true);
-
-
-
-  if ((pinfo->desegment_len != 0) && (offset_where_dissection_stops == 0))
-  {
-      // to avoid tshark 1.12.0 rc2 crash (rejects return 0 when desegment asked)
-//	  return tvb_length(tvb);
-      return  1;
-  }
-  return  offset_where_dissection_stops;
+    return  offset_where_dissection_stops;
 }
 
 //*****************************************************************************
@@ -2725,61 +2724,61 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
                                     packet_info  * pinfo,
                                     proto_tree   * tree)
 {
-  T_generic_protocol_data  & protocol_data = get_protocol_data(proto_idx);
-  C_debug_set_temporary      debug_dissect_main(protocol_data.DEBUG);
+    T_generic_protocol_data  & protocol_data = get_protocol_data(proto_idx);
+    C_debug_set_temporary      debug_dissect_main(protocol_data.DEBUG);
 
-  M_TRACE_ENTER ("heuristic_generic_proto", protocol_data.PROTOABBREV << " ("
-                 << proto_idx << ", "
-                 << tvb << ", "
-                 << pinfo << ", "
-                 << tree << ")");
+    M_TRACE_ENTER ("heuristic_generic_proto", protocol_data.PROTOABBREV << " ("
+                    << proto_idx << ", "
+                    << tvb << ", "
+                    << pinfo << ", "
+                    << tree << ")");
 
-  if (protocol_data.HEURISTIC_FUNCTION != "")
-  {
-      // Check of tvb data to know if it is our protocol
-      try
-      {
-          const void           * ptr_raw_data = tvb_get_ptr(tvb, 0, -1);
-          const int              length_raw_data = tvb_length_remaining(tvb, 0);
-          if ((ptr_raw_data == NULL) || (length_raw_data <= 0))
-          {
-              return  false;
-          }
-          T_frame_data           frame_data(ptr_raw_data, 0, length_raw_data * 8);
+    if (protocol_data.HEURISTIC_FUNCTION != "")
+    {
+        // Check of tvb data to know if it is our protocol
+        try
+        {
+            const void           * ptr_raw_data = tvb_get_ptr(tvb, 0, -1);
+            const int              length_raw_data = tvb_length_remaining(tvb, 0);
+            if ((ptr_raw_data == NULL) || (length_raw_data <= 0))
+            {
+                return  false;
+            }
+            T_frame_data           frame_data(ptr_raw_data, 0, length_raw_data * 8);
 
-          const string           expression_str = protocol_data.HEURISTIC_FUNCTION + " ()";
-          T_interpret_data       interpret_data;
-          T_decode_stream_frame                             decode_stream_frame;
-          C_decode_stream_frame_set_temporary_if_necessary  dsfstin(interpret_data, decode_stream_frame);
-//		  interpret_data.set_decode_stream_frame(&decode_stream_frame);
-          const string           data_name;
-          const string         & data_simple_name = data_name;
-          ostrstream             os_out;
-          ostrstream           & os_err = os_out;
+            const string           expression_str = protocol_data.HEURISTIC_FUNCTION + " ()";
+            T_interpret_data       interpret_data;
+            T_decode_stream_frame                             decode_stream_frame;
+            C_decode_stream_frame_set_temporary_if_necessary  dsfstin(interpret_data, decode_stream_frame);
+//          interpret_data.set_decode_stream_frame(&decode_stream_frame);
+            const string           data_name;
+            const string         & data_simple_name = data_name;
+            ostrstream             os_out;
+            ostrstream           & os_err = os_out;
 
-          const C_value          HEURISTIC_FUNCTION_result = compute_expression(protocol_data.type_definitions, interpret_data, frame_data,
-                                                                           expression_str,
-                                                                           data_name, data_simple_name, os_out, os_err);
+            const C_value          HEURISTIC_FUNCTION_result = compute_expression(protocol_data.type_definitions, interpret_data, frame_data,
+                                                                            expression_str,
+                                                                            data_name, data_simple_name, os_out, os_err);
 
-          if (HEURISTIC_FUNCTION_result.get_bool() != true)
-          {
-              return  false;
-          }
-      }
-      catch(std::exception& e)
-      {
-        M_TRACE_FATAL("Unexpected exception " << e.what());
-        return  false;
-      }
-      catch(...)
-      {
-          M_TRACE_FATAL("Unexpected unknow exception.");
-          return  false;
-      }
-  }
+            if (HEURISTIC_FUNCTION_result.get_bool() != true)
+            {
+                return  false;
+            }
+        }
+        catch(std::exception& e)
+        {
+            M_TRACE_FATAL("Unexpected exception " << e.what());
+            return  false;
+        }
+        catch(...)
+        {
+            M_TRACE_FATAL("Unexpected unknow exception.");
+            return  false;
+        }
+    }
 
-  // Do not care of return value ?
-  dissect_generic_proto(proto_idx, tvb, pinfo, tree);
+    // Do not care of return value ?
+    dissect_generic_proto(proto_idx, tvb, pinfo, tree);
 
-  return  true;
+    return  true;
 }
