@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2009-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,13 +56,13 @@ public:
 
     typedef T element_type;
 
-	// Do not use <scoped_copyable_ptr object>.get() as parameter !!!
+    // Do not use <scoped_copyable_ptr object>.get() as parameter !!!
     explicit scoped_copyable_ptr(T * p = 0): ptr(p) // never throws
     {
     }
 
-	// I do not use auto_ptr
-	// Not accepted by gcc 4.4.1
+    // I do not use auto_ptr
+    // Not accepted by gcc 4.4.1
 #if 0
     explicit scoped_copyable_ptr(std::auto_ptr<T> p): ptr(p.release()) // never throws
     {
@@ -70,48 +70,48 @@ public:
 #endif
 
     explicit scoped_copyable_ptr(scoped_copyable_ptr const & rhs)
-		:ptr(NULL)
-	{
-		if (rhs.ptr != NULL)
-		{
-			ptr = new T(*rhs.ptr);
-		}
-	}
-
-    scoped_copyable_ptr & operator=(scoped_copyable_ptr const & rhs)
-	{
-		if (ptr != rhs.ptr)
-		{
-			delete  ptr;
-			ptr = new T(*rhs.ptr);
-		}
-		return  *this;
-	}
-#if 0
-	// Dangereux ?
-    scoped_copyable_ptr & operator=(T * p)
-	{
-		if (ptr != p)
-		{
-			delete  ptr;
-			ptr = p;
-		}
-		return  *this;
-	}
-#endif
-	~scoped_copyable_ptr() // never throws
+        :ptr(NULL)
     {
-		delete  ptr;
+        if (rhs.ptr != NULL)
+        {
+            ptr = new T(*rhs.ptr);
+        }
     }
 
-	// Do not use <scoped_copyable_ptr object>.get() as parameter !!!
+    scoped_copyable_ptr & operator=(scoped_copyable_ptr const & rhs)
+    {
+        if (ptr != rhs.ptr)
+        {
+            delete  ptr;
+            ptr = new T(*rhs.ptr);
+        }
+        return  *this;
+    }
+#if 0
+    // Dangereux ?
+    scoped_copyable_ptr & operator=(T * p)
+    {
+        if (ptr != p)
+        {
+            delete  ptr;
+            ptr = p;
+        }
+        return  *this;
+    }
+#endif
+    ~scoped_copyable_ptr() // never throws
+    {
+        delete  ptr;
+    }
+
+    // Do not use <scoped_copyable_ptr object>.get() as parameter !!!
     void reset(T * p = 0) // never throws
     {
-		if (p != ptr)
-		{
-			delete  ptr;
-			ptr = p;
-		}
+        if (p != ptr)
+        {
+            delete  ptr;
+            ptr = p;
+        }
     }
 
     T & operator*() const // never throws
@@ -139,7 +139,7 @@ public:
         return ptr != 0;
     }
 
-	void swap(scoped_copyable_ptr & b) // never throws
+    void swap(scoped_copyable_ptr & b) // never throws
     {
         T * tmp = b.ptr;
         b.ptr = ptr;

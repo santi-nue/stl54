@@ -97,37 +97,37 @@ typedef unsigned char   T_byte;
 
 enum E_byte_interpret_exception
 {
-	E_byte_interpret_exception_missing_data,
-	E_byte_interpret_exception_loop_deep_break,
-	E_byte_interpret_exception_loop_deep_continue,
-	E_byte_interpret_exception_loop_break,
-	E_byte_interpret_exception_loop_continue,
-	E_byte_interpret_exception_return,
-	E_byte_interpret_exception_fatal
+    E_byte_interpret_exception_missing_data,
+    E_byte_interpret_exception_loop_deep_break,
+    E_byte_interpret_exception_loop_deep_continue,
+    E_byte_interpret_exception_loop_break,
+    E_byte_interpret_exception_loop_continue,
+    E_byte_interpret_exception_return,
+    E_byte_interpret_exception_fatal
 };
 
 class C_byte_interpret_exception : public std::exception
 {
 public:
-	C_byte_interpret_exception(
-						 const char                        * file_name,
-							   int                           file_line,
-							   E_byte_interpret_exception    bie,
+    C_byte_interpret_exception(
+                         const char                        * file_name,
+                               int                           file_line,
+                               E_byte_interpret_exception    bie,
                          const std::string                 & str);
-	~C_byte_interpret_exception() throw() { }
+    ~C_byte_interpret_exception() throw() { }
 
-	// override
-	virtual const char* what() const throw();
-	
-	E_byte_interpret_exception    get_cause() const          { return  A_bie; }
-	const std::string             get_explanation() const;
+    // override
+    virtual const char* what() const throw();
+    
+    E_byte_interpret_exception    get_cause() const          { return  A_bie; }
+    const std::string             get_explanation() const;
 
 private:
-	std::string                   A_file_name;
-	int                           A_file_line;
-	E_byte_interpret_exception    A_bie;
-	std::string                   A_str;
-	std::string                   A_explanation;
+    std::string                   A_file_name;
+    int                           A_file_line;
+    E_byte_interpret_exception    A_bie;
+    std::string                   A_str;
+    std::string                   A_explanation;
 };
 
 //****************************************************************************
@@ -135,10 +135,10 @@ private:
 //****************************************************************************
 
 void    fatal_pb (const string  & lhs,
-				  const string  & comp,
-				  const string  & rhs,
-				  const char    * file_name,
-				  const size_t    file_line);
+                  const string  & comp,
+                  const string  & rhs,
+                  const char    * file_name,
+                  const size_t    file_line);
 
 #define M_FATAL_IF_FALSE(assertion)                                           \
     if ((assertion) == false)                                                 \
@@ -205,7 +205,7 @@ void    fatal_pb (const string  & lhs,
     {                                                                         \
         std::ostrstream  M_FATAL_COMMENT_oss;                                 \
         M_FATAL_COMMENT_oss << comment << ends;                               \
-    	fatal_pb ("FATAL :", "", M_FATAL_COMMENT_oss.str (),                  \
+        fatal_pb ("FATAL :", "", M_FATAL_COMMENT_oss.str (),                  \
                   __FILE__, __LINE__);                                        \
         M_FATAL_COMMENT_oss.freeze (false);           /* avoid memory leak */ \
     }
@@ -219,40 +219,40 @@ void    fatal_pb (const string  & lhs,
 //****************************************************************************
 
 #define M_TRACE_ENTER(function_name,OSTREAM_OUTPUT_EXPR)                      \
-	C_trace    M_trace(function_name);                                        \
-	M_TRACE_base (" ", "Enter", function_name << " " << OSTREAM_OUTPUT_EXPR)
+    C_trace    M_trace(function_name);                                        \
+    M_TRACE_base (" ", "Enter", function_name << " " << OSTREAM_OUTPUT_EXPR)
 
 #define M_TRACE_ENTER_NO_LEAVE(function_name,OSTREAM_OUTPUT_EXPR)             \
-	M_TRACE_ENTER(function_name,OSTREAM_OUTPUT_EXPR);                         \
-	M_trace.leave_trace_done()
+    M_TRACE_ENTER(function_name,OSTREAM_OUTPUT_EXPR);                         \
+    M_trace.leave_trace_done()
 
 #define M_TRACE_LEAVE(OSTREAM_OUTPUT_EXPR)                      \
-	M_TRACE_base (" ", "Leave", M_trace.A_function_name << " " << OSTREAM_OUTPUT_EXPR);  \
-	M_trace.leave_trace_done()
+    M_TRACE_base (" ", "Leave", M_trace.A_function_name << " " << OSTREAM_OUTPUT_EXPR);  \
+    M_trace.leave_trace_done()
 
 
 #define M_TRACE_DEBUG(OSTREAM_OUTPUT_EXPR)                                    \
-	M_TRACE_base (" ", "     ", OSTREAM_OUTPUT_EXPR)
+    M_TRACE_base (" ", "     ", OSTREAM_OUTPUT_EXPR)
 #define M_TRACE_INFO(OSTREAM_OUTPUT_EXPR)                                     \
-	M_TRACE_base ("i", "     ", OSTREAM_OUTPUT_EXPR)
+    M_TRACE_base ("i", "     ", OSTREAM_OUTPUT_EXPR)
 #define M_TRACE_WARNING(OSTREAM_OUTPUT_EXPR)                                  \
-	M_TRACE_print ("W", "     ", OSTREAM_OUTPUT_EXPR)
+    M_TRACE_print ("W", "     ", OSTREAM_OUTPUT_EXPR)
 #define M_TRACE_ERROR(OSTREAM_OUTPUT_EXPR)                                    \
-	M_TRACE_print ("E", "     ", OSTREAM_OUTPUT_EXPR)
+    M_TRACE_print ("E", "     ", OSTREAM_OUTPUT_EXPR)
 #define M_TRACE_FATAL(OSTREAM_OUTPUT_EXPR)                                    \
-	M_TRACE_print ("F", "     ", OSTREAM_OUTPUT_EXPR)
+    M_TRACE_print ("F", "     ", OSTREAM_OUTPUT_EXPR)
 #define M_TRACE_ASSERT(OSTREAM_OUTPUT_EXPR)                                   \
-	M_TRACE_print ("A", "     ", OSTREAM_OUTPUT_EXPR)
+    M_TRACE_print ("A", "     ", OSTREAM_OUTPUT_EXPR)
 
 #define M_TRACE_base(PREFIX1,PREFIX2,OSTREAM_OUTPUT_EXPR)                     \
-	if (C_trace::A_debug_status != E_debug_status_OFF)                        \
-	{                                                                         \
-		M_TRACE_print (PREFIX1, PREFIX2, OSTREAM_OUTPUT_EXPR);                \
-	}
+    if (C_trace::A_debug_status != E_debug_status_OFF)                        \
+    {                                                                         \
+        M_TRACE_print (PREFIX1, PREFIX2, OSTREAM_OUTPUT_EXPR);                \
+    }
 
 #define M_TRACE_print(PREFIX1,PREFIX2,OSTREAM_OUTPUT_EXPR)                    \
-	C_trace::print_beginning_of_trace(get_state_ostream(), PREFIX1, PREFIX2); \
-	get_state_ostream() << OSTREAM_OUTPUT_EXPR << endl << flush
+    C_trace::print_beginning_of_trace(get_state_ostream(), PREFIX1, PREFIX2); \
+    get_state_ostream() << OSTREAM_OUTPUT_EXPR << endl << flush
 
 
 
@@ -269,19 +269,19 @@ E_debug_status  get_debug();
 class C_debug_set_temporary
 {
 public:
-	C_debug_set_temporary(E_debug_status  debug);
-	C_debug_set_temporary();
-	~C_debug_set_temporary();
+    C_debug_set_temporary(E_debug_status  debug);
+    C_debug_set_temporary();
+    ~C_debug_set_temporary();
 
-	void    set(E_debug_status  debug);
-	void    unset();
-	void    forget();
+    void    set(E_debug_status  debug);
+    void    unset();
+    void    forget();
 
 private:
-	C_debug_set_temporary(const C_debug_set_temporary  &);
+    C_debug_set_temporary(const C_debug_set_temporary  &);
 
-	E_debug_status    previous_value;
-	bool              value_modified;
+    E_debug_status    previous_value;
+    bool              value_modified;
 };
 
 
@@ -294,19 +294,19 @@ ostream  & set_state_ostream(ostream  & new_state_ostream);
 
 struct C_trace
 {
-	C_trace(const char  * function_name);
-	~C_trace();
+    C_trace(const char  * function_name);
+    ~C_trace();
 
-	static
-	void    print_beginning_of_trace(      ostream  & os,
-									 const char     * prefix1,
-									 const char     * prefix2);
+    static
+    void    print_beginning_of_trace(      ostream  & os,
+                                     const char     * prefix1,
+                                     const char     * prefix2);
 
-	// Specifiy the leave trace has been done
-	void    leave_trace_done();
+    // Specifiy the leave trace has been done
+    void    leave_trace_done();
 
-	const char  * A_function_name;
-	bool          A_must_do_leave_trace;
+    const char  * A_function_name;
+    bool          A_must_do_leave_trace;
 
 
     static E_debug_status   A_debug_status;
@@ -321,7 +321,7 @@ enum E_return_code
     E_rc_ok,                       // everything is ok
     E_rc_not_integer,              // format ok BUT integer value NOK
     E_rc_not_found,                // format expected NOT found
-	E_rc_multiple_value,           // is a mulitple value
+    E_rc_multiple_value,           // is a mulitple value
     E_rc_not_ok                    // NOT ok
 };
 
@@ -376,10 +376,10 @@ T_iter     find (      T_iter     _First,
                        T_iter     _Last,
                  const T_value  & _Val)
 {
-	for (; _First != _Last; ++_First)
-		if (*_First == _Val)
-			break;
-	return (_First);
+    for (; _First != _Last; ++_First)
+        if (*_First == _Val)
+            break;
+    return (_First);
 }
 #endif
 #endif
@@ -421,10 +421,10 @@ T_iter    rfind (const T_iter     begin,
 //*****************************************************************************
 
 int   get_files_in_dir (const string          & dir_name,
-						const string          & begin_file_name,
-						const string          & end_file_name,
-						      vector<string>  & file_names,
-						const bool              full_name_required);
+                        const string          & begin_file_name,
+                        const string          & end_file_name,
+                              vector<string>  & file_names,
+                        const bool              full_name_required);
 
 
 #endif /* BYTE_INTERPRET_COMMON_H */

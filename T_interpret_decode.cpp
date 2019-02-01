@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,14 +30,14 @@
 void
 T_interpret_decode::set_decode_function (string  decode_function)
 {
-	if (decode_function == "nil")
-	{
-		A_decode_function = "";
-	}
-	else
-	{
-		A_decode_function = decode_function;
-	}
+    if (decode_function == "nil")
+    {
+        A_decode_function = "";
+    }
+    else
+    {
+        A_decode_function = decode_function;
+    }
 }
 
 //*****************************************************************************
@@ -45,15 +45,15 @@ T_interpret_decode::set_decode_function (string  decode_function)
 //*****************************************************************************
 
 C_interpret_decode_in_progress::C_interpret_decode_in_progress(
-											T_interpret_decode  & interpret_decode)
-	:A_interpret_decode(interpret_decode)
+                                            T_interpret_decode  & interpret_decode)
+    :A_interpret_decode(interpret_decode)
 {
-	A_interpret_decode.set_decode_in_progress(true);
+    A_interpret_decode.set_decode_in_progress(true);
 }
 
 C_interpret_decode_in_progress::~C_interpret_decode_in_progress()
 {
-	A_interpret_decode.set_decode_in_progress(false);
+    A_interpret_decode.set_decode_in_progress(false);
 }
 
 
@@ -62,22 +62,22 @@ C_interpret_decode_in_progress::~C_interpret_decode_in_progress()
 //*****************************************************************************
 
 C_interpret_decode_set_temporary::C_interpret_decode_set_temporary(
-									 T_interpret_decode  & interpret_decode,
+                                     T_interpret_decode  & interpret_decode,
                                const std::string         & decoder_function)
-	:A_interpret_decode(interpret_decode),
-	 A_decoder_function(decoder_function),
-	 A_previous_decoder_function(interpret_decode.get_decode_function())
+    :A_interpret_decode(interpret_decode),
+     A_decoder_function(decoder_function),
+     A_previous_decoder_function(interpret_decode.get_decode_function())
 {
-	if (A_decoder_function != "")
-	{
-		A_interpret_decode.set_decode_function(A_decoder_function);
-	}
+    if (A_decoder_function != "")
+    {
+        A_interpret_decode.set_decode_function(A_decoder_function);
+    }
 }
 
 C_interpret_decode_set_temporary::~C_interpret_decode_set_temporary()
 {
-	if (A_decoder_function != "")
-	{
-		A_interpret_decode.set_decode_function(A_previous_decoder_function);
-	}
+    if (A_decoder_function != "")
+    {
+        A_interpret_decode.set_decode_function(A_previous_decoder_function);
+    }
 }

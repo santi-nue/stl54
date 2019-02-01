@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
                                istream             & input_stream,
                                ostream             & os_out,
                                ostream             & os_err,
-							   T_interpret_data    & in_out_interpret_data);
+                               T_interpret_data    & in_out_interpret_data);
 
 bool    interpret_bytes (const T_type_definitions  & type_definitions,
                          const T_byte             *& in_out_P_bytes,
@@ -61,7 +61,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
                          const string              & in_input_string,
                                ostream             & os_out,
                                ostream             & os_err,
-							   T_interpret_data    & in_out_interpret_data);
+                               T_interpret_data    & in_out_interpret_data);
 
 //*****************************************************************************
 // interpret_bytes ************************************************************
@@ -102,7 +102,7 @@ bool    build_types_and_interpret_bytes (
 //*****************************************************************************
 
 bool    is_a_switch_value (const T_type_definitions  & type_definitions,
-					       const string              & orig_type,
+                           const string              & orig_type,
                                  string              & final_simple_type,
                                  string              & discriminant);
 

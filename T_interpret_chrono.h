@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,9 +42,9 @@ struct T_interpret_chrono : public CT_debug_object_counter<T_interpret_chrono>
 
 private:
 
-	static long    A_ms_cumulative;
-	T_perf_time    A_timeb_ctor;
-	T_perf_time    A_timeb_last;
+    static long    A_ms_cumulative;
+    T_perf_time    A_timeb_ctor;
+    T_perf_time    A_timeb_last;
 };
 
 #endif /* T_interpret_chrono_h */

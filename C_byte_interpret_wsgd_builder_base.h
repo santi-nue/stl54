@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,99 +32,99 @@ using namespace std;
 
 
 proto_item  * cpp_dissect_generic_add_item(const int     proto_idx,
-											        tvbuff_t     * tvb,
-												    packet_info  * pinfo,
+                                                    tvbuff_t     * tvb,
+                                                    packet_info  * pinfo,
                                                proto_tree  * wsgd_tree,
-										 const int     field_idx,
-										 const int     offset,
-										 const int     field_byte_size,
-										 const int     little_endian,
-										 const char  * text,
-										 const int     error);
+                                         const int     field_idx,
+                                         const int     offset,
+                                         const int     field_byte_size,
+                                         const int     little_endian,
+                                         const char  * text,
+                                         const int     error);
 
 proto_item  * cpp_dissect_generic_add_item_string(const int     proto_idx,
-											        tvbuff_t     * tvb,
-												    packet_info  * pinfo,
-										          proto_tree  * tree,
-										 const int     field_idx,
-										 const int     offset,
-										 const int     field_byte_size,
-										 const int     little_endian,
-										 const char  * text,
-										 const int     error,
-										 const char  * value);
+                                                    tvbuff_t     * tvb,
+                                                    packet_info  * pinfo,
+                                                  proto_tree  * tree,
+                                         const int     field_idx,
+                                         const int     offset,
+                                         const int     field_byte_size,
+                                         const int     little_endian,
+                                         const char  * text,
+                                         const int     error,
+                                         const char  * value);
 
 proto_item  * cpp_dissect_generic_add_item_float(const int     proto_idx,
-											        tvbuff_t     * tvb,
-												    packet_info  * pinfo,
-										          proto_tree  * tree,
-										 const int     field_idx,
-										 const int     offset,
-										 const int     field_byte_size,
-										 const int     little_endian,
-										 const char  * text,
-										 const int     error,
-										 const float   value);
+                                                    tvbuff_t     * tvb,
+                                                    packet_info  * pinfo,
+                                                  proto_tree  * tree,
+                                         const int     field_idx,
+                                         const int     offset,
+                                         const int     field_byte_size,
+                                         const int     little_endian,
+                                         const char  * text,
+                                         const int     error,
+                                         const float   value);
 
 proto_item  * cpp_dissect_generic_add_item_double(const int     proto_idx,
-											        tvbuff_t     * tvb,
-												    packet_info  * pinfo,
-										          proto_tree  * tree,
-										 const int     field_idx,
-										 const int     offset,
-										 const int     field_byte_size,
-										 const int     little_endian,
-										 const char  * text,
-										 const int     error,
-										 const double  value);
+                                                    tvbuff_t     * tvb,
+                                                    packet_info  * pinfo,
+                                                  proto_tree  * tree,
+                                         const int     field_idx,
+                                         const int     offset,
+                                         const int     field_byte_size,
+                                         const int     little_endian,
+                                         const char  * text,
+                                         const int     error,
+                                         const double  value);
 
 proto_item  * cpp_dissect_generic_add_item_uint32(const int     proto_idx,
-											        tvbuff_t     * tvb,
-												    packet_info  * pinfo,
-										          proto_tree  * tree,
-										 const int     field_idx,
-										 const int     offset,
-										 const int     field_byte_size,
-										 const int     little_endian,
-										 const char  * text,
-										 const int     error,
-										 const long long  value);
+                                                    tvbuff_t     * tvb,
+                                                    packet_info  * pinfo,
+                                                  proto_tree  * tree,
+                                         const int     field_idx,
+                                         const int     offset,
+                                         const int     field_byte_size,
+                                         const int     little_endian,
+                                         const char  * text,
+                                         const int     error,
+                                         const long long  value);
 
 proto_item  * cpp_dissect_generic_add_item_int32(const int     proto_idx,
-											        tvbuff_t     * tvb,
-												    packet_info  * pinfo,
-										          proto_tree  * tree,
-										 const int     field_idx,
-										 const int     offset,
-										 const int     field_byte_size,
-										 const int     little_endian,
-										 const char  * text,
-										 const int     error,
-										 const long long  value);
+                                                    tvbuff_t     * tvb,
+                                                    packet_info  * pinfo,
+                                                  proto_tree  * tree,
+                                         const int     field_idx,
+                                         const int     offset,
+                                         const int     field_byte_size,
+                                         const int     little_endian,
+                                         const char  * text,
+                                         const int     error,
+                                         const long long  value);
 
 proto_item  * cpp_dissect_generic_add_item_uint64(const int     proto_idx,
-											        tvbuff_t     * tvb,
-												    packet_info  * pinfo,
-										          proto_tree  * tree,
-										 const int     field_idx,
-										 const int     offset,
-										 const int     field_byte_size,
-										 const int     little_endian,
-										 const char  * text,
-										 const int     error,
-										 const long long  value);
+                                                    tvbuff_t     * tvb,
+                                                    packet_info  * pinfo,
+                                                  proto_tree  * tree,
+                                         const int     field_idx,
+                                         const int     offset,
+                                         const int     field_byte_size,
+                                         const int     little_endian,
+                                         const char  * text,
+                                         const int     error,
+                                         const long long  value);
 
 proto_item  * cpp_dissect_generic_add_item_int64(const int     proto_idx,
-											        tvbuff_t     * tvb,
-												    packet_info  * pinfo,
-										          proto_tree  * tree,
-										 const int     field_idx,
-										 const int     offset,
-										 const int     field_byte_size,
-										 const int     little_endian,
-										 const char  * text,
-										 const int     error,
-										 const long long  value);
+                                                    tvbuff_t     * tvb,
+                                                    packet_info  * pinfo,
+                                                  proto_tree  * tree,
+                                         const int     field_idx,
+                                         const int     offset,
+                                         const int     field_byte_size,
+                                         const int     little_endian,
+                                         const char  * text,
+                                         const int     error,
+                                         const long long  value);
 
 //*****************************************************************************
 // C_byte_interpret_wsgd_builder_base
@@ -135,54 +135,54 @@ class C_byte_interpret_wsgd_builder_base : public C_byte_interpret_builder
 public:
 
     C_byte_interpret_wsgd_builder_base(int                   proto_idx,
-		                               tvbuff_t            * wsgd_tvb,
-		                               packet_info         * wsgd_pinfo,
-			                           proto_tree          * wsgd_tree,
+                                       tvbuff_t            * wsgd_tvb,
+                                       packet_info         * wsgd_pinfo,
+                                       proto_tree          * wsgd_tree,
                                        proto_tree          * wsgd_msg_root_tree);
 
-	//*****************************************************************************
-	// is_input_data_complete :
-	// - true  means all the input data is here, could NOT have more
-	// - false means it could have more input data BUT it is not sure
-	//*****************************************************************************
-	void    set_is_input_data_complete(bool    is_input_data_complete);
-	bool    is_input_data_complete() const;
+    //*****************************************************************************
+    // is_input_data_complete :
+    // - true  means all the input data is here, could NOT have more
+    // - false means it could have more input data BUT it is not sure
+    //*****************************************************************************
+    void    set_is_input_data_complete(bool    is_input_data_complete);
+    bool    is_input_data_complete() const;
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
 
-	void    missing_data(const T_type_definitions  & type_definitions,
-										const T_frame_data        & in_out_frame_data,
-										const T_interpret_data    & interpret_data,
-										const T_field_type_name   & field_type_name,
-										const string              & data_name,
-										const string              & data_simple_name,
-										const string              & error);
+    void    missing_data(const T_type_definitions  & type_definitions,
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_interpret_data    & interpret_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & data_simple_name,
+                                        const string              & error);
 
 
 protected:
 
-	struct T_interpret_wsgd
-	{
-		int                   proto_idx;
-		tvbuff_t            * wsgd_tvb;
-		packet_info         * wsgd_pinfo;
-		proto_tree          * wsgd_tree;
-		proto_tree          * wsgd_msg_root_tree;
+    struct T_interpret_wsgd
+    {
+        int                   proto_idx;
+        tvbuff_t            * wsgd_tvb;
+        packet_info         * wsgd_pinfo;
+        proto_tree          * wsgd_tree;
+        proto_tree          * wsgd_msg_root_tree;
 
-		T_interpret_wsgd ()
-			:proto_idx (-1),
-			 wsgd_tvb (NULL),
-			 wsgd_pinfo (NULL),
-			 wsgd_tree (NULL),
-			 wsgd_msg_root_tree (NULL)
-		{
-		}
-	};
+        T_interpret_wsgd ()
+            :proto_idx (-1),
+             wsgd_tvb (NULL),
+             wsgd_pinfo (NULL),
+             wsgd_tree (NULL),
+             wsgd_msg_root_tree (NULL)
+        {
+        }
+    };
 
-	T_interpret_wsgd             A_interpret_wsgd;
-	bool                         A_is_input_data_complete;
+    T_interpret_wsgd             A_interpret_wsgd;
+    bool                         A_is_input_data_complete;
 };
 
 

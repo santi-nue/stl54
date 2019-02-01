@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -114,13 +114,13 @@ int   G_TEST_nb_errors_already_known = 0;
 #define M_TEST_RETURN_OF_MAIN()                                               \
     cout << "End of main" << endl;                                            \
                                                                               \
-	string  TEST_new_label = "";                                              \
-	if (G_TEST_nb_errors_already_known != 0)                                  \
-	{                                                                         \
-		TEST_new_label = " new";                                              \
-		cout << "         " << G_TEST_nb_errors_already_known                 \
-			 << " already known errors." << endl;                             \
-	}                                                                         \
+    string  TEST_new_label = "";                                              \
+    if (G_TEST_nb_errors_already_known != 0)                                  \
+    {                                                                         \
+        TEST_new_label = " new";                                              \
+        cout << "         " << G_TEST_nb_errors_already_known                 \
+             << " already known errors." << endl;                             \
+    }                                                                         \
     if (G_TEST_nb_errors == 0)                                                \
         cout << "    OK : no" << TEST_new_label << " error";                  \
     else                                                                      \
@@ -143,15 +143,15 @@ int   G_TEST_nb_errors_already_known = 0;
 //! The specified comparison must fail for the test be valid.
 #define M_TEST_fail_compare(VAL1,FAIL_COMPARE,VAL2)                           \
     ++G_TEST_nb_tests;                                                        \
-	if (VAL1 FAIL_COMPARE VAL2)                                               \
-	M_TEST_failure(VAL1,FAIL_COMPARE,VAL2)
+    if (VAL1 FAIL_COMPARE VAL2)                                               \
+    M_TEST_failure(VAL1,FAIL_COMPARE,VAL2)
 
 //! For float/double comparison.
 //! Could NOT work for little values (like zero).
 #define M_TEST_EQ_APPROX(VAL1,VAL2)                                           \
     ++G_TEST_nb_tests;                                                        \
     if (fabs(VAL1 - VAL2) > fabs(VAL1 / 100000.0))                            \
-	M_TEST_failure(VAL1,"NOT approx =",VAL2)
+    M_TEST_failure(VAL1,"NOT approx =",VAL2)
 
 
 
@@ -164,36 +164,36 @@ std::string  G_TEST_error_already_known_explain;
 class C_TEST_error_already_known
 {
 public:
-	C_TEST_error_already_known(long  bug_id, const std::string  & comment)
-		:A_save_G_TEST_nb_errors_already_known(G_TEST_nb_errors_already_known)
-	{
-		G_TEST_is_an_error_already_known = true;
-		G_TEST_error_already_known_explain = "";
+    C_TEST_error_already_known(long  bug_id, const std::string  & comment)
+        :A_save_G_TEST_nb_errors_already_known(G_TEST_nb_errors_already_known)
+    {
+        G_TEST_is_an_error_already_known = true;
+        G_TEST_error_already_known_explain = "";
 
-		{
-			std::ostringstream  oss;
-			if (bug_id > 0)
-			{
-				oss << "bug=" << bug_id << "  ";
-			}
-			oss << comment;
-			G_TEST_error_already_known_explain += oss.str();
-		}
-	}
+        {
+            std::ostringstream  oss;
+            if (bug_id > 0)
+            {
+                oss << "bug=" << bug_id << "  ";
+            }
+            oss << comment;
+            G_TEST_error_already_known_explain += oss.str();
+        }
+    }
 
     ~C_TEST_error_already_known()
     {
-		G_TEST_is_an_error_already_known = false;
-		G_TEST_error_already_known_explain = "";
-		if (G_TEST_nb_errors_already_known <= A_save_G_TEST_nb_errors_already_known)
-		{
-			++G_TEST_nb_errors;
-			cout << "NO MORE ERROR in test" << endl;
-		}
-	}
+        G_TEST_is_an_error_already_known = false;
+        G_TEST_error_already_known_explain = "";
+        if (G_TEST_nb_errors_already_known <= A_save_G_TEST_nb_errors_already_known)
+        {
+            ++G_TEST_nb_errors;
+            cout << "NO MORE ERROR in test" << endl;
+        }
+    }
 
 private:
-	int          A_save_G_TEST_nb_errors_already_known;
+    int          A_save_G_TEST_nb_errors_already_known;
 };
 
 #define M_TEST_ERROR_ALREADY_KNOWN__OPEN(BUGID,COMMENT)                       \
@@ -210,8 +210,8 @@ private:
   catch (...)                                                                 \
   {                                                                           \
     is_exception_catched = true;                                              \
-	++G_TEST_nb_errors_already_known;                                         \
-	cout << "EXCEPTION (already known: "                                      \
+    ++G_TEST_nb_errors_already_known;                                         \
+    cout << "EXCEPTION (already known: "                                      \
          << G_TEST_error_already_known_explain << ") "                        \
          << " at " << __FILE__ << "[" << __LINE__ << "]"                      \
          << " test# " << G_TEST_nb_tests                                      \
@@ -228,16 +228,16 @@ private:
 //! The specified fail comparison is valid, so the test is not valid.
 #define M_TEST_failure(VAL1,FAIL_COMPARE,VAL2)                                \
     {                                                                         \
-		string  TEST_already_known_label = "";                                \
-	    if (G_TEST_is_an_error_already_known == true)                         \
-		{                                                                     \
-			++G_TEST_nb_errors_already_known;                                 \
-			TEST_already_known_label = "(already known: ";                    \
+        string  TEST_already_known_label = "";                                \
+        if (G_TEST_is_an_error_already_known == true)                         \
+        {                                                                     \
+            ++G_TEST_nb_errors_already_known;                                 \
+            TEST_already_known_label = "(already known: ";                    \
             TEST_already_known_label += G_TEST_error_already_known_explain;   \
             TEST_already_known_label += ") ";                                 \
-		}                                                                     \
-		else                                                                  \
-			++G_TEST_nb_errors;                                               \
+        }                                                                     \
+        else                                                                  \
+            ++G_TEST_nb_errors;                                               \
         cout << "ERROR " << TEST_already_known_label << "in test "            \
              << #VAL1 " (" << VAL1 << ") "                                    \
              << #FAIL_COMPARE " "                                             \
@@ -251,9 +251,9 @@ private:
  following test could NOT be added,
   because it could have many tests and only 1 (or few) fails.
 
-	else if (G_TEST_is_an_error_already_known == true)                        \
-	{                                                                         \
-		++G_TEST_nb_errors;                                                   \
+    else if (G_TEST_is_an_error_already_known == true)                        \
+    {                                                                         \
+        ++G_TEST_nb_errors;                                                   \
         cout << "NO MORE ERROR in test "                                      \
              << #VAL1 " (" << VAL1 << ") "                                    \
              << #FAIL_COMPARE " "                                             \
@@ -261,7 +261,7 @@ private:
              << " at " << __FILE__ << "[" << __LINE__ << "]"                  \
              << " test# " << G_TEST_nb_tests                                  \
              << endl;                                                         \
-	}
+    }
 #endif
 
 

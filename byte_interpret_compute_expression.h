@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,8 +37,8 @@
 //*****************************************************************************
 
 E_return_code    get_complex_value (const T_type_definitions  & type_definitions,
-									const T_interpret_data    & interpret_data,
-									const std::string         & value_str,
+                                    const T_interpret_data    & interpret_data,
+                                    const std::string         & value_str,
                                           C_value             & value);
 
 //*****************************************************************************
@@ -48,11 +48,11 @@ E_return_code    get_complex_value (const T_type_definitions  & type_definitions
 //*****************************************************************************
 
 string    compute_expressions_in_array (
-						 const T_type_definitions      & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-						 const string                  & in_str,
-						 const string                  & data_name,
+                         const T_type_definitions      & type_definitions,
+                               T_interpret_data        & interpret_data,
+                               T_frame_data            & in_out_frame_data,
+                         const string                  & in_str,
+                         const string                  & data_name,
                          const string                  & data_simple_name,
                                ostream                 & os_out,
                                ostream                 & os_err);
@@ -62,11 +62,11 @@ string    compute_expressions_in_array (
 //*****************************************************************************
 
 C_value    compute_expression (
-						 const T_type_definitions      & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-						 const std::string             & str,
-						 const std::string             & data_name,
+                         const T_type_definitions      & type_definitions,
+                               T_interpret_data        & interpret_data,
+                               T_frame_data            & in_out_frame_data,
+                         const std::string             & str,
+                         const std::string             & data_name,
                          const std::string             & data_simple_name,
                                std::ostream            & os_out,
                                std::ostream            & os_err);
@@ -79,9 +79,9 @@ C_value    compute_expression (
 //*****************************************************************************
 
 C_value    compute_expression_no_io (
-						 const T_type_definitions  & type_definitions,
-							   T_interpret_data    & interpret_data,
-						 const std::string         & str);
+                         const T_type_definitions  & type_definitions,
+                               T_interpret_data    & interpret_data,
+                         const std::string         & str);
 
 //*****************************************************************************
 // compute_expression_static **************************************************
@@ -90,7 +90,7 @@ C_value    compute_expression_no_io (
 //*****************************************************************************
 
 C_value    compute_expression_static (const T_type_definitions  & type_definitions,
-									  const std::string         & str);
+                                      const std::string         & str);
 
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -78,7 +78,7 @@ enum E_parser_cfg
     E_parser_cfg_normal      = K_parser_cfg_common | K_parser_cfg_manage_blanks,
     E_parser_cfg_C           = K_parser_cfg_common | K_parser_cfg_manage_blanks | K_parser_cfg_manage_separator_C,
     E_parser_cfg_parameters  = K_parser_cfg_common | K_parser_cfg_manage_comma,
-	E_parser_cfg_expression  = K_parser_cfg_common  // a tester
+    E_parser_cfg_expression  = K_parser_cfg_common  // a tester
 };
 
 #define K_parser_cfg_normal        E_parser_cfg_normal
@@ -126,7 +126,7 @@ bool    get_number (const char*   word,
 bool    get_number (const char*        word,
                           long long  & P_number);
 bool    get_number (const char*        word,
-						  int          base,
+                          int          base,
                           long long  & number);
 bool    get_number (const char*        word,
                           double     & P_number);

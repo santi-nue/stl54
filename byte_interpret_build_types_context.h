@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ std::string  build_types_context_where();
 //****************************************************************************
 
 void         build_types_context_include_file_open (const std::string  & file_name,
-													const istream      & is);
+                                                    const istream      & is);
 void         build_types_context_include_file_open (const std::string  & file_name);
 void         build_types_context_include_file_close(const std::string  & file_name);
 

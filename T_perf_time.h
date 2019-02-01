@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,30 +40,30 @@
 class T_perf_time
 {
 public:
-	T_perf_time()
-	{
+    T_perf_time()
+    {
 #ifdef WIN32
-		ftime (&A_perf_time);
+        ftime (&A_perf_time);
 #else
-		A_perf_times = times(NULL);
-		A_perf_clock = clock();
+        A_perf_times = times(NULL);
+        A_perf_clock = clock();
 #endif
-	}
+    }
 
-	bool  operator!= (const T_perf_time  & rhs) const;
+    bool  operator!= (const T_perf_time  & rhs) const;
 
 private:
 
 #ifdef WIN32
-	struct timeb  A_perf_time;
+    struct timeb  A_perf_time;
 #else
-	clock_t       A_perf_times;
-	clock_t       A_perf_clock;
+    clock_t       A_perf_times;
+    clock_t       A_perf_clock;
 #endif
 
-	friend std::ostream &  operator<<(std::ostream & os, const T_perf_time  & rhs);
-	friend long    perf_time_diff_ms(const T_perf_time  & timeb_val_lhs,
-									 const T_perf_time  & timeb_val_rhs);
+    friend std::ostream &  operator<<(std::ostream & os, const T_perf_time  & rhs);
+    friend long    perf_time_diff_ms(const T_perf_time  & timeb_val_lhs,
+                                     const T_perf_time  & timeb_val_rhs);
 };
 
 
@@ -71,12 +71,12 @@ std::ostream &  operator<<(std::ostream & os, const T_perf_time  & rhs);
 
 
 long    perf_time_diff_ms(const T_perf_time  & timeb_val_lhs,
-						  const T_perf_time  & timeb_val_rhs);
+                          const T_perf_time  & timeb_val_rhs);
 
 std::string  get_diff_time_ms_str(const long  diff_total_ms);
 
 std::string  perf_time_diff_ms_str(const T_perf_time  & timeb_val_lhs,
-								   const T_perf_time  & timeb_val_rhs);
+                                   const T_perf_time  & timeb_val_rhs);
 
 
 #endif /* T_perf_time_h */

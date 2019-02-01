@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,19 +69,19 @@ T_interpret_byte_order::is_little_endian() const
 void
 T_interpret_byte_order::set_big_endian()
 {
-	A_must_invert_bytes = A_is_host_byte_order_inverted;
+    A_must_invert_bytes = A_is_host_byte_order_inverted;
 }
 
 void
 T_interpret_byte_order::set_little_endian()
 {
-	A_must_invert_bytes = ! A_is_host_byte_order_inverted;
+    A_must_invert_bytes = ! A_is_host_byte_order_inverted;
 }
 
 void
 T_interpret_byte_order::set_as_host()
 {
-	A_must_invert_bytes = false;
+    A_must_invert_bytes = false;
 }
 
 void
@@ -101,7 +101,7 @@ T_interpret_byte_order::set_data_order(const std::string  & byte_order)
     }
     else
     {
-		M_FATAL_COMMENT("Bad byte_order " << byte_order);
+        M_FATAL_COMMENT("Bad byte_order " << byte_order);
     }
 }
 
@@ -129,7 +129,7 @@ T_interpret_byte_order::get_host_order()
 {
     if (A_is_host_byte_order_inverted)
         return  "little_endian";
-	else
+    else
         return  "big_endian";
 }
 
@@ -138,29 +138,29 @@ T_interpret_byte_order::get_host_order()
 //*****************************************************************************
 
 C_interpret_byte_order_set_temporary::C_interpret_byte_order_set_temporary(
-									 T_interpret_byte_order  & interpret_byte_order,
+                                     T_interpret_byte_order  & interpret_byte_order,
                                const std::string             & byte_order)
-	:A_interpret_byte_order(interpret_byte_order),
-	 A_byte_order(byte_order),
-	 A_previous_byte_order_is_little_endian(interpret_byte_order.is_little_endian())
+    :A_interpret_byte_order(interpret_byte_order),
+     A_byte_order(byte_order),
+     A_previous_byte_order_is_little_endian(interpret_byte_order.is_little_endian())
 {
-	if (A_byte_order != "")
-	{
-		A_interpret_byte_order.set_data_order(A_byte_order);
-	}
+    if (A_byte_order != "")
+    {
+        A_interpret_byte_order.set_data_order(A_byte_order);
+    }
 }
 
 C_interpret_byte_order_set_temporary::~C_interpret_byte_order_set_temporary()
 {
-	if (A_byte_order != "")
-	{
-		if (A_previous_byte_order_is_little_endian)
-		{
-			A_interpret_byte_order.set_little_endian();
-		}
-		else
-		{
-			A_interpret_byte_order.set_big_endian();
-		}
-	}
+    if (A_byte_order != "")
+    {
+        if (A_previous_byte_order_is_little_endian)
+        {
+            A_interpret_byte_order.set_little_endian();
+        }
+        else
+        {
+            A_interpret_byte_order.set_big_endian();
+        }
+    }
 }

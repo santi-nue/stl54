@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,16 +29,16 @@
 //*****************************************************************************
 
 C_interpret_output_level_move_temporary::C_interpret_output_level_move_temporary(
-											T_interpret_output  & interpret_output,
-											int                   output_level_offset)
-	:A_interpret_output(interpret_output),
-	 A_output_level_offset(output_level_offset)
+                                            T_interpret_output  & interpret_output,
+                                            int                   output_level_offset)
+    :A_interpret_output(interpret_output),
+     A_output_level_offset(output_level_offset)
 {
-	A_interpret_output.set_output_level(A_interpret_output.get_output_level() + A_output_level_offset);
+    A_interpret_output.set_output_level(A_interpret_output.get_output_level() + A_output_level_offset);
 }
 
 C_interpret_output_level_move_temporary::~C_interpret_output_level_move_temporary()
 {
-	A_interpret_output.set_output_level(A_interpret_output.get_output_level() - A_output_level_offset);
+    A_interpret_output.set_output_level(A_interpret_output.get_output_level() - A_output_level_offset);
 }
 

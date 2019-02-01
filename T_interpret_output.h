@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,20 +65,20 @@ private:
 class C_interpret_output_level_move_temporary
 {
 public:
-	// Change the output level
-	C_interpret_output_level_move_temporary(T_interpret_output  & interpret_output,
-											int                   output_level_offset);
+    // Change the output level
+    C_interpret_output_level_move_temporary(T_interpret_output  & interpret_output,
+                                            int                   output_level_offset);
 
-	// Restore the previous output level
-	~C_interpret_output_level_move_temporary();
+    // Restore the previous output level
+    ~C_interpret_output_level_move_temporary();
 
 private:
-	// Copy and assignment are forbidden
-	C_interpret_output_level_move_temporary(const C_interpret_output_level_move_temporary  &);
-	C_interpret_output_level_move_temporary & operator=(const C_interpret_output_level_move_temporary  &);
+    // Copy and assignment are forbidden
+    C_interpret_output_level_move_temporary(const C_interpret_output_level_move_temporary  &);
+    C_interpret_output_level_move_temporary & operator=(const C_interpret_output_level_move_temporary  &);
 
-	T_interpret_output  & A_interpret_output;
-	int                   A_output_level_offset;
+    T_interpret_output  & A_interpret_output;
+    int                   A_output_level_offset;
 };
 
 

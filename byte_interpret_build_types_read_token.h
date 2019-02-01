@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2010 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,7 +57,7 @@ void       read_token_end_of_statement (
 bool       read_token_simple_word_check_unexpected (
                             istream       & is,
                             string        & str_result,
-					  const char          * P_unexpected_char);
+                      const char          * P_unexpected_char);
 
 //*****************************************************************************
 // read_token_type_simple
@@ -161,8 +161,8 @@ bool       read_token_simple_word_or_string (
 //*****************************************************************************
 
 bool   read_token_parameters_vector(istream				  & is,
-									vector<string>		  & fct_parameters_vector,
-									const E_parser_cfg		parser_cfg = K_parser_cfg_normal);
+                                    vector<string>		  & fct_parameters_vector,
+                                    const E_parser_cfg		parser_cfg = K_parser_cfg_normal);
 
 //*****************************************************************************
 // read_token_function_name

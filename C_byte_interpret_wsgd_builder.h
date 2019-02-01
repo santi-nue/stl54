@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,129 +44,129 @@ public:
                                   proto_tree          * wsgd_tree,
                                   proto_tree          * wsgd_msg_root_tree);
 
-	//*****************************************************************************
-	// NB: in_out_frame_data is AFTER the value
-	//*****************************************************************************
+    //*****************************************************************************
+    // NB: in_out_frame_data is AFTER the value
+    //*****************************************************************************
 
-	void    value(const T_type_definitions  & type_definitions,
-										const T_frame_data        & in_out_frame_data,
-										const T_field_type_name   & field_type_name,
-										const string              & data_name,
-										const string              & data_simple_name,
-										const T_attribute_value   & attribute_value,
-										const string              & data_value,
-										const string              & final_type,
-										const int                   type_bit_size,
-										const bool                  is_little_endian,
-										const bool                  error);
+    void    value(const T_type_definitions  & type_definitions,
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & data_simple_name,
+                                        const T_attribute_value   & attribute_value,
+                                        const string              & data_value,
+                                        const string              & final_type,
+                                        const int                   type_bit_size,
+                                        const bool                  is_little_endian,
+                                        const bool                  error);
 
-	//*****************************************************************************
-	// NB: in_out_frame_data is AFTER the value
-	//*****************************************************************************
+    //*****************************************************************************
+    // NB: in_out_frame_data is AFTER the value
+    //*****************************************************************************
 
-	void    raw_data(const T_type_definitions  & type_definitions,
-										const T_frame_data        & in_out_frame_data,
-										const T_interpret_data    & interpret_data,
-										const T_field_type_name   & field_type_name,
-										const string              & data_name,
-										const string              & data_simple_name,
-										const int                   type_bit_size,
-										const E_raw_data_type       raw_data_type);
+    void    raw_data(const T_type_definitions  & type_definitions,
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_interpret_data    & interpret_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & data_simple_name,
+                                        const int                   type_bit_size,
+                                        const E_raw_data_type       raw_data_type);
 
-	//*****************************************************************************
-	// NB: group_end will be called
-	//*****************************************************************************
+    //*****************************************************************************
+    // NB: group_end will be called
+    //*****************************************************************************
 
-	void    group_begin(const T_type_definitions  & type_definitions,
-										const T_frame_data        & in_out_frame_data,
-										const T_field_type_name   & field_type_name,
-										const string              & data_name,
-										const string              & data_simple_name);
+    void    group_begin(const T_type_definitions  & type_definitions,
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & data_simple_name);
 
-	//*****************************************************************************
-	// NB: group_begin has been called
-	//*****************************************************************************
+    //*****************************************************************************
+    // NB: group_begin has been called
+    //*****************************************************************************
 
-	void    group_append_text(const T_type_definitions  & type_definitions,
-										   const T_frame_data        & in_out_frame_data,
+    void    group_append_text(const T_type_definitions  & type_definitions,
+                                           const T_frame_data        & in_out_frame_data,
 //										   const T_field_type_name   & field_type_name,
-										   const string              & data_name,
-										   const string              & data_simple_name,
-										   const string              & text);
+                                           const string              & data_name,
+                                           const string              & data_simple_name,
+                                           const string              & text);
 
-	//*****************************************************************************
-	// NB: group_begin has been called
-	//*****************************************************************************
+    //*****************************************************************************
+    // NB: group_begin has been called
+    //*****************************************************************************
 
-	void    group_end(const T_type_definitions  & type_definitions,
-										   const T_frame_data        & in_out_frame_data,
-										   const T_field_type_name   & field_type_name,
-										   const string              & data_name,
-										   const string              & data_simple_name,
-										   const int                   type_bit_size);
+    void    group_end(const T_type_definitions  & type_definitions,
+                                           const T_frame_data        & in_out_frame_data,
+                                           const T_field_type_name   & field_type_name,
+                                           const string              & data_name,
+                                           const string              & data_simple_name,
+                                           const int                   type_bit_size);
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
 
-	void    error(const T_type_definitions  & type_definitions,
-										const T_frame_data        & in_out_frame_data,
-										const T_field_type_name   & field_type_name,
-										const string              & data_name,
-										const string              & data_simple_name,
-										const string              & error);
+    void    error(const T_type_definitions  & type_definitions,
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & data_simple_name,
+                                        const string              & error);
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
 #if 0
-	void    fatal(const T_type_definitions  & type_definitions,
-										const T_frame_data        & in_out_frame_data,
-										const T_field_type_name   & field_type_name,
-										const string              & data_name,
-										const string              & data_simple_name,
-										const string              & error);
+    void    fatal(const T_type_definitions  & type_definitions,
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & data_simple_name,
+                                        const string              & error);
 #endif
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
 
-	void    cmd_error(const T_type_definitions  & type_definitions,
-										const T_frame_data        & in_out_frame_data,
-										const T_field_type_name   & field_type_name,
-										const string              & data_name,
-										const string              & text_to_print);
+    void    cmd_error(const T_type_definitions  & type_definitions,
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & text_to_print);
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
 
-	void    cmd_print(const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-								    const T_field_type_name   & field_type_name,
-								    const string              & data_name,
-								    const string              & text_to_print);
+    void    cmd_print(const T_type_definitions  & type_definitions,
+                                    const T_frame_data        & in_out_frame_data,
+                                    const T_field_type_name   & field_type_name,
+                                    const string              & data_name,
+                                    const string              & text_to_print);
 
 
 private:
 
-	struct T_wsgd_group_data
-	{
-		proto_tree        * tree;
-		proto_item        * item;
+    struct T_wsgd_group_data
+    {
+        proto_tree        * tree;
+        proto_item        * item;
 
-		T_wsgd_group_data (proto_tree  * proto_tree_param)
-			:tree (proto_tree_param),
-			 item (NULL)
-		{ }
-	};
+        T_wsgd_group_data (proto_tree  * proto_tree_param)
+            :tree (proto_tree_param),
+             item (NULL)
+        { }
+    };
 
-	vector<T_wsgd_group_data>    A_wsgd_group_data;
+    vector<T_wsgd_group_data>    A_wsgd_group_data;
 };
 
 

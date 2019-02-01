@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,144 +38,144 @@ class C_byte_interpret_builder
 {
 public:
 
-	virtual
-	~C_byte_interpret_builder() { }
+    virtual
+    ~C_byte_interpret_builder() { }
 
-	//*****************************************************************************
-	// NB: in_out_frame_data is AFTER the value
-	//*****************************************************************************
-	virtual
-	void    value(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & /* in_out_frame_data */,
-										const T_field_type_name   & /* field_type_name */,
-										const string              & /* data_name */,
-										const string              & /* data_simple_name */,
-										const T_attribute_value   & /* attribute_value */,
-										const string              & /* data_value */,
-										const string              & /* final_type */,
-										const int                   /* type_bit_size */,
-										const bool                  /* is_little_endian */,
-										const bool                  /* error */)
-	{ }
+    //*****************************************************************************
+    // NB: in_out_frame_data is AFTER the value
+    //*****************************************************************************
+    virtual
+    void    value(const T_type_definitions  & /* type_definitions */,
+                                        const T_frame_data        & /* in_out_frame_data */,
+                                        const T_field_type_name   & /* field_type_name */,
+                                        const string              & /* data_name */,
+                                        const string              & /* data_simple_name */,
+                                        const T_attribute_value   & /* attribute_value */,
+                                        const string              & /* data_value */,
+                                        const string              & /* final_type */,
+                                        const int                   /* type_bit_size */,
+                                        const bool                  /* is_little_endian */,
+                                        const bool                  /* error */)
+    { }
 
-	//*****************************************************************************
-	// NB: in_out_frame_data is AFTER the value
-	//*****************************************************************************
-	virtual
-	void    raw_data(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & /* in_out_frame_data */,
-										const T_interpret_data    & /* interpret_data */,
-										const T_field_type_name   & /* field_type_name */,
-										const string              & /* data_name */,
-										const string              & /* data_simple_name */,
-										const int                   /* type_bit_size */,
-										const E_raw_data_type       /* raw_data_type */)
-	{ }
+    //*****************************************************************************
+    // NB: in_out_frame_data is AFTER the value
+    //*****************************************************************************
+    virtual
+    void    raw_data(const T_type_definitions  & /* type_definitions */,
+                                        const T_frame_data        & /* in_out_frame_data */,
+                                        const T_interpret_data    & /* interpret_data */,
+                                        const T_field_type_name   & /* field_type_name */,
+                                        const string              & /* data_name */,
+                                        const string              & /* data_simple_name */,
+                                        const int                   /* type_bit_size */,
+                                        const E_raw_data_type       /* raw_data_type */)
+    { }
 
-	//*****************************************************************************
-	// NB: group_end will be called
-	//*****************************************************************************
-	virtual
-	void    group_begin(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & /* in_out_frame_data */,
-										const T_field_type_name   & /* field_type_name */,
-										const string              & /* data_name */,
-										const string              & /* data_simple_name */)
-	{ }
+    //*****************************************************************************
+    // NB: group_end will be called
+    //*****************************************************************************
+    virtual
+    void    group_begin(const T_type_definitions  & /* type_definitions */,
+                                        const T_frame_data        & /* in_out_frame_data */,
+                                        const T_field_type_name   & /* field_type_name */,
+                                        const string              & /* data_name */,
+                                        const string              & /* data_simple_name */)
+    { }
 
-	//*****************************************************************************
-	// NB: group_begin has been called
-	//*****************************************************************************
-	virtual
-	void    group_append_text(const T_type_definitions  & /* type_definitions */,
-										   const T_frame_data        & /* in_out_frame_data */,
+    //*****************************************************************************
+    // NB: group_begin has been called
+    //*****************************************************************************
+    virtual
+    void    group_append_text(const T_type_definitions  & /* type_definitions */,
+                                           const T_frame_data        & /* in_out_frame_data */,
 //										   const T_field_type_name   & /* field_type_name */,
-										   const string              & /* data_name */,
-										   const string              & /* data_simple_name */,
-										   const string              & /* text */)
-	{ }
+                                           const string              & /* data_name */,
+                                           const string              & /* data_simple_name */,
+                                           const string              & /* text */)
+    { }
 
-	//*****************************************************************************
-	// NB: group_begin has been called
-	//*****************************************************************************
-	virtual
-	void    group_end(const T_type_definitions  & /* type_definitions */,
-										   const T_frame_data        & /* in_out_frame_data */,
-										   const T_field_type_name   & /* field_type_name */,
-										   const string              & /* data_name */,
-										   const string              & /* data_simple_name */,
-										   const int                   /* type_bit_size */)
-	{ }
+    //*****************************************************************************
+    // NB: group_begin has been called
+    //*****************************************************************************
+    virtual
+    void    group_end(const T_type_definitions  & /* type_definitions */,
+                                           const T_frame_data        & /* in_out_frame_data */,
+                                           const T_field_type_name   & /* field_type_name */,
+                                           const string              & /* data_name */,
+                                           const string              & /* data_simple_name */,
+                                           const int                   /* type_bit_size */)
+    { }
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
-	virtual
-	void    error(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & /* in_out_frame_data */,
-										const T_field_type_name   & /* field_type_name */,
-										const string              & /* data_name */,
-										const string              & /* data_simple_name */,
-										const string              & /* error */)
-	{ }
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
+    virtual
+    void    error(const T_type_definitions  & /* type_definitions */,
+                                        const T_frame_data        & /* in_out_frame_data */,
+                                        const T_field_type_name   & /* field_type_name */,
+                                        const string              & /* data_name */,
+                                        const string              & /* data_simple_name */,
+                                        const string              & /* error */)
+    { }
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
-	virtual
-	void    fatal(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & /* in_out_frame_data */,
-										const T_field_type_name   & /* field_type_name */,
-										const string              & /* data_name */,
-										const string              & /* data_simple_name */,
-										const string              & /* error */)
-	{ }
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
+    virtual
+    void    fatal(const T_type_definitions  & /* type_definitions */,
+                                        const T_frame_data        & /* in_out_frame_data */,
+                                        const T_field_type_name   & /* field_type_name */,
+                                        const string              & /* data_name */,
+                                        const string              & /* data_simple_name */,
+                                        const string              & /* error */)
+    { }
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
-	virtual
-	void    missing_data(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & /* in_out_frame_data */,
-										const T_interpret_data    & /* interpret_data */,
-										const T_field_type_name   & /* field_type_name */,
-										const string              & /* data_name */,
-										const string              & /* data_simple_name */,
-										const string              & /* error */)
-	{ }
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
+    virtual
+    void    missing_data(const T_type_definitions  & /* type_definitions */,
+                                        const T_frame_data        & /* in_out_frame_data */,
+                                        const T_interpret_data    & /* interpret_data */,
+                                        const T_field_type_name   & /* field_type_name */,
+                                        const string              & /* data_name */,
+                                        const string              & /* data_simple_name */,
+                                        const string              & /* error */)
+    { }
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
-	virtual
-	void    cmd_error(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & /* in_out_frame_data */,
-										const T_field_type_name   & /* field_type_name */,
-										const string              & /* data_name */,
-										const string              & /* data_simple_name */)
-	{ }
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
+    virtual
+    void    cmd_error(const T_type_definitions  & /* type_definitions */,
+                                        const T_frame_data        & /* in_out_frame_data */,
+                                        const T_field_type_name   & /* field_type_name */,
+                                        const string              & /* data_name */,
+                                        const string              & /* data_simple_name */)
+    { }
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
-	virtual
-	void    cmd_fatal(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & /* in_out_frame_data */,
-										const T_field_type_name   & /* field_type_name */,
-										const string              & /* data_name */,
-										const string              & /* data_simple_name */)
-	{ }
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
+    virtual
+    void    cmd_fatal(const T_type_definitions  & /* type_definitions */,
+                                        const T_frame_data        & /* in_out_frame_data */,
+                                        const T_field_type_name   & /* field_type_name */,
+                                        const string              & /* data_name */,
+                                        const string              & /* data_simple_name */)
+    { }
 
-	//*****************************************************************************
-	// 
-	//*****************************************************************************
-	virtual
+    //*****************************************************************************
+    // 
+    //*****************************************************************************
+    virtual
     void    cmd_print(const T_type_definitions  & /* type_definitions */,
-									const T_frame_data        & /* in_out_frame_data */,
-								    const T_field_type_name   & /* field_type_name */,
-								    const string              & /* data_name */,
-								    const string              & /* data_simple_name */)
-	{ }
+                                    const T_frame_data        & /* in_out_frame_data */,
+                                    const T_field_type_name   & /* field_type_name */,
+                                    const string              & /* data_name */,
+                                    const string              & /* data_simple_name */)
+    { }
 
 };
 

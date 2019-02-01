@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,18 +35,18 @@
 
 struct T_frame_data_write : public T_frame_data
 {
-	T_frame_data_write();
+    T_frame_data_write();
 
-	// Ctor which define the data used.
-	T_frame_data_write(void       * initial_P_bytes,
+    // Ctor which define the data used.
+    T_frame_data_write(void       * initial_P_bytes,
                  const short        bit_offset_in_1st_byte,
                  const long         initial_sizeof_bits);
 
-	// Write some data.
-	void            write_1_byte(T_byte  byte);
-	void            write_n_bytes(short  n_bytes, const void  * P_n_bytes_write);
-	void            write_less_1_byte(T_byte  byte, short  n_bits);
-	void            write_n_bits(short  n_bits, const void  * P_n_bytes_write, short  n_bytes_write);
+    // Write some data.
+    void            write_1_byte(T_byte  byte);
+    void            write_n_bytes(short  n_bytes, const void  * P_n_bytes_write);
+    void            write_less_1_byte(T_byte  byte, short  n_bits);
+    void            write_n_bits(short  n_bits, const void  * P_n_bytes_write, short  n_bytes_write);
 };
 
 

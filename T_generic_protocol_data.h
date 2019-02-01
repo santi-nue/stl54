@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -106,9 +106,9 @@ struct T_generic_protocol_subdissector_data : public CT_debug_object_counter<T_g
   dissector_handle_t     data_handle;
 
   T_generic_protocol_subdissector_data()
-	  :dissector_table (NULL),
+      :dissector_table (NULL),
        heur_dissector_list (NULL),
-	   try_heuristic_first (FALSE)
+       try_heuristic_first (FALSE)
   { }
 };
 
@@ -124,11 +124,11 @@ struct T_generic_protocol_tap_data : public CT_debug_object_counter<T_generic_pr
   T_RCP_interpret_data   RCP_last_msg_interpret_data;
 
   T_generic_protocol_tap_data()
-	  :proto_tap (-1),
-	   st_node_msg_id(-1),
-	   st_str_msg_id("Msg id"),
-	   st_node_msg_length(-1),
-	   st_str_msg_length("Msg length")
+      :proto_tap (-1),
+       st_node_msg_id(-1),
+       st_str_msg_id("Msg id"),
+       st_node_msg_length(-1),
+       st_str_msg_length("Msg length")
   { }
 };
 
@@ -139,8 +139,8 @@ struct T_generic_protocol_saved_interpreted_data : public CT_debug_object_counte
   T_RCP_interpret_data    RCP_interpret_data;
 
   T_generic_protocol_saved_interpreted_data()
-	  :packet_number(0),
-	   msg_number_inside_packet(0)
+      :packet_number(0),
+       msg_number_inside_packet(0)
   { }
 };
 
@@ -153,7 +153,7 @@ struct T_generic_protocol_global_data : public CT_debug_object_counter<T_generic
   vector<T_generic_protocol_saved_interpreted_data>  saved_interpreted_datas;
 
   T_generic_protocol_global_data()
-	  : RCP_initialized_data(new T_interpret_data())
+      : RCP_initialized_data(new T_interpret_data())
   {
   }
 };
@@ -186,7 +186,7 @@ struct T_generic_protocol_ws_data : public CT_debug_object_counter<T_generic_pro
   T_generic_protocol_global_data        global_data;
 
   T_generic_protocol_ws_data()
-	  :proto_generic (-1),
+      :proto_generic (-1),
        P_dissect_fct (NULL),
        dissector_handle (NULL)
   { }
@@ -216,7 +216,7 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
     string                   PARENT_SUBFIELD;
     vector<int>              PARENT_SUBFIELD_VALUES_int;
     vector<string>           PARENT_SUBFIELD_VALUES_str;
-	vector<pair<int,int> >   PARENT_SUBFIELD_RANGES_int;
+    vector<pair<int,int> >   PARENT_SUBFIELD_RANGES_int;
   };
   vector<T_parent>  PARENTS;
 
@@ -257,12 +257,12 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
   T_generic_protocol_ws_data    ws_data;
 
   T_generic_protocol_data()
-	  :proto_idx(-1),
-	   DEBUG(E_debug_status_OFF),
-	   PACKET_CONTAINS_ONLY_1_MSG(false),
-	   PACKET_CONTAINS_ONLY_COMPLETE_MSG(false),
-	   MANAGE_WIRESHARK_PINFO(false),
-	   MSG_HEADER_LENGTH(-1)
+      :proto_idx(-1),
+       DEBUG(E_debug_status_OFF),
+       PACKET_CONTAINS_ONLY_1_MSG(false),
+       PACKET_CONTAINS_ONLY_COMPLETE_MSG(false),
+       MANAGE_WIRESHARK_PINFO(false),
+       MSG_HEADER_LENGTH(-1)
   { }
 };
 
@@ -292,7 +292,7 @@ void    set_max_nb_of_protocol_data(const int   max_nb);
 //*****************************************************************************
 
 void    read_file_wsgd (const string                   & wsgd_file_name,
-						      T_generic_protocol_data  & protocol_data);
+                              T_generic_protocol_data  & protocol_data);
 
 
 #endif /* __T_GENERIC_PROTOCOL_DATA_H__ */

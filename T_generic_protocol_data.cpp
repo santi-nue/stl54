@@ -63,11 +63,11 @@ dissector_handle_t  T_generic_protocol_subdissector_data::data_handle = NULL;   
 //*****************************************************************************
 void    check_not_already_initialized(const string  & val)
 {
-	M_FATAL_IF_NE(val, "");
+    M_FATAL_IF_NE(val, "");
 }
 void    check_not_already_initialized(const int    val)
 {
-	M_FATAL_IF_NE(val, -1);
+    M_FATAL_IF_NE(val, -1);
 }
 
 //*****************************************************************************
@@ -75,15 +75,15 @@ void    check_not_already_initialized(const int    val)
 //*****************************************************************************
 void    check_initialized(const string  & val)
 {
-	M_FATAL_IF_EQ(val, "");
+    M_FATAL_IF_EQ(val, "");
 }
 void    check_initialized(const int    val)
 {
-	M_FATAL_IF_EQ(val, -1);
+    M_FATAL_IF_EQ(val, -1);
 }
 void    check_initialized(const vector<int>  & val)
 {
-	M_FATAL_IF_EQ(val.size(), 0);
+    M_FATAL_IF_EQ(val.size(), 0);
 }
 
 /******************************************************************************
@@ -107,39 +107,39 @@ void    check_initialized(const vector<int>  & val)
 
 void    dump_hf_data(const hf_register_info  * hf)
 {
-	M_FATAL_IF_FALSE(hf != NULL);
+    M_FATAL_IF_FALSE(hf != NULL);
 
-	M_FATAL_IF_FALSE(hf->p_id != NULL);
-	trace_value_ptr ("c   hf->p_id",  hf->p_id);
-	trace_value_int ("c  *hf->p_id", *hf->p_id);
+    M_FATAL_IF_FALSE(hf->p_id != NULL);
+    trace_value_ptr ("c   hf->p_id",  hf->p_id);
+    trace_value_int ("c  *hf->p_id", *hf->p_id);
 
-	trace_value_str ("c   hf->hfinfo.name", hf->hfinfo.name);
-	trace_value_str ("c   hf->hfinfo.abbrev", hf->hfinfo.abbrev);
-	trace_value_int ("c   hf->hfinfo.type", hf->hfinfo.type);
-	if (hf->hfinfo.type == 0)
-	{
-		M_FATAL_IF_FALSE(hf->hfinfo.display == 0);
-	}
-	else
-		trace_value_int ("c   hf->hfinfo.display", hf->hfinfo.display);
-	trace_value_ptr ("c   hf->hfinfo.strings", hf->hfinfo.strings);
-	//trace_value_int ("c   hf->hfinfo.bitmask", hf->hfinfo.bitmask);
-	//trace_value_str ("c   hf->hfinfo.blurb", hf->hfinfo.blurb);
-	M_FATAL_IF_FALSE(hf->hfinfo.bitmask == 0);
-	M_FATAL_IF_FALSE(hf->hfinfo.blurb == hf->hfinfo.name);
+    trace_value_str ("c   hf->hfinfo.name", hf->hfinfo.name);
+    trace_value_str ("c   hf->hfinfo.abbrev", hf->hfinfo.abbrev);
+    trace_value_int ("c   hf->hfinfo.type", hf->hfinfo.type);
+    if (hf->hfinfo.type == 0)
+    {
+        M_FATAL_IF_FALSE(hf->hfinfo.display == 0);
+    }
+    else
+        trace_value_int ("c   hf->hfinfo.display", hf->hfinfo.display);
+    trace_value_ptr ("c   hf->hfinfo.strings", hf->hfinfo.strings);
+    //trace_value_int ("c   hf->hfinfo.bitmask", hf->hfinfo.bitmask);
+    //trace_value_str ("c   hf->hfinfo.blurb", hf->hfinfo.blurb);
+    M_FATAL_IF_FALSE(hf->hfinfo.bitmask == 0);
+    M_FATAL_IF_FALSE(hf->hfinfo.blurb == hf->hfinfo.name);
 
-	//trace_value_int ("c   hf->hfinfo.id", hf->hfinfo.id);
-	//trace_value_int ("c   hf->hfinfo.parent", hf->hfinfo.parent);
-	//trace_value_int ("c   hf->hfinfo.ref_count", hf->hfinfo.ref_count);
-	//trace_value_int ("c   hf->hfinfo.bitshift", hf->hfinfo.bitshift);
-	//trace_value_ptr ("c   hf->hfinfo.same_name_next", hf->hfinfo.same_name_next);
-	//trace_value_ptr ("c   hf->hfinfo.same_name_prev", hf->hfinfo.same_name_prev);
-	M_FATAL_IF_FALSE(hf->hfinfo.id == 0);
-	M_FATAL_IF_FALSE(hf->hfinfo.parent == 0);
-	M_FATAL_IF_FALSE(hf->hfinfo.ref_count == 0);
-	M_FATAL_IF_FALSE(hf->hfinfo.bitshift == 0);
-	M_FATAL_IF_FALSE(hf->hfinfo.same_name_next == NULL);
-	M_FATAL_IF_FALSE(hf->hfinfo.same_name_prev == NULL);
+    //trace_value_int ("c   hf->hfinfo.id", hf->hfinfo.id);
+    //trace_value_int ("c   hf->hfinfo.parent", hf->hfinfo.parent);
+    //trace_value_int ("c   hf->hfinfo.ref_count", hf->hfinfo.ref_count);
+    //trace_value_int ("c   hf->hfinfo.bitshift", hf->hfinfo.bitshift);
+    //trace_value_ptr ("c   hf->hfinfo.same_name_next", hf->hfinfo.same_name_next);
+    //trace_value_ptr ("c   hf->hfinfo.same_name_prev", hf->hfinfo.same_name_prev);
+    M_FATAL_IF_FALSE(hf->hfinfo.id == 0);
+    M_FATAL_IF_FALSE(hf->hfinfo.parent == 0);
+    M_FATAL_IF_FALSE(hf->hfinfo.ref_count == 0);
+    M_FATAL_IF_FALSE(hf->hfinfo.bitshift == 0);
+    M_FATAL_IF_FALSE(hf->hfinfo.same_name_next == NULL);
+    M_FATAL_IF_FALSE(hf->hfinfo.same_name_prev == NULL);
 }
 
 //*****************************************************************************
@@ -147,16 +147,16 @@ void    dump_hf_data(const hf_register_info  * hf)
 //*****************************************************************************
 
 void    dump_hf_datas(const int                 nb_of_hfs,
-					  const hf_register_info  * hf,
-					  const char              * title)
+                      const hf_register_info  * hf,
+                      const char              * title)
 {
-	int   idx_data;
-	trace_str (title);
+    int   idx_data;
+    trace_str (title);
     for (idx_data = 0; idx_data < nb_of_hfs; ++idx_data)
     {
-		trace_value_int ("c   idx_data", idx_data);
-		dump_hf_data(&hf[idx_data]);
-	}
+        trace_value_int ("c   idx_data", idx_data);
+        dump_hf_data(&hf[idx_data]);
+    }
 }
 
 //*****************************************************************************
@@ -164,58 +164,58 @@ void    dump_hf_datas(const int                 nb_of_hfs,
 //*****************************************************************************
 
 void    dump_fields_data(const T_generic_protocol_ws_data  * P_protocol_ws_data,
-						 const char                         * title,
-						 const int                            before_register)
+                         const char                         * title,
+                         const int                            before_register)
 {
-	int   idx_data;
-	trace_str (title);
+    int   idx_data;
+    trace_str (title);
     for (idx_data = 0; idx_data <= P_protocol_ws_data->fields_data.max_field_idx; ++idx_data)
     {
-		trace_value_int ("c   idx_data", idx_data);
+        trace_value_int ("c   idx_data", idx_data);
 
-		if ((idx_data > 0) && (before_register == FALSE))
-		{
-			M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.ett_id[idx_data] == P_protocol_ws_data->fields_data.ett_id[idx_data-1]+1);
-		}
-		else
-			trace_value_int ("c   ett_id[idx_data]", P_protocol_ws_data->fields_data.ett_id[idx_data]);
+        if ((idx_data > 0) && (before_register == FALSE))
+        {
+            M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.ett_id[idx_data] == P_protocol_ws_data->fields_data.ett_id[idx_data-1]+1);
+        }
+        else
+            trace_value_int ("c   ett_id[idx_data]", P_protocol_ws_data->fields_data.ett_id[idx_data]);
 
-		//trace_value_ptr ("c  &ett_id[idx_data]", &P_protocol_ws_data->fields_data.ett_id[idx_data]);
-		//trace_value_ptr ("c   ett[idx_data]", P_protocol_ws_data->fields_data.ett[idx_data]);
-		M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.ett[idx_data] == &P_protocol_ws_data->fields_data.ett_id[idx_data]);
+        //trace_value_ptr ("c  &ett_id[idx_data]", &P_protocol_ws_data->fields_data.ett_id[idx_data]);
+        //trace_value_ptr ("c   ett[idx_data]", P_protocol_ws_data->fields_data.ett[idx_data]);
+        M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.ett[idx_data] == &P_protocol_ws_data->fields_data.ett_id[idx_data]);
 
-		trace_value_int ("c   hf_id[idx_data]", P_protocol_ws_data->fields_data.hf_id[idx_data]);
-		//trace_value_ptr ("c  &hf_id[idx_data]", &P_protocol_ws_data->fields_data.hf_id[idx_data]);
-		//trace_value_ptr ("c   hf[idx_data].p_id", P_protocol_ws_data->fields_data.hf[idx_data].p_id);
-		M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].p_id == &P_protocol_ws_data->fields_data.hf_id[idx_data]);
+        trace_value_int ("c   hf_id[idx_data]", P_protocol_ws_data->fields_data.hf_id[idx_data]);
+        //trace_value_ptr ("c  &hf_id[idx_data]", &P_protocol_ws_data->fields_data.hf_id[idx_data]);
+        //trace_value_ptr ("c   hf[idx_data].p_id", P_protocol_ws_data->fields_data.hf[idx_data].p_id);
+        M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].p_id == &P_protocol_ws_data->fields_data.hf_id[idx_data]);
 
-		trace_value_str ("c   hf[idx_data].hfinfo.name", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.name);
-		trace_value_str ("c   hf[idx_data].hfinfo.abbrev", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.abbrev);
-		trace_value_int ("c   hf[idx_data].hfinfo.type", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.type);
-		if (P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.type == 0)
-		{
-			M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.display == 0);
-		}
-		else
-			trace_value_int ("c   hf[idx_data].hfinfo.display", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.display);
-		trace_value_ptr ("c   hf[idx_data].hfinfo.strings", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.strings);
-		//trace_value_int ("c   hf[idx_data].hfinfo.bitmask", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitmask);
-		//trace_value_str ("c   hf[idx_data].hfinfo.blurb", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.blurb);
-		M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitmask == 0);
-		M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.blurb == P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.name);
+        trace_value_str ("c   hf[idx_data].hfinfo.name", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.name);
+        trace_value_str ("c   hf[idx_data].hfinfo.abbrev", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.abbrev);
+        trace_value_int ("c   hf[idx_data].hfinfo.type", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.type);
+        if (P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.type == 0)
+        {
+            M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.display == 0);
+        }
+        else
+            trace_value_int ("c   hf[idx_data].hfinfo.display", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.display);
+        trace_value_ptr ("c   hf[idx_data].hfinfo.strings", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.strings);
+        //trace_value_int ("c   hf[idx_data].hfinfo.bitmask", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitmask);
+        //trace_value_str ("c   hf[idx_data].hfinfo.blurb", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.blurb);
+        M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitmask == 0);
+        M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.blurb == P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.name);
 
-		trace_value_int ("c   hf[idx_data].hfinfo.id", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.id);
-		trace_value_int ("c   hf[idx_data].hfinfo.parent", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.parent);
-		trace_value_int ("c   hf[idx_data].hfinfo.ref_count", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.ref_count);
-		trace_value_int ("c   hf[idx_data].hfinfo.bitshift", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitshift);
-		trace_value_ptr ("c   hf[idx_data].hfinfo.same_name_next", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_next);
-		trace_value_ptr ("c   hf[idx_data].hfinfo.same_name_prev", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_prev);
-		//M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.id == 0);
-		//M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.parent == 0);
-		//M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.ref_count == 0);
-		//M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitshift == 0);
-		//M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_next == NULL);
-		//M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_prev == NULL);
+        trace_value_int ("c   hf[idx_data].hfinfo.id", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.id);
+        trace_value_int ("c   hf[idx_data].hfinfo.parent", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.parent);
+        trace_value_int ("c   hf[idx_data].hfinfo.ref_count", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.ref_count);
+        trace_value_int ("c   hf[idx_data].hfinfo.bitshift", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitshift);
+        trace_value_ptr ("c   hf[idx_data].hfinfo.same_name_next", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_next);
+        trace_value_ptr ("c   hf[idx_data].hfinfo.same_name_prev", P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_prev);
+        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.id == 0);
+        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.parent == 0);
+        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.ref_count == 0);
+        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitshift == 0);
+        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_next == NULL);
+        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_prev == NULL);
     }
 }
 #endif
@@ -231,23 +231,23 @@ T_generic_protocol_data::check_config_parameters_initialized() const
   ::check_initialized(PROTOABBREV);
 
   if (PARENTS.empty() &&
-	  PARENTS_HEURISTIC.empty())
+      PARENTS_HEURISTIC.empty())
   {
     M_FATAL_COMMENT("Must set PARENT_SUBFIELD & PARENT_SUBFIELD_VALUES");
   }
   for (vector<T_generic_protocol_data::T_parent>::const_iterator
-									parent_iter  = PARENTS.begin();
-									parent_iter != PARENTS.end();
-								  ++parent_iter)
+                                    parent_iter  = PARENTS.begin();
+                                    parent_iter != PARENTS.end();
+                                  ++parent_iter)
   {
-	  const T_generic_protocol_data::T_parent  & parent = * parent_iter;
-	  ::check_initialized(parent.PARENT_SUBFIELD);
-	  if (parent.PARENT_SUBFIELD_VALUES_int.empty() &&
-		  parent.PARENT_SUBFIELD_VALUES_str.empty() &&
-		  parent.PARENT_SUBFIELD_RANGES_int.empty())
-	  {
-		  M_FATAL_COMMENT("Must set PARENT_SUBFIELD_VALUES or PARENT_SUBFIELD_RANGE");
-	  }
+      const T_generic_protocol_data::T_parent  & parent = * parent_iter;
+      ::check_initialized(parent.PARENT_SUBFIELD);
+      if (parent.PARENT_SUBFIELD_VALUES_int.empty() &&
+          parent.PARENT_SUBFIELD_VALUES_str.empty() &&
+          parent.PARENT_SUBFIELD_RANGES_int.empty())
+      {
+          M_FATAL_COMMENT("Must set PARENT_SUBFIELD_VALUES or PARENT_SUBFIELD_RANGE");
+      }
   }
 
   ::check_initialized(MSG_HEADER_TYPE);
@@ -256,10 +256,10 @@ T_generic_protocol_data::check_config_parameters_initialized() const
 //  ::check_initialized(MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES);  optional
   if (MSG_MAIN_TYPE == "")
   {
-	  if ((MSG_FROM_MAIN_TYPE == "") || (MSG_TO_MAIN_TYPE == ""))
-	  {
-		  M_FATAL_COMMENT("Must set MSG_MAIN_TYPE or MSG_FROM_MAIN_TYPE and MSG_TO_MAIN_TYPE");
-	  }
+      if ((MSG_FROM_MAIN_TYPE == "") || (MSG_TO_MAIN_TYPE == ""))
+      {
+          M_FATAL_COMMENT("Must set MSG_MAIN_TYPE or MSG_FROM_MAIN_TYPE and MSG_TO_MAIN_TYPE");
+      }
   }
 }
 
@@ -274,14 +274,14 @@ int   S_proto_idx_dissect_in_progress = -1;
 static gint                                                                               \
 dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *)       \
 {                                                                                         \
-	M_TRACE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
+    M_TRACE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
                                                                                           \
-	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
-	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
+    const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
+    S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
                                                                                           \
-	const int   result = dissect_generic_proto(PROTO_IDX, tvb, pinfo, tree);              \
+    const int   result = dissect_generic_proto(PROTO_IDX, tvb, pinfo, tree);              \
                                                                                           \
-	S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
+    S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
                                                                                           \
     return  result;                                                                       \
 }
@@ -290,14 +290,14 @@ dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tr
 static gboolean                                                                           \
 heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *)     \
 {                                                                                         \
-	M_TRACE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
+    M_TRACE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
                                                                                           \
-	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
-	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
+    const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
+    S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
                                                                                           \
-	const int   result = heuristic_generic_proto(PROTO_IDX, tvb, pinfo, tree);            \
+    const int   result = heuristic_generic_proto(PROTO_IDX, tvb, pinfo, tree);            \
                                                                                           \
-	S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
+    S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
                                                                                           \
     return  result;                                                                       \
 }
@@ -306,14 +306,14 @@ heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *
 static gint                                                                               \
 dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)       \
 {                                                                                         \
-	M_TRACE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
+    M_TRACE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
                                                                                           \
-	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
-	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
+    const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
+    S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
                                                                                           \
-	const int   result = dissect_generic_proto(PROTO_IDX, tvb, pinfo, tree);              \
+    const int   result = dissect_generic_proto(PROTO_IDX, tvb, pinfo, tree);              \
                                                                                           \
-	S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
+    S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
                                                                                           \
     return  result;                                                                       \
 }
@@ -322,22 +322,22 @@ dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tr
 static gboolean                                                                           \
 heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)     \
 {                                                                                         \
-	M_TRACE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
+    M_TRACE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
                                                                                           \
-	const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
-	S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
+    const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
+    S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
                                                                                           \
-	const int   result = heuristic_generic_proto(PROTO_IDX, tvb, pinfo, tree);            \
+    const int   result = heuristic_generic_proto(PROTO_IDX, tvb, pinfo, tree);            \
                                                                                           \
-	S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
+    S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
                                                                                           \
     return  result;                                                                       \
 }
 #endif
 
 #define M_DEFINE_PROTO_FCT(PROTO_IDX)                                                     \
-		M_DEFINE_DISSECT_FCT(PROTO_IDX)                                                   \
-		M_DEFINE_HEURISTIC_FCT(PROTO_IDX)
+        M_DEFINE_DISSECT_FCT(PROTO_IDX)                                                   \
+        M_DEFINE_HEURISTIC_FCT(PROTO_IDX)
 
 
 M_DEFINE_PROTO_FCT(0)
@@ -383,37 +383,37 @@ T_generic_protocol_data  & new_protocol_data(const int   proto_idx)
   S_protocol_data[proto_idx].proto_idx = proto_idx;
 
 #define M_DEFINE_PROTO_FCT(PROTO_IDX)                                                         \
-	else if (proto_idx == PROTO_IDX)                                                          \
+    else if (proto_idx == PROTO_IDX)                                                          \
     {                                                                                         \
-		S_protocol_data[proto_idx].ws_data.P_dissect_fct   =   dissect_generic_ ## PROTO_IDX; \
-		S_protocol_data[proto_idx].ws_data.P_heuristic_fct = heuristic_generic_ ## PROTO_IDX; \
+        S_protocol_data[proto_idx].ws_data.P_dissect_fct   =   dissect_generic_ ## PROTO_IDX; \
+        S_protocol_data[proto_idx].ws_data.P_heuristic_fct = heuristic_generic_ ## PROTO_IDX; \
     }
 
-	if (FALSE)  ;
-	M_DEFINE_PROTO_FCT(0)
-	M_DEFINE_PROTO_FCT(1)
-	M_DEFINE_PROTO_FCT(2)
-	M_DEFINE_PROTO_FCT(3)
-	M_DEFINE_PROTO_FCT(4)
-	M_DEFINE_PROTO_FCT(5)
-	M_DEFINE_PROTO_FCT(6)
-	M_DEFINE_PROTO_FCT(7)
-	M_DEFINE_PROTO_FCT(8)
-	M_DEFINE_PROTO_FCT(9)
-	M_DEFINE_PROTO_FCT(10)
-	M_DEFINE_PROTO_FCT(11)
-	M_DEFINE_PROTO_FCT(12)
-	M_DEFINE_PROTO_FCT(13)
-	M_DEFINE_PROTO_FCT(14)
-	M_DEFINE_PROTO_FCT(15)
-	M_DEFINE_PROTO_FCT(16)
-	M_DEFINE_PROTO_FCT(17)
-	M_DEFINE_PROTO_FCT(18)
-	M_DEFINE_PROTO_FCT(19)
+    if (FALSE)  ;
+    M_DEFINE_PROTO_FCT(0)
+    M_DEFINE_PROTO_FCT(1)
+    M_DEFINE_PROTO_FCT(2)
+    M_DEFINE_PROTO_FCT(3)
+    M_DEFINE_PROTO_FCT(4)
+    M_DEFINE_PROTO_FCT(5)
+    M_DEFINE_PROTO_FCT(6)
+    M_DEFINE_PROTO_FCT(7)
+    M_DEFINE_PROTO_FCT(8)
+    M_DEFINE_PROTO_FCT(9)
+    M_DEFINE_PROTO_FCT(10)
+    M_DEFINE_PROTO_FCT(11)
+    M_DEFINE_PROTO_FCT(12)
+    M_DEFINE_PROTO_FCT(13)
+    M_DEFINE_PROTO_FCT(14)
+    M_DEFINE_PROTO_FCT(15)
+    M_DEFINE_PROTO_FCT(16)
+    M_DEFINE_PROTO_FCT(17)
+    M_DEFINE_PROTO_FCT(18)
+    M_DEFINE_PROTO_FCT(19)
 
 #undef M_DEFINE_PROTO_FCT
 
-	M_FATAL_IF_EQ(S_protocol_data[proto_idx].ws_data.P_dissect_fct, NULL);
+    M_FATAL_IF_EQ(S_protocol_data[proto_idx].ws_data.P_dissect_fct, NULL);
 
 
   return  S_protocol_data[proto_idx];
@@ -442,19 +442,19 @@ void    remove_protocol_data_if_exist(const int   proto_idx)
 
 T_generic_protocol_data  & get_protocol_data_from_proto_abbrev(const char  * proto_abbrev)
 {
-	for (vector<T_generic_protocol_data>::iterator  iter  = S_protocol_data.begin();
-													iter != S_protocol_data.end();
-												  ++iter)
-	{
-		if (proto_abbrev == iter->PROTOABBREV)
-		{
-			return  *iter;
-		}
-	}
+    for (vector<T_generic_protocol_data>::iterator  iter  = S_protocol_data.begin();
+                                                    iter != S_protocol_data.end();
+                                                  ++iter)
+    {
+        if (proto_abbrev == iter->PROTOABBREV)
+        {
+            return  *iter;
+        }
+    }
 
-	M_FATAL_COMMENT("Proto abbrev " << proto_abbrev << " NOT found.");
+    M_FATAL_COMMENT("Proto abbrev " << proto_abbrev << " NOT found.");
 
-	return  *(T_generic_protocol_data*)NULL;        // avoid compiler warning
+    return  *(T_generic_protocol_data*)NULL;        // avoid compiler warning
 }
 
 void    set_max_nb_of_protocol_data(const int   max_nb)
@@ -469,10 +469,10 @@ void    set_max_nb_of_protocol_data(const int   max_nb)
   {
     T_generic_protocol_data    protocol_data;
 
-	// Do NOT set proto_idx attribute.
-	// It permits to know if protocol_data has been initialized.
+    // Do NOT set proto_idx attribute.
+    // It permits to know if protocol_data has been initialized.
 
-	S_protocol_data.push_back(protocol_data);
+    S_protocol_data.push_back(protocol_data);
   }
 }
 
@@ -488,7 +488,7 @@ void    add_initial_types (T_generic_protocol_data  & protocol_data)
   {
     istrstream           iss("enum8     bool8   { false 0  true 1 }");
 
-	const string    result = build_types (iss, protocol_data.type_definitions);
+    const string    result = build_types (iss, protocol_data.type_definitions);
     M_FATAL_IF_NE(result, "");
   }
 
@@ -496,21 +496,21 @@ void    add_initial_types (T_generic_protocol_data  & protocol_data)
   {
     istrstream           iss("enum16    bool16  as  bool8 ;");
 
-	const string    result = build_types (iss, protocol_data.type_definitions);
+    const string    result = build_types (iss, protocol_data.type_definitions);
     M_FATAL_IF_NE(result, "");
   }
 //  if (protocol_data.type_definitions.is_a_type_name("bool32") == false)
   {
     istrstream           iss("enum32    bool32  as  bool8 ;");
 
-	const string    result = build_types (iss, protocol_data.type_definitions);
+    const string    result = build_types (iss, protocol_data.type_definitions);
     M_FATAL_IF_NE(result, "");
   }
 //  if (protocol_data.type_definitions.is_a_type_name("bool1") == false)
   {
     istrstream           iss("enum1    bool1  as  bool8 ;");
 
-	const string    result = build_types (iss, protocol_data.type_definitions);
+    const string    result = build_types (iss, protocol_data.type_definitions);
     M_FATAL_IF_NE(result, "");
   }
 }
@@ -520,7 +520,7 @@ void    add_initial_types (T_generic_protocol_data  & protocol_data)
 //*****************************************************************************
 
 void    read_file_wsgd (const string                       & wsgd_file_name,
-						      T_generic_protocol_data  & protocol_data)
+                              T_generic_protocol_data  & protocol_data)
 {
   M_TRACE_ENTER ("read_file_wsgd", wsgd_file_name);
   ifstream              ifs (wsgd_file_name.c_str());
@@ -538,56 +538,56 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   }
 
 #define M_READ_VALUE(NAME)                                   \
-	M_READ_NAME_VALUE(NAME,protocol_data.NAME)
+    M_READ_NAME_VALUE(NAME,protocol_data.NAME)
 
 // bool
 #define M_READ_NAME_BOOL(NAME,VARIABLE)                      \
   else if (keyword == #NAME)  {                              \
-	string    word;                                          \
+    string    word;                                          \
     ifs >> word;                                             \
-	if ((word == "false") || (word == "no")) {               \
+    if ((word == "false") || (word == "no")) {               \
       VARIABLE = false;                                      \
-	}                                                        \
+    }                                                        \
     else if ((word == "true") || (word == "yes")) {          \
       VARIABLE = true;                                       \
-	}                                                        \
+    }                                                        \
     else {                                                   \
-	  M_FATAL_COMMENT("Bad value for " #NAME);               \
-	}                                                        \
+      M_FATAL_COMMENT("Bad value for " #NAME);               \
+    }                                                        \
     M_TRACE_DEBUG (#NAME << " = " << VARIABLE);              \
   }
 
 // bool
 #define M_READ_BOOL(NAME)                                    \
-	M_READ_NAME_BOOL(NAME,protocol_data.NAME)
+    M_READ_NAME_BOOL(NAME,protocol_data.NAME)
 
 // vector<int>
 #define M_READ_VALUES(NAME)                                 \
   else if (keyword == #NAME)  {                             \
-	string    line;                                         \
+    string    line;                                         \
     getline (ifs, line);                                    \
-	istrstream  is_line(line.c_str());                      \
+    istrstream  is_line(line.c_str());                      \
     while (is_istream_empty(is_line) != true)               \
     {                                                       \
-	  int    val;                                           \
+      int    val;                                           \
       is_line >> val;                                       \
-	  protocol_data.NAME.push_back(val);                    \
-	}                                                       \
+      protocol_data.NAME.push_back(val);                    \
+    }                                                       \
   }
 
 // vector<string>
 #define M_READ_STRINGS(NAME,VARIABLE)                       \
   else if (keyword == #NAME)  {                             \
     ifs >> ws;                                              \
-	string    line;                                         \
+    string    line;                                         \
     getline (ifs, line);                                    \
-	istrstream  is_line(line.c_str());                      \
+    istrstream  is_line(line.c_str());                      \
     while (is_istream_empty(is_line) != true)               \
     {                                                       \
-	  string    val;                                        \
+      string    val;                                        \
       is_line >> val;                                       \
-	  protocol_data.VARIABLE.push_back(val);                \
-	}                                                       \
+      protocol_data.VARIABLE.push_back(val);                \
+    }                                                       \
   }
 
 // string
@@ -609,136 +609,136 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   while (is_istream_empty(ifs) != true)
   {
     string    keyword;
-	ifs >> keyword;
+    ifs >> keyword;
 
-	if (keyword == "DEBUG")
-	{
-		protocol_data.DEBUG = E_debug_status_ON;
+    if (keyword == "DEBUG")
+    {
+        protocol_data.DEBUG = E_debug_status_ON;
 //		set_debug(protocol_data.DEBUG);
-		continue;
-	}
-	else if (keyword == "DEBUG_NO_TIME")
-	{
-		protocol_data.DEBUG = E_debug_status_ON_NO_TIME;
-		continue;
-	}
-	else if (keyword == "PROTO_TYPE_DEFINITIONS")
-	{
-	  break;
-	}
-	M_READ_LINE(PROTONAME)
-	M_READ_VALUE(PROTOSHORTNAME)
-	M_READ_VALUE(PROTOABBREV)
+        continue;
+    }
+    else if (keyword == "DEBUG_NO_TIME")
+    {
+        protocol_data.DEBUG = E_debug_status_ON_NO_TIME;
+        continue;
+    }
+    else if (keyword == "PROTO_TYPE_DEFINITIONS")
+    {
+      break;
+    }
+    M_READ_LINE(PROTONAME)
+    M_READ_VALUE(PROTOSHORTNAME)
+    M_READ_VALUE(PROTOABBREV)
 
     else if (keyword == "PARENT_SUBFIELD")
-	{
-		protocol_data.PARENTS.push_back(T_generic_protocol_data::T_parent());
-		ifs >> protocol_data.PARENTS.back().PARENT_SUBFIELD;
-	    M_TRACE_DEBUG ("PARENT_SUBFIELD = " << protocol_data.PARENTS.back().PARENT_SUBFIELD);
-	}
-	M_READ_STRINGS(PARENT_SUBFIELD_VALUES,PARENTS.back().PARENT_SUBFIELD_VALUES_str)
+    {
+        protocol_data.PARENTS.push_back(T_generic_protocol_data::T_parent());
+        ifs >> protocol_data.PARENTS.back().PARENT_SUBFIELD;
+        M_TRACE_DEBUG ("PARENT_SUBFIELD = " << protocol_data.PARENTS.back().PARENT_SUBFIELD);
+    }
+    M_READ_STRINGS(PARENT_SUBFIELD_VALUES,PARENTS.back().PARENT_SUBFIELD_VALUES_str)
     else if (keyword == "PARENT_SUBFIELD_RANGE")
-	{
-		pair<int,int>    low_high;
-		ifs >> low_high.first;
-		ifs >> low_high.second;
-		protocol_data.PARENTS.back().PARENT_SUBFIELD_RANGES_int.push_back(low_high);
-	}
-	else if (keyword == "PARENT_HEURISTIC")
-	{
-		string   parent_name;
-		ifs >> parent_name;
-		protocol_data.PARENTS_HEURISTIC.push_back(parent_name);
-	}
-	M_READ_VALUE(HEURISTIC_FUNCTION)
-	else if (keyword == "ADD_FOR_DECODE_AS_TABLE")
-	{
-		string   table_name;
-		ifs >> table_name;
-		protocol_data.ADD_FOR_DECODE_AS_TABLES.push_back(table_name);
-	}
+    {
+        pair<int,int>    low_high;
+        ifs >> low_high.first;
+        ifs >> low_high.second;
+        protocol_data.PARENTS.back().PARENT_SUBFIELD_RANGES_int.push_back(low_high);
+    }
+    else if (keyword == "PARENT_HEURISTIC")
+    {
+        string   parent_name;
+        ifs >> parent_name;
+        protocol_data.PARENTS_HEURISTIC.push_back(parent_name);
+    }
+    M_READ_VALUE(HEURISTIC_FUNCTION)
+    else if (keyword == "ADD_FOR_DECODE_AS_TABLE")
+    {
+        string   table_name;
+        ifs >> table_name;
+        protocol_data.ADD_FOR_DECODE_AS_TABLES.push_back(table_name);
+    }
 
     else if (keyword == "SUBFIELD")
-	{
-	    check_not_already_initialized(protocol_data.SUBPROTO_SUBFIELD);
-	    ifs >> ws;
-		string    line;
-	    getline (ifs, line);
-	    {
+    {
+        check_not_already_initialized(protocol_data.SUBPROTO_SUBFIELD);
+        ifs >> ws;
+        string    line;
+        getline (ifs, line);
+        {
           istrstream  is_line(line.c_str());
-	      is_line >> protocol_data.SUBPROTO_SUBFIELD;
-	      is_line >> protocol_data.SUBPROTO_SUBFIELD_TYPE;
-		  if (protocol_data.SUBPROTO_SUBFIELD == "")
-		  {
-			  M_FATAL_COMMENT("Missing name on SUBFIELD line = " << line);
-		  }
-		  if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "")
-		  {
-			  M_FATAL_COMMENT("Missing type on SUBFIELD line = " << line);
-		  }
-		  if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint8")
-			  protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT8;
-		  else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint16")
-			  protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT16;
-		  else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint24")
-			  protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT24;
-		  else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint32")
-			  protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT32;
-		  else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "string")
-			  protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_STRING;
-		  else
-		  {
-			  M_FATAL_COMMENT("Bad type on SUBFIELD line = " << line);
-		  }
-		  if (is_istream_empty(is_line) != true)
-		  {
-			  string    key_word_from;
-			  is_line >> key_word_from;
-			  if (key_word_from != "from")
-			  {
-				  M_FATAL_COMMENT("Expecting key word from on SUBFIELD line = " << line);
-			  }
+          is_line >> protocol_data.SUBPROTO_SUBFIELD;
+          is_line >> protocol_data.SUBPROTO_SUBFIELD_TYPE;
+          if (protocol_data.SUBPROTO_SUBFIELD == "")
+          {
+              M_FATAL_COMMENT("Missing name on SUBFIELD line = " << line);
+          }
+          if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "")
+          {
+              M_FATAL_COMMENT("Missing type on SUBFIELD line = " << line);
+          }
+          if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint8")
+              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT8;
+          else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint16")
+              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT16;
+          else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint24")
+              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT24;
+          else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint32")
+              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT32;
+          else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "string")
+              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_STRING;
+          else
+          {
+              M_FATAL_COMMENT("Bad type on SUBFIELD line = " << line);
+          }
+          if (is_istream_empty(is_line) != true)
+          {
+              string    key_word_from;
+              is_line >> key_word_from;
+              if (key_word_from != "from")
+              {
+                  M_FATAL_COMMENT("Expecting key word from on SUBFIELD line = " << line);
+              }
 
-			  is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1;
-			  is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_2;
-			  is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_3;
-			  if (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 == "")
-			  {
-				  M_FATAL_COMMENT("Expecting at least one field after from on SUBFIELD line = " << line);
-			  }
-			  if (is_istream_empty(is_line) != true)
-			  {
-				  M_FATAL_COMMENT("Too much data on SUBFIELD line = " << line);
-			  }
-		  }
-		  if (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 == "")
-			  protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 = protocol_data.SUBPROTO_SUBFIELD;
-		}
-	}
-	
-	M_READ_VALUE(MSG_HEADER_TYPE)
-	M_READ_VALUE(MSG_ID_FIELD_NAME)
-	M_READ_VALUE(MSG_TITLE)
+              is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1;
+              is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_2;
+              is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_3;
+              if (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 == "")
+              {
+                  M_FATAL_COMMENT("Expecting at least one field after from on SUBFIELD line = " << line);
+              }
+              if (is_istream_empty(is_line) != true)
+              {
+                  M_FATAL_COMMENT("Too much data on SUBFIELD line = " << line);
+              }
+          }
+          if (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 == "")
+              protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 = protocol_data.SUBPROTO_SUBFIELD;
+        }
+    }
+    
+    M_READ_VALUE(MSG_HEADER_TYPE)
+    M_READ_VALUE(MSG_ID_FIELD_NAME)
+    M_READ_VALUE(MSG_TITLE)
     else if (keyword == "PACKET_ID_FIELD_TYPE")
-	{
-		M_TRACE_ERROR("PACKET_ID_FIELD_TYPE is no more used -> remove it");
-		string  do_not_care;
-	    ifs >> do_not_care;
-	}
-	M_READ_STRINGS(MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES,MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES)
-	M_READ_VALUE(MSG_MAIN_TYPE)
-	M_READ_VALUE(MSG_FROM_MAIN_TYPE)
-	M_READ_VALUE(MSG_TO_MAIN_TYPE)
-	M_READ_LINE(MSG_TOTAL_LENGTH)
-	M_READ_VALUE(MSG_HEADER_LENGTH)
-	M_READ_VALUE(GLOBAL_DATA_TYPE)
-	M_READ_BOOL(PACKET_CONTAINS_ONLY_1_MSG)
-	M_READ_BOOL(PACKET_CONTAINS_ONLY_COMPLETE_MSG)
-	M_READ_BOOL(MANAGE_WIRESHARK_PINFO)
-	else
-	{
-		M_FATAL_COMMENT("unexpected keyword=" << keyword);
-	}
+    {
+        M_TRACE_ERROR("PACKET_ID_FIELD_TYPE is no more used -> remove it");
+        string  do_not_care;
+        ifs >> do_not_care;
+    }
+    M_READ_STRINGS(MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES,MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES)
+    M_READ_VALUE(MSG_MAIN_TYPE)
+    M_READ_VALUE(MSG_FROM_MAIN_TYPE)
+    M_READ_VALUE(MSG_TO_MAIN_TYPE)
+    M_READ_LINE(MSG_TOTAL_LENGTH)
+    M_READ_VALUE(MSG_HEADER_LENGTH)
+    M_READ_VALUE(GLOBAL_DATA_TYPE)
+    M_READ_BOOL(PACKET_CONTAINS_ONLY_1_MSG)
+    M_READ_BOOL(PACKET_CONTAINS_ONLY_COMPLETE_MSG)
+    M_READ_BOOL(MANAGE_WIRESHARK_PINFO)
+    else
+    {
+        M_FATAL_COMMENT("unexpected keyword=" << keyword);
+    }
   }
 
   // Read the type definitions of the protocol.
@@ -749,52 +749,52 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 //  add_initial_types (protocol_data);
   string    wsgd_file_name_short = wsgd_file_name;
   {
-	const string::size_type  idx_last_dir = wsgd_file_name_short.find_last_of("/\\");
-	if (idx_last_dir != string::npos)
-	{
-		wsgd_file_name_short.erase(0, idx_last_dir+1);
-	}
+    const string::size_type  idx_last_dir = wsgd_file_name_short.find_last_of("/\\");
+    if (idx_last_dir != string::npos)
+    {
+        wsgd_file_name_short.erase(0, idx_last_dir+1);
+    }
   }
   build_types_context_include_file_open (wsgd_file_name_short);
 
   {
-	  protocol_data.type_definitions.map_const_value["shark::progfile_dir"]     = get_progfile_dir();
+      protocol_data.type_definitions.map_const_value["shark::progfile_dir"]     = get_progfile_dir();
 #if WIRESHARK_VERSION_NUMBER < 20600
-	  protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugin_dir();
+      protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugin_dir();
 #else
-	  protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugins_dir_with_version();
+      protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugins_dir_with_version();
 #endif
-	  protocol_data.type_definitions.map_const_value["shark::datafile_dir"]     = get_datafile_dir();
-	  protocol_data.type_definitions.map_const_value["shark::systemfile_dir"]   = get_systemfile_dir();
-	  protocol_data.type_definitions.map_const_value["shark::profiles_dir"]     = get_profiles_dir();
-	  protocol_data.type_definitions.map_const_value["shark::persdatafile_dir"] = get_persdatafile_dir();
+      protocol_data.type_definitions.map_const_value["shark::datafile_dir"]     = get_datafile_dir();
+      protocol_data.type_definitions.map_const_value["shark::systemfile_dir"]   = get_systemfile_dir();
+      protocol_data.type_definitions.map_const_value["shark::profiles_dir"]     = get_profiles_dir();
+      protocol_data.type_definitions.map_const_value["shark::persdatafile_dir"] = get_persdatafile_dir();
   }
 
   while (is_istream_empty(ifs) != true)
   {
-	const string    result = build_types (ifs,
-										  protocol_data.type_definitions);
+    const string    result = build_types (ifs,
+                                          protocol_data.type_definitions);
 
-	if (result == "DEBUG")
-	{
-		debug_type_definitions.set(E_debug_status_ON);
-		continue;
-	}
-	else if (result == "DEBUG_NO_TIME")
-	{
-		debug_type_definitions.set(E_debug_status_ON_NO_TIME);
-		continue;
-	}
-	else if (result == "NETPDL")
-	{
+    if (result == "DEBUG")
+    {
+        debug_type_definitions.set(E_debug_status_ON);
+        continue;
+    }
+    else if (result == "DEBUG_NO_TIME")
+    {
+        debug_type_definitions.set(E_debug_status_ON_NO_TIME);
+        continue;
+    }
+    else if (result == "NETPDL")
+    {
         string  file_name;
-	    ifs >> file_name;
-		build_netpdl_types (file_name, protocol_data.type_definitions);
-		must_ouput_types = true;
-		continue;
-	}
+        ifs >> file_name;
+        build_netpdl_types (file_name, protocol_data.type_definitions);
+        must_ouput_types = true;
+        continue;
+    }
 
-	M_FATAL_IF_NE(result, "");
+    M_FATAL_IF_NE(result, "");
   }
 
   build_types_context_include_file_close(wsgd_file_name_short);
@@ -804,55 +804,55 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 
   // Check/update PARENTS
   for (vector<T_generic_protocol_data::T_parent>::iterator
-									parent_iter  = protocol_data.PARENTS.begin();
-									parent_iter != protocol_data.PARENTS.end();
-								  ++parent_iter)
+                                    parent_iter  = protocol_data.PARENTS.begin();
+                                    parent_iter != protocol_data.PARENTS.end();
+                                  ++parent_iter)
   {
-	  T_generic_protocol_data::T_parent  & parent = * parent_iter;
+      T_generic_protocol_data::T_parent  & parent = * parent_iter;
 
-	  // Transform strings to integer values (if they are integers).
-	  for (vector<string>::iterator   iter  = parent.PARENT_SUBFIELD_VALUES_str.begin();
-									  iter != parent.PARENT_SUBFIELD_VALUES_str.end();
-									++iter)
-	  {
-		  long    subfield_val_int = 0;
-		  if (get_number(iter->c_str(), &subfield_val_int))
-		  {
-			  parent.PARENT_SUBFIELD_VALUES_int.push_back(subfield_val_int);
-		  }
-		  else
-		  {
-			  remove_string_limits(*iter);
-		  }
-	  }
+      // Transform strings to integer values (if they are integers).
+      for (vector<string>::iterator   iter  = parent.PARENT_SUBFIELD_VALUES_str.begin();
+                                      iter != parent.PARENT_SUBFIELD_VALUES_str.end();
+                                    ++iter)
+      {
+          long    subfield_val_int = 0;
+          if (get_number(iter->c_str(), &subfield_val_int))
+          {
+              parent.PARENT_SUBFIELD_VALUES_int.push_back(subfield_val_int);
+          }
+          else
+          {
+              remove_string_limits(*iter);
+          }
+      }
 
-	  if (parent.PARENT_SUBFIELD_VALUES_int.size() == parent.PARENT_SUBFIELD_VALUES_str.size())
-	  {
-		  // They are all integers.
-		  parent.PARENT_SUBFIELD_VALUES_str.clear();
-	  }
-	  else if (parent.PARENT_SUBFIELD_VALUES_int.empty())
-	  {
-		  // None are integers : nothing to do.
-	  }
-	  else
-	  {
-		  // Mixed integers and strings : NOT accepted.
-		  M_FATAL_COMMENT("PARENT_SUBFIELD_VALUES must be integers or strings, NOT both. NB: if you want a string like 12, use \"12\".");
+      if (parent.PARENT_SUBFIELD_VALUES_int.size() == parent.PARENT_SUBFIELD_VALUES_str.size())
+      {
+          // They are all integers.
+          parent.PARENT_SUBFIELD_VALUES_str.clear();
+      }
+      else if (parent.PARENT_SUBFIELD_VALUES_int.empty())
+      {
+          // None are integers : nothing to do.
+      }
+      else
+      {
+          // Mixed integers and strings : NOT accepted.
+          M_FATAL_COMMENT("PARENT_SUBFIELD_VALUES must be integers or strings, NOT both. NB: if you want a string like 12, use \"12\".");
 
-	  }
+      }
   }
 
   // Check HEURISTIC_FUNCTION
   {
-	  remove_string_limits(protocol_data.HEURISTIC_FUNCTION);
-	  if (protocol_data.HEURISTIC_FUNCTION != "")
-	  {
-		  if (protocol_data.type_definitions.is_a_function(protocol_data.HEURISTIC_FUNCTION) == false)
-		  {
-			  M_FATAL_COMMENT("HEURISTIC_FUNCTION (" << protocol_data.HEURISTIC_FUNCTION << ") is NOT a defined function name");
-		  }
-	  }
+      remove_string_limits(protocol_data.HEURISTIC_FUNCTION);
+      if (protocol_data.HEURISTIC_FUNCTION != "")
+      {
+          if (protocol_data.type_definitions.is_a_function(protocol_data.HEURISTIC_FUNCTION) == false)
+          {
+              M_FATAL_COMMENT("HEURISTIC_FUNCTION (" << protocol_data.HEURISTIC_FUNCTION << ") is NOT a defined function name");
+          }
+      }
   }
 
 
@@ -860,16 +860,16 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   // Check MSG_HEADER_TYPE.
   if (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_HEADER_TYPE) == false)
   {
-	  M_FATAL_COMMENT("MSG_HEADER_TYPE (" << protocol_data.MSG_HEADER_TYPE << ") is NOT a defined type name");
+      M_FATAL_COMMENT("MSG_HEADER_TYPE (" << protocol_data.MSG_HEADER_TYPE << ") is NOT a defined type name");
   }
 
   // Check GLOBAL_DATA_TYPE.
   if (protocol_data.GLOBAL_DATA_TYPE != "")
   {
-	  if (protocol_data.type_definitions.is_a_struct(protocol_data.GLOBAL_DATA_TYPE) == false)
-	  {
-		  M_FATAL_COMMENT("GLOBAL_DATA_TYPE (" << protocol_data.GLOBAL_DATA_TYPE << ") is NOT a defined struct type name");
-	  }
+      if (protocol_data.type_definitions.is_a_struct(protocol_data.GLOBAL_DATA_TYPE) == false)
+      {
+          M_FATAL_COMMENT("GLOBAL_DATA_TYPE (" << protocol_data.GLOBAL_DATA_TYPE << ") is NOT a defined struct type name");
+      }
   }
 
   string    switch_orig_type;
@@ -877,26 +877,26 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 
   // Check MSG_MAIN_TYPE.
   if ((protocol_data.MSG_MAIN_TYPE != "") &&
-	  (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_MAIN_TYPE) == false) &&
-	  (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+      (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_MAIN_TYPE) == false) &&
+      (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
   {
-	  M_FATAL_COMMENT("MSG_MAIN_TYPE (" << protocol_data.MSG_MAIN_TYPE << ") is NOT a defined type name");
+      M_FATAL_COMMENT("MSG_MAIN_TYPE (" << protocol_data.MSG_MAIN_TYPE << ") is NOT a defined type name");
   }
 
   // Check MSG_FROM_MAIN_TYPE.
   if ((protocol_data.MSG_FROM_MAIN_TYPE != "") &&
-	  (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_FROM_MAIN_TYPE) == false) &&
-	  (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_FROM_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+      (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_FROM_MAIN_TYPE) == false) &&
+      (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_FROM_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
   {
-	  M_FATAL_COMMENT("MSG_FROM_MAIN_TYPE (" << protocol_data.MSG_FROM_MAIN_TYPE << ") is NOT a defined type name");
+      M_FATAL_COMMENT("MSG_FROM_MAIN_TYPE (" << protocol_data.MSG_FROM_MAIN_TYPE << ") is NOT a defined type name");
   }
 
   // Check MSG_TO_MAIN_TYPE.
   if ((protocol_data.MSG_TO_MAIN_TYPE != "") &&
-	  (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_TO_MAIN_TYPE) == false) &&
-	  (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_TO_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+      (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_TO_MAIN_TYPE) == false) &&
+      (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_TO_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
   {
-	  M_FATAL_COMMENT("MSG_TO_MAIN_TYPE (" << protocol_data.MSG_TO_MAIN_TYPE << ") is NOT a defined type name");
+      M_FATAL_COMMENT("MSG_TO_MAIN_TYPE (" << protocol_data.MSG_TO_MAIN_TYPE << ") is NOT a defined type name");
   }
 
   if (must_ouput_types && get_debug())
@@ -911,22 +911,22 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
 #if 0
 const T_interpret_read_values  * get_P_interpret_read_values_of_msg(int   msg_id)
 {
-	// Retrieve the current protocol.
-	M_FATAL_IF_LT(S_proto_idx_dissect_in_progress, 0);
-	M_FATAL_IF_GE(S_proto_idx_dissect_in_progress, S_protocol_data.size());
+    // Retrieve the current protocol.
+    M_FATAL_IF_LT(S_proto_idx_dissect_in_progress, 0);
+    M_FATAL_IF_GE(S_proto_idx_dissect_in_progress, S_protocol_data.size());
 
-	T_generic_protocol_data  & protocol_data = S_protocol_data[S_proto_idx_dissect_in_progress];
+    T_generic_protocol_data  & protocol_data = S_protocol_data[S_proto_idx_dissect_in_progress];
 
-	// Retrieve the specified message.
-	T_generic_protocol_global_data  & global_data = protocol_data.ws_data.global_data;
-	M_FATAL_IF_LT(msg_id, 0);
-	M_FATAL_IF_GE(msg_id, global_data.saved_interpreted_datas.size());
+    // Retrieve the specified message.
+    T_generic_protocol_global_data  & global_data = protocol_data.ws_data.global_data;
+    M_FATAL_IF_LT(msg_id, 0);
+    M_FATAL_IF_GE(msg_id, global_data.saved_interpreted_datas.size());
 
-	if (msg_id == global_data.saved_interpreted_datas.size())
-	{
-		// ICIOA c'est le message courant
-	}
+    if (msg_id == global_data.saved_interpreted_datas.size())
+    {
+        // ICIOA c'est le message courant
+    }
 
-	return  global_data.saved_interpreted_datas[msg_id].RCP_interpret_data;
+    return  global_data.saved_interpreted_datas[msg_id].RCP_interpret_data;
 }
 #endif

@@ -37,32 +37,32 @@ using namespace std;
 
 ostream &  operator<< (ostream  & os, const C_value::E_type  type)
 {
-	if (type == C_value::E_type_integer)
-	{
-		os << "integer";
-	}
-	else if (type == C_value::E_type_float)
-	{
-		os << "float";
-	}
-	else if (type == C_value::E_type_string)
-	{
-		os << "string";
-	}
-	else if (type == C_value::E_type_msg)
-	{
-		os << "msg";
-	}
-	else if (type == C_value::E_type_struct)
-	{
-		os << "struct";
-	}
-	else
-	{
-		os << "unknow_type=" << static_cast<int>(type);
-	}
+    if (type == C_value::E_type_integer)
+    {
+        os << "integer";
+    }
+    else if (type == C_value::E_type_float)
+    {
+        os << "float";
+    }
+    else if (type == C_value::E_type_string)
+    {
+        os << "string";
+    }
+    else if (type == C_value::E_type_msg)
+    {
+        os << "msg";
+    }
+    else if (type == C_value::E_type_struct)
+    {
+        os << "struct";
+    }
+    else
+    {
+        os << "unknow_type=" << static_cast<int>(type);
+    }
 
-	return  os;
+    return  os;
 }
 
 //*****************************************************************************
@@ -71,16 +71,16 @@ ostream &  operator<< (ostream  & os, const C_value::E_type  type)
 
 ostream &  operator<< (ostream  & os, const C_value        & rhs)
 {
-	os << "type=" << rhs.A_type << "  ";
+    os << "type=" << rhs.A_type << "  ";
     os << "int=" << rhs.A_integer << "  ";
     os << "flt=" << rhs.A_flt << "  ";
     os << "str=" << rhs.A_str << "  ";
-	os << "bit_position_offset=" << rhs.A_bit_position_offset << "  ";
-	os << "bit_position_size=" << rhs.A_bit_position_size << "  ";
+    os << "bit_position_offset=" << rhs.A_bit_position_offset << "  ";
+    os << "bit_position_size=" << rhs.A_bit_position_size << "  ";
 //	os << "external_type__cvtbd=" << rhs.A_external_type__cvtbd << "  ";
-	os << "external_type_bit_size__cvtbd=" << rhs.A_external_type_bit_size__cvtbd << "  ";
+    os << "external_type_bit_size__cvtbd=" << rhs.A_external_type_bit_size__cvtbd << "  ";
 
-	return  os;
+    return  os;
 }
 
 //*****************************************************************************
@@ -89,60 +89,60 @@ ostream &  operator<< (ostream  & os, const C_value        & rhs)
 
 C_value::C_value ()
     :A_type (E_type_string),
-	 A_external_type_bit_size__cvtbd(0),
+     A_external_type_bit_size__cvtbd(0),
      A_integer (0),
      A_flt (0.0),
      A_str (""),                 // means NOT intialized for quantum, offset, constraints
-	 A_bit_position_offset(-1),
-	 A_bit_position_size(-1)
+     A_bit_position_offset(-1),
+     A_bit_position_size(-1)
 {
 }
 
 C_value::C_value (const E_type               type)
     :A_type (type),
-	 A_external_type_bit_size__cvtbd(0),
+     A_external_type_bit_size__cvtbd(0),
      A_integer (0),
      A_flt (0.0),
      A_str (""),                 // means NOT intialized for quantum, offset, constraints
-	 A_bit_position_offset(-1),
-	 A_bit_position_size(-1)
+     A_bit_position_offset(-1),
+     A_bit_position_size(-1)
 {
-	if (A_type == E_type_msg)
-	{
-		A_str = "nil";
-	}
+    if (A_type == E_type_msg)
+    {
+        A_str = "nil";
+    }
 }
 
 C_value::C_value (const E_type               type,
-						T_msg                msg)
+                        T_msg                msg)
     :A_type (type),
-	 A_external_type_bit_size__cvtbd(0),
+     A_external_type_bit_size__cvtbd(0),
      A_integer ((long long)msg),
      A_flt ((double)(long long)msg),
      A_str (get_string(msg)),
-	 A_bit_position_offset(-1),
-	 A_bit_position_size(-1)
+     A_bit_position_offset(-1),
+     A_bit_position_size(-1)
 {
-	if (A_type != E_type_msg)
-	{
-		M_FATAL_COMMENT("Value type must be msg and not " << type);
-	}
-	if (A_integer == 0)
-	{
-		A_str = "nil";
-	}
+    if (A_type != E_type_msg)
+    {
+        M_FATAL_COMMENT("Value type must be msg and not " << type);
+    }
+    if (A_integer == 0)
+    {
+        A_str = "nil";
+    }
 }
 
 
 #define CTOR_INT_LL(TYPE)                                                     \
 C_value::C_value (TYPE    integer)                                            \
     :A_type (E_type_integer),                                                 \
-	 A_external_type_bit_size__cvtbd(0),                                      \
+     A_external_type_bit_size__cvtbd(0),                                      \
      A_integer (integer),                                                     \
      A_flt ((double)integer),                                                 \
      A_str (get_string ((long long)integer)),                                 \
-	 A_bit_position_offset(-1),                                               \
-	 A_bit_position_size(-1)                                                  \
+     A_bit_position_offset(-1),                                               \
+     A_bit_position_size(-1)                                                  \
 {                                                                             \
 }
 
@@ -168,37 +168,37 @@ CTOR_INT_LL(unsigned long long)
 
 C_value::C_value (float        flt)
     :A_type (E_type_float),
-	 A_external_type_bit_size__cvtbd(0),
+     A_external_type_bit_size__cvtbd(0),
      A_integer ((long long)flt),
      A_flt (flt),
      A_str (get_string (flt)),        // pb precision
-	 A_bit_position_offset(-1),
-	 A_bit_position_size(-1)
+     A_bit_position_offset(-1),
+     A_bit_position_size(-1)
 {
 }
 
 C_value::C_value (double       flt)
     :A_type (E_type_float),
-	 A_external_type_bit_size__cvtbd(0),
+     A_external_type_bit_size__cvtbd(0),
      A_integer ((long long)flt),
      A_flt (flt),
      A_str (get_string (flt)),        // pb precision
-	 A_bit_position_offset(-1),
-	 A_bit_position_size(-1)
+     A_bit_position_offset(-1),
+     A_bit_position_size(-1)
 {
 }
 
 C_value::C_value (const string    & str)
     :A_type (E_type_string),
-	 A_external_type_bit_size__cvtbd(0),
+     A_external_type_bit_size__cvtbd(0),
      A_integer (0),
      A_flt (0.0),
      A_str (str),
-	 A_bit_position_offset(-1),
-	 A_bit_position_size(-1)
+     A_bit_position_offset(-1),
+     A_bit_position_size(-1)
 {
-	// No automatic transformation to integer or float.
-	// This must be done explicitely by user.
+    // No automatic transformation to integer or float.
+    // This must be done explicitely by user.
 }
 
 // NB: this constructor is necessary,
@@ -207,12 +207,12 @@ C_value::C_value (const string    & str)
 // It seems that an integer constructor is called instead !!!
 C_value::C_value (const char      * str)
     :A_type (E_type_string),
-	 A_external_type_bit_size__cvtbd(0),
+     A_external_type_bit_size__cvtbd(0),
      A_integer (0),
      A_flt (0.0),
      A_str (str),
-	 A_bit_position_offset(-1),
-	 A_bit_position_size(-1)
+     A_bit_position_offset(-1),
+     A_bit_position_size(-1)
 {
 }
 
@@ -222,28 +222,28 @@ C_value::C_value (const char      * str)
 C_value &
 C_value::operator=(const C_value  & rhs)
 {
-	A_type                 = rhs.A_type;
-	A_integer              = rhs.A_integer;
-	A_flt                  = rhs.A_flt;
-	A_str                  = rhs.A_str;
+    A_type                 = rhs.A_type;
+    A_integer              = rhs.A_integer;
+    A_flt                  = rhs.A_flt;
+    A_str                  = rhs.A_str;
 
-	A_bit_position_offset  = rhs.A_bit_position_offset;
-	A_bit_position_size    = rhs.A_bit_position_size;
+    A_bit_position_offset  = rhs.A_bit_position_offset;
+    A_bit_position_size    = rhs.A_bit_position_size;
 
-	// Special behavior
-	// ICIOA a revoir
-	// si la valeur de this est definie :
-	// - ne pas la modifier
-	// - verifier que la valeur assignee est compatible
-	// si la valeur de this n'est pas definie :
-	// - ne pas la modifier ? 
-	// voir M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS
-	if (A_external_type_bit_size__cvtbd == 0)
-	{
-		A_external_type_bit_size__cvtbd = rhs.A_external_type_bit_size__cvtbd;
-	}
+    // Special behavior
+    // ICIOA a revoir
+    // si la valeur de this est definie :
+    // - ne pas la modifier
+    // - verifier que la valeur assignee est compatible
+    // si la valeur de this n'est pas definie :
+    // - ne pas la modifier ? 
+    // voir M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS
+    if (A_external_type_bit_size__cvtbd == 0)
+    {
+        A_external_type_bit_size__cvtbd = rhs.A_external_type_bit_size__cvtbd;
+    }
 
-	return  *this;
+    return  *this;
 }
 
 //*****************************************************************************
@@ -254,55 +254,55 @@ void
 C_value::set_external_type(const std::string  & final_type)
 {
 //	A_external_type__cvtbd = final_type;
-	A_external_type_bit_size__cvtbd = 0;
+    A_external_type_bit_size__cvtbd = 0;
 
-	long    bit_size = 0;
-	if ((strncmp(final_type.c_str(), "uint", 4) == 0) &&
-		(get_number(final_type.c_str()+4, &bit_size) == true))
-	{
-		A_external_type_bit_size__cvtbd = bit_size;
-	}
-	else if ((strncmp(final_type.c_str(), "int", 3) == 0) &&
-			 (get_number(final_type.c_str()+3, &bit_size) == true))
-	{
-		A_external_type_bit_size__cvtbd = - bit_size;
-	}
-	else if ((strncmp(final_type.c_str(), "float", 3) == 0) &&
-			 (get_number(final_type.c_str()+5, &bit_size) == true))
-	{
-		A_external_type_bit_size__cvtbd = - bit_size;
-	}
-	// else string ???
+    long    bit_size = 0;
+    if ((strncmp(final_type.c_str(), "uint", 4) == 0) &&
+        (get_number(final_type.c_str()+4, &bit_size) == true))
+    {
+        A_external_type_bit_size__cvtbd = bit_size;
+    }
+    else if ((strncmp(final_type.c_str(), "int", 3) == 0) &&
+             (get_number(final_type.c_str()+3, &bit_size) == true))
+    {
+        A_external_type_bit_size__cvtbd = - bit_size;
+    }
+    else if ((strncmp(final_type.c_str(), "float", 3) == 0) &&
+             (get_number(final_type.c_str()+5, &bit_size) == true))
+    {
+        A_external_type_bit_size__cvtbd = - bit_size;
+    }
+    // else string ???
 }
-	
+    
 bool
 C_value::get_external_type_signed ()  const
 {
-	return  A_external_type_bit_size__cvtbd < 0;
+    return  A_external_type_bit_size__cvtbd < 0;
 }
 
 int
 C_value::get_external_type_bit_size ()  const
 {
-	if (A_external_type_bit_size__cvtbd < 0)
-		return  - A_external_type_bit_size__cvtbd;
-	else
-		return  A_external_type_bit_size__cvtbd;
+    if (A_external_type_bit_size__cvtbd < 0)
+        return  - A_external_type_bit_size__cvtbd;
+    else
+        return  A_external_type_bit_size__cvtbd;
 }
 
 int
 C_value::get_external_type_byte_size ()  const
 {
-	if (A_external_type_bit_size__cvtbd < 0)
-		return  - A_external_type_bit_size__cvtbd / 8;
-	else
-		return  A_external_type_bit_size__cvtbd / 8;
+    if (A_external_type_bit_size__cvtbd < 0)
+        return  - A_external_type_bit_size__cvtbd / 8;
+    else
+        return  A_external_type_bit_size__cvtbd / 8;
 }
 
 void
 C_value::set_external_type_bit_size(int    external_type_bit_size)
 {
-	A_external_type_bit_size__cvtbd = external_type_bit_size;
+    A_external_type_bit_size__cvtbd = external_type_bit_size;
 }
 
 //*****************************************************************************
@@ -311,8 +311,8 @@ C_value::set_external_type_bit_size(int    external_type_bit_size)
 void
 C_value::set_bit_position_offset_size(int  offset, int  size)
 {
-	A_bit_position_offset = offset;
-	A_bit_position_size = size;
+    A_bit_position_offset = offset;
+    A_bit_position_size = size;
 }
 
 //*****************************************************************************
@@ -375,11 +375,11 @@ C_value::as_string () const
 void
 C_value::to_numeric()
 {
-	M_TRACE_ENTER("to_numeric", "");
+    M_TRACE_ENTER("to_numeric", "");
 
-	promote();
+    promote();
 
-	M_FATAL_IF_NE (is_numeric (), true);
+    M_FATAL_IF_NE (is_numeric (), true);
 }
 
 //*****************************************************************************
@@ -388,33 +388,33 @@ C_value::to_numeric()
 void
 C_value::to_int(int  base)
 {
-	M_TRACE_ENTER("to_int", "");
+    M_TRACE_ENTER("to_int", "");
 
-	if (A_type == E_type_float)
-	{
-		A_type = E_type_integer;
-		A_str = get_string ((long long)A_integer);
-	}
-	else if (A_type == E_type_string)
-	{
-		// Try to promote to integer
-		long long    value;
-		double       value_dbl;
-		if (get_number(A_str.c_str(), base, value))
-		{
-			A_type = E_type_integer;
-			A_integer = value;
-			A_flt = (double)value;
-		}
-		else if (get_number(A_str.c_str(), value_dbl))
-		{
-			A_type = E_type_integer;           // can loose data, e.g 1e120
-			A_integer = (long long)value_dbl;
-			A_flt = value_dbl;
-		}
-	}
+    if (A_type == E_type_float)
+    {
+        A_type = E_type_integer;
+        A_str = get_string ((long long)A_integer);
+    }
+    else if (A_type == E_type_string)
+    {
+        // Try to promote to integer
+        long long    value;
+        double       value_dbl;
+        if (get_number(A_str.c_str(), base, value))
+        {
+            A_type = E_type_integer;
+            A_integer = value;
+            A_flt = (double)value;
+        }
+        else if (get_number(A_str.c_str(), value_dbl))
+        {
+            A_type = E_type_integer;           // can loose data, e.g 1e120
+            A_integer = (long long)value_dbl;
+            A_flt = value_dbl;
+        }
+    }
 
-	M_FATAL_IF_NE (get_type (), E_type_integer);
+    M_FATAL_IF_NE (get_type (), E_type_integer);
 }
 
 //*****************************************************************************
@@ -423,26 +423,26 @@ C_value::to_int(int  base)
 void
 C_value::to_float()
 {
-	M_TRACE_ENTER("to_float", "");
+    M_TRACE_ENTER("to_float", "");
 
-	if (A_type == E_type_integer)
-	{
-		A_type = E_type_float;
-		A_str = get_string ((long long)A_flt);
-	}
-	else if (A_type == E_type_string)
-	{
-		// Try to promote to float
-		double    value;
-		if (get_number(A_str.c_str(), value))
-		{
-			A_type = E_type_float;
-			A_integer = (long long)value;
-			A_flt = value;
-		}
-	}
+    if (A_type == E_type_integer)
+    {
+        A_type = E_type_float;
+        A_str = get_string ((long long)A_flt);
+    }
+    else if (A_type == E_type_string)
+    {
+        // Try to promote to float
+        double    value;
+        if (get_number(A_str.c_str(), value))
+        {
+            A_type = E_type_float;
+            A_integer = (long long)value;
+            A_flt = value;
+        }
+    }
 
-	M_FATAL_IF_NE (get_type (), E_type_float);
+    M_FATAL_IF_NE (get_type (), E_type_float);
 }
 
 //*****************************************************************************
@@ -451,29 +451,29 @@ C_value::to_float()
 
 char    get_format_percent_letter(const char  * str)
 {
-	char    format_percent_letter = '\0';    // nothing found
+    char    format_percent_letter = '\0';    // nothing found
 
-	while ((str = strchr(str, '%')) != NULL)
-	{
-		++str;
+    while ((str = strchr(str, '%')) != NULL)
+    {
+        ++str;
 
-		if (*str == '%')
-		{
-			++str;
-			continue;
-		}
+        if (*str == '%')
+        {
+            ++str;
+            continue;
+        }
 
-		while ((*str != '\0') &&
-			   ((isalpha(*str) == 0) || (*str == 'h') || (*str == 'l') || (*str == 'L')))
-		{
-			++str;
-		}
+        while ((*str != '\0') &&
+               ((isalpha(*str) == 0) || (*str == 'h') || (*str == 'l') || (*str == 'L')))
+        {
+            ++str;
+        }
 
-		format_percent_letter = tolower(*str);
-		break;
-	}
+        format_percent_letter = tolower(*str);
+        break;
+    }
 
-	return  format_percent_letter;
+    return  format_percent_letter;
 }
 
 //*****************************************************************************
@@ -483,85 +483,85 @@ char    get_format_percent_letter(const char  * str)
 void
 C_value::format(const string  & display)
 {
-	M_TRACE_ENTER("format", "display=" << display << "  type=" << A_type << "  str=" << A_str);
+    M_TRACE_ENTER("format", "display=" << display << "  type=" << A_type << "  str=" << A_str);
 
-	char    tmp_str[999+1];
+    char    tmp_str[999+1];
 
-	if (display == "hex")
-	{
-	    if (A_type == E_type_integer)
-		{
-			sprintf(tmp_str, "0x%llx", A_integer);
-			A_str = tmp_str;
-		}
-	}
-	else if (display == "oct")
-	{
-	    if (A_type == E_type_integer)
-		{
-			sprintf(tmp_str, "0%llo", A_integer);
-			A_str = tmp_str;
-		}
-	}
-	else if (display == "bin")
-	{
-	    if (A_type == E_type_integer)
-		{
-			strcpy(tmp_str, "");
-			bool    output_zero = false;
-			for (int  idx = 63; idx >= 0; --idx)
-			{
-				if (A_integer & (1LL << idx))
-				{
-					if (output_zero == false)
-					{
-						strcat(tmp_str, "b");
-						output_zero = true;
-					}
-					strcat(tmp_str, "1");
-				}
-				else if (output_zero)
-				{
-					strcat(tmp_str, "0");
-				}
-			}
-			if (output_zero == false)
-			{
-				strcpy(tmp_str, "b0");
-			}
-			A_str = tmp_str;
-		}
-	}
-	else
-	{
-		char   format_percent_letter = get_format_percent_letter(display.c_str());
+    if (display == "hex")
+    {
+        if (A_type == E_type_integer)
+        {
+            sprintf(tmp_str, "0x%llx", A_integer);
+            A_str = tmp_str;
+        }
+    }
+    else if (display == "oct")
+    {
+        if (A_type == E_type_integer)
+        {
+            sprintf(tmp_str, "0%llo", A_integer);
+            A_str = tmp_str;
+        }
+    }
+    else if (display == "bin")
+    {
+        if (A_type == E_type_integer)
+        {
+            strcpy(tmp_str, "");
+            bool    output_zero = false;
+            for (int  idx = 63; idx >= 0; --idx)
+            {
+                if (A_integer & (1LL << idx))
+                {
+                    if (output_zero == false)
+                    {
+                        strcat(tmp_str, "b");
+                        output_zero = true;
+                    }
+                    strcat(tmp_str, "1");
+                }
+                else if (output_zero)
+                {
+                    strcat(tmp_str, "0");
+                }
+            }
+            if (output_zero == false)
+            {
+                strcpy(tmp_str, "b0");
+            }
+            A_str = tmp_str;
+        }
+    }
+    else
+    {
+        char   format_percent_letter = get_format_percent_letter(display.c_str());
 
-		if (format_percent_letter == 's')
-		{
-			sprintf(tmp_str, display.c_str(), A_str.c_str());
-			A_str = tmp_str;
-		}
-		else if ((format_percent_letter != '\0') && (is_numeric()))
-		{
-			if ((format_percent_letter == 'e') ||
-				(format_percent_letter == 'f') ||
-				(format_percent_letter == 'g'))
-			{
-				sprintf(tmp_str, display.c_str(), A_flt);
-				A_str = tmp_str;
-			}
-			else
-			{
-				sprintf(tmp_str, display.c_str(), A_integer);
-				A_str = tmp_str;
-			}
-		}
-		else
-		{
-			// Error, unexpected display string
-			M_TRACE_ERROR("format bad display " << display);
-		}
-	}
+        if (format_percent_letter == 's')
+        {
+            sprintf(tmp_str, display.c_str(), A_str.c_str());
+            A_str = tmp_str;
+        }
+        else if ((format_percent_letter != '\0') && (is_numeric()))
+        {
+            if ((format_percent_letter == 'e') ||
+                (format_percent_letter == 'f') ||
+                (format_percent_letter == 'g'))
+            {
+                sprintf(tmp_str, display.c_str(), A_flt);
+                A_str = tmp_str;
+            }
+            else
+            {
+                sprintf(tmp_str, display.c_str(), A_integer);
+                A_str = tmp_str;
+            }
+        }
+        else
+        {
+            // Error, unexpected display string
+            M_TRACE_ERROR("format bad display " << display);
+        }
+    }
 }
 
 //*****************************************************************************
@@ -571,23 +571,23 @@ C_value::format(const string  & display)
 void
 C_value::format_reset()
 {
-	M_TRACE_ENTER("format_reset", "");
+    M_TRACE_ENTER("format_reset", "");
 
-	if (A_type == E_type_float)
-	{
-		A_str = get_string(A_flt);
-	}
-	else if (A_type == E_type_integer)
-	{
-		A_str = get_string(A_integer);
-	}
-	else if (A_type == E_type_msg)
-	{
-		if (A_integer != 0)
-		{
-			A_str = get_string(A_integer);
-		}
-	}
+    if (A_type == E_type_float)
+    {
+        A_str = get_string(A_flt);
+    }
+    else if (A_type == E_type_integer)
+    {
+        A_str = get_string(A_integer);
+    }
+    else if (A_type == E_type_msg)
+    {
+        if (A_integer != 0)
+        {
+            A_str = get_string(A_integer);
+        }
+    }
 }
 
 //*****************************************************************************
@@ -597,7 +597,7 @@ C_value::format_reset()
 void
 C_value::set_str(const string  & str)
 {
-	A_str = str;
+    A_str = str;
 }
 
 //*****************************************************************************
@@ -608,34 +608,34 @@ C_value::set_str(const string  & str)
 C_value::E_type
 C_value::promote()
 {
-	if (A_type == E_type_string)
-	{
-		// Try to promote to integer
-		{
-			long long    value;
-			if (get_number(A_str.c_str(), value))
-			{
-				A_type = E_type_integer;
-				A_integer = value;
-				A_flt = (double)value;
-				return  A_type;
-			}
-		}
+    if (A_type == E_type_string)
+    {
+        // Try to promote to integer
+        {
+            long long    value;
+            if (get_number(A_str.c_str(), value))
+            {
+                A_type = E_type_integer;
+                A_integer = value;
+                A_flt = (double)value;
+                return  A_type;
+            }
+        }
 
-		// Try to promote to float
-		{
-			double    value;
-			if (get_number(A_str.c_str(), value))
-			{
-				A_type = E_type_float;
-				A_integer = (long long)value;
-				A_flt = value;
-				return  A_type;
-			}
-		}
-	}
+        // Try to promote to float
+        {
+            double    value;
+            if (get_number(A_str.c_str(), value))
+            {
+                A_type = E_type_float;
+                A_integer = (long long)value;
+                A_flt = value;
+                return  A_type;
+            }
+        }
+    }
 
-	return  A_type;
+    return  A_type;
 }
 
 //*****************************************************************************
@@ -646,59 +646,59 @@ C_value::promote()
 
 class C_value_set_position_offset
 {
-	C_value  & A_value_to_set;
-	int        A_pos;
-	int        A_offset;
+    C_value  & A_value_to_set;
+    int        A_pos;
+    int        A_offset;
 //	string     A_external_type__cvtbd;
-	int        A_external_type_bit_size__cvtbd;
+    int        A_external_type_bit_size__cvtbd;
 
 public:
-	C_value_set_position_offset(C_value  & val, int pos, int offset,
+    C_value_set_position_offset(C_value  & val, int pos, int offset,
 //						  const string   & external_type__cvtbd)//,
-								int        external_type_bit_size__cvtbd)
-		:A_value_to_set(val),
-		 A_pos(pos),
-		 A_offset(offset),
+                                int        external_type_bit_size__cvtbd)
+        :A_value_to_set(val),
+         A_pos(pos),
+         A_offset(offset),
 //		 A_external_type__cvtbd(external_type__cvtbd)//,
-		 A_external_type_bit_size__cvtbd(external_type_bit_size__cvtbd)
-	{
-	}
+         A_external_type_bit_size__cvtbd(external_type_bit_size__cvtbd)
+    {
+    }
 
-	~C_value_set_position_offset()
-	{
-		A_value_to_set.set_bit_position_offset_size(A_pos, A_offset);
+    ~C_value_set_position_offset()
+    {
+        A_value_to_set.set_bit_position_offset_size(A_pos, A_offset);
 //		A_value_to_set.set_external_type(A_external_type__cvtbd);
-		A_value_to_set.set_external_type_bit_size(A_external_type_bit_size__cvtbd);
-	}
+        A_value_to_set.set_external_type_bit_size(A_external_type_bit_size__cvtbd);
+    }
 };
 
 
 #define M_COMPUTE_NEW_POSITION_OFFSET_RESULT_RHS(RESULT,RHS)                \
-	if (RHS A_bit_position_size > 0)                                        \
-	{                                                                       \
-		if (RESULT A_bit_position_size <= 0)                                \
-		{                                                                   \
-			RESULT A_bit_position_offset = RHS A_bit_position_offset;       \
-			RESULT A_bit_position_size   = RHS A_bit_position_size;         \
-		}                                                                   \
-		else                                                                \
-		{                                                                   \
-			int  bit_position_offset_end = max((RESULT A_bit_position_offset + RESULT A_bit_position_size), (RHS A_bit_position_offset + RHS A_bit_position_size));  \
-			RESULT A_bit_position_offset = min(RESULT A_bit_position_offset, RHS A_bit_position_offset);   \
-			RESULT A_bit_position_size   = bit_position_offset_end - RESULT A_bit_position_offset;         \
-		}                                                                   \
-	}
+    if (RHS A_bit_position_size > 0)                                        \
+    {                                                                       \
+        if (RESULT A_bit_position_size <= 0)                                \
+        {                                                                   \
+            RESULT A_bit_position_offset = RHS A_bit_position_offset;       \
+            RESULT A_bit_position_size   = RHS A_bit_position_size;         \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            int  bit_position_offset_end = max((RESULT A_bit_position_offset + RESULT A_bit_position_size), (RHS A_bit_position_offset + RHS A_bit_position_size));  \
+            RESULT A_bit_position_offset = min(RESULT A_bit_position_offset, RHS A_bit_position_offset);   \
+            RESULT A_bit_position_size   = bit_position_offset_end - RESULT A_bit_position_offset;         \
+        }                                                                   \
+    }
 
 #define M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS(RESULT,RHS)                  \
     if (RESULT A_external_type_bit_size__cvtbd == 0)                        \
-	{                                                                       \
-		RESULT A_external_type_bit_size__cvtbd = RHS A_external_type_bit_size__cvtbd;     \
+    {                                                                       \
+        RESULT A_external_type_bit_size__cvtbd = RHS A_external_type_bit_size__cvtbd;     \
     }
 
 #define M_COMPUTE_NEW_POSITION_OFFSET()                                     \
-	M_COMPUTE_NEW_POSITION_OFFSET_RESULT_RHS(this-> ,rhs.);                 \
-	M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS(this-> ,rhs.);                   \
-	C_value_set_position_offset  vspo(*this, this->A_bit_position_offset, this->A_bit_position_size, this->A_external_type_bit_size__cvtbd)
+    M_COMPUTE_NEW_POSITION_OFFSET_RESULT_RHS(this-> ,rhs.);                 \
+    M_COMPUTE_NEW_EXTERNAL_TYPE_RESULT_RHS(this-> ,rhs.);                   \
+    C_value_set_position_offset  vspo(*this, this->A_bit_position_offset, this->A_bit_position_size, this->A_external_type_bit_size__cvtbd)
 
 
 //*****************************************************************************
@@ -706,132 +706,132 @@ public:
 //*****************************************************************************
 C_value
 C_value::sprintf_values(const std::string      & printf_format,
-	                    const vector<C_value>  & values_to_print)
+                        const vector<C_value>  & values_to_print)
 {
-	M_TRACE_ENTER("sprintf_values", "printf_format=" << printf_format);
+    M_TRACE_ENTER("sprintf_values", "printf_format=" << printf_format);
 
-	char    tmp_str[999+1];
+    char    tmp_str[999+1];
 
-	// No parameters.
-	if (values_to_print.empty())
-	{
-		strncpy(tmp_str, printf_format.c_str(), sizeof(tmp_str));
-		return  tmp_str;
-	}
+    // No parameters.
+    if (values_to_print.empty())
+    {
+        strncpy(tmp_str, printf_format.c_str(), sizeof(tmp_str));
+        return  tmp_str;
+    }
 
-	// 1 parameter.
-	// This will NOT work if I want to do a %s on a numeric value.
-	// Must I change format to manage %s as I do here ?
+    // 1 parameter.
+    // This will NOT work if I want to do a %s on a numeric value.
+    // Must I change format to manage %s as I do here ?
 #if 0
-	if (values_to_print.size() == 1)
-	{
-		C_value  val = values_to_print[0];
-		val.format(printf_format);
-		return  val.as_string();
-	}
+    if (values_to_print.size() == 1)
+    {
+        C_value  val = values_to_print[0];
+        val.format(printf_format);
+        return  val.as_string();
+    }
 #endif
 
-	// Highlight data.
-	int   A_bit_position_offset = -1;
-	int   A_bit_position_size = -1;
+    // Highlight data.
+    int   A_bit_position_offset = -1;
+    int   A_bit_position_size = -1;
 
-	// Many parameters.
-	strcpy(tmp_str, "");
-	unsigned int       value_idx = 0;
-	string::size_type  idx_begin = 0;
-	string::size_type  idx_format = 0;
-	while (idx_begin < printf_format.size())
-	{
-		idx_format = printf_format.find ('%', idx_begin);
+    // Many parameters.
+    strcpy(tmp_str, "");
+    unsigned int       value_idx = 0;
+    string::size_type  idx_begin = 0;
+    string::size_type  idx_format = 0;
+    while (idx_begin < printf_format.size())
+    {
+        idx_format = printf_format.find ('%', idx_begin);
 
-		if (idx_format == string::npos)
-		{
-			strcat(tmp_str, &printf_format[idx_begin]);
-			break;
-		}
+        if (idx_format == string::npos)
+        {
+            strcat(tmp_str, &printf_format[idx_begin]);
+            break;
+        }
 
-		strncat(tmp_str, &printf_format[idx_begin], idx_format-idx_begin);
-		++idx_format;
+        strncat(tmp_str, &printf_format[idx_begin], idx_format-idx_begin);
+        ++idx_format;
 
-		// if %%
-		if (printf_format[idx_format] == '%')
-		{
-			// This is a simple % character
-			strcat(tmp_str, "%");
+        // if %%
+        if (printf_format[idx_format] == '%')
+        {
+            // This is a simple % character
+            strcat(tmp_str, "%");
 
-			idx_begin = idx_format + 1;
-			continue;
-		}
+            idx_begin = idx_format + 1;
+            continue;
+        }
 
-		idx_begin = idx_format - 1;
+        idx_begin = idx_format - 1;
 
-		M_FATAL_IF_GE (value_idx, values_to_print.size());
+        M_FATAL_IF_GE (value_idx, values_to_print.size());
 
-		// 
-		idx_format = printf_format.find ('%', idx_begin+1);
+        // 
+        idx_format = printf_format.find ('%', idx_begin+1);
 
-		if (idx_format == string::npos)
-		{
-			idx_format = printf_format.size();
-		}
+        if (idx_format == string::npos)
+        {
+            idx_format = printf_format.size();
+        }
 
-		char   tmp_str_format[999+1];
-		strncpy(tmp_str_format, &printf_format[idx_begin], idx_format-idx_begin);
-		tmp_str_format[idx_format-idx_begin] = '\0';
+        char   tmp_str_format[999+1];
+        strncpy(tmp_str_format, &printf_format[idx_begin], idx_format-idx_begin);
+        tmp_str_format[idx_format-idx_begin] = '\0';
 
-		M_TRACE_DEBUG("str=" << tmp_str << "  " <<
-					  "str_format=" << tmp_str_format << "  " <<
-					  "idx_begin=" << idx_begin << "  " <<
-					  "idx_format=" << idx_format << "  " <<
-					  "value_idx=" << value_idx);
+        M_TRACE_DEBUG("str=" << tmp_str << "  " <<
+                      "str_format=" << tmp_str_format << "  " <<
+                      "idx_begin=" << idx_begin << "  " <<
+                      "idx_format=" << idx_format << "  " <<
+                      "value_idx=" << value_idx);
 
-		// 
-		const C_value  & value = values_to_print[value_idx];
+        // 
+        const C_value  & value = values_to_print[value_idx];
 
-		M_COMPUTE_NEW_POSITION_OFFSET_RESULT_RHS(,value.);
+        M_COMPUTE_NEW_POSITION_OFFSET_RESULT_RHS(,value.);
 
-		if (value.get_type() == C_value::E_type_string)
-		{
-			sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.as_string().c_str());
-		}
-		else
-		{
-			// Search if %...s is specified.
-			const char  * p_format = tmp_str_format;
-			while ((*p_format != '\0') &&
-				   ((isalpha(*p_format) == 0) || (*p_format == 'l') || (*p_format == 'L')))
-			{
-				++p_format;
-			}
+        if (value.get_type() == C_value::E_type_string)
+        {
+            sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.as_string().c_str());
+        }
+        else
+        {
+            // Search if %...s is specified.
+            const char  * p_format = tmp_str_format;
+            while ((*p_format != '\0') &&
+                   ((isalpha(*p_format) == 0) || (*p_format == 'l') || (*p_format == 'L')))
+            {
+                ++p_format;
+            }
 
-			if (*p_format == 's')
-			{
-				sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.as_string().c_str());
-			}
-			else if (value.get_type() == C_value::E_type_float)
-			{
-				sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.get_flt());
-			}
-			else if (value.get_type() == C_value::E_type_integer)
-			{
-				sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.get_int());
-			}
-			else if (value.get_type() == C_value::E_type_msg)
-			{
-				sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.get_msg());
-			}
-		}
+            if (*p_format == 's')
+            {
+                sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.as_string().c_str());
+            }
+            else if (value.get_type() == C_value::E_type_float)
+            {
+                sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.get_flt());
+            }
+            else if (value.get_type() == C_value::E_type_integer)
+            {
+                sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.get_int());
+            }
+            else if (value.get_type() == C_value::E_type_msg)
+            {
+                sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.get_msg());
+            }
+        }
 
-		// Next.
-		idx_begin = idx_format;
-		++value_idx;
-	}
+        // Next.
+        idx_begin = idx_format;
+        ++value_idx;
+    }
 
-	C_value  return_value(tmp_str);
-	return_value.set_bit_position_offset_size(A_bit_position_offset,
+    C_value  return_value(tmp_str);
+    return_value.set_bit_position_offset_size(A_bit_position_offset,
                                               A_bit_position_size);
 
-	return  return_value;
+    return  return_value;
 }
 
 //*****************************************************************************
@@ -924,7 +924,7 @@ C_value::operator!= (const C_value  & rhs) const
         M_FATAL_COMMENT("operator != could NOT be used for struct");
     }
 
-	if (A_type == E_type_integer)
+    if (A_type == E_type_integer)
     {
         if (rhs.A_type == E_type_integer)
             return  A_integer != rhs.A_integer;
@@ -1097,9 +1097,9 @@ C_value::operator> (const C_value  & rhs) const
 C_value                                                        \
 C_value::operator OPERATOR (const C_value  & rhs) const        \
 {                                                              \
-	C_value    left(*this);                                \
-	left OPERATOR ## = rhs;                                \
-	return  left;                                          \
+    C_value    left(*this);                                \
+    left OPERATOR ## = rhs;                                \
+    return  left;                                          \
 }
 
 //*****************************************************************************
@@ -1112,10 +1112,10 @@ C_value::operator&= (const C_value  & rhs)
     M_FATAL_IF_NE (    A_type, E_type_integer);
     M_FATAL_IF_NE (rhs.A_type, E_type_integer);
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     *this = C_value (A_integer & rhs.A_integer);
-	return  *this;
+    return  *this;
 }
 
 C_value &
@@ -1124,10 +1124,10 @@ C_value::operator|= (const C_value  & rhs)
     M_FATAL_IF_NE (    A_type, E_type_integer);
     M_FATAL_IF_NE (rhs.A_type, E_type_integer);
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     *this = C_value (A_integer | rhs.A_integer);
-	return  *this;
+    return  *this;
 }
 
 C_value &
@@ -1136,10 +1136,10 @@ C_value::operator^= (const C_value  & rhs)
     M_FATAL_IF_NE (    A_type, E_type_integer);
     M_FATAL_IF_NE (rhs.A_type, E_type_integer);
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     *this = C_value (A_integer ^ rhs.A_integer);
-	return  *this;
+    return  *this;
 }
 
 C_value &
@@ -1148,10 +1148,10 @@ C_value::operator<<= (const C_value  & rhs)
     M_FATAL_IF_NE (    A_type, E_type_integer);
     M_FATAL_IF_NE (rhs.A_type, E_type_integer);
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     *this = C_value (A_integer << rhs.A_integer);
-	return  *this;
+    return  *this;
 }
 
 C_value &
@@ -1160,10 +1160,10 @@ C_value::operator>>= (const C_value  & rhs)
     M_FATAL_IF_NE (    A_type, E_type_integer);
     M_FATAL_IF_NE (rhs.A_type, E_type_integer);
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     *this = C_value (A_integer >> rhs.A_integer);
-	return  *this;
+    return  *this;
 }
 
 M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(&)
@@ -1181,14 +1181,14 @@ M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(>>)
 C_value &
 C_value::operator+= (const C_value  & rhs)
 {
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     if ((    A_type == E_type_string) ||
         (rhs.A_type == E_type_string))
     {
         M_FATAL_IF_NE (A_type, rhs.A_type);
         *this = C_value (A_str + rhs.A_str);
-		return  *this;
+        return  *this;
     }
 
     if ((    A_type == E_type_msg) ||
@@ -1217,7 +1217,7 @@ C_value::operator+= (const C_value  & rhs)
             *this = C_value (A_flt + rhs.A_flt);
     }
 
-	return  *this;
+    return  *this;
 }
 
 C_value &
@@ -1239,7 +1239,7 @@ C_value::operator-= (const C_value  & rhs)
         M_FATAL_COMMENT("operator -= could NOT be used for struct");
     }
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     if (A_type == E_type_integer)
     {
@@ -1256,7 +1256,7 @@ C_value::operator-= (const C_value  & rhs)
             *this = C_value (A_flt - rhs.A_flt);
     }
 
-	return  *this;
+    return  *this;
 }
 
 C_value &
@@ -1278,7 +1278,7 @@ C_value::operator*= (const C_value  & rhs)
         M_FATAL_COMMENT("operator *= could NOT be used for struct");
     }
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     if (A_type == E_type_integer)
     {
@@ -1295,7 +1295,7 @@ C_value::operator*= (const C_value  & rhs)
             *this = C_value (A_flt * rhs.A_flt);
     }
 
-	return  *this;
+    return  *this;
 }
 #if 0
 C_value &
@@ -1309,7 +1309,7 @@ C_value::operator/= (const C_value  & rhs)
     if ((    A_type == E_type_msg) ||
         (rhs.A_type == E_type_msg))
     {
-		M_FATAL_COMMENT("operator /= could NOT be used for msg");
+        M_FATAL_COMMENT("operator /= could NOT be used for msg");
     }
     if ((    A_type == E_type_struct) ||
         (rhs.A_type == E_type_struct))
@@ -1317,7 +1317,7 @@ C_value::operator/= (const C_value  & rhs)
         M_FATAL_COMMENT("operator /= could NOT be used for struct");
     }
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 #if 0
     // All divide must give float ?
     *this = C_value (A_flt / rhs.A_flt);
@@ -1337,7 +1337,7 @@ C_value::operator/= (const C_value  & rhs)
             *this = C_value (A_flt / rhs.A_flt);
     }
 #endif
-	return  *this;
+    return  *this;
 }
 #endif
 
@@ -1347,11 +1347,11 @@ C_value::operator%= (const C_value  & rhs)
     M_FATAL_IF_NE (    A_type, E_type_integer);
     M_FATAL_IF_NE (rhs.A_type, E_type_integer);
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
     *this = C_value (A_integer % rhs.A_integer);
 
-	return  *this;
+    return  *this;
 }
 
 M_OPERATOR_CONST_FROM_OPERATOR_EQUAL(+)
@@ -1371,7 +1371,7 @@ C_value::this_divide_float (const C_value  & rhs)
     if ((    A_type == E_type_msg) ||
         (rhs.A_type == E_type_msg))
     {
-		M_FATAL_COMMENT("operator /= could NOT be used for msg");
+        M_FATAL_COMMENT("operator /= could NOT be used for msg");
     }
     if ((    A_type == E_type_struct) ||
         (rhs.A_type == E_type_struct))
@@ -1379,12 +1379,12 @@ C_value::this_divide_float (const C_value  & rhs)
         M_FATAL_COMMENT("operator /= could NOT be used for struct");
     }
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
-	// All divide must give float ?
+    // All divide must give float ?
     *this = C_value (A_flt / rhs.A_flt);
 
-	return  *this;
+    return  *this;
 }
 
 C_value &
@@ -1398,7 +1398,7 @@ C_value::this_divide_c (const C_value  & rhs)
     if ((    A_type == E_type_msg) ||
         (rhs.A_type == E_type_msg))
     {
-		M_FATAL_COMMENT("operator /= could NOT be used for msg");
+        M_FATAL_COMMENT("operator /= could NOT be used for msg");
     }
     if ((    A_type == E_type_struct) ||
         (rhs.A_type == E_type_struct))
@@ -1406,9 +1406,9 @@ C_value::this_divide_c (const C_value  & rhs)
         M_FATAL_COMMENT("operator /= could NOT be used for struct");
     }
 
-	M_COMPUTE_NEW_POSITION_OFFSET();
+    M_COMPUTE_NEW_POSITION_OFFSET();
 
-	if (A_type == E_type_integer)
+    if (A_type == E_type_integer)
     {
         if (rhs.A_type == E_type_integer)
             *this = C_value (A_integer / rhs.A_integer);
@@ -1423,24 +1423,24 @@ C_value::this_divide_c (const C_value  & rhs)
             *this = C_value (A_flt / rhs.A_flt);
     }
 
-	return  *this;
+    return  *this;
 }
 
 C_value
 C_value::divide_float (const C_value  & lhs, const C_value  & rhs)
 {
-	C_value  value = lhs;
-	value.this_divide_float(rhs);
+    C_value  value = lhs;
+    value.this_divide_float(rhs);
 
-	return  value;
+    return  value;
 }
 C_value
 C_value::divide_c (const C_value  & lhs, const C_value  & rhs)
 {
-	C_value  value = lhs;
-	value.this_divide_c(rhs);
+    C_value  value = lhs;
+    value.this_divide_c(rhs);
 
-	return  value;
+    return  value;
 }
 
 //*****************************************************************************
@@ -1466,15 +1466,15 @@ C_value::pow_internal(const C_value  & lhs, const C_value  & rhs)
         M_FATAL_COMMENT("operator ** could NOT be used for struct");
     }
 
-	double  pow_val = 0.0;
+    double  pow_val = 0.0;
 
     if (lhs.A_type == E_type_integer)
     {
         if (rhs.A_type == E_type_integer)
-		{
-			pow_val = ::pow (static_cast<double>(lhs.A_integer), static_cast<int>(rhs.A_integer));
-			return  static_cast<long long>(pow_val);
-		}
+        {
+            pow_val = ::pow (static_cast<double>(lhs.A_integer), static_cast<int>(rhs.A_integer));
+            return  static_cast<long long>(pow_val);
+        }
         else
             pow_val = ::pow (static_cast<double>(lhs.A_integer), rhs.A_flt);
     }
@@ -1486,14 +1486,14 @@ C_value::pow_internal(const C_value  & lhs, const C_value  & rhs)
             pow_val = ::pow (lhs.A_flt, rhs.A_flt);
     }
 
-	return  pow_val;
+    return  pow_val;
 }
 C_value
 C_value::pow(const C_value  & lhs, const C_value  & rhs)
 {
-	C_value  val = pow_internal(lhs, rhs);
+    C_value  val = pow_internal(lhs, rhs);
 
-	M_COMPUTE_NEW_POSITION_OFFSET_RESULT_RHS(val., rhs.);
+    M_COMPUTE_NEW_POSITION_OFFSET_RESULT_RHS(val., rhs.);
 
-	return  val;
+    return  val;
 }

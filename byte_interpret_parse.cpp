@@ -54,25 +54,25 @@ void    build_types_context_line_new (const istream  & is);
 void    skip_blanks (istream  & is)
 {
     // While istream is ok ...
-	while (is.good())
-	{
-		// NB: do NOT use unget or putback (bug on VC++ 2003/2005/2008)
-		const istream::int_type  next_char = is.peek();
+    while (is.good())
+    {
+        // NB: do NOT use unget or putback (bug on VC++ 2003/2005/2008)
+        const istream::int_type  next_char = is.peek();
 
-		if (isspace(next_char) == 0)
-		{
-			// This is not a space (blank, tab, \r, \n ...)
-			break;
-		}
+        if (isspace(next_char) == 0)
+        {
+            // This is not a space (blank, tab, \r, \n ...)
+            break;
+        }
 
-		if (next_char == '\n')
-		{
-			// new line notification
-			build_types_context_line_new(is);
-		}
+        if (next_char == '\n')
+        {
+            // new line notification
+            build_types_context_line_new(is);
+        }
 
-		is.get();
-	}
+        is.get();
+    }
 }
 
 //*****************************************************************************
@@ -82,28 +82,28 @@ void    skip_blanks (istream  & is)
 void    skip_blanks_and_comments (istream  & is)
 {
     // While istream is ok ...
-	while (is.good())
-	{
-		// skip blanks including new lines
-		skip_blanks(is);
+    while (is.good())
+    {
+        // skip blanks including new lines
+        skip_blanks(is);
 
-		// NB: do NOT use unget or putback (bug on VC++ 2003/2005/2008)
-		const istream::int_type  next_char = is.peek();
+        // NB: do NOT use unget or putback (bug on VC++ 2003/2005/2008)
+        const istream::int_type  next_char = is.peek();
 
-		if (next_char != K_COMMENT_START)
-		{
-			// This is not a comment (and not a space).
-			break;
-		}
+        if (next_char != K_COMMENT_START)
+        {
+            // This is not a comment (and not a space).
+            break;
+        }
 
-		// This is a comment.
-		// Skip the end of the line.
-	    string  tmp;
-		getline (is, tmp);
+        // This is a comment.
+        // Skip the end of the line.
+        string  tmp;
+        getline (is, tmp);
 
-		// new line notification
-		build_types_context_line_new(is);
-	}
+        // new line notification
+        build_types_context_line_new(is);
+    }
 }
 
 //*****************************************************************************
@@ -113,15 +113,15 @@ void    skip_blanks_and_comments (istream  & is)
 void    skip_line (istream  & is)
 {
     // If istream is ok ...
-	if (is.good())
-	{
-		// Skip the end of the line.
-	    string  tmp;
-		getline (is, tmp);
+    if (is.good())
+    {
+        // Skip the end of the line.
+        string  tmp;
+        getline (is, tmp);
 
-		// new line notification
-		build_types_context_line_new(is);
-	}
+        // new line notification
+        build_types_context_line_new(is);
+    }
 }
 
 //*****************************************************************************
@@ -185,7 +185,7 @@ void    remove_word_limits (string  & str,
 
 void    remove_string_limits (string  & str)
 {
-	const string::size_type  original_size = str.size ();
+    const string::size_type  original_size = str.size ();
 
     remove_word_limits (str, '"', '"');
     if (str.size () != original_size)
@@ -247,24 +247,24 @@ bool    append_to_string_until (istream       & is,
                           const E_parser_cfg    parser_cfg);
 
 #define M_GET_FROM_ISTREAM(THE_IS)                   \
-	if (c_read == '\n')                              \
-	{                                                \
-		build_types_context_line_new(THE_IS);        \
-	}                                                \
-	THE_IS.get()
+    if (c_read == '\n')                              \
+    {                                                \
+        build_types_context_line_new(THE_IS);        \
+    }                                                \
+    THE_IS.get()
 
 bool    append_to_string_until_base (istream       & is,
                                 string        & result,
                           const char            end_of_str,
                           const E_parser_cfg    parser_cfg)
 {
-	M_TRACE_ENTER ("append_to_string_until",
-				   "result=" << result <<
-				   " end_of_str=" << int(end_of_str));
+    M_TRACE_ENTER ("append_to_string_until",
+                   "result=" << result <<
+                   " end_of_str=" << int(end_of_str));
 
     while (true)
     {
-		const istream::int_type    c_read_int = is.peek();
+        const istream::int_type    c_read_int = is.peek();
         if (c_read_int < 0)
         {
             // Fin du istream.
@@ -274,119 +274,119 @@ bool    append_to_string_until_base (istream       & is,
             return  (end_of_str == '\0');
         }
 
-		char    c_read = c_read_int;
+        char    c_read = c_read_int;
 
-		if (end_of_str == '\0')
-		{
-			if (isspace (c_read))
-			{
-				if (result.empty ())
-				{
-					// Token not already found.
-					// Do NOT add the blank.
-					M_GET_FROM_ISTREAM(is);
-					continue;
-				}
+        if (end_of_str == '\0')
+        {
+            if (isspace (c_read))
+            {
+                if (result.empty ())
+                {
+                    // Token not already found.
+                    // Do NOT add the blank.
+                    M_GET_FROM_ISTREAM(is);
+                    continue;
+                }
 
-				if (parser_cfg & K_parser_cfg_manage_blanks)
-				{
-					// End of the token.
-					// Not appended to the result string.
-					M_GET_FROM_ISTREAM(is);
-					return  true;
-				}
-			}
+                if (parser_cfg & K_parser_cfg_manage_blanks)
+                {
+                    // End of the token.
+                    // Not appended to the result string.
+                    M_GET_FROM_ISTREAM(is);
+                    return  true;
+                }
+            }
 
-	        if ((parser_cfg & K_parser_cfg_manage_dot_comma) &&
-				(c_read == ';'))       // 2009/01/18
-		    {
-				if (result.empty () == false)
-				{
-					// End of the token.
-					// Not appended to the result string.
-					return  true;
-				}
-				else
-				{
-					// This is the token.
-					result = c_read;
-					M_GET_FROM_ISTREAM(is);
-					return  true;
-				}
-			}
+            if ((parser_cfg & K_parser_cfg_manage_dot_comma) &&
+                (c_read == ';'))       // 2009/01/18
+            {
+                if (result.empty () == false)
+                {
+                    // End of the token.
+                    // Not appended to the result string.
+                    return  true;
+                }
+                else
+                {
+                    // This is the token.
+                    result = c_read;
+                    M_GET_FROM_ISTREAM(is);
+                    return  true;
+                }
+            }
 
-	        if (parser_cfg & K_parser_cfg_manage_comma)
-	        {
-				if (c_read == ',')
-				{
-					// End of parameter.
-					// , is removed.
-					M_GET_FROM_ISTREAM(is);
-					return  true;
-				}
-			}
+            if (parser_cfg & K_parser_cfg_manage_comma)
+            {
+                if (c_read == ',')
+                {
+                    // End of parameter.
+                    // , is removed.
+                    M_GET_FROM_ISTREAM(is);
+                    return  true;
+                }
+            }
 
-			if ((parser_cfg == K_parser_cfg_C) &&
-		        (result.empty () == false))
-	        {
-				if (c_read != '[')  // 2010/07/15 to avoid split of an_array[idx]
-				{
- 					if (is_open (c_read))
-					{
-						// Supposed to be if( or while( ...
-						return  true;
-					}
-					if ((is_separator (c_read) != is_separator (result[0])) ||
-						(result[0] == '('))
-					{
-						return  true;
-					}
-				}
-			}
+            if ((parser_cfg == K_parser_cfg_C) &&
+                (result.empty () == false))
+            {
+                if (c_read != '[')  // 2010/07/15 to avoid split of an_array[idx]
+                {
+                    if (is_open (c_read))
+                    {
+                        // Supposed to be if( or while( ...
+                        return  true;
+                    }
+                    if ((is_separator (c_read) != is_separator (result[0])) ||
+                        (result[0] == '('))
+                    {
+                        return  true;
+                    }
+                }
+            }
 
-			if ((parser_cfg & K_parser_cfg_ignore_comments_sharp) &&
-				(c_read == K_COMMENT_START) &&
-				(result.empty ()))					// comment must have a space before
-			{
-				// This is a comment.
+            if ((parser_cfg & K_parser_cfg_ignore_comments_sharp) &&
+                (c_read == K_COMMENT_START) &&
+                (result.empty ()))					// comment must have a space before
+            {
+                // This is a comment.
 #if 1
-				// Ignore it.
-				string  end_of_line;
-				getline (is, end_of_line);
-				build_types_context_line_new(is);
-				continue;
+                // Ignore it.
+                string  end_of_line;
+                getline (is, end_of_line);
+                build_types_context_line_new(is);
+                continue;
 #else
-				// Get it.
-				getline (is, result);
-				build_types_context_line_new(is);
-				return  true;
+                // Get it.
+                getline (is, result);
+                build_types_context_line_new(is);
+                return  true;
 #endif
-	        }
+            }
 
 #if 1
-			if ((parser_cfg != K_parser_cfg_parameters) &&    // 20090521 manage "..."+"..."
-				(is_str_limit (c_read)) &&
-				(result.empty () == false))
-			{
-				// A string begins (and so previous token is terminated).
-				return  true;
-			}
+            if ((parser_cfg != K_parser_cfg_parameters) &&    // 20090521 manage "..."+"..."
+                (is_str_limit (c_read)) &&
+                (result.empty () == false))
+            {
+                // A string begins (and so previous token is terminated).
+                return  true;
+            }
 #else
-			if ((is_str_limit (c_read)) &&
-				(result.empty () == false))
-			{
-				// A string begins (and so previous token is terminated).
-				return  true;
-			}
+            if ((is_str_limit (c_read)) &&
+                (result.empty () == false))
+            {
+                // A string begins (and so previous token is terminated).
+                return  true;
+            }
 #endif
-		}
+        }
 
         // Transform any space into blank.
         if (isspace (c_read))
             c_read = ' ';
 
         result += c_read;
-		M_GET_FROM_ISTREAM(is);
+        M_GET_FROM_ISTREAM(is);
 
         if (c_read == end_of_str)
         {
@@ -441,29 +441,29 @@ bool    append_to_string_until (istream       & is,
                           const char            end_of_str,
                           const E_parser_cfg    parser_cfg)
 {
-	const bool  ok = append_to_string_until_base(is, result, end_of_str, parser_cfg);
+    const bool  ok = append_to_string_until_base(is, result, end_of_str, parser_cfg);
 
-	if (ok && (result != ""))
-	{
-		// Remove all blanks at the end.
-		string::size_type  idx = result.size() - 1;
-		while (idx >= 0)
-		{
-			if (isspace(result[idx]) == 0)
-			{
-				++idx;
-				if (idx < result.size())
-				{
-					result.erase(idx);
-				}
-				break;
-			}
+    if (ok && (result != ""))
+    {
+        // Remove all blanks at the end.
+        string::size_type  idx = result.size() - 1;
+        while (idx >= 0)
+        {
+            if (isspace(result[idx]) == 0)
+            {
+                ++idx;
+                if (idx < result.size())
+                {
+                    result.erase(idx);
+                }
+                break;
+            }
 
-			--idx;
-		}
-	}
+            --idx;
+        }
+    }
 
-	return  ok;
+    return  ok;
 }
 
 //*****************************************************************************
@@ -473,7 +473,7 @@ bool       read_token_word_cplx (istream       & is,
                            const E_parser_cfg    parser_cfg)
 {
     str_result = "";
-	skip_blanks_and_comments(is);
+    skip_blanks_and_comments(is);
     if (is.good () == false)
         return  false;
 
@@ -633,7 +633,7 @@ void    istream_hexa_dump_to_frame (
 void    bin_file_to_frame (const string         & file_name,
                                  T_byte_vector  & frame)
 {
-	M_TRACE_ENTER ("bin_file_to_frame", file_name);
+    M_TRACE_ENTER ("bin_file_to_frame", file_name);
 
     // Compute size of the file.
     size_t       size_file = 0;
@@ -694,11 +694,11 @@ bool    get_number (const char*   word,
 bool    get_number (const char*        word,
                           long long  & number)
 {
-	return  get_number(word, 0, number);
+    return  get_number(word, 0, number);
 }
 
 bool    get_number (const char*        word,
-						  int          base,
+                          int          base,
                           long long  & number)
 {
   number = 0;
@@ -741,27 +741,27 @@ bool    get_number (const char*        word,
         (*endptr != '\0'))
         return  false;
 
-	// Zero leading is simply ignored by strtod -> wrong result value.
-	{
-		const char  * first_digit = word;
-		while (isdigit(*first_digit) == 0)
-		{
-			++first_digit;
-			if (*first_digit == '\0')
-				break;
-		}
-		if (*first_digit == '0')
-		{
-			++first_digit;
-			if (isdigit(*first_digit))
-			{
-				// Zero followed by a digit -> octal number, not a float number.
-				return  false;
-			}
-		}
-	}
+    // Zero leading is simply ignored by strtod -> wrong result value.
+    {
+        const char  * first_digit = word;
+        while (isdigit(*first_digit) == 0)
+        {
+            ++first_digit;
+            if (*first_digit == '\0')
+                break;
+        }
+        if (*first_digit == '0')
+        {
+            ++first_digit;
+            if (isdigit(*first_digit))
+            {
+                // Zero followed by a digit -> octal number, not a float number.
+                return  false;
+            }
+        }
+    }
 
-	return  true;
+    return  true;
 }
 
 //*****************************************************************************
@@ -803,7 +803,7 @@ E_return_code  get_before_separator_after (const string  & str,
         return  E_rc_not_found;
 
     str_left  = str.substr (0, idx - 0);
-	str_right = str.substr (idx + separator.size());
+    str_right = str.substr (idx + separator.size());
 
     return  E_rc_ok;
 }
@@ -832,33 +832,33 @@ E_return_code    decompose_type_sep_value_sep (
     if (idx_right != orig_type.size () - 1)
         return  E_rc_not_found;
 
-	// Searching for separator_left.
-	int                number_of_separator_left_to_find = 1;
+    // Searching for separator_left.
+    int                number_of_separator_left_to_find = 1;
     string::size_type  idx_left = idx_right-1;
 
-	while (idx_left > 0)                         // do NOT accept empty left_part
-	{
-		if (orig_type[idx_left] == separator_left)
-		{
-			--number_of_separator_left_to_find;
-			if (number_of_separator_left_to_find <= 0)
-				break;
-		}
-		else if ((separator_left != separator_right) &&
-				 (orig_type[idx_left] == separator_right))
-		{
-			++number_of_separator_left_to_find;
-		}
+    while (idx_left > 0)                         // do NOT accept empty left_part
+    {
+        if (orig_type[idx_left] == separator_left)
+        {
+            --number_of_separator_left_to_find;
+            if (number_of_separator_left_to_find <= 0)
+                break;
+        }
+        else if ((separator_left != separator_right) &&
+                 (orig_type[idx_left] == separator_right))
+        {
+            ++number_of_separator_left_to_find;
+        }
 
-		--idx_left;
-	}
+        --idx_left;
+    }
 
-	if ((idx_left <= 0) || (number_of_separator_left_to_find != 0))
+    if ((idx_left <= 0) || (number_of_separator_left_to_find != 0))
         return  E_rc_not_found;
 
-	// Extract data part.
+    // Extract data part.
     // NB: orig_type is a copy and not a reference
-	//      to avoid pb if left_part or value_str are the same reference
+    //      to avoid pb if left_part or value_str are the same reference
     left_part = orig_type.substr (0, idx_left - 0);
     value_str = orig_type.substr (idx_left+1, idx_right - (idx_left+1));
 
@@ -887,33 +887,33 @@ E_return_code    decompose_left_sep_middle_sep_right (
     if (idx_left == string::npos)
         return  E_rc_not_found;
 
-	// Searching for separator_right.
-	int                number_of_separator_right_to_find = 1;
+    // Searching for separator_right.
+    int                number_of_separator_right_to_find = 1;
     string::size_type  idx_right = idx_left+1;
 
-	while (idx_right < orig_type.size())
-	{
-		if (orig_type[idx_right] == separator_right)
-		{
-			--number_of_separator_right_to_find;
-			if (number_of_separator_right_to_find <= 0)
-				break;
-		}
-		else if ((separator_left != separator_right) &&
-				 (orig_type[idx_right] == separator_left))
-		{
-			++number_of_separator_right_to_find;
-		}
+    while (idx_right < orig_type.size())
+    {
+        if (orig_type[idx_right] == separator_right)
+        {
+            --number_of_separator_right_to_find;
+            if (number_of_separator_right_to_find <= 0)
+                break;
+        }
+        else if ((separator_left != separator_right) &&
+                 (orig_type[idx_right] == separator_left))
+        {
+            ++number_of_separator_right_to_find;
+        }
 
-		++idx_right;
-	}
+        ++idx_right;
+    }
 
-	if ((idx_right >= orig_type.size()) || (number_of_separator_right_to_find != 0))
+    if ((idx_right >= orig_type.size()) || (number_of_separator_right_to_find != 0))
         return  E_rc_not_found;
 
-	// Extract data part.
+    // Extract data part.
     // NB: orig_type is a copy and not a reference
-	//      to avoid pb if left_part or middle_part or right_part are the same reference
+    //      to avoid pb if left_part or middle_part or right_part are the same reference
     left_part   = orig_type.substr (0, idx_left - 0);
     middle_part = orig_type.substr (idx_left+1, idx_right - (idx_left+1));
     right_part  = orig_type.substr (idx_right+1);
@@ -929,55 +929,55 @@ E_return_code    decompose_left_sep_middle_sep_right (
 
 void    promote_printf_string_to_64bits(string   & printf_string)
 {
-	const string::size_type  size_before = printf_string.size();
+    const string::size_type  size_before = printf_string.size();
 
-	string::size_type  idx_any = 0;
-	while ((idx_any	= printf_string.find ('%', idx_any)) != string::npos)
-	{
-		++idx_any;
+    string::size_type  idx_any = 0;
+    while ((idx_any	= printf_string.find ('%', idx_any)) != string::npos)
+    {
+        ++idx_any;
 
-		if (printf_string[idx_any] == '%')
-		{
-			// This is not a printf format directive.
-			++idx_any;
-			continue;
-		}
+        if (printf_string[idx_any] == '%')
+        {
+            // This is not a printf format directive.
+            ++idx_any;
+            continue;
+        }
 
-		while (isalpha(printf_string[idx_any]) == 0)
-		{
-			if (idx_any == printf_string.size())
-			{
-				M_TRACE_ERROR("bad printf format string gives >" << printf_string << "< ");
-				return;
-			}
+        while (isalpha(printf_string[idx_any]) == 0)
+        {
+            if (idx_any == printf_string.size())
+            {
+                M_TRACE_ERROR("bad printf format string gives >" << printf_string << "< ");
+                return;
+            }
 
-			++idx_any;
-		}
+            ++idx_any;
+        }
 
-		if (printf_string[idx_any] != 's')
-		{
-			if ((printf_string[idx_any] != 'f') &&
-				(printf_string[idx_any] != 'F') &&
-				(printf_string[idx_any] != 'e') &&
-				(printf_string[idx_any] != 'E') &&
-				(printf_string[idx_any] != 'g') &&
-				(printf_string[idx_any] != 'G'))
-			{
+        if (printf_string[idx_any] != 's')
+        {
+            if ((printf_string[idx_any] != 'f') &&
+                (printf_string[idx_any] != 'F') &&
+                (printf_string[idx_any] != 'e') &&
+                (printf_string[idx_any] != 'E') &&
+                (printf_string[idx_any] != 'g') &&
+                (printf_string[idx_any] != 'G'))
+            {
 #ifdef WIN32
-				printf_string.insert(idx_any, "I64");
-				idx_any += 4;
+                printf_string.insert(idx_any, "I64");
+                idx_any += 4;
 #else
-				printf_string.insert(idx_any, "ll");
-				idx_any += 3;
+                printf_string.insert(idx_any, "ll");
+                idx_any += 3;
 #endif
-			}
-		}
-	}
+            }
+        }
+    }
 
-	if (printf_string.size() != size_before)
-	{
-		M_TRACE_DEBUG("promote_printf_string_to_64bits gives >" << printf_string << "<");
-	}
+    if (printf_string.size() != size_before)
+    {
+        M_TRACE_DEBUG("promote_printf_string_to_64bits gives >" << printf_string << "<");
+    }
 }
 
 //*****************************************************************************

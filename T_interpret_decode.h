@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,12 +37,12 @@ using namespace std;
 struct T_interpret_decode : public CT_debug_object_counter<T_interpret_decode>
 {
     void            set_decode_function (string  decode_function);
-	const string &  get_decode_function () const                    { return  A_decode_function; }
+    const string &  get_decode_function () const                    { return  A_decode_function; }
 
     void    set_decode_in_progress (bool  in_progress)  { A_decode_in_progress = in_progress; }
     bool     is_decode_in_progress () const             { return  A_decode_in_progress; }
 
-	bool    must_decode () const              { return  A_decode_function != ""; }
+    bool    must_decode () const              { return  A_decode_function != ""; }
     bool    must_decode_now () const          { return  must_decode () && (is_decode_in_progress () == false); }
 
     T_interpret_decode ()
@@ -51,8 +51,8 @@ struct T_interpret_decode : public CT_debug_object_counter<T_interpret_decode>
     }
 
 private:
-	string  A_decode_function;
-	bool    A_decode_in_progress;
+    string  A_decode_function;
+    bool    A_decode_in_progress;
 };
 
 //*****************************************************************************
@@ -63,18 +63,18 @@ private:
 class C_interpret_decode_in_progress
 {
 public:
-	// Ctor set_decode_in_progress(true)
-	C_interpret_decode_in_progress(T_interpret_decode  & interpret_decode);
+    // Ctor set_decode_in_progress(true)
+    C_interpret_decode_in_progress(T_interpret_decode  & interpret_decode);
 
-	// Dtor set_decode_in_progress(false)
-	~C_interpret_decode_in_progress();
+    // Dtor set_decode_in_progress(false)
+    ~C_interpret_decode_in_progress();
 
 private:
-	// Copy and assignment are forbidden
-	C_interpret_decode_in_progress(const C_interpret_decode_in_progress  &);
-	C_interpret_decode_in_progress & operator=(const C_interpret_decode_in_progress  &);
+    // Copy and assignment are forbidden
+    C_interpret_decode_in_progress(const C_interpret_decode_in_progress  &);
+    C_interpret_decode_in_progress & operator=(const C_interpret_decode_in_progress  &);
 
-	T_interpret_decode  & A_interpret_decode;
+    T_interpret_decode  & A_interpret_decode;
 };
 
 //*****************************************************************************
@@ -86,21 +86,21 @@ private:
 class C_interpret_decode_set_temporary
 {
 public:
-	// Change the decoder function
-	C_interpret_decode_set_temporary(T_interpret_decode  & interpret_decode,
+    // Change the decoder function
+    C_interpret_decode_set_temporary(T_interpret_decode  & interpret_decode,
                                const std::string         & decoder_function);
 
-	// Restore the previous decoder function
-	~C_interpret_decode_set_temporary();
+    // Restore the previous decoder function
+    ~C_interpret_decode_set_temporary();
 
 private:
-	// Copy and assignment are forbidden
-	C_interpret_decode_set_temporary(const C_interpret_decode_set_temporary  &);
-	C_interpret_decode_set_temporary & operator=(const C_interpret_decode_set_temporary  &);
+    // Copy and assignment are forbidden
+    C_interpret_decode_set_temporary(const C_interpret_decode_set_temporary  &);
+    C_interpret_decode_set_temporary & operator=(const C_interpret_decode_set_temporary  &);
 
-	T_interpret_decode  & A_interpret_decode;
-	std::string           A_decoder_function;
-	std::string           A_previous_decoder_function;
+    T_interpret_decode  & A_interpret_decode;
+    std::string           A_decoder_function;
+    std::string           A_previous_decoder_function;
 };
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,7 +70,7 @@ string    build_types (istream             & is,
 //****************************************************************************
 
 string    build_field (istream                           & is,
-				 const T_type_definitions                & type_definitions,
+                 const T_type_definitions                & type_definitions,
                        string                              first_word,
                        T_field_type_name                 & field_type_name);
 

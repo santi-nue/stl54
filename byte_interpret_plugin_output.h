@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2012-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,19 +35,19 @@
 
 struct T_byte_interpret_plugin_output_context
 {
-	const void  * P_null1;
-	const void  * P_null2;
-	const void  * P_library_name;
-	const char  * P_user_data;
+    const void  * P_null1;
+    const void  * P_null2;
+    const void  * P_library_name;
+    const char  * P_user_data;
 
 #ifdef __cplusplus
-	T_byte_interpret_plugin_output_context()
-		:P_null1(NULL),
-		 P_null2(NULL),
-		 P_library_name(NULL),
-		 P_user_data(NULL)
-	{
-	}
+    T_byte_interpret_plugin_output_context()
+        :P_null1(NULL),
+         P_null2(NULL),
+         P_library_name(NULL),
+         P_user_data(NULL)
+    {
+    }
 #endif
 };
 
@@ -61,10 +61,10 @@ struct T_byte_interpret_plugin_output_context
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_begin(
-				const T_byte_interpret_plugin_output_context   * P_context);
+                const T_byte_interpret_plugin_output_context   * P_context);
 
 typedef void  (* T_byte_interpret_plugin_output_begin_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context);
+                const T_byte_interpret_plugin_output_context   * P_context);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_value_integer *********************************
@@ -72,26 +72,26 @@ typedef void  (* T_byte_interpret_plugin_output_begin_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_value_integer(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     final_type,
-				const long long                                  data_value,
-			    const char *                                     data_value_str,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     final_type,
+                const long long                                  data_value,
+                const char *                                     data_value_str,
+                const char *                                     error);
 
 typedef void  (* T_byte_interpret_plugin_output_value_integer_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     final_type,
-				const long long                                  data_value,
-			    const char *                                     data_value_str,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     final_type,
+                const long long                                  data_value,
+                const char *                                     data_value_str,
+                const char *                                     error);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_value_float ***********************************
@@ -99,26 +99,26 @@ typedef void  (* T_byte_interpret_plugin_output_value_integer_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_value_float(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     final_type,
-				const double                                     data_value,
-			    const char *                                     data_value_str,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     final_type,
+                const double                                     data_value,
+                const char *                                     data_value_str,
+                const char *                                     error);
 
 typedef void  (* T_byte_interpret_plugin_output_value_float_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     final_type,
-				const double                                     data_value,
-			    const char *                                     data_value_str,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     final_type,
+                const double                                     data_value,
+                const char *                                     data_value_str,
+                const char *                                     error);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_value_string **********************************
@@ -126,26 +126,26 @@ typedef void  (* T_byte_interpret_plugin_output_value_float_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_value_string(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     final_type,
-				const char *                                     data_value,
-			    const char *                                     data_value_str,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     final_type,
+                const char *                                     data_value,
+                const char *                                     data_value_str,
+                const char *                                     error);
 
 typedef void  (* T_byte_interpret_plugin_output_value_string_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     final_type,
-				const char *                                     data_value,
-			    const char *                                     data_value_str,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     final_type,
+                const char *                                     data_value,
+                const char *                                     data_value_str,
+                const char *                                     error);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_raw_data **************************************
@@ -153,22 +153,22 @@ typedef void  (* T_byte_interpret_plugin_output_value_string_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_raw_data(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-				const int                                        type_bit_size/*,
-			    const E_raw_data_type                            raw_data_type*/);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const int                                        type_bit_size/*,
+                const E_raw_data_type                            raw_data_type*/);
 
 typedef void  (* T_byte_interpret_plugin_output_raw_data_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-				const int                                        type_bit_size/*,
-			    const E_raw_data_type                            raw_data_type*/);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const int                                        type_bit_size/*,
+                const E_raw_data_type                            raw_data_type*/);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_group_begin ***********************************
@@ -176,18 +176,18 @@ typedef void  (* T_byte_interpret_plugin_output_raw_data_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_group_begin(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name);
 
 typedef void  (* T_byte_interpret_plugin_output_group_begin_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_group_append_text *****************************
@@ -195,18 +195,18 @@ typedef void  (* T_byte_interpret_plugin_output_group_begin_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_group_append_text(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     text);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     text);
 
 typedef void  (* T_byte_interpret_plugin_output_group_append_text_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     text);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     text);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_group_end *************************************
@@ -214,18 +214,18 @@ typedef void  (* T_byte_interpret_plugin_output_group_append_text_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_group_end(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name);
 
 typedef void  (* T_byte_interpret_plugin_output_group_end_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_error *****************************************
@@ -233,18 +233,18 @@ typedef void  (* T_byte_interpret_plugin_output_group_end_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_error(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     error);
 
 typedef void  (* T_byte_interpret_plugin_output_error_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     error);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_missing_data **********************************
@@ -252,20 +252,20 @@ typedef void  (* T_byte_interpret_plugin_output_error_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_missing_data(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     error);
 
 typedef void  (* T_byte_interpret_plugin_output_missing_data_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     type_name,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     type_name,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     error);
 
 //*****************************************************************************
 // byte_interpret_plugin_output_cmd_error *************************************
@@ -273,18 +273,18 @@ typedef void  (* T_byte_interpret_plugin_output_missing_data_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_cmd_error(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     error);
 
 typedef void  (* T_byte_interpret_plugin_output_cmd_error_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     error);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     error);
 
 
 
@@ -294,18 +294,18 @@ typedef void  (* T_byte_interpret_plugin_output_cmd_error_cb)(
 EXTERN_C 
 LIBRARY_EXPORT
 void    byte_interpret_plugin_output_cmd_print(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     text);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     text);
 
 typedef void  (* T_byte_interpret_plugin_output_cmd_print_cb)(
-				const T_byte_interpret_plugin_output_context   * P_context,
-				const void                                     * P_null,
-			    const char *                                     data_name,
-			    const char *                                     data_simple_name,
-			    const char *                                     text);
+                const T_byte_interpret_plugin_output_context   * P_context,
+                const void                                     * P_null,
+                const char *                                     data_name,
+                const char *                                     data_simple_name,
+                const char *                                     text);
 
 
 #endif /* BYTE_INTERPRET_PLUGIN_OUTPUT_H */

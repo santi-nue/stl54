@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2012-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,51 +40,51 @@
 class C_debug_object_counter
 {
 public:
-	C_debug_object_counter();
-	C_debug_object_counter(const C_debug_object_counter  & );
-	~C_debug_object_counter();
+    C_debug_object_counter();
+    C_debug_object_counter(const C_debug_object_counter  & );
+    ~C_debug_object_counter();
 
-	static int    get_nb_of_objects()                    { return A_debug_counter; }
+    static int    get_nb_of_objects()                    { return A_debug_counter; }
 
-	static std::string  get_debug_string();
+    static std::string  get_debug_string();
 
 
-	static void    incr(const char * class_name, const int  sizeof_class);
-	static void    decr(const char * class_name);
+    static void    incr(const char * class_name, const int  sizeof_class);
+    static void    decr(const char * class_name);
 
 private:
-	static int    A_debug_counter;
+    static int    A_debug_counter;
 };
 
 template<class TYPE>
 class CT_debug_object_counter
 {
 public:
-	CT_debug_object_counter()
-	{
-		C_debug_object_counter::incr(typeid(TYPE).name(), sizeof(TYPE));
-	}
-	CT_debug_object_counter(const CT_debug_object_counter &)
-	{
-		C_debug_object_counter::incr(typeid(TYPE).name(), sizeof(TYPE));
-	}
-	~CT_debug_object_counter()
-	{
-		C_debug_object_counter::decr(typeid(TYPE).name());
-	}
+    CT_debug_object_counter()
+    {
+        C_debug_object_counter::incr(typeid(TYPE).name(), sizeof(TYPE));
+    }
+    CT_debug_object_counter(const CT_debug_object_counter &)
+    {
+        C_debug_object_counter::incr(typeid(TYPE).name(), sizeof(TYPE));
+    }
+    ~CT_debug_object_counter()
+    {
+        C_debug_object_counter::decr(typeid(TYPE).name());
+    }
 };
 #else
 
 class C_debug_object_counter
 {
 public:
-	C_debug_object_counter()                                  {  }
-	C_debug_object_counter(const C_debug_object_counter  & )  {  }
-	~C_debug_object_counter()                                 {  }
+    C_debug_object_counter()                                  {  }
+    C_debug_object_counter(const C_debug_object_counter  & )  {  }
+    ~C_debug_object_counter()                                 {  }
 
-	static int    get_nb_of_objects()                    { return  0; }
+    static int    get_nb_of_objects()                    { return  0; }
 
-	static std::string  get_debug_string()               { return  ""; }
+    static std::string  get_debug_string()               { return  ""; }
 
 };
 
@@ -92,9 +92,9 @@ template<class TYPE>
 class CT_debug_object_counter
 {
 public:
-	CT_debug_object_counter() {  }
-	CT_debug_object_counter(const CT_debug_object_counter &) {  }
-	~CT_debug_object_counter() {  }
+    CT_debug_object_counter() {  }
+    CT_debug_object_counter(const CT_debug_object_counter &) {  }
+    ~CT_debug_object_counter() {  }
 };
 #endif
 

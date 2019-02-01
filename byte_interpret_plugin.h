@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2012-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +46,7 @@
 #if 0
 struct T_byte_interpret_plugin_output
 {
-	const char  * P_user_data;
+    const char  * P_user_data;
 };
 #endif
 

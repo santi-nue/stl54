@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,19 +56,19 @@ expression could be :
 
 struct T_expression : public CT_debug_object_counter<T_expression>
 {
-	enum E_type
-	{
-		E_type_none,
-		E_type_value,
-		E_type_variable,
-		E_type_function_call,
-		E_type_operation
-	};
+    enum E_type
+    {
+        E_type_none,
+        E_type_value,
+        E_type_variable,
+        E_type_function_call,
+        E_type_operation
+    };
 
-	enum E_operation
-	{
-		E_operation_none,
-	    E_operation_condition,
+    enum E_operation
+    {
+        E_operation_none,
+        E_operation_condition,
         E_operation_logical_and,
         E_operation_logical_or,
         E_operation_bit_and,
@@ -89,153 +89,153 @@ struct T_expression : public CT_debug_object_counter<T_expression>
         E_operation_divide_float,
         E_operation_divide_c,
         E_operation_modulo
-	};
+    };
 
-	T_expression();
+    T_expression();
 //	T_expression(		 const T_type_definitions  & type_definitions,
 //						 const std::string         & str);
 
-	bool             is_defined() const           { return  A_type != E_type_none; }
+    bool             is_defined() const           { return  A_type != E_type_none; }
 
-	bool             is_a_value() const           { return  A_type == E_type_value; }
-	bool             is_a_variable() const        { return  A_type == E_type_variable; }
-	const std::string  & get_variable_name() const;
+    bool             is_a_value() const           { return  A_type == E_type_value; }
+    bool             is_a_variable() const        { return  A_type == E_type_variable; }
+    const std::string  & get_variable_name() const;
 
-	const std::string  & get_original_string_expression() const   { return  A_original_string_expression; }
-
-
-	void             build_expression(
-						 const T_type_definitions  & type_definitions,
-						 const std::string         & str);
-	void             build_expression(
-						 const C_value             & value);
+    const std::string  & get_original_string_expression() const   { return  A_original_string_expression; }
 
 
-	void      pre_compute_expression(
-						 const T_type_definitions      & type_definitions);
+    void             build_expression(
+                         const T_type_definitions  & type_definitions,
+                         const std::string         & str);
+    void             build_expression(
+                         const C_value             & value);
 
 
-	const C_value &  compute_expression(
-						 const T_type_definitions      & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-						 const std::string             & data_name,
+    void      pre_compute_expression(
+                         const T_type_definitions      & type_definitions);
+
+
+    const C_value &  compute_expression(
+                         const T_type_definitions      & type_definitions,
+                               T_interpret_data        & interpret_data,
+                               T_frame_data            & in_out_frame_data,
+                         const std::string             & data_name,
                          const std::string             & data_simple_name,
                                std::ostream            & os_out,
                                std::ostream            & os_err) const;
 
-	const C_value &  compute_expression_no_io(
-						 const T_type_definitions      & type_definitions,
-							   T_interpret_data        & interpret_data) const;
+    const C_value &  compute_expression_no_io(
+                         const T_type_definitions      & type_definitions,
+                               T_interpret_data        & interpret_data) const;
 
-	const C_value &  compute_expression_static(
-						 const T_type_definitions      & type_definitions) const;
-	
+    const C_value &  compute_expression_static(
+                         const T_type_definitions      & type_definitions) const;
+    
 private:
 
-	void             build_expression_str(
-						 const T_type_definitions  & type_definitions,
-						 const std::string         & str);
+    void             build_expression_str(
+                         const T_type_definitions  & type_definitions,
+                         const std::string         & str);
 
-	void             build_expression_words(
-						 const T_type_definitions        & type_definitions,
-						 const std::vector<std::string>  & words);
+    void             build_expression_words(
+                         const T_type_definitions        & type_definitions,
+                         const std::vector<std::string>  & words);
 
-	void             build_expression_array(
-						 const T_type_definitions  & type_definitions,
-						 const std::string         & str);
+    void             build_expression_array(
+                         const T_type_definitions  & type_definitions,
+                         const std::string         & str);
 
 public:
-	const C_value &  compute_expression(
-						 const T_type_definitions      & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-						 const std::string             & data_name,
+    const C_value &  compute_expression(
+                         const T_type_definitions      & type_definitions,
+                               T_interpret_data        & interpret_data,
+                               T_frame_data            & in_out_frame_data,
+                         const std::string             & data_name,
                          const std::string             & data_simple_name,
                                std::ostream            & os_out,
                                std::ostream            & os_err,
-							   bool                      pre_compute,
-							   bool                    & pre_compute_result) const;
+                               bool                      pre_compute,
+                               bool                    & pre_compute_result) const;
 private:
 
-	void      compute_expression_variable_array(
-						 const T_type_definitions      & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-						 const std::string             & data_name,
+    void      compute_expression_variable_array(
+                         const T_type_definitions      & type_definitions,
+                               T_interpret_data        & interpret_data,
+                               T_frame_data            & in_out_frame_data,
+                         const std::string             & data_name,
                          const std::string             & data_simple_name,
                                std::ostream            & os_out,
                                std::ostream            & os_err,
-							   bool                      pre_compute,
-							   bool                    & pre_compute_result) const;
+                               bool                      pre_compute,
+                               bool                    & pre_compute_result) const;
 
-	void      compute_expression_function(
-						 const T_type_definitions      & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-						 const std::string             & data_name,
+    void      compute_expression_function(
+                         const T_type_definitions      & type_definitions,
+                               T_interpret_data        & interpret_data,
+                               T_frame_data            & in_out_frame_data,
+                         const std::string             & data_name,
                          const std::string             & data_simple_name,
                                std::ostream            & os_out,
                                std::ostream            & os_err,
-							   bool                      pre_compute,
-							   bool                    & pre_compute_result) const;
+                               bool                      pre_compute,
+                               bool                    & pre_compute_result) const;
 
-	void      compute_expression_operation(
-						 const T_type_definitions      & type_definitions,
-							   T_interpret_data        & interpret_data,
-					           T_frame_data            & in_out_frame_data,
-						 const std::string             & data_name,
+    void      compute_expression_operation(
+                         const T_type_definitions      & type_definitions,
+                               T_interpret_data        & interpret_data,
+                               T_frame_data            & in_out_frame_data,
+                         const std::string             & data_name,
                          const std::string             & data_simple_name,
                                std::ostream            & os_out,
                                std::ostream            & os_err,
-							   bool                      pre_compute,
-							   bool                    & pre_compute_result) const;
+                               bool                      pre_compute,
+                               bool                    & pre_compute_result) const;
 
-	// The original string from which the expression have been build.
-	//
-	std::string                         A_original_string_expression;
+    // The original string from which the expression have been build.
+    //
+    std::string                         A_original_string_expression;
 
-	// True if the value has already been calculated (during initialisation).
-	mutable bool                        A_value_alreay_computed;
+    // True if the value has already been calculated (during initialisation).
+    mutable bool                        A_value_alreay_computed;
 
-	// Type of expression.
-	E_type                              A_type;
+    // Type of expression.
+    E_type                              A_type;
 
-	// The value.
-	// compute_expression always return this value.
-	mutable C_value		                A_value;
+    // The value.
+    // compute_expression always return this value.
+    mutable C_value		                A_value;
 
-	// Name of the variable or name of the function.
-	std::string                         A_variable_or_function_name;
+    // Name of the variable or name of the function.
+    std::string                         A_variable_or_function_name;
 
-	// Operation to do (with A_expressions)
-	E_operation                         A_operation;
+    // Operation to do (with A_expressions)
+    E_operation                         A_operation;
 
-	// Expression for function call or operation or variable with array
-	mutable std::vector<T_expression>   A_expressions;
+    // Expression for function call or operation or variable with array
+    mutable std::vector<T_expression>   A_expressions;
 
-	// Expressions for array index
+    // Expressions for array index
 #if 0
 
-	struct T_array
-	{
-		T_expression  expression;
-		// reduced_variable_name :
-		// if the orginal variable name was   "left[idx_1].field[idx_2][idx_3]"
-		//  then the reduced_variable_name is "left[].field[][]"
-		// This idx_... gives the position where to insert
-		//  the result of the expression.
-		int           idx_inside_reduced_variable_name;
-	};
+    struct T_array
+    {
+        T_expression  expression;
+        // reduced_variable_name :
+        // if the orginal variable name was   "left[idx_1].field[idx_2][idx_3]"
+        //  then the reduced_variable_name is "left[].field[][]"
+        // This idx_... gives the position where to insert
+        //  the result of the expression.
+        int           idx_inside_reduced_variable_name;
+    };
 //	std::vector<T_array>        A_arrays;
 #endif
 
-	friend std::ostream &  operator<< (std::ostream    & os,
-		                     const T_expression    & rhs);
-	friend std::ostream &  operator<< (std::ostream            & os,
-		                     const T_expression::E_type    & rhs);
-	friend std::ostream &  operator<< (std::ostream               & os,
-		                     const T_expression::E_operation  & rhs);
+    friend std::ostream &  operator<< (std::ostream    & os,
+                             const T_expression    & rhs);
+    friend std::ostream &  operator<< (std::ostream            & os,
+                             const T_expression::E_type    & rhs);
+    friend std::ostream &  operator<< (std::ostream               & os,
+                             const T_expression::E_operation  & rhs);
 };
 
 std::ostream &  operator<< (std::ostream    & os,

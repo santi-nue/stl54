@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2012 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,61 +30,61 @@
 //*****************************************************************************
 
 T_interpret_value::T_interpret_value()
-	:A_reference_counter(0),
-	 A_type(E_type_group)
+    :A_reference_counter(0),
+     A_type(E_type_group)
 {
 }
 
 T_interpret_value::T_interpret_value(const std::string        & name)
-	:A_reference_counter(0),
-	 A_type(E_type_group),
-	 A_name(name)
+    :A_reference_counter(0),
+     A_type(E_type_group),
+     A_name(name)
 {
 }
 
 // Element
 T_interpret_value::T_interpret_value(
-							   const std::string        & name,
-							   const T_attribute_value  & attribute_value)
-	:A_reference_counter(0),
-	 A_type(E_type_value),
-	 A_name(name),
-	 A_attribute_value(attribute_value)
-	 
+                               const std::string        & name,
+                               const T_attribute_value  & attribute_value)
+    :A_reference_counter(0),
+     A_type(E_type_value),
+     A_name(name),
+     A_attribute_value(attribute_value)
+     
 {
-	if (attribute_value.transformed.get_type() == C_value::E_type_msg)
-	{
-		A_type = E_type_msg;
-	}
+    if (attribute_value.transformed.get_type() == C_value::E_type_msg)
+    {
+        A_type = E_type_msg;
+    }
 }
 #if 0
 T_interpret_value::T_interpret_value(const T_interpret_value  & rhs)
-	:A_reference_counter(rhs.A_reference_counter),   // reference_counter(0) specific behavior does NOT work
-	 A_type(rhs.A_type),
-	 A_name(rhs.A_name),
-	 A_attribute_value(rhs.A_attribute_value)
+    :A_reference_counter(rhs.A_reference_counter),   // reference_counter(0) specific behavior does NOT work
+     A_type(rhs.A_type),
+     A_name(rhs.A_name),
+     A_attribute_value(rhs.A_attribute_value)
 {
 }
 
 T_interpret_value &
 T_interpret_value::operator=(const T_interpret_value  & rhs)
 {
-	A_reference_counter = rhs.A_reference_counter;  // reference_counter specific behavior does NOT work
-	A_type = rhs.A_type;
-	A_name = rhs.A_name;
-	A_attribute_value = rhs.A_attribute_value;
+    A_reference_counter = rhs.A_reference_counter;  // reference_counter specific behavior does NOT work
+    A_type = rhs.A_type;
+    A_name = rhs.A_name;
+    A_attribute_value = rhs.A_attribute_value;
 
-	return  * this;
+    return  * this;
 }
 
 T_interpret_value::~T_interpret_value()
 {
-	if (A_reference_counter != 0)
-	{
-		M_FATAL_COMMENT("type=" << A_type << " " <<
-						"name=" << A_name << " " <<
-						"reference_counter=" << A_reference_counter << " != 0");
-	}
+    if (A_reference_counter != 0)
+    {
+        M_FATAL_COMMENT("type=" << A_type << " " <<
+                        "name=" << A_name << " " <<
+                        "reference_counter=" << A_reference_counter << " != 0");
+    }
 }
 #endif
 
@@ -93,11 +93,11 @@ T_interpret_value::~T_interpret_value()
 //*****************************************************************************
 
 void    swap(T_interpret_value  & lhs,
-			 T_interpret_value  & rhs)
+             T_interpret_value  & rhs)
 {
-	swap(lhs.A_reference_counter, rhs.A_reference_counter);
-	swap(lhs.A_type,              rhs.A_type);
-	swap(lhs.A_name,              rhs.A_name);
-	swap(lhs.A_attribute_value,   rhs.A_attribute_value);
+    swap(lhs.A_reference_counter, rhs.A_reference_counter);
+    swap(lhs.A_type,              rhs.A_type);
+    swap(lhs.A_name,              rhs.A_name);
+    swap(lhs.A_attribute_value,   rhs.A_attribute_value);
 }
 

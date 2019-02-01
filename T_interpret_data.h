@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,7 +51,7 @@ typedef C_reference_counter_ptr<const T_interpret_data>  T_RCP_const_interpret_d
 
 
 void    swap(T_interpret_data  & lhs,
-			 T_interpret_data  & rhs);
+             T_interpret_data  & rhs);
 
 //*****************************************************************************
 // Permits recursive call of generic dissector.
@@ -61,19 +61,19 @@ void    swap(T_interpret_data  & lhs,
 class C_interpret_data_set_temporary
 {
 public:
-	C_interpret_data_set_temporary(T_interpret_data  & interpret_data);
-	C_interpret_data_set_temporary();
-	~C_interpret_data_set_temporary();
+    C_interpret_data_set_temporary(T_interpret_data  & interpret_data);
+    C_interpret_data_set_temporary();
+    ~C_interpret_data_set_temporary();
 
-	void    set(T_interpret_data  & interpret_data);
-	void    unset();
-	void    forget();
+    void    set(T_interpret_data  & interpret_data);
+    void    unset();
+    void    forget();
 
 private:
-	C_interpret_data_set_temporary(const C_interpret_data_set_temporary  &);
+    C_interpret_data_set_temporary(const C_interpret_data_set_temporary  &);
 
-	T_interpret_data  * previous_value;
-	bool                value_modified;
+    T_interpret_data  * previous_value;
+    bool                value_modified;
 };
 
 //*****************************************************************************

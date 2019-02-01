@@ -32,34 +32,34 @@
 //****************************************************************************
 
 C_byte_interpret_exception::C_byte_interpret_exception(
-						const char                        * file_name,
-							int                           file_line,
-							E_byte_interpret_exception    bie,
+                        const char                        * file_name,
+                            int                           file_line,
+                            E_byte_interpret_exception    bie,
                         const std::string                 & str)
-	:std::exception(),
-	A_file_name(file_name),
-	A_file_line(file_line),
-	A_bie(bie),
-	A_str(str)
+    :std::exception(),
+    A_file_name(file_name),
+    A_file_line(file_line),
+    A_bie(bie),
+    A_str(str)
 {
-	A_explanation = get_explanation();
+    A_explanation = get_explanation();
 }
 
 const char*
 C_byte_interpret_exception::what() const throw()
 {
-	return  A_explanation.c_str();
+    return  A_explanation.c_str();
 }
 
 const std::string 
 C_byte_interpret_exception::get_explanation() const
 {
-	string  debug_str;
-	if (A_file_name != "")
-	{
-		debug_str += " at " + A_file_name + " line=" + get_string(A_file_line);
-	}
-	return  A_str + debug_str;
+    string  debug_str;
+    if (A_file_name != "")
+    {
+        debug_str += " at " + A_file_name + " line=" + get_string(A_file_line);
+    }
+    return  A_str + debug_str;
 }
 
 // ****************************************************************************
@@ -70,16 +70,16 @@ static ostream  * S_P_state_ostream = &cout;
 
 ostream  & get_state_ostream()
 {
-	return  * S_P_state_ostream;
+    return  * S_P_state_ostream;
 }
 
 ostream  & set_state_ostream(ostream  & new_state_ostream)
 {
-	ostream  & old_state_ostream = * S_P_state_ostream;
+    ostream  & old_state_ostream = * S_P_state_ostream;
 
-	S_P_state_ostream = & new_state_ostream;
+    S_P_state_ostream = & new_state_ostream;
 
-	return  old_state_ostream;
+    return  old_state_ostream;
 }
 
 // ****************************************************************************
@@ -87,52 +87,52 @@ ostream  & set_state_ostream(ostream  & new_state_ostream)
 // ****************************************************************************
 void    set_debug(E_debug_status    debug)
 {
-	C_trace::A_debug_status = debug;
+    C_trace::A_debug_status = debug;
 }
 
 E_debug_status  get_debug()
 {
-	return  C_trace::A_debug_status;
+    return  C_trace::A_debug_status;
 }
 
 
 C_debug_set_temporary::C_debug_set_temporary(E_debug_status  debug)
-	:previous_value(get_debug()),
-	 value_modified(false)
+    :previous_value(get_debug()),
+     value_modified(false)
 {
-	set(debug);
+    set(debug);
 }
 
 C_debug_set_temporary::C_debug_set_temporary()
-	:previous_value(get_debug()),
-	 value_modified(false)
+    :previous_value(get_debug()),
+     value_modified(false)
 {
 }
 
 C_debug_set_temporary::~C_debug_set_temporary()
 {
-	unset();
+    unset();
 }
 
 void
 C_debug_set_temporary::set(E_debug_status  debug)
 {
-	set_debug(debug);
-	value_modified = true;
+    set_debug(debug);
+    value_modified = true;
 }
 void
 C_debug_set_temporary::unset()
 {
-	if (value_modified)
-	{
-		set_debug(previous_value);
-		value_modified = false;
-	}
+    if (value_modified)
+    {
+        set_debug(previous_value);
+        value_modified = false;
+    }
 }
 void
 C_debug_set_temporary::forget()
 {
-	value_modified = false;
+    value_modified = false;
 }
 
 // ****************************************************************************
@@ -142,16 +142,16 @@ E_debug_status  C_trace::A_debug_status = E_debug_status_OFF;
 
 C_trace::C_trace(const char  * function_name)
     :A_function_name(function_name),
-	 A_must_do_leave_trace(true)
+     A_must_do_leave_trace(true)
 {
 }
 
 C_trace::~C_trace()
 {
-	if (A_must_do_leave_trace)
-	{
-		M_TRACE_base(" ", "Leave", A_function_name);
-	}
+    if (A_must_do_leave_trace)
+    {
+        M_TRACE_base(" ", "Leave", A_function_name);
+    }
 }
 
 //#ifdef WIN32
@@ -163,47 +163,47 @@ T_perf_time  perf_time_val_last_trace;
 
 void
 C_trace::print_beginning_of_trace(      ostream  & os,
-								  const char     * prefix1,
-								  const char     * prefix2)
+                                  const char     * prefix1,
+                                  const char     * prefix2)
 {
-	os << prefix1 << " ";
+    os << prefix1 << " ";
 
     if (A_debug_status == E_debug_status_ON)
     {
-	    T_perf_time  timeb_val;
+        T_perf_time  timeb_val;
 
-	    os << timeb_val << " ";
+        os << timeb_val << " ";
 
-	    if ((perf_time_val_last_trace_initialized) &&
-		    (timeb_val != perf_time_val_last_trace))
-	    {
-		    long    diff_time_ms = perf_time_diff_ms(timeb_val, perf_time_val_last_trace);
-		    if (diff_time_ms > 1)
-		    {
-			    char  time_str[99+1];
-			    sprintf(time_str, "%4ld ", diff_time_ms);
-			    os << time_str;
-		    }
-		    else
-		    {
-			    os << "     ";
-		    }
-	    }
-	    else
-	    {
-		    os << "     ";
-	    }
-	    perf_time_val_last_trace = timeb_val;
-	    perf_time_val_last_trace_initialized = true;
+        if ((perf_time_val_last_trace_initialized) &&
+            (timeb_val != perf_time_val_last_trace))
+        {
+            long    diff_time_ms = perf_time_diff_ms(timeb_val, perf_time_val_last_trace);
+            if (diff_time_ms > 1)
+            {
+                char  time_str[99+1];
+                sprintf(time_str, "%4ld ", diff_time_ms);
+                os << time_str;
+            }
+            else
+            {
+                os << "     ";
+            }
+        }
+        else
+        {
+            os << "     ";
+        }
+        perf_time_val_last_trace = timeb_val;
+        perf_time_val_last_trace_initialized = true;
     }
 
-	os << prefix2 << " "; 
+    os << prefix2 << " "; 
 }
 
 void
 C_trace::leave_trace_done()
 {
-	A_must_do_leave_trace = false;
+    A_must_do_leave_trace = false;
 }
 
 //*****************************************************************************
@@ -211,18 +211,18 @@ C_trace::leave_trace_done()
 //*****************************************************************************
 
 void    fatal_pb (const string  & lhs,
-				  const string  & comp,
-				  const string  & rhs,
-				  const char    * file_name,
-				  const size_t    file_line)
+                  const string  & comp,
+                  const string  & rhs,
+                  const char    * file_name,
+                  const size_t    file_line)
 {
-	ostrstream  oss;
-	oss << lhs << " "
-		<< comp << " "
-		<< rhs << " "
+    ostrstream  oss;
+    oss << lhs << " "
+        << comp << " "
+        << rhs << " "
         << "at " << file_name << "[" << file_line << "]";
-	oss << ends;
-	const char  * oss_str = oss.str ();
+    oss << ends;
+    const char  * oss_str = oss.str ();
     oss.freeze (false);           /* avoid memory leak */
 
     M_TRACE_FATAL(oss_str);
@@ -239,15 +239,15 @@ void    fatal_pb (const string  & lhs,
 #endif
 
 int   get_files_in_dir (const string          & dir_name,
-						const string          & begin_file_name,
-						const string          & end_file_name,
-						      vector<string>  & file_names,
-						const bool              full_name_required)
+                        const string          & begin_file_name,
+                        const string          & end_file_name,
+                              vector<string>  & file_names,
+                        const bool              full_name_required)
 {
   M_TRACE_ENTER ("get_files_in_dir",
                  "dir_name=" << dir_name <<
-				 "  begin_file_name=" << begin_file_name <<
-				 "  end_file_name=" << end_file_name);
+                 "  begin_file_name=" << begin_file_name <<
+                 "  end_file_name=" << end_file_name);
 
 #ifdef WIN32
 
@@ -268,13 +268,13 @@ int   get_files_in_dir (const string          & dir_name,
   {
     if ((full_name_required) && (dir_name != ""))
       file_names.push_back(dir_name + "\\" + FindData.cFileName);
-	else
+    else
       file_names.push_back(FindData.cFileName);
 
-	//-------------------------------------------------------
-	// Recherche du fichier suivant
-	//-------------------------------------------------------
-	hOK = FindNextFile (hFindFile,&FindData);
+    //-------------------------------------------------------
+    // Recherche du fichier suivant
+    //-------------------------------------------------------
+    hOK = FindNextFile (hFindFile,&FindData);
   }
 
   FindClose (hFindFile);
@@ -319,7 +319,7 @@ int   get_files_in_dir (const string          & dir_name,
 
     if ((full_name_required) && (dir_name != ""))
       file_names.push_back(dir_name + "/" + file_name);
-	else
+    else
       file_names.push_back(file_name);
   }
 
