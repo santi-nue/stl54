@@ -1085,15 +1085,15 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 
         protocol_data.ws_data.subdissector_data.dissector_table =
 #if WIRESHARK_VERSION_NUMBER >= 20200
-            register_dissector_table(protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str(),
-                                    protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str(),
-                                    protocol_data.ws_data.proto_generic,
-                                    protocol_data.SUBPROTO_SUBFIELD_TYPE_WS,
-                                    BASE_DEC);
+        register_dissector_table(protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str(),
+                                 protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str(),
+                                 protocol_data.ws_data.proto_generic,
+                                 protocol_data.SUBPROTO_SUBFIELD_TYPE_WS,
+                                 BASE_DEC);
 #else
-            register_dissector_table(protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str(),
-                                    protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str(),
-                                    protocol_data.SUBPROTO_SUBFIELD_TYPE_WS, BASE_DEC);
+        register_dissector_table(protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str(),
+                                 protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str(),
+                                 protocol_data.SUBPROTO_SUBFIELD_TYPE_WS, BASE_DEC);
 #endif
 
         M_FATAL_IF_EQ(protocol_data.ws_data.subdissector_data.dissector_table, NULL);

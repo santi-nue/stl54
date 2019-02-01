@@ -36,6 +36,13 @@ using namespace std;
 
 //*****************************************************************************
 // T_interpret_read_values
+// Contains named data (T_interpret_value)
+// Data could be :
+// - global data                        optional, wireshark only
+// - pinfo data                         optional, wireshark only
+// - fields read from input data
+// - variables
+// For wireshark, data is about 1 msg/pdu
 //*****************************************************************************
 
 struct T_interpret_read_values : public C_reference_counter,
@@ -140,11 +147,11 @@ struct T_interpret_read_values : public C_reference_counter,
 private:
     typedef vector<T_interpret_value>      T_interpret_values;
     vector<T_interpret_value>    A_msg;
-    int                          A_msg_global_idx_begin;
+    int                          A_msg_global_idx_begin;    // optional
     int                          A_msg_global_idx_end;
-    int                          A_msg_pinfo_idx_begin;
+    int                          A_msg_pinfo_idx_begin;     // optional
     int                          A_msg_pinfo_idx_end;
-    int                          A_msg_other_idx_begin;    // other data start after global and pinfo
+    int                          A_msg_other_idx_begin;     // other data start after global and pinfo
     std::string                  A_current_path;
 
 
