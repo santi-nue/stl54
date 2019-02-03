@@ -174,7 +174,7 @@ void    register_fields_add_field_none(
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_filter_name_param;
     hf_register_info               hf = 
         { NULL,    // initialized later
-        { strdup(field_name),
+          { strdup(field_name),
             strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
             strdup(field_extended_name), HFILL }};
 
@@ -193,7 +193,7 @@ void    register_fields_add_field_none(
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
     hf_register_info               hf = 
         { NULL,    // initialized later
-        { strdup(field_name.get_display_name().c_str()),
+          { strdup(field_name.get_display_name().c_str()),
             strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
@@ -212,7 +212,7 @@ void    register_fields_add_field_bytes(
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
     hf_register_info               hf = 
         { NULL,    // initialized later
-        { strdup(field_name.get_display_name().c_str()),
+          { strdup(field_name.get_display_name().c_str()),
             strdup(filter_field_name.c_str()), FT_BYTES, BASE_NONE, NULL, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
@@ -231,7 +231,7 @@ void    register_fields_add_field_string(
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
     hf_register_info               hf = 
         { NULL,    // initialized later
-        { strdup(field_name.get_display_name().c_str()),
+          { strdup(field_name.get_display_name().c_str()),
             strdup(filter_field_name.c_str()), FT_STRING, BASE_NONE, NULL, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
@@ -252,7 +252,7 @@ void    register_fields_add_field_float(
     ftenum                         ws_size = field_bit_size<=32 ? FT_FLOAT : FT_DOUBLE;
     hf_register_info               hf = 
         { NULL,    // initialized later
-        { strdup(field_name.get_display_name().c_str()),
+          { strdup(field_name.get_display_name().c_str()),
             strdup(filter_field_name.c_str()), ws_size, BASE_NONE, NULL, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
@@ -301,7 +301,7 @@ void    register_fields_add_field_int(
 
     hf_register_info               hf = 
         { NULL,    // initialized later
-        { strdup(field_name.get_display_name().c_str()),
+          { strdup(field_name.get_display_name().c_str()),
             strdup(filter_field_name.c_str()), ws_size, BASE_DEC, NULL, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
