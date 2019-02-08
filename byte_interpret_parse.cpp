@@ -824,7 +824,7 @@ E_return_code    decompose_type_sep_value_sep (
                               string   & value_str)
 {
     // Searching for separator_right which must be at the end.
-    string::size_type  idx_right = orig_type.rfind (separator_right);
+    const string::size_type  idx_right = orig_type.rfind (separator_right);
 
     if (idx_right == string::npos)
         return  E_rc_not_found;

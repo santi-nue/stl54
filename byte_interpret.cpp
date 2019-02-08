@@ -62,6 +62,7 @@ using namespace std;
 // Exceptions
 //****************************************************************************
 
+// A normal exception, ie does not correspond to an error
 class C_byte_interpret_exception_normal : public C_byte_interpret_exception
 {
 public:
@@ -81,6 +82,7 @@ public:
     ~C_byte_interpret_exception_normal() throw() { }
 };
 
+// A normal exception throwed on break/continue command
 class C_byte_interpret_exception_loop : public C_byte_interpret_exception_normal
 {
 public:
@@ -100,6 +102,7 @@ public:
     ~C_byte_interpret_exception_loop() throw() { }
 };
 
+// A normal exception throwed on return command
 class C_byte_interpret_exception_return : public C_byte_interpret_exception_normal
 {
 public:
@@ -148,8 +151,8 @@ public:
 
 E_return_code    get_complex_variable_integer_value (
                                         const T_interpret_data  & interpret_data,
-                                        const string     & value_str,
-                                              long long  & value_int)
+                                        const string            & value_str,
+                                              long long         & value_int)
 {
     if (get_number (value_str.c_str (), value_int))
     {
@@ -389,7 +392,7 @@ long    size_expression_to_int(   const T_type_definitions  & type_definitions,
         return  0;
 
     // Compute the string size.
-    C_value    value = compute_expression_no_io(type_definitions, interpret_data, str_size);
+    const C_value    value = compute_expression_no_io(type_definitions, interpret_data, str_size);
 
     if (value.get_type () != C_value::E_type_integer)
     {
@@ -418,8 +421,11 @@ bool    is_a_switch_value (const T_type_definitions  & type_definitions,
     if (decompose_type_sep_value_sep (orig_type, '(', ')',
                                       final_simple_type,
                                       discriminant) != E_rc_ok)
+    {
+        return false;
+    }
 
-  // reproductible fails without this line
+    // reproductible fails without this line
     final_simple_type = type_definitions.get_final_type (final_simple_type);
 
     return  type_definitions.map_switch_definition.find (final_simple_type) !=
@@ -616,14 +622,14 @@ C_value    printf_args_to_string (const T_type_definitions  & type_definitions,
 // printf_args_to_string ******************************************************
 //*****************************************************************************
 
-C_value    printf_args_to_string (const T_type_definitions  & type_definitions,
-                                        T_interpret_data    & interpret_data,
-                               T_frame_data            & in_out_frame_data,
-                                  const string              & print_args,
-                         const std::string             & data_name,
-                         const std::string             & data_simple_name,
-                               std::ostream            & os_out,
-                               std::ostream            & os_err)
+C_value    printf_args_to_string (const T_type_definitions      & type_definitions,
+                                        T_interpret_data        & interpret_data,
+                                        T_frame_data            & in_out_frame_data,
+                                  const std::string             & print_args,
+                                  const std::string             & data_name,
+                                  const std::string             & data_simple_name,
+                                        std::ostream            & os_out,
+                                        std::ostream            & os_err)
 {
     string    printf_result = print_args;
 
@@ -682,15 +688,15 @@ C_value    printf_args_to_string (const T_type_definitions  & type_definitions,
 // printf_args_to_string ******************************************************
 //*****************************************************************************
 
-C_value    printf_args_to_string (const T_type_definitions  & type_definitions,
-                                        T_interpret_data    & interpret_data,
-                               T_frame_data            & in_out_frame_data,
-                                  const string              & print_args,
-                         const std::string             & data_name,
-                         const std::string             & data_simple_name,
-                               std::ostream            & os_out,
-                               std::ostream            & os_err,
-                               T_interpret_read_values::T_var_name_P_values  & var_name_P_values)
+C_value    printf_args_to_string (const T_type_definitions      & type_definitions,
+                                        T_interpret_data        & interpret_data,
+                                        T_frame_data            & in_out_frame_data,
+                                  const std::string             & print_args,
+                                  const std::string             & data_name,
+                                  const std::string             & data_simple_name,
+                                        std::ostream            & os_out,
+                                        std::ostream            & os_err,
+                                        T_interpret_read_values::T_var_name_P_values  & var_name_P_values)
 {
     string    printf_result = print_args;
 
@@ -768,14 +774,14 @@ C_value    printf_args_to_string (const T_type_definitions  & type_definitions,
 // read the specified bit size of data
 //*****************************************************************************
 
-bool    read_data_bits (      T_frame_data  & in_out_frame_data,
-                         void          * P_value_param,
-                   const char          * UNUSED(TYPE_NAME),
-                   const size_t          TYPE_BIT_SIZE,
-                   const char          * UNUSED(TYPE_IMPL_STR),
-                   const size_t          TYPE_IMPL_BIT_SIZE,
-                   const bool            must_invert_bytes,
-                   const bool            is_signed_integer)
+bool    read_data_bits (     T_frame_data  & in_out_frame_data,
+                             void          * P_value_param,
+                       const char          * UNUSED(TYPE_NAME),
+                       const size_t          TYPE_BIT_SIZE,
+                       const char          * UNUSED(TYPE_IMPL_STR),
+                       const size_t          TYPE_IMPL_BIT_SIZE,
+                       const bool            must_invert_bytes,
+                       const bool            is_signed_integer)
 {
     const size_t    TYPE_SIZE = (TYPE_BIT_SIZE / 8) + ((TYPE_BIT_SIZE % 8) ? 1 : 0);
 
@@ -978,13 +984,13 @@ void    read_data (const T_type_definitions  & type_definitions,
                    const T_field_type_name   & field_type_name,
                    const string              & data_name,
                    const string              & data_simple_name,
-                         void          * P_value_param,
-                   const char          * TYPE_NAME,
-                   const size_t          TYPE_BIT_SIZE,
-                   const char          * TYPE_IMPL_STR,
-                   const size_t          TYPE_IMPL_BIT_SIZE,
-                   const bool            must_invert_bytes,
-                   const bool            is_signed_integer)
+                         void                * P_value_param,
+                   const char                * TYPE_NAME,
+                   const size_t                TYPE_BIT_SIZE,
+                   const char                * TYPE_IMPL_STR,
+                   const size_t                TYPE_IMPL_BIT_SIZE,
+                   const bool                  must_invert_bytes,
+                   const bool                  is_signed_integer)
 {
     if (read_data (in_out_frame_data,
                    P_value_param, TYPE_NAME, TYPE_BIT_SIZE,
@@ -1011,17 +1017,17 @@ enum E_return_value_indicator
     E_return_value_do_not_care
 };
 
-bool    frame_to_function_base (const T_type_definitions    & type_definitions,
-                               T_interpret_data        & in_out_interpret_data,
-                               T_frame_data            & in_out_frame_data,
-                         const T_function_definition   & fct_def,
-                         const vector<T_expression>    & fct_parameters,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err,
-                               E_return_value_indicator  return_value_indicator,
-                               C_value                 & returned_value);
+bool    frame_to_function_base (const T_type_definitions      & type_definitions,
+                                      T_interpret_data        & in_out_interpret_data,
+                                      T_frame_data            & in_out_frame_data,
+                                const T_function_definition   & fct_def,
+                                const vector<T_expression>    & fct_parameters,
+                                const string                  & data_name,
+                                const string                  & data_simple_name,
+                                      ostream                 & os_out,
+                                      ostream                 & os_err,
+                                      E_return_value_indicator  return_value_indicator,
+                                      C_value                 & returned_value);
 
 
 //*****************************************************************************
@@ -1429,10 +1435,10 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
     while (nb_of_bits_needed > 0)
     {
         // Always read 4 characters 
-        T_byte  byte_encoded1 = decoder_base64_read_byte(in_out_frame_data);
-        T_byte  byte_encoded2 = decoder_base64_read_byte(in_out_frame_data);
-        T_byte  byte_encoded3 = decoder_base64_read_byte(in_out_frame_data);
-        T_byte  byte_encoded4 = decoder_base64_read_byte(in_out_frame_data);
+        const T_byte  byte_encoded1 = decoder_base64_read_byte(in_out_frame_data);
+        const T_byte  byte_encoded2 = decoder_base64_read_byte(in_out_frame_data);
+        const T_byte  byte_encoded3 = decoder_base64_read_byte(in_out_frame_data);
+        const T_byte  byte_encoded4 = decoder_base64_read_byte(in_out_frame_data);
 
         // Copy 6 bit data into frame.
         decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded1), 6);
@@ -1510,8 +1516,8 @@ bool    decoder_utf16be (const T_type_definitions      & UNUSED(type_definitions
     while (nb_of_bits_needed > 0)
     {
         // inverted read
-        T_byte  byte2 = in_out_frame_data.read_1_byte();
-        T_byte  byte1 = in_out_frame_data.read_1_byte();
+        const T_byte  byte2 = in_out_frame_data.read_1_byte();
+              T_byte  byte1 = in_out_frame_data.read_1_byte();
 
         if (byte2 != 0)
         {
@@ -1520,7 +1526,7 @@ bool    decoder_utf16be (const T_type_definitions      & UNUSED(type_definitions
             if ((byte2 & 0xfc) == 0xd8)
             {
                 /*T_byte  byte3 =*/ in_out_frame_data.read_1_byte();
-                /*T_byte  byte4 = */ in_out_frame_data.read_1_byte();
+                /*T_byte  byte4 =*/ in_out_frame_data.read_1_byte();
             }
         }
 
@@ -1559,8 +1565,8 @@ bool    decoder_utf16le (const T_type_definitions      & UNUSED(type_definitions
 
     while (nb_of_bits_needed > 0)
     {
-        T_byte  byte1 = in_out_frame_data.read_1_byte();
-        T_byte  byte2 = in_out_frame_data.read_1_byte();
+              T_byte  byte1 = in_out_frame_data.read_1_byte();
+        const T_byte  byte2 = in_out_frame_data.read_1_byte();
 
         if (byte2 != 0)
         {
@@ -1957,15 +1963,15 @@ void    read_decode_data (
                    const T_field_type_name   & field_type_name,
                    const string              & data_name,
                    const string              & data_simple_name,
-                         ostream                 & os_out,
-                         ostream                 & os_err,
-                         void          * P_value_param,
-                   const char          * TYPE_NAME,
-                   const size_t          TYPE_BIT_SIZE,
-                   const char          * TYPE_IMPL_STR,
-                   const size_t          TYPE_IMPL_BIT_SIZE,
-                   const bool            must_invert_bytes,
-                   const bool            is_signed_integer)
+                         ostream             & os_out,
+                         ostream             & os_err,
+                         void                * P_value_param,
+                   const char                * TYPE_NAME,
+                   const size_t                TYPE_BIT_SIZE,
+                   const char                * TYPE_IMPL_STR,
+                   const size_t                TYPE_IMPL_BIT_SIZE,
+                   const bool                  must_invert_bytes,
+                   const bool                  is_signed_integer)
 {
     T_frame_data           * P_in_out_frame_data = & in_out_frame_data_param;
 
@@ -2047,22 +2053,22 @@ bool    frame_to_fields (const T_type_definitions    & type_definitions,
                                ostream               & os_err);
 
 bool    frame_to_struct_inline (const T_type_definitions    & type_definitions,
-                               T_frame_data          & in_out_frame_data,
-                               T_interpret_data      & interpret_data,
-                         const T_struct_definition   & struct_definition,
-                         const string                & data_name,
-                         const string                & data_simple_name,
-                               ostream               & os_out,
-                               ostream               & os_err);
+                                      T_frame_data          & in_out_frame_data,
+                                      T_interpret_data      & interpret_data,
+                                const T_struct_definition   & struct_definition,
+                                const string                & data_name,
+                                const string                & data_simple_name,
+                                      ostream               & os_out,
+                                      ostream               & os_err);
 
-bool    frame_to_bitfield_inline (const T_type_definitions    & type_definitions,
-                               T_frame_data            & in_out_frame_data,
-                               T_interpret_data        & interpret_data,
-                         const T_bitfield_definition   & bitfield_definition,
-                         const string                  & data_name,
-                         const string                  & data_simple_name,
-                               ostream                 & os_out,
-                               ostream                 & os_err);
+bool    frame_to_bitfield_inline (const T_type_definitions      & type_definitions,
+                                        T_frame_data            & in_out_frame_data,
+                                        T_interpret_data        & interpret_data,
+                                  const T_bitfield_definition   & bitfield_definition,
+                                  const string                  & data_name,
+                                  const string                  & data_simple_name,
+                                        ostream                 & os_out,
+                                        ostream                 & os_err);
 
 bool    frame_to_switch (const T_type_definitions      & type_definitions,
                                T_frame_data            & in_out_frame_data,
@@ -3036,7 +3042,8 @@ bool    frame_to_struct (const T_type_definitions    & type_definitions,
 // frame_to_bitfield_inline ***************************************************
 //*****************************************************************************
 
-bool    frame_to_bitfield_inline (const T_type_definitions    & type_definitions,
+bool    frame_to_bitfield_inline (
+                         const T_type_definitions      & type_definitions,
                                T_frame_data            & in_out_frame_data,
                                T_interpret_data        & interpret_data,
                          const T_bitfield_definition   & bitfield_definition,
@@ -3105,7 +3112,8 @@ bool    frame_to_bitfield_inline (const T_type_definitions    & type_definitions
 // frame_to_bitfield **********************************************************
 //*****************************************************************************
 
-bool    frame_to_bitfield (const T_type_definitions    & type_definitions,
+bool    frame_to_bitfield (
+                         const T_type_definitions      & type_definitions,
                                T_frame_data            & in_out_frame_data,
                                T_interpret_data        & interpret_data,
                          const T_bitfield_definition   & bitfield_definition,
@@ -3443,7 +3451,8 @@ DC_API DCuint    dcCallUInt  (DCCallVM* vm, DCpointer funcptr) { return  dcCallI
 // T_expression_frame_to_function_base2 ***************************************
 //*****************************************************************************
 
-bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type_definitions,
+bool    T_expression_frame_to_function_base2 (
+                         const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                                T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
@@ -3819,7 +3828,8 @@ bool    T_expression_frame_to_function_base2 (const T_type_definitions    & type
 // T_expression_frame_to_function_base ****************************************
 //*****************************************************************************
 
-bool    T_expression_frame_to_function_base (const T_type_definitions    & type_definitions,
+bool    T_expression_frame_to_function_base (
+                         const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                                T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
@@ -3861,7 +3871,8 @@ bool    T_expression_frame_to_function_base (const T_type_definitions    & type_
 // T_expression_compute_function **********************************************
 //*****************************************************************************
 
-C_value    T_expression_compute_function (const T_type_definitions    & type_definitions,
+C_value    T_expression_compute_function (
+                         const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                                T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
@@ -3902,7 +3913,8 @@ C_value    T_expression_compute_function (const T_type_definitions    & type_def
 // frame_to_function_base *****************************************************
 //*****************************************************************************
 
-bool    frame_to_function_base (const T_type_definitions    & type_definitions,
+bool    frame_to_function_base (
+                         const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                                T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
@@ -3943,7 +3955,8 @@ bool    frame_to_function_base (const T_type_definitions    & type_definitions,
 // frame_to_function **********************************************************
 //*****************************************************************************
 
-bool    frame_to_function (const T_type_definitions    & type_definitions,
+bool    frame_to_function (
+                         const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                                T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
@@ -4560,11 +4573,11 @@ bool    frame_to_print (
                         T_frame_data        & in_out_frame_data,
                         T_interpret_data    & interpret_data,
                   const T_field_type_name   & field_type_name,
-                  const string        & final_type,
-                  const string        & data_name,
-                  const string        & data_simple_name,
-                        ostream       & os_out,
-                        ostream       & os_err)
+                  const string              & final_type,
+                  const string              & data_name,
+                  const string              & data_simple_name,
+                        ostream             & os_out,
+                        ostream             & os_err)
 {
     // Verify debug_print is available.
     if ((final_type == "debug_print") &&
@@ -4700,11 +4713,11 @@ bool    frame_to_print (
 string    simple_value_to_attribute_value_main (
                          const T_type_definitions  & type_definitions,
                                T_interpret_data    & interpret_data,
-                                  const C_value            & value,
-                                  const string             & UNUSED(final_type),
-                                  const T_field_type_name  & field_type_name,
-                                        T_attribute_value  & attribute_value,
-                                        bool               & no_error)
+                         const C_value             & value,
+                         const string              & UNUSED(final_type),
+                         const T_field_type_name   & field_type_name,
+                               T_attribute_value   & attribute_value,
+                               bool                & no_error)
 {
     attribute_value.transformed    = value;
     // normalize the string original
@@ -4898,7 +4911,8 @@ void read_simple_type(const string  & TYPE_NAME,
 // frame_to_string ************************************************************
 //*****************************************************************************
 
-bool    frame_to_string (const T_type_definitions    & type_definitions,
+bool    frame_to_string (
+                      const T_type_definitions    & type_definitions,
                             T_frame_data          & in_out_frame_data_param,
                             T_interpret_data      & interpret_data,
                       const T_field_type_name     & field_type_name,
@@ -5372,7 +5386,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 
 // When a struct is a variable, this flag is set to true.
 // Then all fields (recursively) of the struct become variable
-//  and are intialized to zero.
+//  and are initialized to zero.
 bool    G_is_a_variable_ICIOA = false;
 
 //*****************************************************************************
@@ -5785,14 +5799,14 @@ bool    frame_to_any_switch (
     const T_switch_definition  * P_switch = field_type_name.P_type_switch_def;
 
     if (frame_to_switch (type_definitions,
-                     in_out_frame_data,
-                     interpret_data,
-                    *P_switch,
-                     field_type_name.str_size_or_parameter,
-                     field_type_name,
-                     data_name,
-                     data_simple_name,
-                     os_out, os_err) != true)
+                         in_out_frame_data,
+                         interpret_data,
+                        *P_switch,
+                         field_type_name.str_size_or_parameter,
+                         field_type_name,
+                         data_name,
+                         data_simple_name,
+                         os_out, os_err) != true)
     {
         // Error notification done into the function.
         return  false;
