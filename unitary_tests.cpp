@@ -5006,18 +5006,30 @@ void    test_interpret_forget()
 
     T_interpret_data      interpret_data;
 
+    // Test with simple variable
+    M_TEST_EQ(interpret_data.is_read_variable("value"), false);
+    M_TEST_SIMPLE("", " forget var uint32  value = 3457 ;", "value = 3457");
+    M_TEST_EQ(interpret_data.is_read_variable("value"), false);            // value is forgotten
     M_TEST_SIMPLE("", "        var uint32  value = 7 ;", "value = 7");
+    M_TEST_EQ(interpret_data.is_read_variable("value"), true);
     M_TEST_SIMPLE("", "        print (\"%d\", value);", "7");
     M_TEST_SIMPLE("", " forget var uint32  value = 3457 ;", "value = 3457");
-    M_TEST_SIMPLE("", "        print (\"%d\", value);", "7");
+    M_TEST_EQ(interpret_data.is_read_variable("value"), true);
+    M_TEST_SIMPLE("", "        print (\"%d\", value);", "7");            // value 3457 is forgotten
     M_TEST_SIMPLE("", "        var uint32  value = 3 ;", "value = 3");
     M_TEST_SIMPLE("", "        print (\"%d\", value);", "3");
+    M_TEST_EQ(interpret_data.is_read_variable("value"), true);
 
     // Test with struct
+    M_TEST_EQ(interpret_data.is_read_variable("struct_counter"), false);
     M_TEST_SIMPLE("", "    var int32  struct_counter = 1000 ;", "struct_counter = 1000");
     M_TEST_SIMPLE("", "        T_forget      st1 ;", "st1.struct_counter = 1001");
+    M_TEST_EQ(interpret_data.is_read_variable("struct_counter"), true);
     M_TEST_SIMPLE("", " forget T_forget      st2 ;", "st2.struct_counter = 1002");
-    M_TEST_SIMPLE("", "        T_forget      st3 ;", "st3.struct_counter = 1002");
+    M_TEST_EQ(interpret_data.is_read_variable("struct_counter"), true);
+    M_TEST_SIMPLE("", "        T_forget      st3 ;", "st3.struct_counter = 1002");   // st2 (and its struct_counter) is forgotten
+    M_TEST_EQ(interpret_data.is_read_variable("struct_counter"), true);
+
     // Test with array : each item of the array is forgot (one by one, not at the end of the array)
     M_TEST_SIMPLE("", " forget T_forget[3]   sta ;", "sta[0].struct_counter = 1003" K_eol
                                                      "sta[1].struct_counter = 1003" K_eol
