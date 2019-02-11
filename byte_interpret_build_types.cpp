@@ -2594,7 +2594,10 @@ C_value  string_count_cpp_to_fdesc(const string::size_type  cpp_count);
 void    build_types_begin (T_type_definitions  & type_definitions)
 {
     if (type_definitions.map_enum_definition_representation.empty() == false)
+    {
+        // Already initialized
         return;
+    }
 
     M_TRACE_ENTER ("build_types_begin", "");
 
@@ -2615,8 +2618,8 @@ void    build_types_begin (T_type_definitions  & type_definitions)
 #endif
     type_definitions.map_const_value["system::bits"] = sizeof(void*)*8;
     type_definitions.map_const_value["system::osbits"] =
-        type_definitions.map_const_value["system::os"].as_string() +
-        type_definitions.map_const_value["system::bits"].as_string();
+    type_definitions.map_const_value["system::os"].as_string() +
+    type_definitions.map_const_value["system::bits"].as_string();
 
 
 #define M_DEFINE_BUILTIN_FUNCTION(PROTOTYPE)                                    \
@@ -2626,13 +2629,14 @@ void    build_types_begin (T_type_definitions  & type_definitions)
         "}", type_definitions)
 
     // Built-in functions
-    M_DEFINE_BUILTIN_FUNCTION("string   to_string (in any  rhs)");
-    M_DEFINE_BUILTIN_FUNCTION("any      to_numeric (in string  rhs)");
-    M_DEFINE_BUILTIN_FUNCTION("float64  to_float (in any  rhs)");
-    M_DEFINE_BUILTIN_FUNCTION("int64    to_integer (in string  rhs, in int8  base = 0)");
-    M_DEFINE_BUILTIN_FUNCTION("string   getenv (in string  rhs)");
+    M_DEFINE_BUILTIN_FUNCTION("bool8    is_existing_field_or_variable (in string  var_name)");
+    M_DEFINE_BUILTIN_FUNCTION("string   to_string (in any  value)");
+    M_DEFINE_BUILTIN_FUNCTION("any      to_numeric (in string  value)");
+    M_DEFINE_BUILTIN_FUNCTION("float64  to_float (in any  value)");
+    M_DEFINE_BUILTIN_FUNCTION("int64    to_integer (in string  value, in int8  base = 0)");
+    M_DEFINE_BUILTIN_FUNCTION("string   getenv (in string  env_name)");
 
-    M_DEFINE_BUILTIN_FUNCTION("int64    string.length  (in string  rhs)");
+    M_DEFINE_BUILTIN_FUNCTION("int64    string.length  (in string  str)");
     M_DEFINE_BUILTIN_FUNCTION("string   string.substr  (in string  str, in int64  idx, in int64  count = string::npos)");
     M_DEFINE_BUILTIN_FUNCTION("string   string.erase   (in string  str, in int64  idx, in int64  count = string::npos)");
     M_DEFINE_BUILTIN_FUNCTION("string   string.insert  (in string  str, in int64  idx, in string  str_to_insert)");

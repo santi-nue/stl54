@@ -532,6 +532,44 @@ function int64  call_me_maybe_u1 (in uint1  value)
 }
 
 ###############################################################################
+# is_existing_field_or_variable
+###############################################################################
+
+struct T_is_existing_field_or_variable
+{
+  hide var bool8   is_none_begin           = is_existing_field_or_variable("");
+  hide var bool8   is_not_exist_begin      = is_existing_field_or_variable("not_exist");
+  hide var bool8   is_in_main_struct_begin = is_existing_field_or_variable("in_main_struct");
+  hide var bool8   is_in_if_begin          = is_existing_field_or_variable("in_if");
+  hide var bool8   is_in_else_begin        = is_existing_field_or_variable("in_else");
+  hide var bool8   is_in_while_begin       = is_existing_field_or_variable("in_while");
+ 
+  var int32  in_main_struct = 1;    # At least something must be displayed (for M_TEST_SIMPLE)
+  
+  if (1)
+  {
+    hide var int32  in_if = 11;
+  }
+  else
+  {
+    hide var int32  in_else = 21;
+  }
+  
+  while (1)
+  {
+    hide var int32  in_while = 31;
+    break;
+  }
+  
+  hide var bool8   is_none_end           = is_existing_field_or_variable("");
+  hide var bool8   is_not_exist_end      = is_existing_field_or_variable("not_exist");
+  hide var bool8   is_in_main_struct_end = is_existing_field_or_variable("in_main_struct");
+  hide var bool8   is_in_if_end          = is_existing_field_or_variable("in_if");
+  hide var bool8   is_in_else_end        = is_existing_field_or_variable("in_else");
+  hide var bool8   is_in_while_end       = is_existing_field_or_variable("in_while");
+}
+
+###############################################################################
 # forget
 ###############################################################################
 

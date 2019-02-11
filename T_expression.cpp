@@ -1139,7 +1139,8 @@ C_value  string_count_cpp_to_fdesc(const string::size_type  cpp_count)
 //*****************************************************************************
 // compute_expression_function
 //*****************************************************************************
-C_value    T_expression_compute_function (const T_type_definitions    & type_definitions,
+C_value    T_expression_compute_function (
+                         const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                                T_frame_data            & in_out_frame_data,
                          const T_function_definition   & fct_def,
@@ -1198,6 +1199,17 @@ T_expression::compute_expression_function(
 
         // printf.
         A_value = C_value::sprintf_values(printf_format, values_to_print);
+    }
+    else if (A_variable_or_function_name == "is_existing_field_or_variable")
+    {
+        if (pre_compute == true)
+        {
+            // Can not be pre-computed
+            pre_compute_result = false;
+            return;
+        }
+        const bool  is_existing = interpret_data.is_read_variable(P_parameter_values[0]->get_str());
+        A_value = is_existing;
     }
     else if (A_variable_or_function_name == "to_string")
     {

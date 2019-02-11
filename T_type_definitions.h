@@ -192,7 +192,7 @@ typedef bool    (*T_pf_frame_to_field)(
 
 struct T_field_type_name : public T_field_type_name_base
 {
-    bool                         must_forget;
+    bool                         must_forget;       // field immediately removed (for perf reasons)
 
     enum E_output_directive
     {

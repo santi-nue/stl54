@@ -4966,6 +4966,35 @@ void    test_interpret_simple_internal_frame()
 }
 
 //*****************************************************************************
+// test_is_existing_field_or_variable
+//*****************************************************************************
+
+void    test_is_existing_field_or_variable()
+{
+    T_type_definitions    type_definitions;
+    build_types("unitary_tests_basic.fdesc",
+                type_definitions);
+
+    T_interpret_data      interpret_data;
+
+    M_TEST_SIMPLE("", "T_is_existing_field_or_variable    st;", "st.in_main_struct = 1");
+
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_none_begin")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_not_exist_begin")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_in_main_struct_begin")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_in_if_begin")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_in_else_begin")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_in_while_begin")->get_bool(), false);
+
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_none_end")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_not_exist_end")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_in_main_struct_end")->get_bool(), true);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_in_if_end")->get_bool(), true);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_in_else_end")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_in_while_end")->get_bool(), true);
+}
+
+//*****************************************************************************
 // test_interpret_forget
 //*****************************************************************************
 
@@ -5251,6 +5280,7 @@ int   main(const int         argc,
         M_TEST_FCT(test_interpret_simple_int64);
         M_TEST_FCT(test_interpret_simple_uint8_array);
         M_TEST_FCT(test_interpret_simple_internal_frame);
+        M_TEST_FCT(test_is_existing_field_or_variable);
         M_TEST_FCT(test_interpret_forget);
         M_TEST_FCT(test_interpret_msg);
         M_TEST_FCT(test_build_types_and_interpret_bytes);

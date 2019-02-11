@@ -48,7 +48,7 @@ using namespace std;
 struct T_interpret_read_values : public C_reference_counter,
                                  public CT_debug_object_counter<T_interpret_read_values>
 {
-    typedef int       T_id;
+    typedef int       T_id;         // value identifier, -1 is invalid
 
     T_interpret_read_values();
 
@@ -146,7 +146,7 @@ struct T_interpret_read_values : public C_reference_counter,
 
 private:
     typedef vector<T_interpret_value>      T_interpret_values;
-    vector<T_interpret_value>    A_msg;
+    T_interpret_values           A_msg;
     int                          A_msg_global_idx_begin;    // optional
     int                          A_msg_global_idx_end;
     int                          A_msg_pinfo_idx_begin;     // optional

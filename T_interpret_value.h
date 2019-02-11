@@ -44,8 +44,8 @@ struct T_interpret_value : public CT_debug_object_counter<T_interpret_value>
     enum E_type
     {
         E_type_value,
-        E_type_group,
-        E_type_reference,
+        E_type_group,           // not used
+        E_type_reference,       // out/in_out function parameter
         E_type_msg
     };
 
