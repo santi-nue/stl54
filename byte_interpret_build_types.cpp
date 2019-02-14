@@ -34,7 +34,7 @@
 #include <vector>
 #include <queue>
 #include <fstream>
-#include <strstream>
+#include <sstream>
 using namespace std;
 
 #include "byte_interpret_common.h"
@@ -2413,9 +2413,9 @@ void    build_library  (const E_override            must_override,
         function_def.idx_library_function_def = P_library_def->library_functions.size();
         function_def.P_library_def = P_library_def;
 
-        istrstream    iss("{ \n"
-                          "  fatal \"Bug in the software, this version is only a prototype\"; \n"
-                          "}");
+        istringstream    iss("{ \n"
+                             "  fatal \"Bug in the software, this version is only a prototype\"; \n"
+                             "}");
         build_function_after_prototype (must_override, iss, function_def, function_name, type_definitions);
 
         P_library_def->library_functions.push_back(library_function_def);
@@ -2580,7 +2580,7 @@ string    build_types_no_include (istream             & is,
 void    build_types_no_include_str (const string              & str,
                                           T_type_definitions  & type_definitions)
 {
-    istrstream           iss(str.c_str());
+    istringstream           iss(str.c_str());
 
     const string    result = build_types_no_include (iss, type_definitions);
     M_FATAL_IF_NE(result, "");

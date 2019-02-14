@@ -486,7 +486,7 @@ void    add_initial_types (T_generic_protocol_data  & protocol_data)
   // Necessary for wireshark display filters accept "false" and "true".
 //  if (protocol_data.type_definitions.is_a_type_name("bool8") == false)
   {
-    istrstream           iss("enum8     bool8   { false 0  true 1 }");
+    istringstream           iss("enum8     bool8   { false 0  true 1 }");
 
     const string    result = build_types (iss, protocol_data.type_definitions);
     M_FATAL_IF_NE(result, "");
@@ -494,21 +494,21 @@ void    add_initial_types (T_generic_protocol_data  & protocol_data)
 
 //  if (protocol_data.type_definitions.is_a_type_name("bool16") == false)
   {
-    istrstream           iss("enum16    bool16  as  bool8 ;");
+    istringstream           iss("enum16    bool16  as  bool8 ;");
 
     const string    result = build_types (iss, protocol_data.type_definitions);
     M_FATAL_IF_NE(result, "");
   }
 //  if (protocol_data.type_definitions.is_a_type_name("bool32") == false)
   {
-    istrstream           iss("enum32    bool32  as  bool8 ;");
+    istringstream           iss("enum32    bool32  as  bool8 ;");
 
     const string    result = build_types (iss, protocol_data.type_definitions);
     M_FATAL_IF_NE(result, "");
   }
 //  if (protocol_data.type_definitions.is_a_type_name("bool1") == false)
   {
-    istrstream           iss("enum1    bool1  as  bool8 ;");
+    istringstream           iss("enum1    bool1  as  bool8 ;");
 
     const string    result = build_types (iss, protocol_data.type_definitions);
     M_FATAL_IF_NE(result, "");
@@ -566,7 +566,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
   else if (keyword == #NAME)  {                             \
     string    line;                                         \
     getline (ifs, line);                                    \
-    istrstream  is_line(line.c_str());                      \
+    istringstream  is_line(line.c_str());                   \
     while (is_istream_empty(is_line) != true)               \
     {                                                       \
       int    val;                                           \
@@ -581,7 +581,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
     ifs >> ws;                                              \
     string    line;                                         \
     getline (ifs, line);                                    \
-    istrstream  is_line(line.c_str());                      \
+    istringstream  is_line(line.c_str());                   \
     while (is_istream_empty(is_line) != true)               \
     {                                                       \
       string    val;                                        \
@@ -665,7 +665,7 @@ void    read_file_wsgd (const string                       & wsgd_file_name,
         string    line;
         getline (ifs, line);
         {
-          istrstream  is_line(line.c_str());
+          istringstream  is_line(line.c_str());
           is_line >> protocol_data.SUBPROTO_SUBFIELD;
           is_line >> protocol_data.SUBPROTO_SUBFIELD_TYPE;
           if (protocol_data.SUBPROTO_SUBFIELD == "")

@@ -34,7 +34,7 @@
 #include <vector>
 #include <queue>
 #include <fstream>
-#include <strstream>
+#include <sstream>
 #include <algorithm>
 using namespace std;
 

@@ -99,11 +99,10 @@ void    fatal_pb (const string  & lhs,
 
 #define M_FATAL_COMMENT(comment)                                              \
     {                                                                         \
-        std::ostrstream  M_FATAL_COMMENT_oss;                                 \
-        M_FATAL_COMMENT_oss << comment << ends;                               \
+        std::ostringstream  M_FATAL_COMMENT_oss;                              \
+        M_FATAL_COMMENT_oss << comment;                                       \
         fatal_pb ("FATAL :", "", M_FATAL_COMMENT_oss.str (),                  \
                   __FILE__, __LINE__);                                        \
-        M_FATAL_COMMENT_oss.freeze (false);           /* avoid memory leak */ \
     }
 
 #define M_ASSERT(assertion)     M_FATAL_IF_FALSE(assertion)

@@ -34,7 +34,7 @@
 #include <vector>
 #include <queue>
 #include <fstream>
-#include <strstream>
+#include <sstream>
 #include <algorithm>
 using namespace std;
 
@@ -6807,7 +6807,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
                                ostream             & os_err,
                                T_interpret_data    & interpret_data)
 {
-    istrstream     is(in_input_string.c_str());
+    istringstream     is(in_input_string.c_str());
 
     return  interpret_bytes (type_definitions,
                              in_out_P_bytes,
@@ -6851,7 +6851,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
                                ostream             & os_out,
                                ostream             & os_err)
 {
-    istrstream     is(in_input_string.c_str());
+    istringstream     is(in_input_string.c_str());
 
     return  interpret_bytes (type_definitions,
                              in_out_P_bytes,

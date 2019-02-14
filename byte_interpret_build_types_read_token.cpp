@@ -27,7 +27,6 @@
 
 #include <iostream>
 #include <string>
-#include <strstream>
 using namespace std;
 
 #include "byte_interpret_parse.h"

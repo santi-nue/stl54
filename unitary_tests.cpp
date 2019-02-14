@@ -2813,7 +2813,7 @@ void    test_expression()
 {
     T_type_definitions    type_definitions;
     {
-        istrstream  iss(
+        istringstream  iss(
             "enum16 T_Operation {  CREATION 0   MODIFICATION 1   DELETION 2 }" "\n"
 
             "function any  addition (in any lhs, in any rhs)" "\n"
@@ -2846,7 +2846,7 @@ void    test_expression()
         M_FATAL_IF_NE(last_word_not_treated, "");
     }
     {
-        istrstream  iss(
+        istringstream  iss(
             "const int32    k::int = -17;" "\n"
             "const float32  k::flt = -234.9;" "\n"
             "const string   k::str = \"hello world\";" "\n"

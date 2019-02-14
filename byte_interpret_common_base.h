@@ -28,10 +28,7 @@
 #include <climits>
 #include <string>
 #include <vector>
-#include <strstream>
-#ifndef non_existent_stringstream__
 #include <sstream>
-#endif
 using namespace std;
 
 #ifdef WIN32
@@ -116,15 +113,11 @@ template <class TYPE>
 //inline
 string    get_string (const TYPE&   rhs)
 {
-  ostrstream    oss;
+  ostringstream    oss;
  
-  oss << rhs << ends;
+  oss << rhs;
 
-  string  tmp (oss.str ());
- 
-  oss.freeze (false);
-
-  return  tmp;
+  return  oss.str();
 }
 #if 1
 #include <cstdio>

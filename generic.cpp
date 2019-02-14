@@ -1640,8 +1640,7 @@ ostream &  get_interpret_ostream()
     }
     else
     {
-        static ostrstream              oss;
-        oss.freeze();
+        static ostringstream    oss;
         return  oss;
     }
 }
@@ -1682,7 +1681,7 @@ void    proto_init_routine(T_generic_protocol_data  & protocol_data)
         const T_byte       * in_out_P_bytes = NULL_PTR;
         size_t               in_out_sizeof_bytes = 0;
         const string         str_interpret = "var " + protocol_data.GLOBAL_DATA_TYPE + " global = zero;";
-        istrstream           iss(str_interpret.c_str());
+        istringstream        iss(str_interpret.c_str());
         ostream            & os = get_interpret_ostream();
         bool    result = interpret_bytes (protocol_data.type_definitions,
                                                             in_out_P_bytes,
@@ -2224,7 +2223,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
         //      because the name will be mandatory everywhere in the code and/or wsgd file
         //      for MSG_ID_FIELD_NAME, MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES and MSG_MAIN_TYPE
         const string         str_interpret = protocol_data.MSG_HEADER_TYPE + " " + "\"\" ;";
-        istrstream           iss(str_interpret.c_str());
+        istringstream        iss(str_interpret.c_str());
 
         C_byte_interpret_wsgd_builder_base  wsgd_builder(proto_idx, tvb, pinfo, tree, tree);
         C_interpret_builder_set_temporary   interpret_builder_set_temporary2(&wsgd_builder);
@@ -2458,7 +2457,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             }
         }
         str_interpret_main += " \"\" ;";
-        istrstream           iss_main(str_interpret_main.c_str());
+        istringstream        iss_main(str_interpret_main.c_str());
 
         bool    result = interpret_bytes (   protocol_data.type_definitions,
                                             in_out_P_bytes,
@@ -2505,7 +2504,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             if ((protocol_data.PACKET_CONTAINS_ONLY_1_MSG) || (protocol_data.MSG_TOTAL_LENGTH != ""))
             {
                 const string         str_interpret = "error  \"" + get_string(in_out_sizeof_bytes) + " bytes NOT read into message\" ;";
-                istrstream           iss(str_interpret.c_str());
+                istringstream        iss(str_interpret.c_str());
 
                 interpret_bytes ( 				   protocol_data.type_definitions,
                                                     in_out_P_bytes,
@@ -2525,7 +2524,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             if (protocol_data.PACKET_CONTAINS_ONLY_1_MSG)
             {
             const string         str_interpret = "error  \"" + get_string(sizeof_bytes_NOT_given_to_interpretor) + " bytes NOT read into packet\" ;";
-            istrstream           iss(str_interpret.c_str());
+            istringstream        iss(str_interpret.c_str());
 
             interpret_bytes ( 				   protocol_data.type_definitions,
                                                 in_out_P_bytes,
@@ -2753,8 +2752,8 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
 //          interpret_data.set_decode_stream_frame(&decode_stream_frame);
             const string           data_name;
             const string         & data_simple_name = data_name;
-            ostrstream             os_out;
-            ostrstream           & os_err = os_out;
+            ostringstream          os_out;
+            ostringstream        & os_err = os_out;
 
             const C_value          HEURISTIC_FUNCTION_result = compute_expression(protocol_data.type_definitions, interpret_data, frame_data,
                                                                             expression_str,

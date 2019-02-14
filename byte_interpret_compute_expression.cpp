@@ -167,8 +167,8 @@ C_value    compute_expression_no_io (
     T_frame_data        in_out_frame_data;
     const string        data_name;
     const string      & data_simple_name = data_name;
-    ostrstream          os_out;
-    ostrstream        & os_err = os_out;
+    ostringstream       os_out;
+    ostringstream     & os_err = os_out;
 
     return  compute_expression(type_definitions, interpret_data, in_out_frame_data,
                                str,

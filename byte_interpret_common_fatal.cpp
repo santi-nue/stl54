@@ -40,14 +40,12 @@ void    fatal_pb (const string  & lhs,
                   const char    * file_name,
                   const size_t    file_line)
 {
-    ostrstream  oss;
+    ostringstream  oss;
     oss << lhs << " "
         << comp << " "
         << rhs << " "
         << "at " << file_name << "[" << file_line << "]";
-    oss << ends;
-    const char  * oss_str = oss.str ();
-    oss.freeze (false);           /* avoid memory leak */
+    const string  oss_str = oss.str ();
 
     M_TRACE_FATAL(oss_str);
     throw  C_byte_interpret_exception(M_WHERE, E_byte_interpret_exception_fatal, oss_str);

@@ -30,7 +30,7 @@
 #include <vector>
 #include <queue>
 #include <fstream>
-#include <strstream>
+#include <sstream>
 using namespace std;
 
 #include "byte_interpret_common.h"
@@ -298,7 +298,7 @@ int   main (int  argc, const char * const  argv[])
 	if (strcmp (argv[arg_idx], "-help_syntax") == 0)
 	{
         ++arg_idx;
-        P_istream = new istrstream ("print syntax ;");
+        P_istream = new istringstream ("print syntax ;");
 	}
     else if ((strcmp (argv[arg_idx], "-fdesc") == 0) ||
         (is_frame_desc_file_name (argv[arg_idx])))
@@ -358,7 +358,7 @@ int   main (int  argc, const char * const  argv[])
             ++arg_idx;
         }
 
-        P_istream = new istrstream (types_and_commands.c_str ());
+        P_istream = new istringstream (types_and_commands.c_str ());
     }
 
     output_time_spent ("avant frame");

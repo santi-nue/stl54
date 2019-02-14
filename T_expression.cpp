@@ -732,8 +732,8 @@ T_expression::pre_compute_expression(
     T_frame_data        in_out_frame_data;
     const string        data_name;
     const string      & data_simple_name = data_name;
-    ostrstream          os_out;
-    ostrstream        & os_err = os_out;
+    ostringstream       os_out;
+    ostringstream     & os_err = os_out;
     bool                pre_compute_result_do_not_care = true;
 
     compute_expression(
@@ -863,8 +863,8 @@ T_expression::compute_expression_no_io(
     T_frame_data        in_out_frame_data;
     const string        data_name;
     const string      & data_simple_name = data_name;
-    ostrstream          os_out;
-    ostrstream        & os_err = os_out;
+    ostringstream       os_out;
+    ostringstream     & os_err = os_out;
 
     return  compute_expression(
                 type_definitions,
@@ -887,8 +887,8 @@ T_expression::compute_expression_static(
     T_frame_data        in_out_frame_data;
     const string        data_name;
     const string      & data_simple_name = data_name;
-    ostrstream          os_out;
-    ostrstream        & os_err = os_out;
+    ostringstream       os_out;
+    ostringstream     & os_err = os_out;
 
     return  compute_expression(
                 type_definitions,

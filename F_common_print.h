@@ -162,10 +162,9 @@ print (      ostream               & os,
        const pair<const KEY, VAL>  & rhs,
        const string                & in_line_prefix)
 {
-    ostrstream    oss;
-    oss << in_line_prefix << rhs.first << " : " << ends;
+    ostringstream    oss;
+    oss << in_line_prefix << rhs.first << " : ";
     return  print (os, rhs.second , oss.str ());
-    oss.freeze (false);
 }
 
 

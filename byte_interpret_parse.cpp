@@ -36,7 +36,7 @@
 #include <vector>
 #include <queue>
 #include <fstream>
-#include <strstream>
+#include <sstream>
 using namespace std;
 
 #include "byte_interpret_common.h"
@@ -201,7 +201,7 @@ void    remove_string_limits (string  & str)
 #if 0
 void    remove_spaces (string  & str)
 {
-    istrstream    is (str.c_str ());
+    istringstream    is (str.c_str ());
 
     string    result;
     string    tmp;
@@ -503,7 +503,7 @@ void    string_to_words (const string          & str,
                                vector<string>  & words,
                          const E_parser_cfg      parser_cfg)
 {
-    istrstream    is (str.c_str ());
+    istringstream    is (str.c_str ());
     istream_to_words (is, words, parser_cfg);
 }
 
@@ -594,7 +594,7 @@ void    istream_hexa_dump_to_frame (
         string    str_line;
         getline (is, str_line);
 
-        istrstream    is_line (str_line.c_str ());
+        istringstream    is_line (str_line.c_str ());
 
         // Ignore the first words.
         for (int   idx = 0; idx < nb_of_first_words_to_ignore; ++idx)
