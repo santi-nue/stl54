@@ -13,7 +13,12 @@ am__objects_CORE_UT = byte_interpret.lo byte_interpret_compute_expression.lo \
 	byte_interpret_build_types.lo \
 	byte_interpret_build_types_context.lo \
 	byte_interpret_build_types_read_token.lo \
-	byte_interpret_parse.lo byte_interpret_common.lo \
+	byte_interpret_parse.lo \
+	byte_interpret_common.lo \
+	byte_interpret_common_base.lo \
+	byte_interpret_common_exception.lo \
+	byte_interpret_common_fatal.lo \
+	byte_interpret_common_trace.lo \
 	CT_debug_object_counter.lo \
 	shark_wsutil_aes.lo
 am__objects_2 = $(am__objects_CORE_UT) \

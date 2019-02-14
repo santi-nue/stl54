@@ -21,4 +21,34 @@
 // ****************************************************************************
 
 #include "precomp.h"
-#include "byte_interpret_common.h"
+#include "byte_interpret_common_fatal.h"
+#include "byte_interpret_common_trace.h"
+#include "byte_interpret_common_exception.h"
+
+#include <iostream>
+#include <vector>
+#include <cstdio>
+
+
+//*****************************************************************************
+// fatal_pb
+//*****************************************************************************
+
+void    fatal_pb (const string  & lhs,
+                  const string  & comp,
+                  const string  & rhs,
+                  const char    * file_name,
+                  const size_t    file_line)
+{
+    ostrstream  oss;
+    oss << lhs << " "
+        << comp << " "
+        << rhs << " "
+        << "at " << file_name << "[" << file_line << "]";
+    oss << ends;
+    const char  * oss_str = oss.str ();
+    oss.freeze (false);           /* avoid memory leak */
+
+    M_TRACE_FATAL(oss_str);
+    throw  C_byte_interpret_exception(M_WHERE, E_byte_interpret_exception_fatal, oss_str);
+}
