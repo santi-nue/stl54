@@ -141,6 +141,7 @@ string  date_get_string_from_days(int ref_year, int  number_of_days)
 
     int  value_work = number_of_days;
 
+    // Compute year (and remaining days)
     int   year = ref_year;
     while (1)
     {
@@ -154,6 +155,7 @@ string  date_get_string_from_days(int ref_year, int  number_of_days)
         ++year;
     }
 
+    // Compute month (and remaining days)
     int   month = 1;
     while (1)
     {
@@ -233,22 +235,20 @@ string  date_get_string_from_seconds(int ref_year, long long  number_of_seconds)
         return  "Number of seconds must be >= 0";  // ICIOA, exception
     }
 
-    long long  value_work = number_of_seconds;
+    const int        seconds = number_of_seconds % 60;
+    const long long  number_of_minutes = (number_of_seconds - seconds) / 60;
 
-    int  sec = value_work % 60;
-    value_work = (value_work - sec) / 60;
+    const int        minutes = number_of_minutes % 60;
+    const long long  number_of_hours = (number_of_minutes - minutes) / 60;
 
-    int  min = value_work % 60;
-    value_work = (value_work - min) / 60;
+    const int        hours = number_of_hours % 24;
+    const long long  days = (number_of_hours - hours) / 24;
 
-    int  hour = value_work % 24;
-    value_work = (value_work - hour) / 24;
-
-    string  str = date_get_string_from_days(ref_year, value_work);
+    string  str = date_get_string_from_days(ref_year, days);
 
     {
         char  str_tmp[99+1];
-        sprintf(str_tmp, " %02d:%02d:%02d", hour, min, sec);
+        sprintf(str_tmp, " %02d:%02d:%02d", hours, minutes, seconds);
         str += str_tmp;
     }
 
@@ -1259,7 +1259,7 @@ T_expression::compute_expression_function(
             cpp_count = string_count_fdesc_to_cpp(* P_parameter_values[2]);
         }
 
-        A_value = A_value.get_str().substr(value_idx.get_int(),cpp_count);
+        A_value = A_value.get_str().substr(value_idx.get_int(), cpp_count);
     }
     else if (A_variable_or_function_name == "string.erase")
     {
@@ -1274,7 +1274,7 @@ T_expression::compute_expression_function(
         }
 
         string  str_copy = A_value.get_str();
-        str_copy.erase(value_idx.get_int(),cpp_count);
+        str_copy.erase(value_idx.get_int(), cpp_count);
         A_value = str_copy;
     }
     else if (A_variable_or_function_name == "string.insert")
@@ -1285,7 +1285,7 @@ T_expression::compute_expression_function(
         C_value  value_str = * P_parameter_values[2];
 
         string  str_copy = A_value.get_str();
-        str_copy.insert(value_idx.get_int(),value_str.get_str());
+        str_copy.insert(value_idx.get_int(), value_str.get_str());
         A_value = str_copy;
     }
     else if (A_variable_or_function_name == "string.replace")
@@ -1297,7 +1297,7 @@ T_expression::compute_expression_function(
         C_value            value_str = * P_parameter_values[3];
 
         string  str_copy = A_value.get_str();
-        str_copy.replace(value_idx.get_int(),cpp_count,value_str.get_str());
+        str_copy.replace(value_idx.get_int(), cpp_count,value_str.get_str());
         A_value = str_copy;
     }
     else if (A_variable_or_function_name == "string.replace_all")

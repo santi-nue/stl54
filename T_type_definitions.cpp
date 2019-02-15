@@ -54,7 +54,7 @@ bool    is_a_valid_identifier_name (const string   & var_name,
     // Must only contain letter, number or _
     // NB: ":" is reserved to enums (<Enum_type_name>::<enum_symbolic_value>)
     // NB: "." is reserved to <name1>.<name2>
-    for (int  idx = 0; idx < var_name.size(); ++idx)
+    for (unsigned int  idx = 0; idx < var_name.size(); ++idx)
     {
         if ((isalnum(var_name[idx]) == 0) &&
             (var_name[idx] != '_') &&
