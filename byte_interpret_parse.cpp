@@ -163,7 +163,7 @@ string     get_replace_all (      string    str_copy,
 }
 
 //*****************************************************************************
-// remove_word_limits *********************************************************
+// remove_word_limits      if both limits are found
 //*****************************************************************************
 
 void    remove_word_limits (string  & str,
@@ -180,7 +180,8 @@ void    remove_word_limits (string  & str,
 }
 
 //*****************************************************************************
-// remove_string_limits *******************************************************
+// remove_string_limits      if both limits are found
+// Limits are " or '
 //*****************************************************************************
 
 void    remove_string_limits (string  & str)
@@ -668,27 +669,27 @@ void    bin_file_to_frame (const string         & file_name,
 bool    get_number (const char*   word,
                           long*   P_number)
 {
-  if (P_number != NULL_PTR)
-    *P_number = 0;
+    if (P_number != NULL_PTR)
+        *P_number = 0;
 
-  if (strcmp (word,"") == 0)
-    return  false;
+    if (strcmp(word, "") == 0)
+        return  false;
 
-  long    number = 0;
-  char*   endptr = NULL_PTR;
+    long    number = 0;
+    char*   endptr = NULL_PTR;
 
-  errno = 0;
-  number = strtol (word,&endptr,0);
+    errno = 0;
+    number = strtol(word, &endptr, 0);
 
-  if ((errno != 0) ||
-      (endptr == NULL_PTR) ||
-      (*endptr != '\0'))
-    return  false;
+    if ((errno != 0) ||
+        (endptr == NULL_PTR) ||
+        (*endptr != '\0'))
+        return  false;
 
-  if (P_number != NULL_PTR)
-    *P_number = number;
+    if (P_number != NULL_PTR)
+        *P_number = number;
 
-  return  true;
+    return  true;
 }
 
 bool    get_number (const char*        word,
@@ -701,26 +702,26 @@ bool    get_number (const char*        word,
                           int          base,
                           long long  & number)
 {
-  number = 0;
+    number = 0;
 
-  if (strcmp (word,"") == 0)
-    return  false;
+    if (strcmp(word, "") == 0)
+        return  false;
 
-  char*   endptr = NULL_PTR;
+    char*   endptr = NULL_PTR;
 
-  errno = 0;
+    errno = 0;
 #if defined WIN32
-  number = _strtoi64 (word,&endptr,base);
+    number = _strtoi64(word, &endptr, base);
 #else
-  number = strtoll (word,&endptr,base);
+    number = strtoll(word, &endptr, base);
 #endif
 
-  if ((errno != 0) ||
-      (endptr == NULL_PTR) ||
-      (*endptr != '\0'))
-    return  false;
+    if ((errno != 0) ||
+        (endptr == NULL_PTR) ||
+        (*endptr != '\0'))
+        return  false;
 
-  return  true;
+    return  true;
 }
 
 bool    get_number (const char*        word,
@@ -775,7 +776,7 @@ E_return_code  get_before_separator_after (const string  & str,
                                                  string  & str_right)
 {
     // Searching for separator.
-    string::size_type  idx = str.find (separator);
+    const string::size_type  idx = str.find (separator);
 
     if (idx == string::npos)
         return  E_rc_not_found;
@@ -797,7 +798,7 @@ E_return_code  get_before_separator_after (const string  & str,
                                                  string  & str_right)
 {
     // Searching for separator.
-    string::size_type  idx = str.find (separator);
+    const string::size_type  idx = str.find (separator);
 
     if (idx == string::npos)
         return  E_rc_not_found;
@@ -882,7 +883,7 @@ E_return_code    decompose_left_sep_middle_sep_right (
                               string   & right_part)
 {
     // Searching for separator_left.
-    string::size_type  idx_left = orig_type.find (separator_left);
+    const string::size_type  idx_left = orig_type.find (separator_left);
 
     if (idx_left == string::npos)
         return  E_rc_not_found;
@@ -989,84 +990,75 @@ void    dump_buffer (      ostream &  os,
                      const void *     A_buffer,
                      const long       P_user_length)
 {
-  const unsigned char *   PA_buffer = static_cast<const unsigned char *>(A_buffer);
-  long     P_length = P_user_length;
-  long     I_count;
-  long     I_limite_boucle;
-  long     I_offset;
-  char     line[256];
-  char     line_part[256];
+    const unsigned char *   PA_buffer = static_cast<const unsigned char *>(A_buffer);
+    long     P_length = P_user_length;
+    long     I_offset = 0;
 
-  I_offset = 0;
-
-  while (P_length > 0)
-  {
-    if (P_length >= K_NB_BYTES_PER_LINE)
+    while (P_length > 0)
     {
-         I_limite_boucle = K_NB_BYTES_PER_LINE;
-    }
-    else
-    {
-         I_limite_boucle = P_length;
-    }
+        const long  I_limite_boucle = (P_length >= K_NB_BYTES_PER_LINE) ? K_NB_BYTES_PER_LINE : P_length;
 
-    // affichage offset
-    sprintf (line, "%08lx : ", I_offset);
+        // affichage offset
+        char     line[256];
+        char     line_part[256];
+        sprintf(line, "%08lx : ", I_offset);
 
-    // dump hexa
-    for (I_count = 0 ; I_count < I_limite_boucle ; I_count++)
-    {
-      sprintf (line_part, "%02x ", PA_buffer[I_count]);
-      strcat  (line, line_part);
-    }
-  
-    // ecriture fin ligne dump hexa en blanc
-    // si nb < K_NB_BYTES_PER_LINE
-    while (I_count < K_NB_BYTES_PER_LINE)
-    {
-      sprintf (line_part, "   ");
-      strcat  (line, line_part);
-      I_count++;
-    }
-  
-  
-    // separation entre hexa et ascii
-    sprintf (line_part, " - ");
-    strcat  (line, line_part);
-  
-  
-    // dump ascii
-    for (I_count = 0 ; I_count < I_limite_boucle ; I_count++)
-    {
-      if (isprint(PA_buffer[I_count]))
-      {
-        sprintf (line_part, "%c", PA_buffer[I_count]);
-      }
-      else {
-        sprintf (line_part, ".");
-      }
-      strcat (line, line_part);
-    }
- 
-    assert(strlen(line) < 256);
- 
-    // ecriture fin ligne dump ascii en blanc
-    // si nb < K_NB_BYTES_PER_LINE
-    while (I_count < K_NB_BYTES_PER_LINE)
-    {
-      sprintf (line_part, " ");
-      strcat (line, line_part);
-      I_count++;
-    }
+        // dump hexa
+        long     I_count;
+        for (I_count = 0; I_count < I_limite_boucle; I_count++)
+        {
+            sprintf(line_part, "%02x ", PA_buffer[I_count]);
+            strcat(line, line_part);
+        }
+
+        // ecriture fin ligne dump hexa en blanc
+        // si nb < K_NB_BYTES_PER_LINE
+        while (I_count < K_NB_BYTES_PER_LINE)
+        {
+            sprintf(line_part, "   ");
+            strcat(line, line_part);
+            I_count++;
+        }
 
 
-    // print line in output file      
-    assert(strlen(line) < 256);
-    os << line << endl;
+        // separation entre hexa et ascii
+        sprintf(line_part, " - ");
+        strcat(line, line_part);
 
-    PA_buffer += K_NB_BYTES_PER_LINE;
-    P_length -= K_NB_BYTES_PER_LINE;
-    I_offset += K_NB_BYTES_PER_LINE;
-  }
+
+        // dump ascii
+        for (I_count = 0; I_count < I_limite_boucle; I_count++)
+        {
+            if (isprint(PA_buffer[I_count]))
+            {
+                sprintf(line_part, "%c", PA_buffer[I_count]);
+            }
+            else
+            {
+                sprintf(line_part, ".");
+            }
+            strcat(line, line_part);
+        }
+
+        assert(strlen(line) < 256);
+
+        // ecriture fin ligne dump ascii en blanc
+        // si nb < K_NB_BYTES_PER_LINE
+        while (I_count < K_NB_BYTES_PER_LINE)
+        {
+            sprintf(line_part, " ");
+            strcat(line, line_part);
+            I_count++;
+        }
+
+
+        // print line in output file      
+        assert(strlen(line) < 256);
+        os << line << endl;
+
+        PA_buffer += K_NB_BYTES_PER_LINE;
+        P_length -= K_NB_BYTES_PER_LINE;
+        I_offset += K_NB_BYTES_PER_LINE;
+    }
 }
 
