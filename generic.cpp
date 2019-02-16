@@ -1357,10 +1357,18 @@ static void    generic_stats_tree_init(stats_tree  * st)
 
     T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
 
-    tap_data.st_node_msg_id = stats_tree_create_node(st, tap_data.st_str_msg_id, 0, TRUE);
+    tap_data.st_node_msg_id = stats_tree_create_node(st, tap_data.st_str_msg_id, 0,
+#if WIRESHARK_VERSION_NUMBER >= 30000
+                                                     STAT_DT_INT,
+#endif
+                                                     TRUE);
     if (protocol_data.MSG_TOTAL_LENGTH != "")
     {
-        tap_data.st_node_msg_length = stats_tree_create_node(st, tap_data.st_str_msg_length, 0, TRUE);
+        tap_data.st_node_msg_length = stats_tree_create_node(st, tap_data.st_str_msg_length, 0,
+#if WIRESHARK_VERSION_NUMBER >= 30000
+                                                             STAT_DT_INT,
+#endif
+                                                             TRUE);
     }
 #if 0
     st_node_packets = stats_tree_create_node(st, st_str_packets, 0, TRUE);
@@ -1368,7 +1376,16 @@ static void    generic_stats_tree_init(stats_tree  * st)
 #endif
 }
 
-static int    generic_stats_tree_packet(stats_tree      * st,
+#if WIRESHARK_VERSION_NUMBER >= 30000
+#define stat_tree_packet_return_type     tap_packet_status
+#define stat_tree_packet_return_value    TAP_PACKET_REDRAW
+#else
+#define stat_tree_packet_return_type     int
+#define stat_tree_packet_return_value    1
+#endif
+static
+stat_tree_packet_return_type
+              generic_stats_tree_packet(stats_tree      * st,
                                         packet_info     * pinfo,
                                         epan_dissect_t  * edt,
                                   const void            * p)
@@ -1409,7 +1426,7 @@ static int    generic_stats_tree_packet(stats_tree      * st,
         /*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
     }
 
-    return 1;
+    return  stat_tree_packet_return_value;
 }
 
 #if 0
@@ -1612,7 +1629,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
                         "\n"
                         "Explicit calls to this subdissector will NOT work.\n");
         }
-        if (false)  // comment savoir qu'il est désactivé ?
+        if (false)  // comment savoir qu'il est dÃ©sactivÃ© ?
         {
             wsgd_report_failure(
                         "Generic dissector will NOT succeed to call subdissector " + subdissector_name +
@@ -2536,9 +2553,9 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             }
             // ICIOA ne fonctionne pas
             // Y a-t-il un moyen pour que wireshark re-appelle le dissector ???
-            // je ne crois pas, il faut se rappeler soi-même
+            // je ne crois pas, il faut se rappeler soi-mÃªme
 
-            // 2009/03/03 en testant MSG_TOTAL_LENGTH, il semble bien que le dissector est appelé plusieurs fois.
+            // 2009/03/03 en testant MSG_TOTAL_LENGTH, il semble bien que le dissector est appelÃ© plusieurs fois.
             // appele 1 fois de plus MAIS pas plus ???
             // -> voir offset de tvbbuf ???
             // tvb_reported_length & tvb_reported_length_remaining ???
