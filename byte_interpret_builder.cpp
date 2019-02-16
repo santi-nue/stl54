@@ -36,13 +36,8 @@ static C_byte_interpret_builder  * S_P_builder = NULL;    // recursive call ok
 
 
 //*****************************************************************************
-// interpret_builder_set_builder **********************************************
+// C_interpret_builder_set_temporary
 //*****************************************************************************
-
-//void    interpret_builder_set_builder(C_byte_interpret_builder  * P_builder)
-//{
-//	S_P_builder = P_builder;
-//}
 
 C_interpret_builder_set_temporary::C_interpret_builder_set_temporary(C_byte_interpret_builder  * P_builder)
     :previous_value(S_P_builder),
@@ -123,7 +118,7 @@ void    interpret_builder_begin(const T_type_definitions  & type_definitions)
 // interpret_builder_value
 //*****************************************************************************
 
-void    interpret_builder_value(const T_type_definitions  & type_definitions,
+void    interpret_builder_value(    const T_type_definitions  & type_definitions,
                                     const T_frame_data        & in_out_frame_data,
                                     const T_field_type_name   & field_type_name,
                                     const string              & data_name,
@@ -221,7 +216,7 @@ void    interpret_builder_value(const T_type_definitions  & type_definitions,
 // interpret_builder_raw_data
 //*****************************************************************************
 
-void    interpret_builder_raw_data(const T_type_definitions  & type_definitions,
+void    interpret_builder_raw_data( const T_type_definitions  & type_definitions,
                                     const T_frame_data        & in_out_frame_data,
                                     const T_interpret_data    & interpret_data,
                                     const T_field_type_name   & field_type_name,
@@ -269,17 +264,17 @@ void    interpret_builder_raw_data(const T_type_definitions  & type_definitions,
 //*****************************************************************************
 
 void    interpret_builder_group_begin(const T_type_definitions  & type_definitions,
-                                    const T_frame_data        & in_out_frame_data,
-                                    const T_field_type_name   & field_type_name,
-                                    const string              & data_name,
-                                    const string              & data_simple_name)
+                                      const T_frame_data        & in_out_frame_data,
+                                      const T_field_type_name   & field_type_name,
+                                      const string              & data_name,
+                                      const string              & data_simple_name)
 {
     M_TRACE_CHECK();
 
     if (S_P_builder != NULL)
     {
         S_P_builder->group_begin (type_definitions, in_out_frame_data,
-                             field_type_name, data_name, data_simple_name);
+                                  field_type_name, data_name, data_simple_name);
     }
 
     if (type_definitions.vector_plugin_output_definition.empty() == false)
@@ -310,11 +305,10 @@ void    interpret_builder_group_begin(const T_type_definitions  & type_definitio
 //*****************************************************************************
 
 void    interpret_builder_group_append_text(const T_type_definitions  & type_definitions,
-                                       const T_frame_data        & in_out_frame_data,
-//									   const T_field_type_name   & field_type_name,
-                                       const string              & data_name,
-                                       const string              & data_simple_name,
-                                       const string              & text)
+                                            const T_frame_data        & in_out_frame_data,
+                                            const string              & data_name,
+                                            const string              & data_simple_name,
+                                            const string              & text)
 {
     if (S_P_builder != NULL)
     {
@@ -434,13 +428,13 @@ void    interpret_builder_error    (const T_type_definitions  & type_definitions
 // interpret_builder_missing_data
 //*****************************************************************************
 
-void    interpret_builder_missing_data    (const T_type_definitions  & type_definitions,
-                                    const T_frame_data        & in_out_frame_data,
-                                    const T_interpret_data    & interpret_data,
-                                    const T_field_type_name   & field_type_name,
-                                    const string              & data_name,
-                                    const string              & data_simple_name,
-                                    const string              & error)
+void    interpret_builder_missing_data( const T_type_definitions  & type_definitions,
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_interpret_data    & interpret_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & data_simple_name,
+                                        const string              & error)
 {
     M_TRACE_CHECK();
 
@@ -527,7 +521,7 @@ void    interpret_builder_cmd_print(const T_type_definitions  & type_definitions
     if (S_P_builder != NULL)
     {
         S_P_builder->cmd_print (type_definitions, in_out_frame_data,
-                             field_type_name, data_name, text_to_print);
+                                field_type_name, data_name, text_to_print);
     }
 
     if (type_definitions.vector_plugin_output_definition.empty() == false)

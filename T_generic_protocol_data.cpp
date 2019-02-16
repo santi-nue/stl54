@@ -226,41 +226,41 @@ void    dump_fields_data(const T_generic_protocol_ws_data  * P_protocol_ws_data,
 void
 T_generic_protocol_data::check_config_parameters_initialized() const
 {
-  ::check_initialized(PROTONAME);
-  ::check_initialized(PROTOSHORTNAME);
-  ::check_initialized(PROTOABBREV);
+    ::check_initialized(PROTONAME);
+    ::check_initialized(PROTOSHORTNAME);
+    ::check_initialized(PROTOABBREV);
 
-  if (PARENTS.empty() &&
-      PARENTS_HEURISTIC.empty())
-  {
-    M_FATAL_COMMENT("Must set PARENT_SUBFIELD & PARENT_SUBFIELD_VALUES");
-  }
-  for (vector<T_generic_protocol_data::T_parent>::const_iterator
-                                    parent_iter  = PARENTS.begin();
-                                    parent_iter != PARENTS.end();
-                                  ++parent_iter)
-  {
-      const T_generic_protocol_data::T_parent  & parent = * parent_iter;
-      ::check_initialized(parent.PARENT_SUBFIELD);
-      if (parent.PARENT_SUBFIELD_VALUES_int.empty() &&
-          parent.PARENT_SUBFIELD_VALUES_str.empty() &&
-          parent.PARENT_SUBFIELD_RANGES_int.empty())
-      {
-          M_FATAL_COMMENT("Must set PARENT_SUBFIELD_VALUES or PARENT_SUBFIELD_RANGE");
-      }
-  }
+    if (PARENTS.empty() &&
+        PARENTS_HEURISTIC.empty())
+    {
+        M_FATAL_COMMENT("Must set PARENT_SUBFIELD & PARENT_SUBFIELD_VALUES");
+    }
+    for (vector<T_generic_protocol_data::T_parent>::const_iterator
+        parent_iter = PARENTS.begin();
+        parent_iter != PARENTS.end();
+        ++parent_iter)
+    {
+        const T_generic_protocol_data::T_parent  & parent = *parent_iter;
+        ::check_initialized(parent.PARENT_SUBFIELD);
+        if (parent.PARENT_SUBFIELD_VALUES_int.empty() &&
+            parent.PARENT_SUBFIELD_VALUES_str.empty() &&
+            parent.PARENT_SUBFIELD_RANGES_int.empty())
+        {
+            M_FATAL_COMMENT("Must set PARENT_SUBFIELD_VALUES or PARENT_SUBFIELD_RANGE");
+        }
+    }
 
-  ::check_initialized(MSG_HEADER_TYPE);
-  ::check_initialized(MSG_ID_FIELD_NAME);
-//  ::check_initialized(MSG_TITLE);  optional
-//  ::check_initialized(MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES);  optional
-  if (MSG_MAIN_TYPE == "")
-  {
-      if ((MSG_FROM_MAIN_TYPE == "") || (MSG_TO_MAIN_TYPE == ""))
-      {
-          M_FATAL_COMMENT("Must set MSG_MAIN_TYPE or MSG_FROM_MAIN_TYPE and MSG_TO_MAIN_TYPE");
-      }
-  }
+    ::check_initialized(MSG_HEADER_TYPE);
+    ::check_initialized(MSG_ID_FIELD_NAME);
+    //  ::check_initialized(MSG_TITLE);  optional
+    //  ::check_initialized(MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES);  optional
+    if (MSG_MAIN_TYPE == "")
+    {
+        if ((MSG_FROM_MAIN_TYPE == "") || (MSG_TO_MAIN_TYPE == ""))
+        {
+            M_FATAL_COMMENT("Must set MSG_MAIN_TYPE or MSG_FROM_MAIN_TYPE and MSG_TO_MAIN_TYPE");
+        }
+    }
 }
 
 /******************************************************************************
@@ -371,16 +371,16 @@ M_DEFINE_PROTO_FCT(19)
 
 T_generic_protocol_data  & get_protocol_data(const int   proto_idx)
 {
-  M_FATAL_IF_GE(proto_idx, static_cast<long>(S_protocol_data.size()));
+    M_FATAL_IF_GE(proto_idx, static_cast<long>(S_protocol_data.size()));
 
-  return  S_protocol_data[proto_idx];
+    return  S_protocol_data[proto_idx];
 }
 
 T_generic_protocol_data  & new_protocol_data(const int   proto_idx)
 {
-  M_FATAL_IF_GE(proto_idx, static_cast<long>(S_protocol_data.size()));
+    M_FATAL_IF_GE(proto_idx, static_cast<long>(S_protocol_data.size()));
 
-  S_protocol_data[proto_idx].proto_idx = proto_idx;
+    S_protocol_data[proto_idx].proto_idx = proto_idx;
 
 #define M_DEFINE_PROTO_FCT(PROTO_IDX)                                                         \
     else if (proto_idx == PROTO_IDX)                                                          \
@@ -416,7 +416,7 @@ T_generic_protocol_data  & new_protocol_data(const int   proto_idx)
     M_FATAL_IF_EQ(S_protocol_data[proto_idx].ws_data.P_dissect_fct, NULL);
 
 
-  return  S_protocol_data[proto_idx];
+    return  S_protocol_data[proto_idx];
 }
 
 // This could NOT work because
@@ -427,16 +427,16 @@ T_generic_protocol_data  & new_protocol_data(const int   proto_idx)
 #if 0
 void    remove_protocol_data_if_exist(const int   proto_idx)
 {
-  M_FATAL_IF_GE(proto_idx, static_cast<long>(S_protocol_data.size()));
+    M_FATAL_IF_GE(proto_idx, static_cast<long>(S_protocol_data.size()));
 
-  // WARNING_ADDRESSES
-  // NB: this function is supposed to be called only during register initialisation.
-  // At this moment, the protocols after this one are supposed NOT initialized.
-  // pop_back do NOT change the address of the vector.
-  S_protocol_data[proto_idx] = T_generic_protocol_data();
-  S_protocol_data.pop_back();
+    // WARNING_ADDRESSES
+    // NB: this function is supposed to be called only during register initialisation.
+    // At this moment, the protocols after this one are supposed NOT initialized.
+    // pop_back do NOT change the address of the vector.
+    S_protocol_data[proto_idx] = T_generic_protocol_data();
+    S_protocol_data.pop_back();
 
-  return;
+    return;
 }
 #endif
 
@@ -459,21 +459,21 @@ T_generic_protocol_data  & get_protocol_data_from_proto_abbrev(const char  * pro
 
 void    set_max_nb_of_protocol_data(const int   max_nb)
 {
-  M_TRACE_ENTER("set_max_nb_of_protocol_data", max_nb);
+    M_TRACE_ENTER("set_max_nb_of_protocol_data", max_nb);
 
-  M_FATAL_IF_LT(max_nb, 0);
+    M_FATAL_IF_LT(max_nb, 0);
 
-  // WARNING_ADDRESSES
-  // It is mandatory to add all items now.
-  for (int  proto_idx = 0; proto_idx < max_nb; ++proto_idx)
-  {
-    T_generic_protocol_data    protocol_data;
+    // WARNING_ADDRESSES
+    // It is mandatory to add all items now.
+    for (int proto_idx = 0; proto_idx < max_nb; ++proto_idx)
+    {
+        T_generic_protocol_data    protocol_data;
 
-    // Do NOT set proto_idx attribute.
-    // It permits to know if protocol_data has been initialized.
+        // Do NOT set proto_idx attribute.
+        // It permits to know if protocol_data has been initialized.
 
-    S_protocol_data.push_back(protocol_data);
-  }
+        S_protocol_data.push_back(protocol_data);
+    }
 }
 
 //*****************************************************************************
@@ -482,427 +482,426 @@ void    set_max_nb_of_protocol_data(const int   max_nb)
 #if 0
 void    add_initial_types (T_generic_protocol_data  & protocol_data)
 {
-  // Define bool8 (and others) as enums.
-  // Necessary for wireshark display filters accept "false" and "true".
-//  if (protocol_data.type_definitions.is_a_type_name("bool8") == false)
-  {
-    istringstream           iss("enum8     bool8   { false 0  true 1 }");
+    // Define bool8 (and others) as enums.
+    // Necessary for wireshark display filters accept "false" and "true".
+    //  if (protocol_data.type_definitions.is_a_type_name("bool8") == false)
+    {
+        istringstream           iss("enum8     bool8   { false 0  true 1 }");
 
-    const string    result = build_types (iss, protocol_data.type_definitions);
-    M_FATAL_IF_NE(result, "");
-  }
+        const string    result = build_types(iss, protocol_data.type_definitions);
+        M_FATAL_IF_NE(result, "");
+    }
 
-//  if (protocol_data.type_definitions.is_a_type_name("bool16") == false)
-  {
-    istringstream           iss("enum16    bool16  as  bool8 ;");
+    //  if (protocol_data.type_definitions.is_a_type_name("bool16") == false)
+    {
+        istringstream           iss("enum16    bool16  as  bool8 ;");
 
-    const string    result = build_types (iss, protocol_data.type_definitions);
-    M_FATAL_IF_NE(result, "");
-  }
-//  if (protocol_data.type_definitions.is_a_type_name("bool32") == false)
-  {
-    istringstream           iss("enum32    bool32  as  bool8 ;");
+        const string    result = build_types(iss, protocol_data.type_definitions);
+        M_FATAL_IF_NE(result, "");
+    }
+    //  if (protocol_data.type_definitions.is_a_type_name("bool32") == false)
+    {
+        istringstream           iss("enum32    bool32  as  bool8 ;");
 
-    const string    result = build_types (iss, protocol_data.type_definitions);
-    M_FATAL_IF_NE(result, "");
-  }
-//  if (protocol_data.type_definitions.is_a_type_name("bool1") == false)
-  {
-    istringstream           iss("enum1    bool1  as  bool8 ;");
+        const string    result = build_types(iss, protocol_data.type_definitions);
+        M_FATAL_IF_NE(result, "");
+    }
+    //  if (protocol_data.type_definitions.is_a_type_name("bool1") == false)
+    {
+        istringstream           iss("enum1    bool1  as  bool8 ;");
 
-    const string    result = build_types (iss, protocol_data.type_definitions);
-    M_FATAL_IF_NE(result, "");
-  }
+        const string    result = build_types(iss, protocol_data.type_definitions);
+        M_FATAL_IF_NE(result, "");
+    }
 }
 #endif
 //*****************************************************************************
 // read_file_wsgd
 //*****************************************************************************
 
-void    read_file_wsgd (const string                       & wsgd_file_name,
+void    read_file_wsgd (const string                   & wsgd_file_name,
                               T_generic_protocol_data  & protocol_data)
 {
-  M_TRACE_ENTER ("read_file_wsgd", wsgd_file_name);
-  ifstream              ifs (wsgd_file_name.c_str());
-  if (!ifs)
-  {
-    M_FATAL_COMMENT("Impossible to open file " << wsgd_file_name);
-  }
+    M_TRACE_ENTER("read_file_wsgd", wsgd_file_name);
+    ifstream              ifs(wsgd_file_name.c_str());
+    if (!ifs)
+    {
+        M_FATAL_COMMENT("Impossible to open file " << wsgd_file_name);
+    }
 
-// string ou int
+    // string ou int
 #define M_READ_NAME_VALUE(NAME,VARIABLE)                     \
-  else if (keyword == #NAME)  {                              \
-    check_not_already_initialized(VARIABLE);                 \
-    ifs >> VARIABLE;                                         \
-    M_TRACE_DEBUG (#NAME << " = " << VARIABLE);              \
-  }
+    else if (keyword == #NAME)  {                            \
+        check_not_already_initialized(VARIABLE);             \
+        ifs >> VARIABLE;                                     \
+        M_TRACE_DEBUG (#NAME << " = " << VARIABLE);          \
+    }
 
 #define M_READ_VALUE(NAME)                                   \
     M_READ_NAME_VALUE(NAME,protocol_data.NAME)
 
 // bool
 #define M_READ_NAME_BOOL(NAME,VARIABLE)                      \
-  else if (keyword == #NAME)  {                              \
-    string    word;                                          \
-    ifs >> word;                                             \
-    if ((word == "false") || (word == "no")) {               \
-      VARIABLE = false;                                      \
-    }                                                        \
-    else if ((word == "true") || (word == "yes")) {          \
-      VARIABLE = true;                                       \
-    }                                                        \
-    else {                                                   \
-      M_FATAL_COMMENT("Bad value for " #NAME);               \
-    }                                                        \
-    M_TRACE_DEBUG (#NAME << " = " << VARIABLE);              \
-  }
+    else if (keyword == #NAME)  {                            \
+        string    word;                                      \
+        ifs >> word;                                         \
+        if ((word == "false") || (word == "no")) {           \
+            VARIABLE = false;                                \
+        }                                                    \
+        else if ((word == "true") || (word == "yes")) {      \
+            VARIABLE = true;                                 \
+        }                                                    \
+        else {                                               \
+            M_FATAL_COMMENT("Bad value for " #NAME);         \
+        }                                                    \
+        M_TRACE_DEBUG (#NAME << " = " << VARIABLE);          \
+    }
 
 // bool
 #define M_READ_BOOL(NAME)                                    \
     M_READ_NAME_BOOL(NAME,protocol_data.NAME)
 
 // vector<int>
-#define M_READ_VALUES(NAME)                                 \
-  else if (keyword == #NAME)  {                             \
-    string    line;                                         \
-    getline (ifs, line);                                    \
-    istringstream  is_line(line.c_str());                   \
-    while (is_istream_empty(is_line) != true)               \
-    {                                                       \
-      int    val;                                           \
-      is_line >> val;                                       \
-      protocol_data.NAME.push_back(val);                    \
-    }                                                       \
-  }
+#define M_READ_VALUES(NAME)                                  \
+    else if (keyword == #NAME)  {                            \
+        string    line;                                      \
+        getline (ifs, line);                                 \
+        istringstream  is_line(line.c_str());                \
+        while (is_istream_empty(is_line) != true)            \
+        {                                                    \
+            int    val;                                      \
+            is_line >> val;                                  \
+            protocol_data.NAME.push_back(val);               \
+        }                                                    \
+    }
 
 // vector<string>
-#define M_READ_STRINGS(NAME,VARIABLE)                       \
-  else if (keyword == #NAME)  {                             \
-    ifs >> ws;                                              \
-    string    line;                                         \
-    getline (ifs, line);                                    \
-    istringstream  is_line(line.c_str());                   \
-    while (is_istream_empty(is_line) != true)               \
-    {                                                       \
-      string    val;                                        \
-      is_line >> val;                                       \
-      protocol_data.VARIABLE.push_back(val);                \
-    }                                                       \
-  }
+#define M_READ_STRINGS(NAME,VARIABLE)                        \
+    else if (keyword == #NAME)  {                            \
+        ifs >> ws;                                           \
+        string    line;                                      \
+        getline (ifs, line);                                 \
+        istringstream  is_line(line.c_str());                \
+        while (is_istream_empty(is_line) != true)            \
+        {                                                    \
+            string    val;                                   \
+            is_line >> val;                                  \
+            protocol_data.VARIABLE.push_back(val);           \
+        }                                                    \
+    }
 
 // string
-#define M_READ_LINE(NAME)                                   \
-  else if (keyword == #NAME)  {                             \
-    check_not_already_initialized(protocol_data.NAME);      \
-    ifs >> ws;                                              \
-    getline (ifs, protocol_data.NAME);                      \
-    const string::size_type  NAME_size = protocol_data.NAME.size(); \
-    if ((NAME_size > 0) &&                                  \
-        (protocol_data.NAME[NAME_size-1] == '\r'))          \
-    {                                                       \
-        protocol_data.NAME.erase(NAME_size-1);              \
-    }                                                       \
-    M_TRACE_DEBUG (#NAME << " = " << protocol_data.NAME);   \
-  }
+#define M_READ_LINE(NAME)                                                \
+    else if (keyword == #NAME)  {                                        \
+        check_not_already_initialized(protocol_data.NAME);               \
+        ifs >> ws;                                                       \
+        getline (ifs, protocol_data.NAME);                               \
+        const string::size_type  NAME_size = protocol_data.NAME.size();  \
+        if ((NAME_size > 0) &&                                           \
+            (protocol_data.NAME[NAME_size-1] == '\r'))                   \
+        {                                                                \
+            protocol_data.NAME.erase(NAME_size-1);                       \
+        }                                                                \
+        M_TRACE_DEBUG (#NAME << " = " << protocol_data.NAME);            \
+    }
 
   // Read the 1st part of the file (until PROTO_TYPE_DEFINITIONS).
-  while (is_istream_empty(ifs) != true)
-  {
-    string    keyword;
-    ifs >> keyword;
+    while (is_istream_empty(ifs) != true)
+    {
+        string    keyword;
+        ifs >> keyword;
 
-    if (keyword == "DEBUG")
-    {
-        protocol_data.DEBUG = E_debug_status_ON;
-//		set_debug(protocol_data.DEBUG);
-        continue;
-    }
-    else if (keyword == "DEBUG_NO_TIME")
-    {
-        protocol_data.DEBUG = E_debug_status_ON_NO_TIME;
-        continue;
-    }
-    else if (keyword == "PROTO_TYPE_DEFINITIONS")
-    {
-      break;
-    }
-    M_READ_LINE(PROTONAME)
-    M_READ_VALUE(PROTOSHORTNAME)
-    M_READ_VALUE(PROTOABBREV)
-
-    else if (keyword == "PARENT_SUBFIELD")
-    {
-        protocol_data.PARENTS.push_back(T_generic_protocol_data::T_parent());
-        ifs >> protocol_data.PARENTS.back().PARENT_SUBFIELD;
-        M_TRACE_DEBUG ("PARENT_SUBFIELD = " << protocol_data.PARENTS.back().PARENT_SUBFIELD);
-    }
-    M_READ_STRINGS(PARENT_SUBFIELD_VALUES,PARENTS.back().PARENT_SUBFIELD_VALUES_str)
-    else if (keyword == "PARENT_SUBFIELD_RANGE")
-    {
-        pair<int,int>    low_high;
-        ifs >> low_high.first;
-        ifs >> low_high.second;
-        protocol_data.PARENTS.back().PARENT_SUBFIELD_RANGES_int.push_back(low_high);
-    }
-    else if (keyword == "PARENT_HEURISTIC")
-    {
-        string   parent_name;
-        ifs >> parent_name;
-        protocol_data.PARENTS_HEURISTIC.push_back(parent_name);
-    }
-    M_READ_VALUE(HEURISTIC_FUNCTION)
-    else if (keyword == "ADD_FOR_DECODE_AS_TABLE")
-    {
-        string   table_name;
-        ifs >> table_name;
-        protocol_data.ADD_FOR_DECODE_AS_TABLES.push_back(table_name);
-    }
-
-    else if (keyword == "SUBFIELD")
-    {
-        check_not_already_initialized(protocol_data.SUBPROTO_SUBFIELD);
-        ifs >> ws;
-        string    line;
-        getline (ifs, line);
+        if (keyword == "DEBUG")
         {
-          istringstream  is_line(line.c_str());
-          is_line >> protocol_data.SUBPROTO_SUBFIELD;
-          is_line >> protocol_data.SUBPROTO_SUBFIELD_TYPE;
-          if (protocol_data.SUBPROTO_SUBFIELD == "")
-          {
-              M_FATAL_COMMENT("Missing name on SUBFIELD line = " << line);
-          }
-          if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "")
-          {
-              M_FATAL_COMMENT("Missing type on SUBFIELD line = " << line);
-          }
-          if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint8")
-              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT8;
-          else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint16")
-              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT16;
-          else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint24")
-              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT24;
-          else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint32")
-              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT32;
-          else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "string")
-              protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_STRING;
-          else
-          {
-              M_FATAL_COMMENT("Bad type on SUBFIELD line = " << line);
-          }
-          if (is_istream_empty(is_line) != true)
-          {
-              string    key_word_from;
-              is_line >> key_word_from;
-              if (key_word_from != "from")
-              {
-                  M_FATAL_COMMENT("Expecting key word from on SUBFIELD line = " << line);
-              }
+            protocol_data.DEBUG = E_debug_status_ON;
+            //		set_debug(protocol_data.DEBUG);
+            continue;
+        }
+        else if (keyword == "DEBUG_NO_TIME")
+        {
+            protocol_data.DEBUG = E_debug_status_ON_NO_TIME;
+            continue;
+        }
+        else if (keyword == "PROTO_TYPE_DEFINITIONS")
+        {
+            break;
+        }
+        M_READ_LINE(PROTONAME)
+        M_READ_VALUE(PROTOSHORTNAME)
+        M_READ_VALUE(PROTOABBREV)
 
-              is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1;
-              is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_2;
-              is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_3;
-              if (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 == "")
-              {
-                  M_FATAL_COMMENT("Expecting at least one field after from on SUBFIELD line = " << line);
-              }
-              if (is_istream_empty(is_line) != true)
-              {
-                  M_FATAL_COMMENT("Too much data on SUBFIELD line = " << line);
-              }
-          }
-          if (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 == "")
-              protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 = protocol_data.SUBPROTO_SUBFIELD;
+        else if (keyword == "PARENT_SUBFIELD")
+        {
+            protocol_data.PARENTS.push_back(T_generic_protocol_data::T_parent());
+            ifs >> protocol_data.PARENTS.back().PARENT_SUBFIELD;
+            M_TRACE_DEBUG("PARENT_SUBFIELD = " << protocol_data.PARENTS.back().PARENT_SUBFIELD);
+        }
+        M_READ_STRINGS(PARENT_SUBFIELD_VALUES, PARENTS.back().PARENT_SUBFIELD_VALUES_str)
+        else if (keyword == "PARENT_SUBFIELD_RANGE")
+        {
+            pair<int, int>    low_high;
+            ifs >> low_high.first;
+            ifs >> low_high.second;
+            protocol_data.PARENTS.back().PARENT_SUBFIELD_RANGES_int.push_back(low_high);
+        }
+        else if (keyword == "PARENT_HEURISTIC")
+        {
+            string   parent_name;
+            ifs >> parent_name;
+            protocol_data.PARENTS_HEURISTIC.push_back(parent_name);
+        }
+        M_READ_VALUE(HEURISTIC_FUNCTION)
+        else if (keyword == "ADD_FOR_DECODE_AS_TABLE")
+        {
+            string   table_name;
+            ifs >> table_name;
+            protocol_data.ADD_FOR_DECODE_AS_TABLES.push_back(table_name);
+        }
+
+        else if (keyword == "SUBFIELD")
+        {
+            check_not_already_initialized(protocol_data.SUBPROTO_SUBFIELD);
+            ifs >> ws;
+            string    line;
+            getline(ifs, line);
+            {
+                istringstream  is_line(line.c_str());
+                is_line >> protocol_data.SUBPROTO_SUBFIELD;
+                is_line >> protocol_data.SUBPROTO_SUBFIELD_TYPE;
+                if (protocol_data.SUBPROTO_SUBFIELD == "")
+                {
+                    M_FATAL_COMMENT("Missing name on SUBFIELD line = " << line);
+                }
+                if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "")
+                {
+                    M_FATAL_COMMENT("Missing type on SUBFIELD line = " << line);
+                }
+                if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint8")
+                    protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT8;
+                else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint16")
+                    protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT16;
+                else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint24")
+                    protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT24;
+                else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "uint32")
+                    protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_UINT32;
+                else if (protocol_data.SUBPROTO_SUBFIELD_TYPE == "string")
+                    protocol_data.SUBPROTO_SUBFIELD_TYPE_WS = FT_STRING;
+                else
+                {
+                    M_FATAL_COMMENT("Bad type on SUBFIELD line = " << line);
+                }
+                if (is_istream_empty(is_line) != true)
+                {
+                    string    key_word_from;
+                    is_line >> key_word_from;
+                    if (key_word_from != "from")
+                    {
+                        M_FATAL_COMMENT("Expecting key word from on SUBFIELD line = " << line);
+                    }
+
+                    is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1;
+                    is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_2;
+                    is_line >> protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_3;
+                    if (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 == "")
+                    {
+                        M_FATAL_COMMENT("Expecting at least one field after from on SUBFIELD line = " << line);
+                    }
+                    if (is_istream_empty(is_line) != true)
+                    {
+                        M_FATAL_COMMENT("Too much data on SUBFIELD line = " << line);
+                    }
+                }
+                if (protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 == "")
+                    protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1 = protocol_data.SUBPROTO_SUBFIELD;
+            }
+        }
+
+        M_READ_VALUE(MSG_HEADER_TYPE)
+        M_READ_VALUE(MSG_ID_FIELD_NAME)
+        M_READ_VALUE(MSG_TITLE)
+        else if (keyword == "PACKET_ID_FIELD_TYPE")
+        {
+            M_TRACE_ERROR("PACKET_ID_FIELD_TYPE is no more used -> remove it");
+            string  do_not_care;
+            ifs >> do_not_care;
+        }
+        M_READ_STRINGS(MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES, MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES)
+        M_READ_VALUE(MSG_MAIN_TYPE)
+        M_READ_VALUE(MSG_FROM_MAIN_TYPE)
+        M_READ_VALUE(MSG_TO_MAIN_TYPE)
+        M_READ_LINE(MSG_TOTAL_LENGTH)
+        M_READ_VALUE(MSG_HEADER_LENGTH)
+        M_READ_VALUE(GLOBAL_DATA_TYPE)
+        M_READ_BOOL(PACKET_CONTAINS_ONLY_1_MSG)
+        M_READ_BOOL(PACKET_CONTAINS_ONLY_COMPLETE_MSG)
+        M_READ_BOOL(MANAGE_WIRESHARK_PINFO)
+        else
+        {
+            M_FATAL_COMMENT("unexpected keyword=" << keyword);
         }
     }
-    
-    M_READ_VALUE(MSG_HEADER_TYPE)
-    M_READ_VALUE(MSG_ID_FIELD_NAME)
-    M_READ_VALUE(MSG_TITLE)
-    else if (keyword == "PACKET_ID_FIELD_TYPE")
-    {
-        M_TRACE_ERROR("PACKET_ID_FIELD_TYPE is no more used -> remove it");
-        string  do_not_care;
-        ifs >> do_not_care;
-    }
-    M_READ_STRINGS(MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES,MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES)
-    M_READ_VALUE(MSG_MAIN_TYPE)
-    M_READ_VALUE(MSG_FROM_MAIN_TYPE)
-    M_READ_VALUE(MSG_TO_MAIN_TYPE)
-    M_READ_LINE(MSG_TOTAL_LENGTH)
-    M_READ_VALUE(MSG_HEADER_LENGTH)
-    M_READ_VALUE(GLOBAL_DATA_TYPE)
-    M_READ_BOOL(PACKET_CONTAINS_ONLY_1_MSG)
-    M_READ_BOOL(PACKET_CONTAINS_ONLY_COMPLETE_MSG)
-    M_READ_BOOL(MANAGE_WIRESHARK_PINFO)
-    else
-    {
-        M_FATAL_COMMENT("unexpected keyword=" << keyword);
-    }
-  }
 
-  // Read the type definitions of the protocol.
-  C_debug_set_temporary  debug_register_proto_main(protocol_data.DEBUG);
-  C_debug_set_temporary  debug_type_definitions;
-  bool                   must_ouput_types = false;
+    // Read the type definitions of the protocol.
+    C_debug_set_temporary  debug_register_proto_main(protocol_data.DEBUG);
+    C_debug_set_temporary  debug_type_definitions;
+    bool                   must_ouput_types = false;
 
-//  add_initial_types (protocol_data);
-  string    wsgd_file_name_short = wsgd_file_name;
-  {
-    const string::size_type  idx_last_dir = wsgd_file_name_short.find_last_of("/\\");
-    if (idx_last_dir != string::npos)
+    //  add_initial_types (protocol_data);
+    string    wsgd_file_name_short = wsgd_file_name;
     {
-        wsgd_file_name_short.erase(0, idx_last_dir+1);
+        const string::size_type  idx_last_dir = wsgd_file_name_short.find_last_of("/\\");
+        if (idx_last_dir != string::npos)
+        {
+            wsgd_file_name_short.erase(0, idx_last_dir + 1);
+        }
     }
-  }
-  build_types_context_include_file_open (wsgd_file_name_short);
+    build_types_context_include_file_open(wsgd_file_name_short);
 
-  {
-      protocol_data.type_definitions.map_const_value["shark::progfile_dir"]     = get_progfile_dir();
+    {
+        protocol_data.type_definitions.map_const_value["shark::progfile_dir"] = get_progfile_dir();
 #if WIRESHARK_VERSION_NUMBER < 20600
-      protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugin_dir();
+        protocol_data.type_definitions.map_const_value["shark::plugin_dir"] = get_plugin_dir();
 #else
-      protocol_data.type_definitions.map_const_value["shark::plugin_dir"]       = get_plugins_dir_with_version();
+        protocol_data.type_definitions.map_const_value["shark::plugin_dir"] = get_plugins_dir_with_version();
 #endif
-      protocol_data.type_definitions.map_const_value["shark::datafile_dir"]     = get_datafile_dir();
-      protocol_data.type_definitions.map_const_value["shark::systemfile_dir"]   = get_systemfile_dir();
-      protocol_data.type_definitions.map_const_value["shark::profiles_dir"]     = get_profiles_dir();
-      protocol_data.type_definitions.map_const_value["shark::persdatafile_dir"] = get_persdatafile_dir();
-  }
-
-  while (is_istream_empty(ifs) != true)
-  {
-    const string    result = build_types (ifs,
-                                          protocol_data.type_definitions);
-
-    if (result == "DEBUG")
-    {
-        debug_type_definitions.set(E_debug_status_ON);
-        continue;
-    }
-    else if (result == "DEBUG_NO_TIME")
-    {
-        debug_type_definitions.set(E_debug_status_ON_NO_TIME);
-        continue;
-    }
-    else if (result == "NETPDL")
-    {
-        string  file_name;
-        ifs >> file_name;
-        build_netpdl_types (file_name, protocol_data.type_definitions);
-        must_ouput_types = true;
-        continue;
+        protocol_data.type_definitions.map_const_value["shark::datafile_dir"] = get_datafile_dir();
+        protocol_data.type_definitions.map_const_value["shark::systemfile_dir"] = get_systemfile_dir();
+        protocol_data.type_definitions.map_const_value["shark::profiles_dir"] = get_profiles_dir();
+        protocol_data.type_definitions.map_const_value["shark::persdatafile_dir"] = get_persdatafile_dir();
     }
 
-    M_FATAL_IF_NE(result, "");
-  }
+    while (is_istream_empty(ifs) != true)
+    {
+        const string    result = build_types(ifs,
+                                             protocol_data.type_definitions);
 
-  build_types_context_include_file_close(wsgd_file_name_short);
+        if (result == "DEBUG")
+        {
+            debug_type_definitions.set(E_debug_status_ON);
+            continue;
+        }
+        else if (result == "DEBUG_NO_TIME")
+        {
+            debug_type_definitions.set(E_debug_status_ON_NO_TIME);
+            continue;
+        }
+        else if (result == "NETPDL")
+        {
+            string  file_name;
+            ifs >> file_name;
+            build_netpdl_types(file_name, protocol_data.type_definitions);
+            must_ouput_types = true;
+            continue;
+        }
 
-  // Verify that all mandatory data have been initialized.
-  protocol_data.check_config_parameters_initialized();
+        M_FATAL_IF_NE(result, "");
+    }
 
-  // Check/update PARENTS
-  for (vector<T_generic_protocol_data::T_parent>::iterator
-                                    parent_iter  = protocol_data.PARENTS.begin();
-                                    parent_iter != protocol_data.PARENTS.end();
-                                  ++parent_iter)
-  {
-      T_generic_protocol_data::T_parent  & parent = * parent_iter;
+    build_types_context_include_file_close(wsgd_file_name_short);
 
-      // Transform strings to integer values (if they are integers).
-      for (vector<string>::iterator   iter  = parent.PARENT_SUBFIELD_VALUES_str.begin();
-                                      iter != parent.PARENT_SUBFIELD_VALUES_str.end();
-                                    ++iter)
-      {
-          long    subfield_val_int = 0;
-          if (get_number(iter->c_str(), &subfield_val_int))
-          {
-              parent.PARENT_SUBFIELD_VALUES_int.push_back(subfield_val_int);
-          }
-          else
-          {
-              remove_string_limits(*iter);
-          }
-      }
+    // Verify that all mandatory data have been initialized.
+    protocol_data.check_config_parameters_initialized();
 
-      if (parent.PARENT_SUBFIELD_VALUES_int.size() == parent.PARENT_SUBFIELD_VALUES_str.size())
-      {
-          // They are all integers.
-          parent.PARENT_SUBFIELD_VALUES_str.clear();
-      }
-      else if (parent.PARENT_SUBFIELD_VALUES_int.empty())
-      {
-          // None are integers : nothing to do.
-      }
-      else
-      {
-          // Mixed integers and strings : NOT accepted.
-          M_FATAL_COMMENT("PARENT_SUBFIELD_VALUES must be integers or strings, NOT both. NB: if you want a string like 12, use \"12\".");
+    // Check/update PARENTS
+    for (vector<T_generic_protocol_data::T_parent>::iterator
+                      parent_iter  = protocol_data.PARENTS.begin();
+                      parent_iter != protocol_data.PARENTS.end();
+                    ++parent_iter)
+    {
+        T_generic_protocol_data::T_parent  & parent = *parent_iter;
 
-      }
-  }
+        // Transform strings to integer values (if they are integers).
+        for (vector<string>::iterator   iter  = parent.PARENT_SUBFIELD_VALUES_str.begin();
+                                        iter != parent.PARENT_SUBFIELD_VALUES_str.end();
+                                      ++iter)
+        {
+            long    subfield_val_int = 0;
+            if (get_number(iter->c_str(), &subfield_val_int))
+            {
+                parent.PARENT_SUBFIELD_VALUES_int.push_back(subfield_val_int);
+            }
+            else
+            {
+                remove_string_limits(*iter);
+            }
+        }
 
-  // Check HEURISTIC_FUNCTION
-  {
-      remove_string_limits(protocol_data.HEURISTIC_FUNCTION);
-      if (protocol_data.HEURISTIC_FUNCTION != "")
-      {
-          if (protocol_data.type_definitions.is_a_function(protocol_data.HEURISTIC_FUNCTION) == false)
-          {
-              M_FATAL_COMMENT("HEURISTIC_FUNCTION (" << protocol_data.HEURISTIC_FUNCTION << ") is NOT a defined function name");
-          }
-      }
-  }
+        if (parent.PARENT_SUBFIELD_VALUES_int.size() == parent.PARENT_SUBFIELD_VALUES_str.size())
+        {
+            // They are all integers.
+            parent.PARENT_SUBFIELD_VALUES_str.clear();
+        }
+        else if (parent.PARENT_SUBFIELD_VALUES_int.empty())
+        {
+            // None are integers : nothing to do.
+        }
+        else
+        {
+            // Mixed integers and strings : NOT accepted.
+            M_FATAL_COMMENT("PARENT_SUBFIELD_VALUES must be integers or strings, NOT both. NB: if you want a string like 12, use \"12\".");
+
+        }
+    }
+
+    // Check HEURISTIC_FUNCTION
+    {
+        remove_string_limits(protocol_data.HEURISTIC_FUNCTION);
+        if (protocol_data.HEURISTIC_FUNCTION != "")
+        {
+            if (protocol_data.type_definitions.is_a_function(protocol_data.HEURISTIC_FUNCTION) == false)
+            {
+                M_FATAL_COMMENT("HEURISTIC_FUNCTION (" << protocol_data.HEURISTIC_FUNCTION << ") is NOT a defined function name");
+            }
+        }
+    }
 
 
+    // Check MSG_HEADER_TYPE.
+    if (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_HEADER_TYPE) == false)
+    {
+        M_FATAL_COMMENT("MSG_HEADER_TYPE (" << protocol_data.MSG_HEADER_TYPE << ") is NOT a defined type name");
+    }
 
-  // Check MSG_HEADER_TYPE.
-  if (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_HEADER_TYPE) == false)
-  {
-      M_FATAL_COMMENT("MSG_HEADER_TYPE (" << protocol_data.MSG_HEADER_TYPE << ") is NOT a defined type name");
-  }
+    // Check GLOBAL_DATA_TYPE.
+    if (protocol_data.GLOBAL_DATA_TYPE != "")
+    {
+        if (protocol_data.type_definitions.is_a_struct(protocol_data.GLOBAL_DATA_TYPE) == false)
+        {
+            M_FATAL_COMMENT("GLOBAL_DATA_TYPE (" << protocol_data.GLOBAL_DATA_TYPE << ") is NOT a defined struct type name");
+        }
+    }
 
-  // Check GLOBAL_DATA_TYPE.
-  if (protocol_data.GLOBAL_DATA_TYPE != "")
-  {
-      if (protocol_data.type_definitions.is_a_struct(protocol_data.GLOBAL_DATA_TYPE) == false)
-      {
-          M_FATAL_COMMENT("GLOBAL_DATA_TYPE (" << protocol_data.GLOBAL_DATA_TYPE << ") is NOT a defined struct type name");
-      }
-  }
+    string    switch_orig_type;
+    string    switch_discriminant_str;
 
-  string    switch_orig_type;
-  string    switch_discriminant_str;
+    // Check MSG_MAIN_TYPE.
+    if ((protocol_data.MSG_MAIN_TYPE != "") &&
+        (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_MAIN_TYPE) == false) &&
+        (is_a_switch_value(protocol_data.type_definitions, protocol_data.MSG_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+    {
+        M_FATAL_COMMENT("MSG_MAIN_TYPE (" << protocol_data.MSG_MAIN_TYPE << ") is NOT a defined type name");
+    }
 
-  // Check MSG_MAIN_TYPE.
-  if ((protocol_data.MSG_MAIN_TYPE != "") &&
-      (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_MAIN_TYPE) == false) &&
-      (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
-  {
-      M_FATAL_COMMENT("MSG_MAIN_TYPE (" << protocol_data.MSG_MAIN_TYPE << ") is NOT a defined type name");
-  }
+    // Check MSG_FROM_MAIN_TYPE.
+    if ((protocol_data.MSG_FROM_MAIN_TYPE != "") &&
+        (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_FROM_MAIN_TYPE) == false) &&
+        (is_a_switch_value(protocol_data.type_definitions, protocol_data.MSG_FROM_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+    {
+        M_FATAL_COMMENT("MSG_FROM_MAIN_TYPE (" << protocol_data.MSG_FROM_MAIN_TYPE << ") is NOT a defined type name");
+    }
 
-  // Check MSG_FROM_MAIN_TYPE.
-  if ((protocol_data.MSG_FROM_MAIN_TYPE != "") &&
-      (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_FROM_MAIN_TYPE) == false) &&
-      (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_FROM_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
-  {
-      M_FATAL_COMMENT("MSG_FROM_MAIN_TYPE (" << protocol_data.MSG_FROM_MAIN_TYPE << ") is NOT a defined type name");
-  }
+    // Check MSG_TO_MAIN_TYPE.
+    if ((protocol_data.MSG_TO_MAIN_TYPE != "") &&
+        (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_TO_MAIN_TYPE) == false) &&
+        (is_a_switch_value(protocol_data.type_definitions, protocol_data.MSG_TO_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
+    {
+        M_FATAL_COMMENT("MSG_TO_MAIN_TYPE (" << protocol_data.MSG_TO_MAIN_TYPE << ") is NOT a defined type name");
+    }
 
-  // Check MSG_TO_MAIN_TYPE.
-  if ((protocol_data.MSG_TO_MAIN_TYPE != "") &&
-      (protocol_data.type_definitions.is_a_defined_type_name(protocol_data.MSG_TO_MAIN_TYPE) == false) &&
-      (is_a_switch_value (protocol_data.type_definitions, protocol_data.MSG_TO_MAIN_TYPE, switch_orig_type, switch_discriminant_str) == false))
-  {
-      M_FATAL_COMMENT("MSG_TO_MAIN_TYPE (" << protocol_data.MSG_TO_MAIN_TYPE << ") is NOT a defined type name");
-  }
-
-  if (must_ouput_types && get_debug())
-  {
-    get_state_ostream() << protocol_data.type_definitions;
-  }
+    if (must_ouput_types && get_debug())
+    {
+        get_state_ostream() << protocol_data.type_definitions;
+    }
 }
 
 //*****************************************************************************
