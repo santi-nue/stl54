@@ -1,0 +1,152 @@
+# CMakeLists.txt
+#
+# Wireshark - Network traffic analyzer
+# By Gerald Combs <gerald@wireshark.org>
+# Copyright 1998 Gerald Combs
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+include(WiresharkPlugin)
+
+# Plugin name and version info (major minor micro extra)
+set_module_info(generic 0 5 2 0)
+
+include(cmake_wireshark_version_number.cmake)
+
+# Dyncall (for all : generic, byte_interpret & unitary_tests)
+#set(DYNCALL_PATH dyncall-0.7-${WIRESHARK_TARGET_PLATFORM}-msvc/dyncall)
+#set(DYNCALL_INC_PATH ${DYNCALL_PATH}/include)
+#set(DYNCALL_LIB_PATH ${DYNCALL_PATH}/lib)
+#find_library(libdynload_LIBRARY libdynload_s PATHS ${DYNCALL_LIB_PATH})
+#find_library(libdyncall_LIBRARY libdyncall_s PATHS ${DYNCALL_LIB_PATH})
+#add_definitions(-DBYTE_INTERPRET_USE_LIBRARY_DYNCALL)
+#add_definitions(-I${DYNCALL_INC_PATH})
+
+
+# Dissector core sources.
+# All files specified here do NOT depend of wireshark.
+set(DISSECTOR_CORE_UT_SRC
+	byte_interpret.cpp
+	byte_interpret_compute_expression.cpp T_expression.cpp
+	T_interpret_data.cpp T_interpret_read_values.cpp T_interpret_byte_order.cpp
+	T_interpret_output.cpp T_interpret_decode.cpp T_interpret_inside_frame.cpp T_interpret_chrono.cpp
+	T_perf_time.cpp
+	T_interpret_value.cpp
+	T_attribute_value.cpp T_frame_data.cpp T_frame_data_write.cpp T_type_definitions.cpp
+	C_value.cpp
+	byte_interpret_builder.cpp
+	byte_interpret_build_types.cpp
+	byte_interpret_build_types_context.cpp
+	byte_interpret_build_types_read_token.cpp
+	byte_interpret_parse.cpp
+	byte_interpret_common.cpp
+	byte_interpret_common_base.cpp
+	byte_interpret_common_exception.cpp
+	byte_interpret_common_fatal.cpp
+	byte_interpret_common_trace.cpp
+	CT_debug_object_counter.cpp
+	shark_wsutil_aes.c
+)
+
+set (DISSECTOR_CORE_OTHER_SRC
+	byte_interpret_build_types_netpdl.cpp
+	tinystr.cpp tinyxml.cpp tinyxmlerror.cpp tinyxmlparser.cpp
+)
+
+set (DISSECTOR_CORE_SRC
+	${DISSECTOR_CORE_UT_SRC}
+	${DISSECTOR_CORE_OTHER_SRC}
+)
+
+
+# Dissector helpers.  They're included in the source files in this
+# directory, but they're not dissectors themselves, i.e. they're not
+# used to generate "register.c").
+set (DISSECTOR_SUPPORT_SRC
+	${DISSECTOR_CORE_SRC}
+	generic.cpp T_generic_protocol_data.cpp
+	C_byte_interpret_wsgd_builder.cpp C_byte_interpret_wsgd_builder_base.cpp
+)
+
+
+set(DISSECTOR_SRC
+	packet-generic.c
+	${DISSECTOR_SUPPORT_SRC}
+)
+
+set(PLUGIN_FILES
+	plugin.c
+	${DISSECTOR_SRC}
+)
+
+set(CLEAN_FILES
+	${PLUGIN_FILES}
+)
+
+if (WERROR_COMMON_FLAGS)
+	set_source_files_properties(
+		${CLEAN_FILES}
+		PROPERTIES
+# Too many errors (sign compare, ...)
+#		COMPILE_FLAGS "${WERROR_COMMON_FLAGS}"
+		COMPILE_FLAGS ""
+	)
+endif()
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+register_plugin_files(plugin.c
+	plugin
+	${DISSECTOR_SRC}
+)
+
+add_plugin_library(generic epan)
+target_link_libraries(generic ${libdynload_LIBRARY} ${libdyncall_LIBRARY} epan)
+
+install_plugin(generic epan)
+
+file(GLOB DISSECTOR_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.h")
+CHECKAPI(
+	NAME
+	  generic
+	SWITCHES
+	  -g abort -g termoutput -build
+	SOURCES
+	  ${DISSECTOR_SRC}
+	  ${DISSECTOR_HEADERS}
+)
+
+
+
+
+# Must find them on Linux
+#find_library(libgmodule_LIBRARY gmodule-2.0 PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-3.0/glib2-2.52.2-1.34-win32ws)
+#find_library(libgcrypt_LIBRARY libgcrypt-20 PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-3.0/libgcrypt-1.8.3-win32ws/bin)
+#find_library(libgpg_LIBRARY libgpg-error-0  PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-3.0/libgcrypt-1.8.3-win32ws/bin)
+#find_library(libcrypt_LIBRARY crypt PATHS ../../../epan/crypt/crypt.dir/RelWithDebInfo)
+
+# byte_interpret
+add_executable(byte_interpret byte_interpret_main.cpp ${DISSECTOR_CORE_SRC})
+#target_link_libraries(byte_interpret PUBLIC ${libgmodule_LIBRARY})
+#target_link_libraries(byte_interpret PUBLIC ${libgcrypt_LIBRARY} ${libgpg_LIBRARY})
+#target_link_libraries(byte_interpret PUBLIC ${libdynload_LIBRARY} ${libdyncall_LIBRARY})
+
+# unitary_tests
+add_executable(unitary_tests unitary_tests.cpp ${DISSECTOR_CORE_UT_SRC})
+#target_link_libraries(unitary_tests PUBLIC ${libgmodule_LIBRARY})
+#target_link_libraries(unitary_tests PUBLIC ${libgcrypt_LIBRARY} ${libgpg_LIBRARY} ${libcrypt_LIBRARY})
+#target_link_libraries(unitary_tests PUBLIC ${libdynload_LIBRARY} ${libdyncall_LIBRARY})
+

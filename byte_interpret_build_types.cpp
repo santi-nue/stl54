@@ -46,7 +46,9 @@ using namespace std;
 #include "byte_interpret_build_types_read_token.h"
 
 // plugin needs gmodule/glib
-#define BYTE_INTERPRET_USE_PLUGIN
+// Linux 300X must find (cmake) g_module to enable it
+// Undocumented feature, nobody will miss it
+//#define BYTE_INTERPRET_USE_PLUGIN
 #ifdef FRHED
 // FRHED do not find gmodule lib
 #undef  BYTE_INTERPRET_USE_PLUGIN
