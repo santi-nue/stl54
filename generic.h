@@ -53,13 +53,13 @@ proto_tree  * cpp_dissect_generic_add_tree(const int           proto_idx,
  * register
  *****************************************************************************/
 EXTERN_C
-void    cpp_proto_register_generic();
+void    cpp_proto_register_generic(void);
 
 //*****************************************************************************
 // handoff
 //*****************************************************************************
 EXTERN_C
-void    cpp_proto_reg_handoff_generic();
+void    cpp_proto_reg_handoff_generic(void);
 
 
 #endif
