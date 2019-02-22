@@ -2320,7 +2320,7 @@ void    test_read_values()
     M_TEST_EQ(read_values.is_read_variable("tutu"), false);
     M_TEST_EQ(read_values.is_read_variable("titi.tutu"), false);
 
-    read_values.add_read_variable("NOT used", "toto", 11);
+    read_values.add_read_variable("toto", 11);
 
     M_TEST_EQ(read_values.is_read_variable("toto"), true);
     M_TEST_EQ(read_values.is_read_variable("tata"), false);
@@ -2328,7 +2328,7 @@ void    test_read_values()
     M_TEST_EQ(read_values.is_read_variable("tutu"), false);
     M_TEST_EQ(read_values.is_read_variable("titi.tutu"), false);
 
-    read_values.add_read_variable("NOT used", "tata", 22);
+    read_values.add_read_variable("tata", 22);
 
     M_TEST_EQ(read_values.is_read_variable("toto"), true);
     M_TEST_EQ(read_values.is_read_variable("tata"), true);
@@ -2336,8 +2336,8 @@ void    test_read_values()
     M_TEST_EQ(read_values.is_read_variable("tutu"), false);
     M_TEST_EQ(read_values.is_read_variable("titi.tutu"), false);
 
-    read_values.add_read_variable("NOT used", "titi", 33);
-    read_values.add_read_variable("NOT used", "tutu", 44);
+    read_values.add_read_variable("titi", 33);
+    read_values.add_read_variable("tutu", 44);
 
     M_TEST_EQ(read_values.is_read_variable("toto"), true);
     M_TEST_EQ(read_values.is_read_variable("tata"), true);
@@ -2351,13 +2351,13 @@ void    test_read_values()
     M_TEST_EQ(read_values.get_P_value_of_read_variable("tutu")->get_int(), 44);
 
     read_values.read_variable_group_begin("titi");
-    read_values.add_read_variable("NOT used", "tutu", 55);
-    read_values.add_read_variable("NOT used", "allo", 111);
-    read_values.add_read_variable("NOT used", "bonjour", 222);
-    read_values.add_read_variable("NOT used", "c_est_moi", 333);
-    read_values.add_read_variable("NOT used", "comment_ca_va", 444);
-    read_values.add_read_variable("NOT used", "bien_et_toi", 444);
-    read_values.add_read_variable("NOT used", "ping", "pong");
+    read_values.add_read_variable("tutu", 55);
+    read_values.add_read_variable("allo", 111);
+    read_values.add_read_variable("bonjour", 222);
+    read_values.add_read_variable("c_est_moi", 333);
+    read_values.add_read_variable("comment_ca_va", 444);
+    read_values.add_read_variable("bien_et_toi", 444);
+    read_values.add_read_variable("ping", "pong");
 
     M_TEST_EQ(read_values.is_read_variable("titi.tutu"), true);
     M_TEST_EQ(read_values.get_P_value_of_read_variable("tutu")->get_int(), 55);
@@ -2384,10 +2384,10 @@ void    test_read_values()
     M_TEST_EQ(name_values.size(), 2);
 
     // Test array
-    read_values.add_read_variable("NOT used", "an_array[0]", 1000);
-    read_values.add_read_variable("NOT used", "an_array[1]", 1001);
-    read_values.add_read_variable("NOT used", "an_array[2]", 1002);
-    read_values.add_read_variable("NOT used", "an_array[3]", 1003);
+    read_values.add_read_variable("an_array[0]", 1000);
+    read_values.add_read_variable("an_array[1]", 1001);
+    read_values.add_read_variable("an_array[2]", 1002);
+    read_values.add_read_variable("an_array[3]", 1003);
 
     M_TEST_EQ(read_values.is_read_variable("an_array[0]"), true);
     M_TEST_EQ(read_values.is_read_variable("an_array[1]"), true);
@@ -3156,7 +3156,7 @@ void    test_expression()
     T_interpret_data                  interpret_data;
 
     interpret_data.read_variable_group_begin("niv");
-    interpret_data.add_read_variable("niv.salut", "salut", get_int_value_bit_pos_size(-32,12,7));
+    interpret_data.add_read_variable("salut", get_int_value_bit_pos_size(-32,12,7));
     {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "salut");
         M_TEST_EQ(value.get_int(), -32);
@@ -3192,7 +3192,7 @@ void    test_expression()
     }
 
     interpret_data.read_variable_group_begin("e2");
-    interpret_data.add_read_variable("niv.e2.toi", "toi", get_int_value_bit_pos_size(-3450000,19,15));
+    interpret_data.add_read_variable("toi", get_int_value_bit_pos_size(-3450000,19,15));
     interpret_data.read_variable_group_end();
     {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "salut * e2.toi");
@@ -3229,7 +3229,7 @@ void    test_expression()
     }
 
     interpret_data.read_variable_group_begin("eau");
-    interpret_data.add_read_variable("niv.eau.la", "la", get_int_value_bit_pos_size(3402340,30,31));
+    interpret_data.add_read_variable("la", get_int_value_bit_pos_size(3402340,30,31));
     interpret_data.read_variable_group_end();
     {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "salut * e2.toi / eau.la");
@@ -3248,7 +3248,7 @@ void    test_expression()
         value.as_string();
     }
 
-    interpret_data.add_read_variable("niv.matelas", "matelas", get_flt_value_bit_pos_size(45.3465,67,2));
+    interpret_data.add_read_variable("matelas", get_flt_value_bit_pos_size(45.3465,67,2));
     {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "niv.salut * niv.e2.toi / niv.eau.la - niv.matelas");
         M_TEST_EQ_APPROX(value.get_flt(), -13.3465);
@@ -3303,10 +3303,10 @@ void    test_expression()
     //-------------------------------------------------------------------------
     // Test array
     //-------------------------------------------------------------------------
-    interpret_data.add_read_variable("NOT used", "an_array[0]", 1000);
-    interpret_data.add_read_variable("NOT used", "an_array[1]", 1001);
-    interpret_data.add_read_variable("NOT used", "an_array[2]", 1002);
-    interpret_data.add_read_variable("NOT used", "an_array[3]", 1003);
+    interpret_data.add_read_variable("an_array[0]", 1000);
+    interpret_data.add_read_variable("an_array[1]", 1001);
+    interpret_data.add_read_variable("an_array[2]", 1002);
+    interpret_data.add_read_variable("an_array[3]", 1003);
     {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "an_array[0]");
         M_TEST_EQ(value.get_int(), 1000);
@@ -3320,7 +3320,7 @@ void    test_expression()
         value.as_string();
     }
 
-    interpret_data.add_read_variable("NOT used", "idx", 1);
+    interpret_data.add_read_variable("idx", 1);
     {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "an_array[idx]");
         M_TEST_EQ(value.get_int(), 1001);
@@ -3369,17 +3369,17 @@ void    test_expression()
 
         C_value    value;
 
-        interpret_data.add_read_variable("NOT used", "another_value", 1);
+        interpret_data.add_read_variable("another_value", 1);
         value = expression.compute_expression_no_io (type_definitions, interpret_data);
         M_TEST_EQ(value.get_int(), 6);
         value.as_string();
 
-        interpret_data.add_read_variable("NOT used", "another_value", 0);
+        interpret_data.add_read_variable("another_value", 0);
         value = expression.compute_expression_no_io (type_definitions, interpret_data);
         M_TEST_EQ(value.get_int(), 4);
         value.as_string();
 
-        interpret_data.add_read_variable("NOT used", "another_value", 2);
+        interpret_data.add_read_variable("another_value", 2);
         value = expression.compute_expression_no_io (type_definitions, interpret_data);
         M_TEST_EQ(value.get_int(), 6);
         value.as_string();
@@ -3514,9 +3514,9 @@ void    test_builtin_functions()
 
     T_interpret_data      interpret_data;
     SP_interpret_data = &interpret_data;
-    interpret_data.add_read_variable("NOT used", "int", 0);
-    interpret_data.add_read_variable("NOT used", "flt", 0.0);
-    interpret_data.add_read_variable("NOT used", "str", "");
+    interpret_data.add_read_variable("int", 0);
+    interpret_data.add_read_variable("flt", 0.0);
+    interpret_data.add_read_variable("str", "");
 
     // to_string
     M_TEST_EQ(compute_expression_static_str("to_string(1234)"), "1234");
@@ -4355,7 +4355,7 @@ void    test_interpret_simple_decoder_aes()
     // value length = 35 (34 + zero end of string)
     // decrypted length = 48 (3*16)
     // So 13 padding bytes that must be read
-    interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "1234567890123456");
+    interpret_data.add_read_variable("decoder_aes_key", "1234567890123456");
     M_TEST_SIMPLE("1a	03	8c	23	70	bb	e8	59	d1	4f	d6	9e	b5	4d	f9	ad"
                   "7c	bc	ca	75	d1	99	89	5d	0c	86	fa	8e	2f	35	63	0e"
                   "de	5d	db	de	5e	56	af	7c	15	82	cb	fa	5e	e4	11	ce",
@@ -4368,7 +4368,7 @@ void    test_interpret_simple_decoder_aes()
     // value length = 35 (34 + zero end of string)
     // decrypted length = 48 (3*16)
     // So 13 padding bytes that must be read
-    interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "abcdefghijklmnop");
+    interpret_data.add_read_variable("decoder_aes_key", "abcdefghijklmnop");
     M_TEST_SIMPLE("dd	4f	b4	94	e3	03	43	b0	17	e1	eb	5c	c1	70	cb	2b"
                   "68	57	7c	00	c6	4c	ad	18	e3	a3	2d	53	e1	9c	11	9e"
                   "2f	b3	d3	f3	88	d8	f7	8d	03	56	af	15	c5	87	14	07",
@@ -4653,7 +4653,7 @@ void    test_interpret_simple_decoder_aes()
     // value length = 35 (34 + zero end of string)
     // decrypted length = 48 (3*16)
     // So 13 padding bytes that must be read
-    interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "WqA&1XsZ~2CdE\"3VfR'4BgT(");
+    interpret_data.add_read_variable("decoder_aes_key", "WqA&1XsZ~2CdE\"3VfR'4BgT(");
     M_TEST_SIMPLE("2a	61	39	d6	12	4c	04	32	7e	d1	7b	a3	2e	f5	9e	ae"
                   "02	c9	1e	9e	eb	1a	54	10	31	44	d1	21	b9	71	88	cb"
                   "f0	c1	7d	61	46	75	7c	db	a7	c7	86	4d	ad	b5	9c	77",
@@ -4665,7 +4665,7 @@ void    test_interpret_simple_decoder_aes()
     // value length = 35 (34 + zero end of string)
     // decrypted length = 48 (3*16)
     // So 13 padding bytes that must be read
-    interpret_data.add_read_variable("decoder_aes_key", "decoder_aes_key", "WqA&1XsZ~2CdE\"3VfR'4BgT(5NhY-6,;");
+    interpret_data.add_read_variable("decoder_aes_key", "WqA&1XsZ~2CdE\"3VfR'4BgT(5NhY-6,;");
     M_TEST_SIMPLE("f8	68	ea	04	3b	d9	c2	f8	52	05	18	b7	2f	7c	6d	c9"
                   "7c	ec	50	5a	4c	0e	91	74	c3	c6	82	cb	92	8d	c4	e7"
                   "53	63	ee	9e	1f	b5	1b	57	80	38	3a	2d	60	ba	b6	0a",
@@ -5070,7 +5070,7 @@ void    test_interpret_msg(int   msg_to_test = -1)
     {
         T_interpret_data  interpret_data;
         interpret_data.global_variable_group_begin();
-        interpret_data.add_read_variable("global.msg_counter", "msg_counter" ,0);
+        interpret_data.add_read_variable("msg_counter" ,0);
         interpret_data.global_variable_group_end();
 
         ut_interpret_bytes(type_definitions,
@@ -5086,7 +5086,7 @@ void    test_interpret_msg(int   msg_to_test = -1)
     {
         T_interpret_data  interpret_data;
         interpret_data.global_variable_group_begin();
-        interpret_data.add_read_variable("global.msg_counter", "msg_counter" ,1);
+        interpret_data.add_read_variable("msg_counter" ,1);
         interpret_data.global_variable_group_end();
 
         // 2010/10/15         2013 ms
@@ -5104,7 +5104,7 @@ void    test_interpret_msg(int   msg_to_test = -1)
     {
         T_interpret_data  interpret_data;
         interpret_data.global_variable_group_begin();
-        interpret_data.add_read_variable("global.msg_counter", "msg_counter" ,2);
+        interpret_data.add_read_variable("msg_counter" ,2);
         interpret_data.global_variable_group_end();
 
         ut_interpret_bytes(type_definitions,
@@ -5116,7 +5116,7 @@ void    test_interpret_msg(int   msg_to_test = -1)
     {
         T_interpret_data  interpret_data;
         interpret_data.global_variable_group_begin();
-        interpret_data.add_read_variable("global.msg_counter", "msg_counter" ,3);
+        interpret_data.add_read_variable("msg_counter" ,3);
         interpret_data.global_variable_group_end();
 
         ut_interpret_bytes(type_definitions,

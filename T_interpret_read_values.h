@@ -64,8 +64,7 @@ struct T_interpret_read_values : public C_reference_counter,
                                       const string     & var_name,
                                             long long  & out_value) const;
 
-    T_id    add_read_variable (const string   & var_name_long,
-                               const string   & var_name_short,
+    T_id    add_read_variable (const string   & var_name,
                                const C_value  & in_value);
 
     void    set_read_variable (const string   & var_name,
@@ -79,8 +78,7 @@ struct T_interpret_read_values : public C_reference_counter,
     void    sup_all_read_variables_after (T_id    var_id);
 
     // 2008/11/12 new T_attribute_value interface
-    T_id    add_read_variable (const string             & var_name_long,  // not used anymore
-                               const string             & var_name_short,
+    T_id    add_read_variable (const string             & var_name,
                                const T_attribute_value  & in_value);
 
 //    T_id    get_id_of_read_variable (const string   & var_name);
@@ -103,7 +101,6 @@ struct T_interpret_read_values : public C_reference_counter,
 //							 const string  & var_name);
 
     void    reset();
-    void    reset_short_names();
     void    reset_position_offset_sizes();
     void    msg_is_ended();
     void    add_this_msg();

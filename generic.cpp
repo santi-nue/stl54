@@ -1714,9 +1714,6 @@ void    proto_init_routine(T_generic_protocol_data  & protocol_data)
             M_TRACE_FATAL (str_report);
             wsgd_report_failure(str_report.c_str());
         }
-
-        // global data only usable with full name.
-        protocol_data.ws_data.global_data.RCP_initialized_data->reset_short_names();
     }
 }
 
@@ -1899,24 +1896,24 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
     interpret_data.pinfo_variable_group_begin();
 
 #define M_ADD_PINFO(NAME)                                             \
-    interpret_data.add_read_variable(#NAME, #NAME, pinfo->NAME)
+    interpret_data.add_read_variable(#NAME, pinfo->NAME)
 
 #define M_ADD_PINFO_STR(NAME)                                             \
-    interpret_data.add_read_variable(#NAME, #NAME, pinfo->NAME ? pinfo->NAME : "")
+    interpret_data.add_read_variable(#NAME, pinfo->NAME ? pinfo->NAME : "")
 
 #define M_ADD_PINFO_ADDRESS(NAME)                                             \
-    interpret_data.add_read_variable(#NAME, #NAME, pinfo_address_to_string(pinfo->NAME).c_str())
+    interpret_data.add_read_variable(#NAME, pinfo_address_to_string(pinfo->NAME).c_str())
 
 #define M_ADD_PINFO_ADDRESS(NAME)                                             \
-    interpret_data.add_read_variable(#NAME, #NAME, pinfo_address_to_string(pinfo->NAME).c_str())
+    interpret_data.add_read_variable(#NAME, pinfo_address_to_string(pinfo->NAME).c_str())
 
 #define M_ADD_PINFO_FD(NAME)                                             \
-    interpret_data.add_read_variable(#NAME, #NAME, pinfo->fd->NAME)
+    interpret_data.add_read_variable(#NAME, pinfo->fd->NAME)
 
 #define M_ADD_PINFO_FD_NSTIME(NAME)                                             \
-    interpret_data.add_read_variable(#NAME, #NAME, pinfo_nstime_to_string(pinfo->fd->NAME));  \
-    interpret_data.add_read_variable(#NAME ".secs", #NAME ".secs", pinfo->fd->NAME.secs);  \
-    interpret_data.add_read_variable(#NAME ".nsecs", #NAME ".nsecs", pinfo->fd->NAME.nsecs)
+    interpret_data.add_read_variable(#NAME, pinfo_nstime_to_string(pinfo->fd->NAME));  \
+    interpret_data.add_read_variable(#NAME ".secs", pinfo->fd->NAME.secs);  \
+    interpret_data.add_read_variable(#NAME ".nsecs", pinfo->fd->NAME.nsecs)
 
     M_ADD_PINFO(current_proto);
 //  M_ADD_PINFO();  // column_info *cinfo;		/* Column formatting information */

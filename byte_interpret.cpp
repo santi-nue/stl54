@@ -3250,7 +3250,7 @@ void    post_treatment_value_transform (
     if (field_type_name.transform_expression.is_defined())
     {
         // Add this value into the interpret_data (to be accessible inside compute_expression).
-        T_interpret_read_values::T_id  this_id = interpret_data.add_read_variable("this", "this", value);
+        T_interpret_read_values::T_id  this_id = interpret_data.add_read_variable("this", value);
 
         // Compute specified expression.
         value = field_type_name.transform_expression.compute_expression_no_io(type_definitions, interpret_data);
@@ -3290,7 +3290,7 @@ void    post_treatment_value_display (
 //		M_TRACE_ENTER ("post_treatment_value", "display expression");
 
         // Add this value into the interpret_data (to be accessible inside compute_expression).
-        T_interpret_read_values::T_id  this_id = interpret_data.add_read_variable("this", "this", value);
+        T_interpret_read_values::T_id  this_id = interpret_data.add_read_variable("this", value);
 
         // Compute specified expression.
         C_value  str_value = compute_expression_no_io(type_definitions, interpret_data, field_type_name.str_display_expression);
@@ -3586,7 +3586,7 @@ bool    T_expression_frame_to_function_base2 (
         {
             if (function_parameter.direction == E_parameter_in)
             {
-                parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, function_parameter.name, obj_value);
+                parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, obj_value);
             }
             else
             {
@@ -5173,7 +5173,7 @@ bool    frame_to_string (
                              attribute_value.transformed, error_on_value);
         value = attribute_value_to_string(attribute_value);
 
-        interpret_data.add_read_variable (data_name, data_simple_name, attribute_value);
+        interpret_data.add_read_variable (data_simple_name, attribute_value);
 
         if (interpret_data.must_output ())
         {
@@ -5511,7 +5511,7 @@ bool    G_is_a_variable_ICIOA = false;
                                 obj_value, final_type,                        \
                                 field_type_name, attribute_value, no_error);  \
                                                                               \
-        interpret_data.add_read_variable (data_name, data_simple_name, attribute_value);    \
+        interpret_data.add_read_variable (data_simple_name, attribute_value); \
                                                                               \
         if (interpret_data.must_NOT_output ())                                \
             return  true;                                                     \
@@ -6050,7 +6050,7 @@ bool    frame_to_any_save_position (
     // Position into data to read.
     //-------------------------------------------------------------------------
     const string  & pos_name = data_simple_name;
-    interpret_data.add_read_variable (data_name, pos_name,
+    interpret_data.add_read_variable (pos_name,
                                       in_out_frame_data.get_bit_offset_into_initial_frame());
     return  true;
 }
@@ -6723,7 +6723,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
     T_decode_stream_frame                             decode_stream_frame;
     C_decode_stream_frame_set_temporary_if_necessary  dsfstin(interpret_data, decode_stream_frame);
 //	interpret_data.set_decode_stream_frame(&decode_stream_frame);
-    interpret_data.add_read_variable("internal_frame", "internal_frame", (long long)interpret_data.get_P_decode_stream_frame());
+    interpret_data.add_read_variable("internal_frame", (long long)interpret_data.get_P_decode_stream_frame());
 
     bool    result = false;
 
@@ -6885,7 +6885,7 @@ bool    build_types_and_interpret_bytes (
     T_decode_stream_frame                             decode_stream_frame;
     C_decode_stream_frame_set_temporary_if_necessary  dsfstin(interpret_data, decode_stream_frame);
 //	interpret_data.set_decode_stream_frame(&decode_stream_frame);
-    interpret_data.add_read_variable("internal_frame", "internal_frame", get_string((long long)interpret_data.get_P_decode_stream_frame()));
+    interpret_data.add_read_variable("internal_frame", get_string((long long)interpret_data.get_P_decode_stream_frame()));
 
     // Reads type definitions.
     // Returns the 1st not understood word (i.e. a word which is NOT a type definition).

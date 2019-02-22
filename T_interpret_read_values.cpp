@@ -113,13 +113,12 @@ T_interpret_read_values::get_int_value_of_read_variable (
 }
 
 T_interpret_read_values::T_id
-T_interpret_read_values::add_read_variable (const string   & var_name_long,
-                                            const string   & var_name_short,
+T_interpret_read_values::add_read_variable (const string   & var_name,
                                             const C_value  & in_value)
 {
     T_attribute_value    attribute_value(in_value);
 
-    return  add_read_variable(var_name_long, var_name_short, attribute_value);
+    return  add_read_variable(var_name, attribute_value);
 }
 
 void
@@ -208,21 +207,20 @@ T_interpret_read_values::sup_all_read_variables_after (T_id    var_id)
 }
 
 T_interpret_read_values::T_id
-T_interpret_read_values::add_read_variable (const string             & /* var_name_long */,
-                                            const string             & var_name_short,
+T_interpret_read_values::add_read_variable (const string             & var_name,
                                             const T_attribute_value  & in_value)
 {
-    M_TRACE_ENTER("add_read_variable", A_current_path << " " << var_name_short);
+    M_TRACE_ENTER("add_read_variable", A_current_path << " " << var_name);
 
     if (A_current_path == "")
     {
-        A_msg.push_back(T_interpret_value(var_name_short, in_value));
+        A_msg.push_back(T_interpret_value(var_name, in_value));
     }
     else
     {
         string    full_name = A_current_path;
         full_name += ".";
-        full_name += var_name_short;
+        full_name += var_name;
         A_msg.push_back(T_interpret_value(full_name, in_value));
     }
 
@@ -255,7 +253,7 @@ T_interpret_read_values::add_ref_variable(const string  & ref_name,
     }
 
     T_interpret_read_values::T_id  ref_id =
-        add_read_variable (ref_name, ref_name, C_value(var_id));
+        add_read_variable (ref_name, C_value(var_id));
 
     A_msg[ref_id].set_type(T_interpret_value::E_type_reference);
     A_msg[var_id].incr_reference_counter();
@@ -855,16 +853,6 @@ T_interpret_read_values::reset()
     A_msg_pinfo_idx_end = -1;
     A_msg_other_idx_begin = 0;
     A_this_msg_attribute_value = T_attribute_value();
-}
-
-//*****************************************************************************
-// reset_short_names
-//*****************************************************************************
-void    
-T_interpret_read_values::reset_short_names()
-{
-    M_TRACE_ENTER("reset_short_names", "");
-// fonction a supprimer
 }
 
 //*****************************************************************************
