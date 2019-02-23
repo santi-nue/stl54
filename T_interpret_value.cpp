@@ -52,7 +52,7 @@ T_interpret_value::T_interpret_value(
      A_attribute_value(attribute_value)
      
 {
-    if (attribute_value.transformed.get_type() == C_value::E_type_msg)
+    if (attribute_value.get_value().get_type() == C_value::E_type_msg)
     {
         A_type = E_type_msg;
     }

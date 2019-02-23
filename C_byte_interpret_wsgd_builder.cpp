@@ -359,7 +359,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 									 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 									 text.c_str(),
 									 error_code,
-									 attribute_value.transformed.get_flt());
+									 attribute_value.get_value().get_flt());
 	}
 	else if (field_type_name.must_force_manage_as_biggest_int())
 	{
@@ -384,7 +384,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 											 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 											 text.c_str(),
 											 error_code,
-											 attribute_value.transformed.get_int());
+											 attribute_value.get_value().get_int());
 			}
 			else
 			{
@@ -399,7 +399,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 											 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 											 text.c_str(),
 											 error_code,
-											 attribute_value.transformed.get_int());
+											 attribute_value.get_value().get_int());
 			}
 		}
 		else
@@ -415,10 +415,10 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 										 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 										 text.c_str(),
 										 error_code,
-										 attribute_value.transformed.get_int());
+										 attribute_value.get_value().get_int());
 		}
 	}
-	else if (attribute_value.transformed.get_type() == C_value::E_type_integer)
+	else if (attribute_value.get_value().get_type() == C_value::E_type_integer)
 	{
 		// bsew : Necessary to give the value to wireshark
 		//         since byte offset and size will not permit to retrieve the value
@@ -437,7 +437,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 											 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 											 text.c_str(),
 											 error_code,
-											 attribute_value.transformed.get_int());
+											 attribute_value.get_value().get_int());
 			}
 			else
 			{
@@ -452,7 +452,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 											 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 											 text.c_str(),
 											 error_code,
-											 attribute_value.transformed.get_int());
+											 attribute_value.get_value().get_int());
 			}
 		}
 		else
@@ -470,7 +470,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 											 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 											 text.c_str(),
 											 error_code,
-											 attribute_value.transformed.get_int());
+											 attribute_value.get_value().get_int());
 			}
 			else
 			{
@@ -485,11 +485,11 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 											 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 											 text.c_str(),
 											 error_code,
-											 attribute_value.transformed.get_int());
+											 attribute_value.get_value().get_int());
 			}
 		}
 	}
-	else if (attribute_value.transformed.get_type() == C_value::E_type_float)
+	else if (attribute_value.get_value().get_type() == C_value::E_type_float)
 	{
 		// bsew : Necessary to give the value to wireshark
 		//         since byte offset and size will not permit to retrieve the value
@@ -505,7 +505,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 										 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 										 text.c_str(),
 										 error_code,
-										 attribute_value.transformed.get_flt());
+										 attribute_value.get_value().get_flt());
 		}
 		else
 		{
@@ -519,10 +519,10 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 										 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 										 text.c_str(),
 										 error_code,
-										 attribute_value.transformed.get_flt());
+										 attribute_value.get_value().get_flt());
 		}
 	}
-	else if (attribute_value.transformed.get_type() == C_value::E_type_string)
+	else if (attribute_value.get_value().get_type() == C_value::E_type_string)
 	{
 		// Ajout d'un item.
 		// La taille specifiee ici est connue ET necessaire pour les types simples
@@ -536,7 +536,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
 									 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
 									 text.c_str(),
 									 error_code,
-									 attribute_value.transformed.get_str().c_str());
+									 attribute_value.get_value().get_str().c_str());
 	}
 	else // used ???
 	{

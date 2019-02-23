@@ -58,7 +58,7 @@ T_interpret_read_values::get_P_value_of_read_variable (const string   & var_name
     const T_attribute_value  * P_attr = get_P_attribute_value_of_read_variable(var_name);
     if (P_attr != NULL)
     {
-        return  & P_attr->transformed;
+        return  & P_attr->get_value();
     }
 
     return  NULL;
@@ -132,7 +132,7 @@ void
 T_interpret_read_values::set_read_variable (const string             & var_name,
                                             const T_attribute_value  & in_value)
 {
-    M_TRACE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.transformed.as_string());
+    M_TRACE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.get_value().as_string());
 
     T_attribute_value  * P_attr = const_cast<T_attribute_value*>(get_P_attribute_value_of_read_variable(var_name));
     if (P_attr == NULL)
@@ -168,7 +168,7 @@ T_interpret_read_values::sup_read_variable (T_id    var_id)
 
     if (interpret_value.get_type() == T_interpret_value::E_type_reference)
     {
-        A_msg[interpret_value.get_attribute_value().transformed.get_int()].decr_reference_counter();
+        A_msg[interpret_value.get_attribute_value().get_value().get_int()].decr_reference_counter();
     }
 
     if (var_id == (A_msg.size() - 1))
@@ -321,7 +321,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
             {
                 if (interpret_value.get_type() == T_interpret_value::E_type_reference)
                 {
-                    var_id = interpret_value.get_attribute_value().transformed.get_int();
+                    var_id = interpret_value.get_attribute_value().get_value().get_int();
                     return  & A_msg[var_id].get_attribute_value();
                 }
                 else
@@ -343,7 +343,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
                 }
                 if (following_name != NULL)
                 {
-                    C_value::T_msg    msg = interpret_value.get_attribute_value().transformed.get_msg();
+                    C_value::T_msg    msg = interpret_value.get_attribute_value().get_value().get_msg();
                     if (msg == NULL)
                     {
                         M_FATAL_COMMENT("Message reference " << var_name << " not initialized");
@@ -402,7 +402,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
             {
                 if (interpret_value.get_type() == T_interpret_value::E_type_reference)
                 {
-                    var_id = interpret_value.get_attribute_value().transformed.get_int();
+                    var_id = interpret_value.get_attribute_value().get_value().get_int();
                     return  & A_msg[var_id].get_attribute_value();
                 }
                 else
@@ -420,7 +420,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
                 }
                 if (following_name != NULL)
                 {
-                    C_value::T_msg    msg = interpret_value.get_attribute_value().transformed.get_msg();
+                    C_value::T_msg    msg = interpret_value.get_attribute_value().get_value().get_msg();
                     if (msg == NULL)
                     {
                         M_FATAL_COMMENT("Message reference " << var_name << " not initialized");
@@ -470,7 +470,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
     {
         // Check that this_msg has been set.
         // If not, we are into pre-computation, so this_msg is NOT defined.
-        if (A_this_msg_attribute_value.transformed.get_msg() != NULL)
+        if (A_this_msg_attribute_value.get_value().get_msg() != NULL)
         {
             T_interpret_read_values  * this_not_const = const_cast<T_interpret_read_values*>(this);
             this_not_const->A_this_msg_attribute_value_used = true;
@@ -572,7 +572,7 @@ T_interpret_read_values::get_P_interpret_read_values_min_max (
             }
             if (following_name != NULL)
             {
-                C_value::T_msg    msg = interpret_value.get_attribute_value().transformed.get_msg();
+                C_value::T_msg    msg = interpret_value.get_attribute_value().get_value().get_msg();
                 if (msg == NULL)
                 {
                     M_FATAL_COMMENT("Message reference " << var_name << " not initialized");
@@ -872,7 +872,7 @@ T_interpret_read_values::reset_position_offset_sizes()
     {
         T_interpret_value &  interpret_value = *iter;
         T_attribute_value &  attribute_value = const_cast<T_attribute_value&>(interpret_value.get_attribute_value());
-        attribute_value.transformed.set_bit_position_offset_size(-1, -1);
+        attribute_value.set_bit_position_offset_size(-1, -1);
     }
 }
 

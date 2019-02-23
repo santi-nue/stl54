@@ -3244,8 +3244,11 @@ void    post_treatment_value_transform (
                          const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                          const T_field_type_name_base  & field_type_name,
-                               C_value                 & value)
+                               T_attribute_value       & attribute_value)
 {
+    C_value  value = attribute_value.get_value();
+    bool     modified = false;
+
     // Transform
     if (field_type_name.transform_expression.is_defined())
     {
@@ -3257,16 +3260,24 @@ void    post_treatment_value_transform (
 
         // Suppress this variable
         interpret_data.sup_read_variable(this_id);
+        modified = true;
     }
 
     if (field_type_name.transform_quantum.as_string() != "")
     {
         value *= field_type_name.transform_quantum;
+        modified = true;
     }
 
     if (field_type_name.transform_offset.as_string() != "")
     {
         value += field_type_name.transform_offset;
+        modified = true;
+    }
+
+    if (modified)
+    {
+        attribute_value.set_value_transformed(value);
     }
 }
 
@@ -3278,16 +3289,19 @@ void    post_treatment_value_display (
                          const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                          const T_field_type_name_base  & field_type_name,
-                               C_value                 & value)
+                               T_attribute_value       & attribute_value)
 {
     // Display
     if (field_type_name.str_display != "")
     {
+        C_value  value = attribute_value.get_value();
         value.format(field_type_name.str_display);
+        attribute_value.set_value_transformed(value);
     }
     else if (field_type_name.str_display_expression != "")
     {
 //		M_TRACE_ENTER ("post_treatment_value", "display expression");
+        const C_value &  value = attribute_value.get_value();
 
         // Add this value into the interpret_data (to be accessible inside compute_expression).
         T_interpret_read_values::T_id  this_id = interpret_data.add_read_variable("this", value);
@@ -3296,7 +3310,7 @@ void    post_treatment_value_display (
         C_value  str_value = compute_expression_no_io(type_definitions, interpret_data, field_type_name.str_display_expression);
 
         // The computed value must be a string.
-        value.set_str(str_value.get_str());
+        attribute_value.change_value_str_only(str_value.get_str());
 
         // Suppress this variable
         interpret_data.sup_read_variable(this_id);
@@ -3311,9 +3325,11 @@ bool    post_treatment_value_check (
                          const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                          const T_field_type_name_base  & field_type_name,
-                               C_value                 & value,
+                         const T_attribute_value       & attribute_value,
                                std::string             & error)
 {
+    const C_value  & value = attribute_value.get_value();
+
     // Check constraints (the order is revelant)
     for (vector<T_field_constraint>::const_iterator  iter  = field_type_name.constraints.begin();
                                                      iter != field_type_name.constraints.end();
@@ -3409,27 +3425,27 @@ bool    post_treatment_value (
                          const T_type_definitions      & type_definitions,
                                T_interpret_data        & interpret_data,
                          const T_field_type_name_base  & field_type_name,
-                               C_value                 & value,
+                               T_attribute_value       & attribute_value,
                                std::string             & error)
 {
     // No statement value
     if (field_type_name.no_statement.as_string() != "")
     {
-        if (value == field_type_name.no_statement)
+        if (attribute_value.get_value() == field_type_name.no_statement)
         {
-            value.set_str("No_Statement");
+            attribute_value.change_value_str_only("No_Statement");
             return  true;
         }
     }
 
     // Transform
-    post_treatment_value_transform(type_definitions, interpret_data, field_type_name, value);
+    post_treatment_value_transform(type_definitions, interpret_data, field_type_name, attribute_value);
 
     // Display
-    post_treatment_value_display(type_definitions, interpret_data, field_type_name, value);
+    post_treatment_value_display(type_definitions, interpret_data, field_type_name, attribute_value);
 
     // Check
-    return  post_treatment_value_check(type_definitions, interpret_data, field_type_name, value, error);
+    return  post_treatment_value_check(type_definitions, interpret_data, field_type_name, attribute_value, error);
 }
 
 //*****************************************************************************
@@ -3570,10 +3586,11 @@ bool    T_expression_frame_to_function_base2 (
         check_function_parameter_value(type_definitions, function_parameter, obj_value);
 
         // quantum/offset/min/max/display
-        string     error_on_value;
+        string             error_on_value;
+        T_attribute_value  obj_attribute_value(obj_value);
         if (post_treatment_value (type_definitions, interpret_data,
                                   function_parameter,
-                                  obj_value, error_on_value) != true)
+                                  obj_attribute_value, error_on_value) != true)
         {
             M_FATAL_COMMENT("Parameter " << function_parameter.name << " : " << error_on_value);
         }
@@ -3586,7 +3603,7 @@ bool    T_expression_frame_to_function_base2 (
         {
             if (function_parameter.direction == E_parameter_in)
             {
-                parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, obj_value);
+                parameters_id[idx] = interpret_data.add_read_variable(function_parameter.name, obj_attribute_value);
             }
             else
             {
@@ -4543,7 +4560,7 @@ bool    frame_to_print_any (
                                         iter != var_name_P_values.end();
                                       ++iter)
         {
-            string    printf_result = iter->var_name + " -> " + iter->P_value->transformed.as_string();
+            string    printf_result = iter->var_name + " -> " + iter->P_value->get_value().as_string();
 
             if (final_type != "print")
             {
@@ -4552,7 +4569,7 @@ bool    frame_to_print_any (
             if (final_type == "debug_print")
             {
                 printf_result += "  ";
-                printf_result += get_string(iter->P_value->transformed);
+                printf_result += get_string(iter->P_value->get_value());
             }
 
             os_out << printf_result << endl;
@@ -4719,14 +4736,12 @@ string    simple_value_to_attribute_value_main (
                                T_attribute_value   & attribute_value,
                                bool                & no_error)
 {
-    attribute_value.transformed    = value;
-    // normalize the string original
-    attribute_value.value_is_original_format_reset();
+    attribute_value.set_value_original_format_reset(value);
 
     string  error_str;
     no_error = post_treatment_value(type_definitions, interpret_data,
                                     field_type_name,
-                                    attribute_value.transformed,
+                                    attribute_value,
                                     error_str);
     if (no_error == false)
     {
@@ -4751,23 +4766,22 @@ string    enum_value_to_attribute_value (
                                bool                & no_error)
 {
     no_error = false;
-    attribute_value.transformed = obj_value;
-    attribute_value.value_is_original();
+    attribute_value.set_value_original(obj_value);
 
     post_treatment_value_transform(type_definitions, interpret_data,
                                     field_type_name,
-                                    attribute_value.transformed);
+                                    attribute_value);
 
     // Search symbolic value
-    const long long    value = attribute_value.transformed.get_int();
+    const long long    value = attribute_value.get_value().get_int();
 
     for (uint  idx = 0; idx < enum_definition.size (); ++idx)
     {
         if (enum_definition[idx].value == value)
         {
             no_error = true;
-            // NB: transformed is still an integer
-            attribute_value.transformed.set_str(enum_definition[idx].name);
+            // NB: the value is still an integer
+            attribute_value.change_value_str_only(enum_definition[idx].name);
             break;
         }
     }
@@ -4781,13 +4795,13 @@ string    enum_value_to_attribute_value (
         // apply display expressions ...
         post_treatment_value_display(type_definitions, interpret_data,
                                         field_type_name,
-                                        attribute_value.transformed);
+                                        attribute_value);
 
         // apply checks ...
         string  error_str;
         no_error = post_treatment_value_check(type_definitions, interpret_data,
                                         field_type_name,
-                                        attribute_value.transformed,
+                                        attribute_value,
                                         error_str);
         if (no_error == false)
         {
@@ -5166,11 +5180,11 @@ bool    frame_to_string (
 
         T_attribute_value    attribute_value(value);
 
-        attribute_value.transformed.set_bit_position_offset_size(bit_position_offset_into_initial_frame, bit_position_size);
+        attribute_value.set_bit_position_offset_size(bit_position_offset_into_initial_frame, bit_position_size);
 
         string    error_on_value;
         post_treatment_value(type_definitions, interpret_data, field_type_name,
-                             attribute_value.transformed, error_on_value);
+                             attribute_value, error_on_value);
         value = attribute_value_to_string(attribute_value);
 
         interpret_data.add_read_variable (data_simple_name, attribute_value);

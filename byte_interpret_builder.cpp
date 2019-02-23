@@ -157,7 +157,7 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (attribute_value.transformed.get_type() == C_value::E_type_float)
+            if (attribute_value.get_value().get_type() == C_value::E_type_float)
             {
                 if (plugin.byte_interpret_plugin_output_value_float_cb != NULL)
                 {
@@ -169,12 +169,12 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
                         data_name.c_str(),
                         field_type_name.name.c_str(),
                         final_type.c_str(),
-                        attribute_value.transformed.get_flt(),
-                        attribute_value.transformed.as_string().c_str(),
+                        attribute_value.get_value().get_flt(),
+                        attribute_value.get_value().as_string().c_str(),
                         P_error);
                 }
             }
-            else if (attribute_value.transformed.get_type() == C_value::E_type_integer)
+            else if (attribute_value.get_value().get_type() == C_value::E_type_integer)
             {
                 if (plugin.byte_interpret_plugin_output_value_integer_cb != NULL)
                 {
@@ -186,12 +186,12 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
                         data_name.c_str(),
                         field_type_name.name.c_str(),
                         final_type.c_str(),
-                        attribute_value.transformed.get_int(),
-                        attribute_value.transformed.as_string().c_str(),
+                        attribute_value.get_value().get_int(),
+                        attribute_value.get_value().as_string().c_str(),
                         P_error);
                 }
             }
-            else if (attribute_value.transformed.get_type() == C_value::E_type_string)
+            else if (attribute_value.get_value().get_type() == C_value::E_type_string)
             {
                 if (plugin.byte_interpret_plugin_output_value_string_cb != NULL)
                 {
@@ -203,8 +203,8 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
                         data_name.c_str(),
                         field_type_name.name.c_str(),
                         final_type.c_str(),
-                        attribute_value.transformed.get_str().c_str(),
-                        attribute_value.transformed.as_string().c_str(),
+                        attribute_value.get_value().get_str().c_str(),
+                        attribute_value.get_value().as_string().c_str(),
                         P_error);
                 }
             }

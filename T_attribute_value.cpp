@@ -104,26 +104,59 @@ T_attribute_value::set_error(const std::string  & in_error)
 }
 
 //*****************************************************************************
-// value_is_original
+// set_value_transformed
 //*****************************************************************************
 void
-T_attribute_value::value_is_original()
+T_attribute_value::set_value_transformed(const C_value&  value)
 {
+    transformed = value;
+}
+
+//*****************************************************************************
+// set_value_original
+//*****************************************************************************
+void
+T_attribute_value::set_value_original(const C_value&  value)
+{
+    transformed = value;
+
     original = transformed.as_string();
 }
 
 //*****************************************************************************
-// value_is_original_format_reset
+// set_value_original_format_reset
 //*****************************************************************************
-void    
-T_attribute_value::value_is_original_format_reset()
+void
+T_attribute_value::set_value_original_format_reset(const C_value&  value)
 {
-    C_value  value = transformed;
+    transformed = value;
 
-    // normalize the string original
-    value.format_reset();
+    {
+        C_value  original_value = transformed;
 
-    original = value.as_string();
+        // normalize the string original
+        original_value.format_reset();
+
+        original = original_value.as_string();
+    }
+}
+
+//*****************************************************************************
+// change_value_str_only
+//*****************************************************************************
+void
+T_attribute_value::change_value_str_only(const string &  new_str)
+{
+    transformed.set_str(new_str);
+}
+
+//*****************************************************************************
+// set_bit_position_offset_size
+//*****************************************************************************
+void
+T_attribute_value::set_bit_position_offset_size(int  offset, int  size)
+{
+    transformed.set_bit_position_offset_size(offset, size);
 }
 
 //*****************************************************************************
