@@ -16,8 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CT_SMART_POINTER_H
-#define CT_SMART_POINTER_H
+#pragma once
 
 //*****************************************************************************
 // Includes
@@ -26,14 +25,6 @@
 #include <iostream>
 #include <utility>
 using namespace std;
-
-#ifndef non_existent_namespace_rel_ops__
-// 2010/05/13 removed because VC2008EE (_MSC_VER==1500)
-//  gives a C2593 error on ambiguous != about reverse_iterator
-//  inside generic.cpp & T_interpret_read_values.cpp
-// Modification not tested with gcc4.
-//using namespace rel_ops;
-#endif
 
 #include "byte_interpret_common.h"
 
@@ -58,154 +49,154 @@ template <class TYPE> class C_reference_counter_ptr
 {
 public:
 
-  //---------------------------------------------------------------------------
-  //! Constructor.
-  //---------------------------------------------------------------------------
-  C_reference_counter_ptr (TYPE *p_object)
-   : _p_object (p_object)
-  {
-    add_ref ();
-  }
+    //---------------------------------------------------------------------------
+    //! Constructor.
+    //---------------------------------------------------------------------------
+    C_reference_counter_ptr(TYPE *p_object)
+        : _p_object(p_object)
+    {
+        add_ref();
+    }
 
-  //---------------------------------------------------------------------------
-  //! Default constructor.
-  //---------------------------------------------------------------------------
-  C_reference_counter_ptr () : _p_object (NULL_PTR) {}
+    //---------------------------------------------------------------------------
+    //! Default constructor.
+    //---------------------------------------------------------------------------
+    C_reference_counter_ptr() : _p_object(NULL_PTR) {}
 
-  //---------------------------------------------------------------------------
-  //! Copy constructor.
-  //---------------------------------------------------------------------------
-  C_reference_counter_ptr (const C_reference_counter_ptr&  rhs)
-   : _p_object (rhs.get ())
-  {
-    add_ref ();
-  }
+    //---------------------------------------------------------------------------
+    //! Copy constructor.
+    //---------------------------------------------------------------------------
+    C_reference_counter_ptr(const C_reference_counter_ptr&  rhs)
+        : _p_object(rhs.get())
+    {
+        add_ref();
+    }
 
-  //---------------------------------------------------------------------------
-  //! Copy constructor template.
-  //! For initialization of a shared pointer from a compatible shared pointer (
-  //! e.g. initialization of C_reference_counter_ptr<const T> from
-  //! C_reference_counter_ptr<T>).
-  //---------------------------------------------------------------------------
-  template <class OTHER>
-  C_reference_counter_ptr (const C_reference_counter_ptr<OTHER>  & rhs)
-    : _p_object (rhs.get ())
-  {
-    add_ref ();
-  }
+    //---------------------------------------------------------------------------
+    //! Copy constructor template.
+    //! For initialization of a shared pointer from a compatible shared pointer (
+    //! e.g. initialization of C_reference_counter_ptr<const T> from
+    //! C_reference_counter_ptr<T>).
+    //---------------------------------------------------------------------------
+    template <class OTHER>
+    C_reference_counter_ptr(const C_reference_counter_ptr<OTHER>  & rhs)
+        : _p_object(rhs.get())
+    {
+        add_ref();
+    }
 
-  //---------------------------------------------------------------------------
-  //! Assignment operator. 
-  //---------------------------------------------------------------------------
-  C_reference_counter_ptr&   operator= (const C_reference_counter_ptr&  rhs)
-  {
-    //! set deals with auto assigment.
-    set (rhs.get ());
-    return  *this;
-  }
+    //---------------------------------------------------------------------------
+    //! Assignment operator. 
+    //---------------------------------------------------------------------------
+    C_reference_counter_ptr&   operator= (const C_reference_counter_ptr&  rhs)
+    {
+        //! set deals with auto assigment.
+        set(rhs.get());
+        return  *this;
+    }
 
-  //---------------------------------------------------------------------------
-  //! Destructor.
-  //---------------------------------------------------------------------------
-  ~C_reference_counter_ptr () { sup_ref (); }
+    //---------------------------------------------------------------------------
+    //! Destructor.
+    //---------------------------------------------------------------------------
+    ~C_reference_counter_ptr() { sup_ref(); }
 
-  //---------------------------------------------------------------------------
-  //! operator ->.
-  //! operator *.
-  //---------------------------------------------------------------------------
-  TYPE*  operator -> () const        { return  _p_object; }
-  TYPE&  operator * () const         { return *_p_object; }
+    //---------------------------------------------------------------------------
+    //! operator ->.
+    //! operator *.
+    //---------------------------------------------------------------------------
+    TYPE*  operator -> () const { return  _p_object; }
+    TYPE&  operator *  () const { return *_p_object; }
 
-  //---------------------------------------------------------------------------
-  //! Automatic cast.
-  //! BECAREFUL about unexpected implicit conversion.
-  //---------------------------------------------------------------------------
-          operator TYPE* () const  { return  _p_object; }
+    //---------------------------------------------------------------------------
+    //! Automatic cast.
+    //! BECAREFUL about unexpected implicit conversion.
+    //---------------------------------------------------------------------------
+    operator TYPE* () const { return  _p_object; }
 
-  //---------------------------------------------------------------------------
-  //! Returns true if pointer is NULL.
-  //! Not necessary if operator TYPE* is defined.
-  //---------------------------------------------------------------------------
-  bool  operator! () const
-  {
-    return  _p_object == NULL_PTR;
-  }
+    //---------------------------------------------------------------------------
+    //! Returns true if pointer is NULL.
+    //! Not necessary if operator TYPE* is defined.
+    //---------------------------------------------------------------------------
+    bool  operator! () const
+    {
+        return  _p_object == NULL_PTR;
+    }
 
-  //---------------------------------------------------------------------------
-  //! Gets the pointer on the data.
-  //---------------------------------------------------------------------------
-  TYPE       *get () const { return  _p_object; }
+    //---------------------------------------------------------------------------
+    //! Gets the pointer on the data.
+    //---------------------------------------------------------------------------
+    TYPE       *get() const { return  _p_object; }
 
-  //---------------------------------------------------------------------------
-  //! Swap (permits to avoid add_ref and sup_ref operations).
-  //---------------------------------------------------------------------------
-  void    swap (C_reference_counter_ptr  & rhs)
-  {
-    TYPE  * tmp = _p_object;
-    _p_object = rhs._p_object;
-    rhs._p_object = tmp;
-  }
+    //---------------------------------------------------------------------------
+    //! Swap (permits to avoid add_ref and sup_ref operations).
+    //---------------------------------------------------------------------------
+    void    swap(C_reference_counter_ptr  & rhs)
+    {
+        TYPE  * tmp = _p_object;
+        _p_object = rhs._p_object;
+        rhs._p_object = tmp;
+    }
 
 
 private:
 
-  //---------------------------------------------------------------------------
-  //! Sets the pointer on the data.
-  //---------------------------------------------------------------------------
-  void        set (TYPE  * p_object)
-  {
-    if (p_object != _p_object)
+    //---------------------------------------------------------------------------
+    //! Sets the pointer on the data.
+    //---------------------------------------------------------------------------
+    void        set(TYPE  * p_object)
     {
-      // sup_ref ();
-      // _p_object = p_object;
-      // add_ref ();
-      // Previous code is simpler but less performant.
+        if (p_object != _p_object)
+        {
+            // sup_ref ();
+            // _p_object = p_object;
+            // add_ref ();
+            // Previous code is simpler but less performant.
 
-      if (_p_object != NULL_PTR)
-      {
-        C_reference_counter_ptr_release (_p_object);
-        _p_object = p_object;
-        add_ref ();
-      }
-      else
-      {
-        // _p_object == NULL_PTR, so :
-        // - C_reference_counter_ptr_release is forbidden
-        // - p_object != NULL_PTR
-        _p_object = p_object;
-        C_reference_counter_ptr_add_ref (_p_object);
-      }
+            if (_p_object != NULL_PTR)
+            {
+                C_reference_counter_ptr_release(_p_object);
+                _p_object = p_object;
+                add_ref();
+            }
+            else
+            {
+                // _p_object == NULL_PTR, so :
+                // - C_reference_counter_ptr_release is forbidden
+                // - p_object != NULL_PTR
+                _p_object = p_object;
+                C_reference_counter_ptr_add_ref(_p_object);
+            }
+        }
     }
-  }
 
-  //---------------------------------------------------------------------------
-  //! Add a reference on the object.
-  //---------------------------------------------------------------------------
-  inline
-  void    add_ref ()
-  {
-    if (_p_object != NULL_PTR)
-      C_reference_counter_ptr_add_ref (_p_object);
-  }
-
-  //---------------------------------------------------------------------------
-  //! Remove a reference on the object.
-  //---------------------------------------------------------------------------
-  inline
-  void    sup_ref ()
-  {
-    if (_p_object != NULL_PTR)
+    //---------------------------------------------------------------------------
+    //! Add a reference on the object.
+    //---------------------------------------------------------------------------
+    inline
+    void    add_ref()
     {
-      C_reference_counter_ptr_release (_p_object);
-      _p_object = NULL_PTR;
+        if (_p_object != NULL_PTR)
+            C_reference_counter_ptr_add_ref(_p_object);
     }
-  }
+
+    //---------------------------------------------------------------------------
+    //! Remove a reference on the object.
+    //---------------------------------------------------------------------------
+    inline
+    void    sup_ref()
+    {
+        if (_p_object != NULL_PTR)
+        {
+            C_reference_counter_ptr_release(_p_object);
+            _p_object = NULL_PTR;
+        }
+    }
 
 
-  //---------------------------------------------------------------------------
-  //! Pointed object.
-  //---------------------------------------------------------------------------
-  TYPE      *_p_object;
+    //---------------------------------------------------------------------------
+    //! Pointed object.
+    //---------------------------------------------------------------------------
+    TYPE      *_p_object;
 };
 
 // ============================================================================
@@ -238,7 +229,3 @@ template<class E, class T, class Y> std::basic_ostream<E, T> & operator<< (std::
 }
 
 #endif
-
-
-
-#endif /* CT_SMART_POINTER_H */

@@ -16,8 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef C_REFERENCE_COUNTER_H
-#define C_REFERENCE_COUNTER_H
+#pragma once
 
 //*****************************************************************************
 // Includes
@@ -36,91 +35,69 @@ class C_reference_counter
 {
 protected:
 
-  //---------------------------------------------------------------------------
-  // Constructor.
-  //---------------------------------------------------------------------------
-  C_reference_counter () : _ref_counter(0) {}
+    //---------------------------------------------------------------------------
+    // Constructor.
+    //---------------------------------------------------------------------------
+    C_reference_counter() : _ref_counter(0) {}
 
-  //---------------------------------------------------------------------------
-  // Copy constructor.
-  // Special behavior, DO NOT COPY _ref_counter.
-  //---------------------------------------------------------------------------
-  C_reference_counter (const C_reference_counter& ) : _ref_counter(0) {}
+    //---------------------------------------------------------------------------
+    // Copy constructor.
+    // Special behavior, DO NOT COPY _ref_counter.
+    //---------------------------------------------------------------------------
+    C_reference_counter(const C_reference_counter&) : _ref_counter(0) {}
 
-  //---------------------------------------------------------------------------
-  // Assignment operator.
-  // Special behavior, DO NOT MODIFY _ref_counter.
-  //---------------------------------------------------------------------------
-  C_reference_counter&  operator= (const C_reference_counter&)
-  { return *this; }
+    //---------------------------------------------------------------------------
+    // Assignment operator.
+    // Special behavior, DO NOT MODIFY _ref_counter.
+    //---------------------------------------------------------------------------
+    C_reference_counter&  operator= (const C_reference_counter&)
+    {
+        return *this;
+    }
 
-  //---------------------------------------------------------------------------
-  // Destructor (verification of reference counter).
-  //---------------------------------------------------------------------------
-  virtual ~C_reference_counter ()
-  {
-    M_ASSERT (_ref_counter == 0);
-  }
+    //---------------------------------------------------------------------------
+    // Destructor (verification of reference counter).
+    //---------------------------------------------------------------------------
+    virtual ~C_reference_counter()
+    {
+        M_ASSERT(_ref_counter == 0);
+    }
 
 
 private:
 
-#ifdef non_existent_mutable__
+    //---------------------------------------------------------------------------
+    // Reference counter (number of smart pointers which point on this object).
+    // mutable means that a const method can modify the counter.
+    // It's normal for this reference counter to be mutable, if not, smart
+    //  pointer on a const object is not possible.
+    //---------------------------------------------------------------------------
+    mutable
+    int            _ref_counter;
 
-#define MUTABLE
-#define CONST_IF_MUTABLE
+    //---------------------------------------------------------------------------
+    // Increments the reference counter.
+    //---------------------------------------------------------------------------
+    void           incr_ref() const
+    {
+        ++_ref_counter;
+    }
 
-  //---------------------------------------------------------------------------
-  // Les methodes suivantes son necessaire si les donnees ne sont pas mutable.
-  //---------------------------------------------------------------------------
-  void           incr_ref () const
-  { (const_cast<C_reference_counter*>(this))->incr_ref (); }
-  void           decr_ref () const 
-  { (const_cast<C_reference_counter*>(this))->decr_ref (); }
+    //---------------------------------------------------------------------------
+    // Decrements the reference counter (destroys itself if necessary).
+    //---------------------------------------------------------------------------
+    void           decr_ref() const
+    {
+        if (--_ref_counter <= 0)
+            delete this;
+    }
 
-#else
-
-#define MUTABLE           mutable
-#define CONST_IF_MUTABLE  const
-
-#endif
-
-  //---------------------------------------------------------------------------
-  // Reference counter (number of smart pointers which point on this object).
-  // mutable means that a const method can modify the counter.
-  // It's normal for this reference counter to be mutable, if not, smart
-  //  pointer on a const object is not possible.
-  //---------------------------------------------------------------------------
-  MUTABLE
-  int            _ref_counter;
-
-  //---------------------------------------------------------------------------
-  // Increments the reference counter.
-  //---------------------------------------------------------------------------
-  void           incr_ref () CONST_IF_MUTABLE
-                            {
-                              ++_ref_counter;
-                            }
-
-  //---------------------------------------------------------------------------
-  // Decrements the reference counter (destroys itself if necessary).
-  //---------------------------------------------------------------------------
-  void           decr_ref () CONST_IF_MUTABLE
-                            {
-                              if (--_ref_counter <= 0)
-                                  delete this;
-                            }
-
-  //---------------------------------------------------------------------------
-  // Friends.
-  //---------------------------------------------------------------------------
-  friend void  C_reference_counter_ptr_add_ref (const C_reference_counter * );
-  friend void  C_reference_counter_ptr_release (const C_reference_counter * );
-
+    //---------------------------------------------------------------------------
+    // Friends.
+    //---------------------------------------------------------------------------
+    friend void  C_reference_counter_ptr_add_ref(const C_reference_counter *);
+    friend void  C_reference_counter_ptr_release(const C_reference_counter *);
 };
-
-#undef MUTABLE
-#undef CONST_IF_MUTABLE
 
 
 //-----------------------------------------------------------------------------
@@ -138,6 +115,3 @@ void  C_reference_counter_ptr_release (const C_reference_counter *  ptr)
 {
     ptr->decr_ref ();
 }
-
-
-#endif /* C_REFERENCE_COUNTER_H */
