@@ -3502,6 +3502,45 @@ void    test_function_call()
 }
 
 //*****************************************************************************
+// test_function_in_out
+//*****************************************************************************
+
+void    test_function_in_out()
+{
+    T_type_definitions    type_definitions;
+    build_types("unitary_tests_basic.fdesc",
+                type_definitions);
+    SP_type_definitions = &type_definitions;
+
+    T_interpret_data      interpret_data;
+    SP_interpret_data = &interpret_data;
+    interpret_data.add_read_variable("is_value_modified", 1);
+    interpret_data.add_read_variable("sum", -7);
+
+    M_TEST_EQ(compute_expression_no_io_int("test_out_normalize (5, is_value_modified)"), 5);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_value_modified")->get_bool(), false);
+
+    M_TEST_EQ(compute_expression_no_io_int("test_out_normalize (15, is_value_modified)"), 10);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_value_modified")->get_bool(), true);
+
+    M_TEST_EQ(compute_expression_no_io_int("test_out_normalize (-15, is_value_modified)"), -15);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_value_modified")->get_bool(), false);
+
+
+    M_TEST_EQ(compute_expression_no_io_int("test_in_out_normalize_accumulate (5, is_value_modified, sum)"), 5);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_value_modified")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("sum")->get_int(), -2);
+
+    M_TEST_EQ(compute_expression_no_io_int("test_in_out_normalize_accumulate (15, is_value_modified, sum)"), 10);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_value_modified")->get_bool(), true);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("sum")->get_int(), 13);
+
+    M_TEST_EQ(compute_expression_no_io_int("test_in_out_normalize_accumulate (-15, is_value_modified, sum)"), -15);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("is_value_modified")->get_bool(), false);
+    M_TEST_EQ(interpret_data.get_P_value_of_read_variable("sum")->get_int(), -2);
+}
+
+//*****************************************************************************
 // test_builtin_functions
 //*****************************************************************************
 
@@ -5278,6 +5317,7 @@ int   main(const int         argc,
         M_TEST_FCT(test_decompose_type_sep_value_sep);
         M_TEST_FCT(test_expression);
         M_TEST_FCT(test_function_call);
+        M_TEST_FCT(test_function_in_out);
         M_TEST_FCT(test_builtin_functions);
         M_TEST_FCT(test_decode_stream_frame);
         M_TEST_FCT(test_frame_data);

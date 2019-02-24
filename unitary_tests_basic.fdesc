@@ -532,6 +532,35 @@ function int64  call_me_maybe_u1 (in uint1  value)
 }
 
 ###############################################################################
+# out & in_out parameters
+###############################################################################
+
+function int64  test_out_normalize (in int64  value, out bool8  value_modified)
+{
+  set value_modified = bool8::false;
+  if (value > 10)
+  {
+    set value = 10;
+	set value_modified = bool8::true;
+  }
+  return  value;
+}
+
+function int64  test_in_out_normalize_accumulate (in int64      value,
+                                                  out bool8     value_modified,
+                                                  in_out int64  accumulate)
+{
+  set accumulate = accumulate + value;
+  set value_modified = bool8::false;
+  if (value > 10)
+  {
+    set value = 10;
+	set value_modified = bool8::true;
+  }
+  return  value;
+}
+
+###############################################################################
 # is_existing_field_or_variable
 ###############################################################################
 
