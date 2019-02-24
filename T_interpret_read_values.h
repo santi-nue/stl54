@@ -69,8 +69,6 @@ struct T_interpret_read_values : public C_reference_counter,
 
     void    set_read_variable (const string   & var_name,
                                const C_value  & in_value);
-    void    set_read_variable (const string             & var_name,
-                               const T_attribute_value  & in_value);
 
     // 
     void    sup_read_variable (T_id    var_id);

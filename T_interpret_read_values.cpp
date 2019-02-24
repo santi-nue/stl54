@@ -125,14 +125,7 @@ void
 T_interpret_read_values::set_read_variable (const string   & var_name,
                                             const C_value  & in_value)
 {
-    set_read_variable(var_name, T_attribute_value(in_value));
-}
-
-void
-T_interpret_read_values::set_read_variable (const string             & var_name,
-                                            const T_attribute_value  & in_value)
-{
-    M_TRACE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.get_value().as_string());
+    M_TRACE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.as_string());
 
     T_attribute_value  * P_attr = const_cast<T_attribute_value*>(get_P_attribute_value_of_read_variable(var_name));
     if (P_attr == NULL)
@@ -140,7 +133,7 @@ T_interpret_read_values::set_read_variable (const string             & var_name,
         M_FATAL_COMMENT("set of an unknow variable/field (" << var_name << ")");
     }
 
-    *P_attr = in_value;
+    swap(*P_attr, T_attribute_value(in_value));
     // reference !!!
 }
 
@@ -852,7 +845,7 @@ T_interpret_read_values::reset()
     A_msg_pinfo_idx_begin = 0;
     A_msg_pinfo_idx_end = -1;
     A_msg_other_idx_begin = 0;
-    A_this_msg_attribute_value = T_attribute_value();
+    swap(A_this_msg_attribute_value, T_attribute_value());
 }
 
 //*****************************************************************************
@@ -910,7 +903,7 @@ T_interpret_read_values::msg_is_ended()
         A_msg_pinfo_idx_begin = 0;
         A_msg_pinfo_idx_end = -1;
         A_msg_other_idx_begin = A_msg_global_idx_end;
-        A_this_msg_attribute_value = T_attribute_value();
+        swap(A_this_msg_attribute_value, T_attribute_value());
         A_this_msg_attribute_value_used = false;
     }
     else
@@ -931,7 +924,7 @@ T_interpret_read_values::msg_is_ended()
 void
 T_interpret_read_values::add_this_msg()
 {
-    A_this_msg_attribute_value = T_attribute_value(C_value(C_value::E_type_msg, this));
+    swap(A_this_msg_attribute_value, T_attribute_value(C_value(C_value::E_type_msg, this)));
     A_this_msg_attribute_value_used = false;
 }
 
