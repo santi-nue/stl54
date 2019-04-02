@@ -36,10 +36,26 @@ T_attribute_value::T_attribute_value()
     original = transformed.as_string();
 }
 
+void
+T_attribute_value::reset()
+{
+    transformed = C_value("");
+    P_error = NULL;
+    original = transformed.as_string();
+}
+
 T_attribute_value::T_attribute_value(const C_value  & value)
     :transformed(value),
      P_error(NULL)
 {
+    original = transformed.as_string();
+}
+
+void
+T_attribute_value::reset(const C_value  & value)
+{
+    transformed = value;
+    P_error = NULL;
     original = transformed.as_string();
 }
 

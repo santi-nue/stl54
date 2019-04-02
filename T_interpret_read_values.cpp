@@ -133,7 +133,7 @@ T_interpret_read_values::set_read_variable (const string   & var_name,
         M_FATAL_COMMENT("set of an unknow variable/field (" << var_name << ")");
     }
 
-    swap(*P_attr, T_attribute_value(in_value));
+    P_attr->reset(in_value);
     // reference !!!
 }
 
@@ -845,7 +845,7 @@ T_interpret_read_values::reset()
     A_msg_pinfo_idx_begin = 0;
     A_msg_pinfo_idx_end = -1;
     A_msg_other_idx_begin = 0;
-    swap(A_this_msg_attribute_value, T_attribute_value());
+    A_this_msg_attribute_value.reset();
 }
 
 //*****************************************************************************
@@ -903,7 +903,7 @@ T_interpret_read_values::msg_is_ended()
         A_msg_pinfo_idx_begin = 0;
         A_msg_pinfo_idx_end = -1;
         A_msg_other_idx_begin = A_msg_global_idx_end;
-        swap(A_this_msg_attribute_value, T_attribute_value());
+        A_this_msg_attribute_value.reset();
         A_this_msg_attribute_value_used = false;
     }
     else
@@ -924,7 +924,7 @@ T_interpret_read_values::msg_is_ended()
 void
 T_interpret_read_values::add_this_msg()
 {
-    swap(A_this_msg_attribute_value, T_attribute_value(C_value(C_value::E_type_msg, this)));
+    A_this_msg_attribute_value.reset(C_value(C_value::E_type_msg, this));
     A_this_msg_attribute_value_used = false;
 }
 

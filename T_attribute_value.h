@@ -63,6 +63,9 @@ public:
     T_attribute_value&  operator=(const T_attribute_value  & rhs);
     ~T_attribute_value();
 
+    void    reset();
+    void    reset(const C_value  & value);
+
 private:
     // VCEE2008 & 32bits
     // Sizeof = 64 + 4 + 28 =  96 bytes
