@@ -1279,18 +1279,6 @@ string    get_traces_file_name()
 {
     string  traces_file_name = "";
 
-    const char *  dir = getenv("WIRESHARK_GENERIC_DISSECTOR_TRACES_DIR");
-    if (dir != NULL)
-    {
-        traces_file_name += dir;
-        traces_file_name += G_DIR_SEPARATOR_S;
-    }
-    else
-    {
-//		traces_file_name += get_persdatafile_dir();
-//		traces_file_name += G_DIR_SEPARATOR_S;
-    }
-
     const char *  file = getenv("WIRESHARK_GENERIC_DISSECTOR_TRACES_FILE");
     if (file != NULL)
     {
@@ -1303,11 +1291,55 @@ string    get_traces_file_name()
 
 
     mod_replace_all(traces_file_name, "{pid}", get_string(getpid()));
-//	mod_replace_all(traces_file_name, "{date}", );
-//	mod_replace_all(traces_file_name, "{time}", );
-
 
     return  traces_file_name;
+}
+
+//*****************************************************************************
+// get_traces_file_full_name
+//*****************************************************************************
+string    get_traces_file_full_name()
+{
+    const std::string  traces_file_name = get_traces_file_name();
+    string  traces_file_full_name = "";
+    
+    const char *  dir = getenv("WIRESHARK_GENERIC_DISSECTOR_TRACES_DIR");
+    if (dir != NULL)
+    {
+        traces_file_full_name = dir;
+        traces_file_full_name += G_DIR_SEPARATOR_S;
+        traces_file_full_name += traces_file_name;
+    }
+    else
+    {
+        // Let's try the local directory
+        traces_file_full_name = traces_file_name;
+        ofstream    ofs(traces_file_full_name.c_str());
+        if (!ofs.is_open())
+        {
+            // File can NOT be created in local directory
+            // Should be a permission problem
+            // So take a personal directory
+            traces_file_full_name = get_persdatafile_dir();
+            traces_file_full_name += G_DIR_SEPARATOR_S;
+            traces_file_full_name += traces_file_name;
+        }
+    }
+
+    mod_replace_all(traces_file_full_name, "{pid}", get_string(getpid()));
+
+    return  traces_file_full_name;
+}
+
+//*****************************************************************************
+// create_traces_file
+//*****************************************************************************
+void    create_traces_file()
+{
+    const std::string  traces_file_full_name = get_traces_file_full_name();
+
+    static ofstream    ofs(traces_file_full_name.c_str());
+    set_state_ostream(ofs);
 }
 
 //*****************************************************************************
@@ -1316,10 +1348,7 @@ string    get_traces_file_name()
 extern "C"
 void    cpp_proto_register_generic(void)
 {
-    {
-        static ofstream    ofs (get_traces_file_name().c_str());
-        set_state_ostream (ofs);
-    }
+    create_traces_file();
 
     C_debug_set_temporary    debug_register_main(E_debug_status_ON_NO_TIME);
 
