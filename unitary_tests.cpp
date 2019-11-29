@@ -74,7 +74,7 @@ bool    read_data (      T_frame_data  & in_out_frame_data,
 
 #if WIRESHARK_VERSION_NUMBER < 20600
 #if defined WIN32
-#define STRDOD_REJECT_HEXADECIMAL_AS_FLOAT
+#define STRTOD_REJECT_HEXADECIMAL_AS_FLOAT
 #endif
 #endif
 
@@ -1443,7 +1443,7 @@ void    test_get_number()
     M_TEST_INT_FLT(" 32",   32,   32.0);
     M_TEST_INT_FLT(" -132", -132, -132.0);
 
-#if defined STRDOD_REJECT_HEXADECIMAL_AS_FLOAT
+#if defined STRTOD_REJECT_HEXADECIMAL_AS_FLOAT
     // VC++ strtod reject hexadecimal
     M_TEST_INT(  "0xa32",  0xa32);
     M_TEST_INT( " 0Xa32",  0xa32);
