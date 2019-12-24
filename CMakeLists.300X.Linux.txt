@@ -132,7 +132,7 @@ CHECKAPI(
 
 
 
-# Must find them on Linux
+# Must find them on Linux + win32 vs win64
 #find_library(libgmodule_LIBRARY gmodule-2.0 PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-3.0/glib2-2.52.2-1.34-win32ws)
 #find_library(libgcrypt_LIBRARY libgcrypt-20 PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-3.0/libgcrypt-1.8.3-win32ws/bin)
 #find_library(libgpg_LIBRARY libgpg-error-0  PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-3.0/libgcrypt-1.8.3-win32ws/bin)
