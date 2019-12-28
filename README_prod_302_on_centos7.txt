@@ -2,20 +2,24 @@
 ********************************************************************************
 *** build wireshark : packages
 ********************************************************************************
-sudo apt-get install git
+sudo yum install install git
 
-sudo apt-get install cmake
-sudo apt-get install g++
-sudo apt-get install libgtk2.0-dev          # for glib2
-sudo apt-get install libgcrypt-dev
-sudo apt-get install flex                   # for lex
-sudo apt-get install bison                  # for yacc
+sudo yum -y install epel-release
+sudo yum install cmake3
 
-sudo apt-get install qtdeclarative5-dev
-sudo apt-get install qttools5-dev-tools
-sudo apt-get install qttools5-dev
-sudo apt-get install qtmultimedia5-dev
-sudo apt-get install libqt5svg5-dev
+sudo yum install libgcrypt-devel
+sudo yum install glib2-devel
+
+sudo yum install qt5-qttools
+sudo yum install qt5-qtbase-devel
+sudo yum install qt5-qttools-devel
+sudo yum install libpcap-devel
+sudo yum install qt5-qtmultimedia-devel
+sudo yum install qt5-qtsvg-devel
+
+sudo yum install zlib-devel
+
+sudo yum install -y harfbuzz-devel.x86_64
 
 
 ********************************************************************************
@@ -32,7 +36,7 @@ git  clone  https://code.wireshark.org/review/wireshark  git-302X--linux64
 cd  git-302X--linux64
 git checkout v3.2.0
 
-cmake .
+cmake3 .
 make
 --> run/wireshark
 
@@ -52,7 +56,7 @@ Edit cmake_wireshark_version_number.cmake to set 30200
 cd  ../../..
 Edit CMakeLists.txt to add a generic line just before the gryphon line
 
-cmake .
+cmake3 .
 make
 --> run/wireshark
 --> run/plugins/3.2/epan/generic.so
