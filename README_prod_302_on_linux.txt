@@ -83,9 +83,9 @@ cd    wireshark
 mkdir dev
 cd    dev
 
-git  clone  https://code.wireshark.org/review/wireshark  git-302X--linux64
+git  clone  https://code.wireshark.org/review/wireshark  git-302XX--linux64
 
-cd  git-302X--linux64
+cd  git-302XX--linux64
 git checkout v3.2.0
 
 cmake .
@@ -100,7 +100,7 @@ cd  plugins/epan
 git clone https://gitlab.com/wsgd/wsgd.git  generic
 
 cd  generic
-cp -p  CMakeLists.300X.Linux.txt  CMakeLists.txt
+cp -p  CMakeLists.300XX.Linux.txt  CMakeLists.txt
 cp -p  cmake_wireshark_version_number.cmake.example  cmake_wireshark_version_number.cmake
 Edit cmake_wireshark_version_number.cmake to set 30200
 
