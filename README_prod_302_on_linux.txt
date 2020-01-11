@@ -1,8 +1,12 @@
 
 ********************************************************************************
-*** Ubuntu 18.04
 *** build wireshark : packages
 ********************************************************************************
+
+--------------------------------------------------------------------------------
+--- Ubuntu 18.04
+--- Kali 2019.2
+--------------------------------------------------------------------------------
 sudo apt-get update
 sudo apt-get --assume-yes install git
 
@@ -14,16 +18,20 @@ sudo apt-get --assume-yes install flex
 sudo apt-get --assume-yes install bison
 
 sudo apt-get --assume-yes install qtdeclarative5-dev
-sudo apt-get --assume-yes install qttools5-dev-tools
 sudo apt-get --assume-yes install qttools5-dev
 sudo apt-get --assume-yes install qtmultimedia5-dev
 sudo apt-get --assume-yes install libqt5svg5-dev
 
+sudo apt-get --assume-yes install libpcap-dev
 
-********************************************************************************
-*** CentOS7
-*** build wireshark : packages
-********************************************************************************
+
+- Kali (wsl), make will fail to find libQt5Core.so :
+sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so
+
+
+--------------------------------------------------------------------------------
+--- CentOS7
+--------------------------------------------------------------------------------
 sudo yum --assumeyes install git
 
 sudo yum --assumeyes install epel-release
@@ -35,20 +43,19 @@ sudo yum --assumeyes install glib2-devel
 sudo yum --assumeyes install qt5-qttools
 sudo yum --assumeyes install qt5-qtbase-devel
 sudo yum --assumeyes install qt5-qttools-devel
-sudo yum --assumeyes install libpcap-devel
 sudo yum --assumeyes install qt5-qtmultimedia-devel
 sudo yum --assumeyes install qt5-qtsvg-devel
 
+sudo yum --assumeyes install libpcap-devel
 sudo yum --assumeyes install zlib-devel
 sudo yum --assumeyes install harfbuzz-devel.x86_64
 
 alias cmake="cmake3"
 
 
-********************************************************************************
-*** openSUSE Leap 15-1
-*** build wireshark : packages
-********************************************************************************
+--------------------------------------------------------------------------------
+--- openSUSE Leap 15-1
+--------------------------------------------------------------------------------
 sudo zypper --non-interactive in git
 
 sudo zypper --non-interactive in cmake
@@ -64,6 +71,7 @@ sudo zypper --non-interactive in libqt5-qtmultimedia-devel
 sudo zypper --non-interactive in libQt5PrintSupport-devel
 sudo zypper --non-interactive in libqt5-qtsvg-devel
 
+sudo zypper --non-interactive in libpcap-devel
 
 
 ********************************************************************************
