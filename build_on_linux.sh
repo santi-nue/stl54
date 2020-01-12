@@ -1,7 +1,12 @@
+#!/bin/bash
 
-echo This script has been tested on :
-echo "- Kali 2019.2 (wsl) & wireshark 2.4 to 3.2"
-echo 
+# For wireshark >= 2.4
+# Script for build wireshark and wsgd
+# More precise script sequence is displayed when  you launch it
+ 
+# This script has been tested on :
+# - Kali 2019.2        (wsl)    wireshark 2.4 to 3.2
+# - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.2
 
 
 ################################################################################
@@ -119,6 +124,36 @@ else
 	[ -z "${wsgd_wireshark_lib_plugin_subdir}" ] && wsgd_wireshark_lib_plugin_subdir=plugins/${wsgd_wireshark_plugin_version}/epan
 fi
 
+################################################################################
+### Script sequence
+################################################################################
+
+echo "For wireshark >= 2.4"
+echo
+echo "Script sequence (specific values depends on configuration) :"
+echo "- install every package mandatory to build wireshark"
+echo "- cd  ~/wireshark/dev                           create it if does not exist"
+echo
+echo "- if  ${wsgd_wireshark_src_subdir}  does not exist"
+echo "  - ${wsgd_clone_wireshark_repository}   ${wsgd_wireshark_src_subdir}"
+echo "  - git checkout  ${wsgd_wireshark_checkout_label}"
+echo "- cmake ."
+echo "- make"
+echo
+echo "- cd  plugins/epan"
+echo "- if  generic  does not exist"
+echo "  - git clone  ${wsgd_wsgd_repository}   generic"
+echo "- configure generic directory"
+echo "- cd  ../.."
+echo "- add ${wsgd_wireshark_src_plugin_subdir}/generic into CMakeLists.txt"
+echo "- cmake ."
+echo "- make"
+echo
+echo "- launch wsgd unitary_tests"
+echo
+read -p "wsgd: Type Enter to display configuration ..."
+echo
+
 
 ################################################################################
 ### Configuration check
@@ -184,6 +219,8 @@ then
 			echo "wsgd: fix make (and wireshark ...) will fail to find libQt5Core.so"
 			sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so
 		fi
+		
+		wsgd_os_install_packages=
 	fi
 
 	if [ "${wsgd_os_name}" == "centos" ]
@@ -211,6 +248,8 @@ then
 		sudo yum --assumeyes install harfbuzz-devel.x86_64
 
 		alias cmake="cmake3"
+
+		wsgd_os_install_packages=
 	fi
 
 	if [ "${wsgd_os_name}" == "opensuse" ]
@@ -235,6 +274,14 @@ then
 		sudo zypper --non-interactive in libqt5-qtsvg-devel
 
 		sudo zypper --non-interactive in libpcap-devel
+		
+		wsgd_os_install_packages=
+	fi
+	
+	if [ ! -z ${wsgd_os_install_packages} ]
+	then
+		wsgd__echo "${wsgd_os_name} is NOT known so NO package has been installed"
+		read -p "wsgd: Type Enter to continue ..."
 	fi
 fi
 
