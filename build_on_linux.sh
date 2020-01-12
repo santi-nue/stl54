@@ -5,6 +5,80 @@ echo
 
 
 ################################################################################
+### tools
+################################################################################
+wsgd__echo ()
+{
+	echo wsgd: $*
+	return  0
+}
+
+wsgd__check_execution_ok ()
+{
+	l_wsgd_output=$1
+	
+	if [ $? -ne 0 ]
+	then
+		wsgd__echo "Error ${l_wsgd_output}"
+		exit 1
+	fi
+	
+	wsgd__echo "${l_wsgd_output} done"
+}
+
+#-------------------------------------------------------------------------------
+#-- tools directory
+#-------------------------------------------------------------------------------
+wsgd__check_dir ()
+{
+	l_wsgd_dir_name=$1
+	
+	[ ! -d "${l_wsgd_dir_name}" ] && wsgd__echo "Directory ${l_wsgd_dir_name} not found !"    && exit 1
+}
+
+wsgd__cd ()
+{
+	l_wsgd_dir_name=$1
+	
+	wsgd__check_dir  ${l_wsgd_dir_name}
+	cd  ${l_wsgd_dir_name}
+	wsgd__echo "$(pwd)"
+}
+
+wsgd__cd_create_if_not_exist ()
+{
+	l_wsgd_dir_name=$1
+	
+	[ ! -d "${l_wsgd_dir_name}" ] && wsgd__echo "Create directory ${l_wsgd_dir_name}" && mkdir ${l_wsgd_dir_name}
+	wsgd__cd  ${l_wsgd_dir_name}
+}
+
+#-------------------------------------------------------------------------------
+#-- tools file
+#-------------------------------------------------------------------------------
+wsgd__check_exists ()
+{
+	l_wsgd_file_name=$1
+	l_wsgd_output=$2
+	
+	[ ! -e "${l_wsgd_file_name}" ] && wsgd__echo "File ${l_wsgd_file_name} not found !"    && exit 1
+	
+	[ ! -z "${l_wsgd_output}" ] && wsgd__echo "File ${l_wsgd_file_name} ${l_wsgd_output}"
+}
+
+wsgd__check_executable ()
+{
+	l_wsgd_file_name=$1
+	l_wsgd_output=$2
+	
+	wsgd__check_exists  ${l_wsgd_file_name}
+	[ ! -x "${l_wsgd_file_name}" ] && wsgd__echo "File ${l_wsgd_file_name} not executable !"    && exit 1
+	
+	[ ! -z "${l_wsgd_output}" ] && wsgd__echo "File ${l_wsgd_file_name} ${l_wsgd_output}"
+}
+
+
+################################################################################
 ### Configuration
 ################################################################################
 
@@ -71,7 +145,8 @@ echo wsgd_wireshark_src_plugin_subdir = ${wsgd_wireshark_src_plugin_subdir}
 echo wsgd_wireshark_lib_plugin_subdir = ${wsgd_wireshark_lib_plugin_subdir}
 
 echo 
-echo wsgd: You must check/fix parameters displayed above
+wsgd__echo "You must check parameters displayed above"
+wsgd__echo "If they are not good, stop the script and fix them"
 read -p "wsgd: Type Enter to continue ..."
 
 ################################################################################
@@ -85,7 +160,7 @@ then
 		#-- Ubuntu 18.04
 		#-- Kali 2019.2
 		#-------------------------------------------------------------------------------
-		echo wsgd: install packages mandatory to build wireshark
+		wsgd__echo "install packages mandatory to build wireshark"
 		sudo apt-get update
 		sudo apt-get --assume-yes install git
 
@@ -116,7 +191,7 @@ then
 		#-------------------------------------------------------------------------------
 		#-- CentOS7
 		#-------------------------------------------------------------------------------
-		echo wsgd: install packages mandatory to build wireshark
+		wsgd__echo "install packages mandatory to build wireshark"
 		sudo yum --assumeyes install git
 
 		sudo yum --assumeyes install epel-release
@@ -143,7 +218,7 @@ then
 		#-------------------------------------------------------------------------------
 		#-- openSUSE Leap 15-1
 		#-------------------------------------------------------------------------------
-		echo wsgd: install packages mandatory to build wireshark
+		wsgd__echo "install packages mandatory to build wireshark"
 		sudo zypper --non-interactive in git
 
 		sudo zypper --non-interactive in cmake
@@ -164,194 +239,129 @@ then
 fi
 
 ################################################################################
-### tools directory
-################################################################################
-wsgd_check_dir ()
-{
-	l_wsgd_dir_name=$1
-	
-	[ ! -d "${l_wsgd_dir_name}" ] && echo wsgd: Directory ${l_wsgd_dir_name} not found !    && exit 1
-}
-
-wsgd_cd ()
-{
-	l_wsgd_dir_name=$1
-	
-	wsgd_check_dir  ${l_wsgd_dir_name}
-	cd  ${l_wsgd_dir_name}
-	echo wsgd: $(pwd)
-}
-
-wsgd_cd_create_if_not_exist ()
-{
-	l_wsgd_dir_name=$1
-	
-	[ ! -d "${l_wsgd_dir_name}" ] && echo wsgd: Create directory ${l_wsgd_dir_name} && mkdir ${l_wsgd_dir_name}
-	wsgd_cd  ${l_wsgd_dir_name}
-}
-
-################################################################################
-### tools file
-################################################################################
-wsgd_check_exists ()
-{
-	l_wsgd_file_name=$1
-	l_wsgd_output=$2
-	
-	[ ! -e "${l_wsgd_file_name}" ] && echo wsgd: File ${l_wsgd_file_name} not found !    && exit 1
-	
-	[ ! -z "${l_wsgd_output}" ] && echo wsgd: File ${l_wsgd_file_name} ${l_wsgd_output}
-}
-
-wsgd_check_executable ()
-{
-	l_wsgd_file_name=$1
-	l_wsgd_output=$2
-	
-	wsgd_check_exists  ${l_wsgd_file_name}
-	[ ! -x "${l_wsgd_file_name}" ] && echo wsgd: File ${l_wsgd_file_name} not executable !    && exit 1
-	
-	[ ! -z "${l_wsgd_output}" ] && echo wsgd: File ${l_wsgd_file_name} ${l_wsgd_output}
-}
-
-################################################################################
-### tools 
-################################################################################
-wsgd_check_execution_ok ()
-{
-	l_wsgd_output=$1
-	
-	if [ $? -ne 0 ]
-	then
-		echo wsgd: Error ${l_wsgd_output}
-		exit 1
-	fi
-	
-	echo wsgd: ${l_wsgd_output} done
-}
-
-
-################################################################################
 ### build wireshark
 ################################################################################
-wsgd_cd  ~
-wsgd_cd_create_if_not_exist  wireshark
-wsgd_cd_create_if_not_exist  dev
+wsgd__cd  ~
+wsgd__cd_create_if_not_exist  wireshark
+wsgd__cd_create_if_not_exist  dev
 
 # Clone wireshark sources
 if [ ! -d "${wsgd_wireshark_src_subdir}" ]
 then
-	echo wsgd: ${wsgd_clone_wireshark_repository}  ${wsgd_wireshark_src_subdir}
+	wsgd__echo "${wsgd_clone_wireshark_repository}  ${wsgd_wireshark_src_subdir}"
 	${wsgd_clone_wireshark_repository}  ${wsgd_wireshark_src_subdir}
-	wsgd_check_execution_ok  "wireshark clone"
-	wsgd_check_dir  ${wsgd_wireshark_src_subdir}
+	wsgd__check_execution_ok  "wireshark clone"
+	wsgd__check_dir  ${wsgd_wireshark_src_subdir}
+
+	wsgd__cd  ${wsgd_wireshark_src_subdir}
+
+	# Checkout version
+	wsgd__echo "git checkout ${wsgd_wireshark_checkout_label}"
+	git checkout ${wsgd_wireshark_checkout_label}
+	wsgd__check_execution_ok  "wireshark checkout"
+else
+	wsgd__cd  ${wsgd_wireshark_src_subdir}
 fi
-wsgd_cd  ${wsgd_wireshark_src_subdir}
 
 wsgd_wireshark_src_dir=$(pwd)
 
-# Checkout version
-echo wsgd: git checkout ${wsgd_wireshark_checkout_label}
-git checkout ${wsgd_wireshark_checkout_label}
-wsgd_check_execution_ok  "wireshark checkout"
-
 # Build
-echo wsgd: wireshark cmake .
+wsgd__echo "wireshark cmake ."
 cmake .
-wsgd_check_execution_ok  "wireshark cmake"
+wsgd__check_execution_ok  "wireshark cmake"
 
-echo wsgd: wireshark make
+wsgd__echo "wireshark make"
 make
-wsgd_check_execution_ok  "wireshark make"
+wsgd__check_execution_ok  "wireshark make"
 
 # Check wireshark
-wsgd_check_executable  run/wireshark  "is present"
+wsgd__check_executable  run/wireshark  "is present"
 
 
 ################################################################################
 ### build wsgd
 ################################################################################
-wsgd_cd  ${wsgd_wireshark_src_dir}/${wsgd_wireshark_src_plugin_subdir}
+wsgd__cd  ${wsgd_wireshark_src_dir}/${wsgd_wireshark_src_plugin_subdir}
 
 # Clone wsgd sources
 if [ ! -d generic ]
 then
-	echo wsgd: git clone ${wsgd_wsgd_repository}  generic
+	wsgd__echo "git clone ${wsgd_wsgd_repository}  generic"
 	git clone ${wsgd_wsgd_repository}  generic
-	wsgd_check_execution_ok  "wsgd clone"
-	wsgd_check_dir  generic 
+	wsgd__check_execution_ok  "wsgd clone"
+	wsgd__check_dir  generic 
 fi
 
-wsgd_cd  generic
+wsgd__cd  generic
 wsgd_wsgd_src_dir=$(pwd)
 
 
 if [ ! -e CMakeLists.txt ]
 then
-	echo wsgd: cp -p  ${wsgd_wsgd_CMakeLists}  CMakeLists.txt
+	wsgd__echo "cp -p  ${wsgd_wsgd_CMakeLists}  CMakeLists.txt"
 	cp -p  ${wsgd_wsgd_CMakeLists}  CMakeLists.txt
-	wsgd_check_exists  CMakeLists.txt
+	wsgd__check_exists  CMakeLists.txt
 fi
 
 if [ ! -e cmake_wireshark_version_number.cmake ]
 then
-	echo wsgd: Copy/edit wsgd cmake_wireshark_version_number.cmake
+	wsgd__echo "Copy/edit wsgd cmake_wireshark_version_number.cmake"
 	cp -p  cmake_wireshark_version_number.cmake.example  cmake_wireshark_version_number.cmake
-	wsgd_check_exists  cmake_wireshark_version_number.cmake
+	wsgd__check_exists  cmake_wireshark_version_number.cmake
 	sed -i s/-DWIRESHARK_VERSION_NUMBER=...../-DWIRESHARK_VERSION_NUMBER=${wsgd_WIRESHARK_VERSION_NUMBER}/  cmake_wireshark_version_number.cmake
 fi
 
 
-wsgd_cd  ${wsgd_wireshark_src_dir}
+wsgd__cd  ${wsgd_wireshark_src_dir}
 
 
-[ ! -e CMakeLists.txt ] && echo wsgd: File CMakeLists.txt not found !    && exit 1
+[ ! -e CMakeLists.txt ] && wsgd__echo "File CMakeLists.txt not found !"    && exit 1
 grep  "${wsgd_wireshark_src_plugin_subdir}/generic"  CMakeLists.txt
 if [ $? -ne 0 ]
 then
     if [ ! -e CMakeLists.txt.generic ]
 	then
-		echo wsgd: Save CMakeLists.txt to CMakeLists.txt.generic
+		wsgd__echo "Save CMakeLists.txt to CMakeLists.txt.generic"
 		cp -p CMakeLists.txt CMakeLists.txt.generic
-		wsgd_check_exists  CMakeLists.txt.generic
+		wsgd__check_exists  CMakeLists.txt.generic
 	fi
 	
-	echo wsgd: Add ${wsgd_wireshark_src_plugin_subdir}/generic to wireshark CMakeLists.txt
+	wsgd__echo "Add ${wsgd_wireshark_src_plugin_subdir}/generic to wireshark CMakeLists.txt"
 	awk -v wsgd_wireshark_src_plugin_subdir=${wsgd_wireshark_src_plugin_subdir} '{ if (index($0, "gryphon") > 0) { printf("\t\t%s/generic\n", wsgd_wireshark_src_plugin_subdir); print; next } else { print; }}' CMakeLists.txt.generic > CMakeLists.txt
 
 	grep  "${wsgd_wireshark_src_plugin_subdir}/generic"  CMakeLists.txt
 	if [ $? -ne 0 ]
 	then
-		echo wsgd: Fail to add ${wsgd_wireshark_src_plugin_subdir}/generic to wireshark CMakeLists.txt
+		wsgd__echo "Fail to add ${wsgd_wireshark_src_plugin_subdir}/generic to wireshark CMakeLists.txt"
 		exit 1
 	fi
 fi
 
 # Build
-echo wsgd: wireshark+wsgd cmake .
+wsgd__echo "wireshark+wsgd cmake ."
 cmake .
-wsgd_check_execution_ok  "wireshark+wsgd cmake"
+wsgd__check_execution_ok  "wireshark+wsgd cmake"
 
-echo wsgd: wireshark+wsgd make
+wsgd__echo "wireshark+wsgd make"
 make
-wsgd_check_execution_ok  "wireshark+wsgd make"
+wsgd__check_execution_ok  "wireshark+wsgd make"
 
 # Check generic.so
 # Check byte_interpret (not necessary for wireshark)
 # Check unitary_tests (not necessary for wireshark)
-wsgd_check_exists      run/${wsgd_wireshark_lib_plugin_subdir}/generic.so    "is present"
-wsgd_check_executable  run/byte_interpret                                    "is present"
-wsgd_check_executable  run/unitary_tests                                     "is present"
+wsgd__check_exists      run/${wsgd_wireshark_lib_plugin_subdir}/generic.so    "is present"
+wsgd__check_executable  run/byte_interpret                                    "is present"
+wsgd__check_executable  run/unitary_tests                                     "is present"
 
 
 ################################################################################
 ### unitary_tests
 ################################################################################
-wsgd_cd  ${wsgd_wsgd_src_dir}
+wsgd__cd  ${wsgd_wsgd_src_dir}
 
-echo wsgd: ${wsgd_wireshark_src_dir}/run/unitary_tests
+wsgd__echo "${wsgd_wireshark_src_dir}/run/unitary_tests"
 ${wsgd_wireshark_src_dir}/run/unitary_tests
-wsgd_check_execution_ok  "unitary_tests"
+wsgd__check_execution_ok  "unitary_tests"
 
 
-echo wsgd: Done
+wsgd__echo "Done"
