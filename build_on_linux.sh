@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # For wireshark >= 2.4
-# Script for build wireshark and wsgd
-# More precise script sequence is displayed when  you launch it
+# Script for clone/build wireshark and clone/build wsgd
+# More precise script sequence is displayed when you launch it
  
 # This script has been tested on :
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.2
