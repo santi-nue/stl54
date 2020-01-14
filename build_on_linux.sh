@@ -129,6 +129,8 @@ fi
 ################################################################################
 ### Script sequence
 ################################################################################
+install_packages_disabled="DISABLED: "
+[ "${wsgd_os_install_packages}" == "yes" ] && install_packages_disabled=""
 
 echo "For wireshark >= 2.4"
 echo
