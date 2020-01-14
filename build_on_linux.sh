@@ -54,7 +54,7 @@ wsgd__cd_create_if_not_exist ()
 {
 	l_wsgd_dir_name=$1
 	
-	[ ! -d "${l_wsgd_dir_name}" ] && wsgd__echo "Create directory ${l_wsgd_dir_name}" && mkdir ${l_wsgd_dir_name}
+	[ ! -d "${l_wsgd_dir_name}" ] && wsgd__echo "Create directory ${l_wsgd_dir_name}" && mkdir -p ${l_wsgd_dir_name}
 	wsgd__cd  ${l_wsgd_dir_name}
 }
 
@@ -108,6 +108,8 @@ wsgd__check_executable ()
 [ -z "${wsgd_wireshark_repository}" ]        && wsgd_wireshark_repository=https://code.wireshark.org/review/wireshark
 [ -z "${wsgd_clone_wireshark_repository}" ]  && wsgd_clone_wireshark_repository="git  clone  ${wsgd_wireshark_repository}"
 
+# Directory where to clone
+[  -z "${wsgd_dev_base_dir}" ]         && wsgd_dev_base_dir=~/wireshark/dev
 
 # Compute other configuration
 [ -z "${wsgd_wireshark_src_subdir}" ]        && wsgd_wireshark_src_subdir=git-${wsgd_wireshark_branch}--linux${wsgd_os_bits}
@@ -131,8 +133,8 @@ fi
 echo "For wireshark >= 2.4"
 echo
 echo "Script sequence (specific values depends on configuration) :"
-echo "- install every package mandatory to build wireshark"
-echo "- cd  ~/wireshark/dev                           create it if does not exist"
+echo "- ${install_packages_disabled}install every package mandatory to build wireshark"
+echo "- cd  ${wsgd_dev_base_dir}                        create it if does not exist"
 echo
 echo "- if  ${wsgd_wireshark_src_subdir}  does not exist"
 echo "  - ${wsgd_clone_wireshark_repository}   ${wsgd_wireshark_src_subdir}"
@@ -172,6 +174,8 @@ echo wsgd_WIRESHARK_VERSION_NUMBER = ${wsgd_WIRESHARK_VERSION_NUMBER}
 echo wsgd_wsgd_repository = ${wsgd_wsgd_repository}
 echo wsgd_wireshark_repository = ${wsgd_wireshark_repository}
 echo wsgd_clone_wireshark_repository = ${wsgd_clone_wireshark_repository}
+
+echo wsgd_dev_base_dir = ${wsgd_dev_base_dir}
 
 echo wsgd_wireshark_src_subdir = ${wsgd_wireshark_src_subdir}
 echo wsgd_wsgd_CMakeLists = ${wsgd_wsgd_CMakeLists}
@@ -288,9 +292,7 @@ fi
 ################################################################################
 ### build wireshark
 ################################################################################
-wsgd__cd  ~
-wsgd__cd_create_if_not_exist  wireshark
-wsgd__cd_create_if_not_exist  dev
+wsgd__cd_create_if_not_exist  ${wsgd_dev_base_dir}
 
 # Clone wireshark sources
 if [ ! -d "${wsgd_wireshark_src_subdir}" ]
