@@ -5,6 +5,7 @@
 # More precise script sequence is displayed when you launch it
  
 # This script has been tested on :
+# - CentOS 7.6         (wsl)    wireshark 2.4 to 3.2
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.2
 # - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.2
 
@@ -193,6 +194,8 @@ read -p "wsgd: Type Enter to continue ..."
 ################################################################################
 ### build wireshark : packages
 ################################################################################
+wsgd_cmake=cmake
+
 if [ "${wsgd_os_install_packages}" == "yes" ]
 then
 	if [ "${wsgd_os_name}" == "ubuntu" ] || [ "${wsgd_os_name}" == "kali" ]
@@ -239,9 +242,12 @@ then
 
 		sudo yum --assumeyes install epel-release
 		sudo yum --assumeyes install cmake3
+		sudo yum --assumeyes install gcc-c++
 
 		sudo yum --assumeyes install libgcrypt-devel
 		sudo yum --assumeyes install glib2-devel
+		sudo yum --assumeyes install flex
+		sudo yum --assumeyes install bison
 
 		sudo yum --assumeyes install qt5-qttools
 		sudo yum --assumeyes install qt5-qtbase-devel
@@ -253,7 +259,7 @@ then
 		sudo yum --assumeyes install zlib-devel
 		sudo yum --assumeyes install harfbuzz-devel.x86_64
 
-		alias cmake="cmake3"
+		wsgd_cmake=cmake3
 
 		wsgd_os_install_packages=
 	fi
@@ -267,6 +273,7 @@ then
 		sudo zypper --non-interactive in git
 
 		sudo zypper --non-interactive in cmake
+		sudo zypper --non-interactive in gcc-c++
 		sudo zypper --non-interactive in glib2-devel
 		sudo zypper --non-interactive in libgcrypt-devel
 		sudo zypper --non-interactive in flex
@@ -290,6 +297,13 @@ then
 		read -p "wsgd: Type Enter to continue ..."
 	fi
 fi
+
+# Check/search cmake
+! type ${wsgd_cmake} 2>/dev/null && wsgd_cmake=""
+[ -z ${wsgd_cmake} ] && type cmake3 2>/dev/null  && wsgd_cmake=cmake3
+[ -z ${wsgd_cmake} ] && type cmake  2>/dev/null  && wsgd_cmake=cmake
+[ -z ${wsgd_cmake} ] && wsgd__echo "cmake/cmake3 not found"
+
 
 ################################################################################
 ### build wireshark
@@ -317,9 +331,9 @@ fi
 wsgd_wireshark_src_dir=$(pwd)
 
 # Build
-wsgd__echo "wireshark cmake ."
-cmake .
-wsgd__check_execution_ok  "wireshark cmake"
+wsgd__echo "wireshark ${wsgd_cmake} ."
+${wsgd_cmake} .
+wsgd__check_execution_ok  "wireshark ${wsgd_cmake}"
 
 wsgd__echo "wireshark make"
 make
@@ -389,9 +403,9 @@ then
 fi
 
 # Build
-wsgd__echo "wireshark+wsgd cmake ."
-cmake .
-wsgd__check_execution_ok  "wireshark+wsgd cmake"
+wsgd__echo "wireshark+wsgd ${wsgd_cmake} ."
+${wsgd_cmake} .
+wsgd__check_execution_ok  "wireshark+wsgd ${wsgd_cmake}"
 
 wsgd__echo "wireshark+wsgd make"
 make
