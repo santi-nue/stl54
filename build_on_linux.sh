@@ -89,9 +89,19 @@ wsgd__check_executable ()
 ################################################################################
 
 # Set os version
-[ -z "${wsgd_os_bits}" ]  && wsgd_os_bits=64
-[ -z "${wsgd_os_name}" ]  && wsgd_os_name=ubuntu    # ubuntu, kali, opensuse, centos
-[ -z "${wsgd_os_wsl}" ]   && wsgd_os_wsl=""         # set wsl if run on Windows Subsystem for Linux
+if [ -z "${wsgd_os_bits}" ]
+then
+	wsgd_os_bits=64
+	uname -a | grep -i x86_64
+	[ $? -ne 0 ] && wsgd_os_bits=32
+fi
+[ -z "${wsgd_os_name}" ]  && wsgd_os_name=$(cat /etc/os-release | grep "^ID=" | sed -e "s/ID=//" | sed -e 's/"//g')
+if [ -z "${wsgd_os_wsl}" ]
+then
+	wsgd_os_wsl="native"
+	uname -a | grep -i Microsoft
+	[ $? -eq 0 ] && wsgd_os_wsl="wsl"       # Windows Subsystem for Linux
+fi
 
 [ -z "${wsgd_os_install_packages}" ]  && wsgd_os_install_packages="yes"
 [ X"$1" == X"--packages:yes" ]        && wsgd_os_install_packages="yes"
@@ -99,8 +109,8 @@ wsgd__check_executable ()
 
 # Set wirewhark version
 [ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=302XX
-[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v3.2.0
 [ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=3.2
+[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v3.2.0
 [ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=30200
 
 
@@ -264,7 +274,7 @@ then
 		wsgd_os_install_packages=
 	fi
 
-	if [ "${wsgd_os_name}" == "opensuse" ]
+	if [ "${wsgd_os_name}" == "opensuse-leap" ]
 	then
 		#-------------------------------------------------------------------------------
 		#-- openSUSE Leap 15-1
