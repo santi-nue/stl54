@@ -3836,6 +3836,22 @@ bool    ut_interpret_bytes_base (const T_type_definitions  & type_definitions,
 bool  S_ut_interpret_bytes_decode_nothing = true;
 bool  S_ut_interpret_bytes_debug          = false;
 
+class C_ut_interpret_bytes_no_decode_guard
+{
+public:
+    C_ut_interpret_bytes_no_decode_guard()
+        : _S_ut_interpret_bytes_decode_nothing_saved(S_ut_interpret_bytes_decode_nothing)
+    {
+		S_ut_interpret_bytes_decode_nothing = false;
+    }
+    ~C_ut_interpret_bytes_no_decode_guard()
+    {
+		S_ut_interpret_bytes_decode_nothing = _S_ut_interpret_bytes_decode_nothing_saved;
+    }
+private:
+    bool    _S_ut_interpret_bytes_decode_nothing_saved;
+};
+
 void ut_interpret_bytes (const T_type_definitions  & type_definitions,
                          const T_byte_vector       & in_byte_vector,
                          const string              & in_input_string,
@@ -4268,6 +4284,43 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
                   "val[9] = 83" K_eol
                   "val[10] = 84" K_eol
                   "val[11] = 83" K_eol);
+    {
+        C_ut_interpret_bytes_no_decode_guard  uibndg;    // [*] & [+] rejected with decode
+        M_TEST_SIMPLE("4249472d5245515545535453",
+                      "uint8[*]  val ;",
+                      "val[0] = 66" K_eol
+                      "val[1] = 73" K_eol
+                      "val[2] = 71" K_eol
+                      "val[3] = 45" K_eol
+                      "val[4] = 82" K_eol
+                      "val[5] = 69" K_eol
+                      "val[6] = 81" K_eol
+                      "val[7] = 85" K_eol
+                      "val[8] = 69" K_eol
+                      "val[9] = 83" K_eol
+                      "val[10] = 84" K_eol
+                      "val[11] = 83" K_eol);
+        M_TEST_SIMPLE("4249472d5245515545535453",
+                      "uint8[+]  val ;",
+                      "val[0] = 66" K_eol
+                      "val[1] = 73" K_eol
+                      "val[2] = 71" K_eol
+                      "val[3] = 45" K_eol
+                      "val[4] = 82" K_eol
+                      "val[5] = 69" K_eol
+                      "val[6] = 81" K_eol
+                      "val[7] = 85" K_eol
+                      "val[8] = 69" K_eol
+                      "val[9] = 83" K_eol
+                      "val[10] = 84" K_eol
+                      "val[11] = 83" K_eol);
+        M_TEST_SIMPLE("",
+                      "uint8[*]  val ;",
+                      "");
+        M_TEST_SIMPLE("42",
+                      "uint8[+]  val ;",
+                      "val[0] = 66" K_eol);
+    }
     M_TEST_SIMPLE("4249472d5245515545535453" "4249472d5245515545535453",
                   "uint8[24]  val ;",
                   "val[0] = 66" K_eol
@@ -4876,8 +4929,7 @@ void    test_interpret_simple_internal_frame()
     //*************************************************************************
     interpret_data.set_decode_function("decode_invert_4_bytes");  // read 4 bytes and invert them
 
-    const bool  save_S_ut_interpret_bytes_decode_nothing = S_ut_interpret_bytes_decode_nothing;
-    S_ut_interpret_bytes_decode_nothing = false;
+    C_ut_interpret_bytes_no_decode_guard  uibndg;
 
     // Bytes inverted by decoder
     M_TEST_SIMPLE("776a3fe2",    // e23f6a77
@@ -4999,9 +5051,6 @@ void    test_interpret_simple_internal_frame()
                   "00000000 : 2d 47 49                                         - -GI             " K_eol
                   "val2 = " K_eol
                   "00000000 : 42 55 51 45 52 53 54 53 45                       - BUQERSTSE       " K_eol);
-
-
-    S_ut_interpret_bytes_decode_nothing = save_S_ut_interpret_bytes_decode_nothing;
 }
 
 //*****************************************************************************
@@ -5082,8 +5131,6 @@ void    test_interpret_forget()
 
 void    test_interpret_msg(int   msg_to_test = -1)
 {
-//	S_ut_interpret_bytes_decode_nothing = false;  // ICIOA temp
-
     // Messages which come from example_with_capture.pcap
     // The number are the packet's number.
     T_byte_vector    msg_1_frame;
