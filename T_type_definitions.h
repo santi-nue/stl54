@@ -562,6 +562,9 @@ struct T_type_definitions
         E_type_function
     };
 
+    // trailer size: used only for [*] [+] (*)
+    int                                   trailer_sizeof_bits;
+
     typedef map<string,E_type_kind>     T_map_forward_type;
     T_map_forward_type                    map_forward_type;
 
@@ -704,6 +707,8 @@ struct T_type_definitions
     void    could_define_new_type(const string      & type_name,
                                   const E_type_kind   type_kind,
                                   const E_override    must_override = E_override_no) const;
+
+    T_type_definitions();
 };
 
 ostream &  operator<< (ostream                          & os,

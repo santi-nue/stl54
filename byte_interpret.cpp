@@ -2551,10 +2551,17 @@ bool    frame_to_field_other(
             }
         }
 
+        // Take care of trailer only when [*] or [+]
+        // In other cases :
+        // - trailer is not our problem, it should be read normally
+        // - and so, we can be inside the trailer
+        const long  trailer_sizeof_bits = (number_of_elements == LONG_MAX) ? type_definitions.trailer_sizeof_bits : 0;
+
         // Read all elements of all arrays (1 elt if no array).
         for (long  element_idx = 0; element_idx < number_of_elements; ++element_idx)
         {
             const long    sizeof_bits = in_out_frame_data.get_remaining_bits();
+            const long    without_trailer_sizeof_bits = sizeof_bits - trailer_sizeof_bits;
 
             // Compute data_simple_array_name
             string  new_data_array_name    = new_data_name;
@@ -2572,7 +2579,7 @@ bool    frame_to_field_other(
             // Check remaining data size
             // Only for array and not for variable.
             // Only if no decode or decode in progress.   2011/03/31
-            if ((sizeof_bits <= 0) &&
+            if ((without_trailer_sizeof_bits <= 0) &&
                 (is_an_array == true) &&
                 (field_type_name.is_a_variable() == false) &&
                 ((interpret_data.must_decode() == false) ||
@@ -5344,7 +5351,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
 
         if (str_string_size == "*")
         {
-            string_size = frame_data_byte_size;
+            string_size = frame_data_byte_size - (type_definitions.trailer_sizeof_bits / 8);
         }
 
         if (frame_data_byte_size < string_size)

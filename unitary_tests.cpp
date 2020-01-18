@@ -5054,6 +5054,78 @@ void    test_interpret_simple_internal_frame()
 }
 
 //*****************************************************************************
+// test_interpret_simple_trailer
+//*****************************************************************************
+
+void    test_interpret_simple_trailer()
+{
+    T_type_definitions    type_definitions;
+    build_types ("unitary_tests_basic.fdesc",
+                 type_definitions);
+
+    T_interpret_data      interpret_data;
+
+	type_definitions.trailer_sizeof_bits = 24;
+#define K_TRAILER_INPUT   "767778"
+#define K_TRAILER_READ    "uint8[3]  trailer ;"
+#define K_TRAILER_OUTPUT  "trailer[0] = 118" K_eol "trailer[1] = 119" K_eol "trailer[2] = 120" K_eol
+
+    {
+        M_TEST_SIMPLE("4249472d5245515545535453" K_TRAILER_INPUT,
+                      "raw(*)  val ;" K_TRAILER_READ,
+                      "val = " K_eol
+                      "00000000 : 42 49 47 2d 52 45 51 55 45 53 54 53              - BIG-REQUESTS    " K_eol
+                      K_TRAILER_OUTPUT);
+        M_TEST_SIMPLE("" K_TRAILER_INPUT,
+                      "raw(*)  val ;" K_TRAILER_READ,
+                      ""
+                      K_TRAILER_OUTPUT);
+    }
+
+    {
+        C_ut_interpret_bytes_no_decode_guard  uibndg;    // [*] & [+] rejected with decode
+        M_TEST_SIMPLE("4249472d5245515545535453" K_TRAILER_INPUT,
+                      "uint8[*]  val ;" K_TRAILER_READ,
+                      "val[0] = 66" K_eol
+                      "val[1] = 73" K_eol
+                      "val[2] = 71" K_eol
+                      "val[3] = 45" K_eol
+                      "val[4] = 82" K_eol
+                      "val[5] = 69" K_eol
+                      "val[6] = 81" K_eol
+                      "val[7] = 85" K_eol
+                      "val[8] = 69" K_eol
+                      "val[9] = 83" K_eol
+                      "val[10] = 84" K_eol
+                      "val[11] = 83" K_eol
+                      K_TRAILER_OUTPUT);
+        M_TEST_SIMPLE("4249472d5245515545535453" K_TRAILER_INPUT,
+                      "uint8[+]  val ;" K_TRAILER_READ,
+                      "val[0] = 66" K_eol
+                      "val[1] = 73" K_eol
+                      "val[2] = 71" K_eol
+                      "val[3] = 45" K_eol
+                      "val[4] = 82" K_eol
+                      "val[5] = 69" K_eol
+                      "val[6] = 81" K_eol
+                      "val[7] = 85" K_eol
+                      "val[8] = 69" K_eol
+                      "val[9] = 83" K_eol
+                      "val[10] = 84" K_eol
+                      "val[11] = 83" K_eol
+                      K_TRAILER_OUTPUT);
+        M_TEST_SIMPLE("" K_TRAILER_INPUT,
+                      "uint8[*]  val ;" K_TRAILER_READ,
+                      ""
+                      K_TRAILER_OUTPUT);
+        M_TEST_SIMPLE("42" K_TRAILER_INPUT,
+                      "uint8[+]  val ;" K_TRAILER_READ,
+                      "val[0] = 66" K_eol
+                      K_TRAILER_OUTPUT);
+    }
+}
+
+//*****************************************************************************
 // test_is_existing_field_or_variable
 //*****************************************************************************
 
@@ -5379,6 +5451,7 @@ int   main(const int         argc,
         M_TEST_FCT(test_interpret_simple_int64);
         M_TEST_FCT(test_interpret_simple_uint8_array);
         M_TEST_FCT(test_interpret_simple_internal_frame);
+        M_TEST_FCT(test_interpret_simple_trailer);
         M_TEST_FCT(test_is_existing_field_or_variable);
         M_TEST_FCT(test_interpret_forget);
         M_TEST_FCT(test_interpret_msg);

@@ -731,6 +731,7 @@ void    read_file_wsgd (const string                   & wsgd_file_name,
         M_READ_VALUE(MSG_TO_MAIN_TYPE)
         M_READ_LINE(MSG_TOTAL_LENGTH)
         M_READ_VALUE(MSG_HEADER_LENGTH)
+        M_READ_VALUE(MSG_TRAILER_LENGTH)
         M_READ_VALUE(GLOBAL_DATA_TYPE)
         M_READ_BOOL(PACKET_CONTAINS_ONLY_1_MSG)
         M_READ_BOOL(PACKET_CONTAINS_ONLY_COMPLETE_MSG)
@@ -739,6 +740,11 @@ void    read_file_wsgd (const string                   & wsgd_file_name,
         {
             M_FATAL_COMMENT("unexpected keyword=" << keyword);
         }
+    }
+
+    if (protocol_data.MSG_TRAILER_LENGTH > 0)
+    {
+        protocol_data.type_definitions.trailer_sizeof_bits = protocol_data.MSG_TRAILER_LENGTH * 8;
     }
 
     // Read the type definitions of the protocol.

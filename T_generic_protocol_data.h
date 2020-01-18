@@ -247,6 +247,7 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
   string            MSG_TO_MAIN_TYPE;
   string            MSG_TOTAL_LENGTH;
   int               MSG_HEADER_LENGTH;
+  int               MSG_TRAILER_LENGTH;
 
   string            GLOBAL_DATA_TYPE;
 
@@ -257,12 +258,13 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
   T_generic_protocol_ws_data    ws_data;
 
   T_generic_protocol_data()
-      :proto_idx(-1),
-       DEBUG(E_debug_status_OFF),
-       PACKET_CONTAINS_ONLY_1_MSG(false),
-       PACKET_CONTAINS_ONLY_COMPLETE_MSG(false),
-       MANAGE_WIRESHARK_PINFO(false),
-       MSG_HEADER_LENGTH(-1)
+      : proto_idx(-1)
+      , DEBUG(E_debug_status_OFF)
+      , PACKET_CONTAINS_ONLY_1_MSG(false)
+      , PACKET_CONTAINS_ONLY_COMPLETE_MSG(false)
+      , MANAGE_WIRESHARK_PINFO(false)
+      , MSG_HEADER_LENGTH(-1)
+      , MSG_TRAILER_LENGTH(-1)
   { }
 };
 
