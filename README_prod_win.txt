@@ -1,5 +1,37 @@
 
-Instructions for old versions
+********************************************************************************
+*** Instructions for wireshark >= 2.4
+********************************************************************************
+Example for 3.2.0
+
+1) you need to have a wireshark tree
+- Download wireshark source files (with git or ...)
+- Generate wireshark following instructions ...
+--> <wireshark build directory>/run/wireshark
+
+2) clone wsgd
+cd  <wireshark sources dir>/plugins/epan
+git clone https://gitlab.com/wsgd/wsgd.git  generic
+
+3) Configure generic directory
+cd  generic
+copy  CMakeLists.302XX.txt  CMakeLists.txt
+copy  cmake_wireshark_version_number.cmake.example  cmake_wireshark_version_number.cmake
+Edit cmake_wireshark_version_number.cmake to set 30200
+
+4) Configure wireshark CMakeLists.txt
+cd  ../../..
+Edit CMakeLists.txt to add a generic line just before the gryphon line
+
+5) Generate again wireshark
+--> <wireshark build directory>/run/plugins/3.2/epan/generic.so
+
+
+
+
+********************************************************************************
+*** Instructions for old versions
+********************************************************************************
 
 1) you need to have a wireshark tree
 - Download wireshark source files (with git or ...)

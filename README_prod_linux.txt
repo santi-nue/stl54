@@ -1,5 +1,17 @@
 
-Instructions for old versions
+********************************************************************************
+*** Instructions for wireshark >= 2.4
+********************************************************************************
+
+See build_on_linux.sh
+Or see README_prod_302_on_linux.txt
+
+
+
+
+********************************************************************************
+*** Instructions for old versions
+********************************************************************************
 
 1) you need to have a wireshark tree
 - Download wireshark source files (with git or ...)
