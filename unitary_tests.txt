@@ -1,9 +1,0 @@
-
-Temps d'execution total des TU
-
-Heure commit		moyenne								Hash commit									Description commit
-24/02/2019 19:25:12	   1105		1085, 1117, 1113		d878941a6e70a1e6a206973f1fda4bfbb4bf8dee	Add UT for out & in_out function parameters
-24/02/2019 12:37:11	   1013		1025, 1008, 1005		9e51f904a462cee5763c6f31b4073417baed64eb	C_value.transformed becomes RCP
-24/02/2019 12:34:04		970		1004,  930,  976		74c23b23016b6cdf23d73a7f30bc8300dc8694ed	Remove useless method and use swap
-23/02/2019 21:48:07		990		 993,  986,  990		933201d9d66263d3e6ba438b4b198c48b82ba5e6	Indentation, remove old code
-
