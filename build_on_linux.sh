@@ -2,12 +2,14 @@
 
 # For wireshark >= 2.4
 # Script for clone/build wireshark and clone/build wsgd
+# sudo is used for install packages mandatory to build wireshark
 # More precise script sequence is displayed when you launch it
  
 # This script has been tested on :
 # - CentOS 7.6         (wsl)    wireshark 2.4 to 3.2
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.2
 # - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.2
+# - Ubuntu 20.04       (wsl)    wireshark        3.2
 
 
 ################################################################################
@@ -211,7 +213,7 @@ then
 	if [ "${wsgd_os_name}" == "ubuntu" ] || [ "${wsgd_os_name}" == "kali" ]
 	then
 		#-------------------------------------------------------------------------------
-		#-- Ubuntu 18.04
+		#-- Ubuntu 18.04 ...
 		#-- Kali 2019.2
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
@@ -233,9 +235,10 @@ then
 		sudo apt-get --assume-yes install libpcap-dev
 
 
-		if [ "${wsgd_os_name}" == "kali" ] && [ "${wsgd_os_wsl}" == "wsl" ]
+		if [ "${wsgd_os_wsl}" == "wsl" ]
 		then
-			echo "wsgd: fix make (and wireshark ...) will fail to find libQt5Core.so"
+			# Problem seen on Kali 2019.2 & Ubuntu 20.04
+			wsgd__echo "fix make (and wireshark ...) will fail to find libQt5Core.so"
 			sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so
 		fi
 		
