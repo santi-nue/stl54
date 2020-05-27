@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -93,9 +93,9 @@ long    perf_time_diff_ms(const T_perf_time  & timeb_val_lhs,
     long  diff_total_ms = (timeb_val_lhs.A_perf_time.time - timeb_val_rhs.A_perf_time.time) * 1000 + (timeb_val_lhs.A_perf_time.millitm - timeb_val_rhs.A_perf_time.millitm);
 #else
 #ifdef  WSGD_USE_TIMES
-    long  diff_total_ms = (timeb_val_lhs.A_perf_times - timeb_val_rhs.A_perf_times) * 1000 / WSGD_CLK_TCK;	
+    long  diff_total_ms = (timeb_val_lhs.A_perf_times - timeb_val_rhs.A_perf_times) * 1000 / WSGD_CLK_TCK;
 #else
-    long  diff_total_ms = (timeb_val_lhs.A_perf_clock - timeb_val_rhs.A_perf_clock) * 1000 / WSGD_CLK_TCK;	
+    long  diff_total_ms = (timeb_val_lhs.A_perf_clock - timeb_val_rhs.A_perf_clock) * 1000 / WSGD_CLK_TCK;
 #endif
 #endif
     return  diff_total_ms;

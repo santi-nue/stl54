@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -355,8 +355,8 @@ void    post_build_field_base (
                     if (idx_sep != string::npos)
                     {
                         M_FATAL_COMMENT("Bad transform specification (" << str_display_or_transform << ") : do NOT accept anything after offset");
-//							M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "q=", 2), 0);
-//							type_definitions.set_field_transform_quantum(field_type_name, str_display_or_transform.c_str()+idx_sep+1+2);
+//                        M_FATAL_IF_NE(strncmp(str_display_or_transform.c_str()+idx_sep+1, "q=", 2), 0);
+//                        type_definitions.set_field_transform_quantum(field_type_name, str_display_or_transform.c_str()+idx_sep+1+2);
                     }
                 }
             }
@@ -1938,7 +1938,7 @@ void    build_switch (const E_override            must_override,
 {
     M_TRACE_ENTER ("build_switch", "");
 
-//	M_ASSERT_EQ (key_word, "switch");
+//    M_ASSERT_EQ (key_word, "switch");
     string    key_word = key_word_param;
 
     string  switch_name;
@@ -2646,10 +2646,10 @@ void    build_types_begin (T_type_definitions  & type_definitions)
     M_DEFINE_BUILTIN_FUNCTION("string   string.replace_all (in string  str, in string  old, in string new)");
     M_DEFINE_BUILTIN_FUNCTION("int64    string.find    (in string  str, in string  str_to_find)");
 
-//	M_DEFINE_BUILTIN_FUNCTION("void     date.get_year_from_days          (in uint16{min=1583} ref_year, in uint32 number_of_days   , out uint16 year, out uint16 number_of_days_in_year)");
-//	M_DEFINE_BUILTIN_FUNCTION("void     date.get_year_from_seconds       (in uint16{min=1583} ref_year, in uint40 number_of_seconds, out uint16 year, out uint32 number_of_seconds_in_year)");
-//	M_DEFINE_BUILTIN_FUNCTION("void     date.get_month_from_year_days    (in uint16{min=1583} year, in uint16 number_of_days_in_year   , out uint8 month, out uint8 day)");
-//	M_DEFINE_BUILTIN_FUNCTION("void     date.get_month_from_year_seconds (in uint16{min=1583} year, in uint32 number_of_seconds_in_year, out uint8 month, out uint8 day, out uint32 number_of_seconds_in_day)");
+//    M_DEFINE_BUILTIN_FUNCTION("void     date.get_year_from_days          (in uint16{min=1583} ref_year, in uint32 number_of_days   , out uint16 year, out uint16 number_of_days_in_year)");
+//    M_DEFINE_BUILTIN_FUNCTION("void     date.get_year_from_seconds       (in uint16{min=1583} ref_year, in uint40 number_of_seconds, out uint16 year, out uint32 number_of_seconds_in_year)");
+//    M_DEFINE_BUILTIN_FUNCTION("void     date.get_month_from_year_days    (in uint16{min=1583} year, in uint16 number_of_days_in_year   , out uint8 month, out uint8 day)");
+//    M_DEFINE_BUILTIN_FUNCTION("void     date.get_month_from_year_seconds (in uint16{min=1583} year, in uint32 number_of_seconds_in_year, out uint8 month, out uint8 day, out uint32 number_of_seconds_in_day)");
     M_DEFINE_BUILTIN_FUNCTION("string   date.get_string_from_days    (in uint16{min=1583} ref_year, in uint32 number_of_days)");
     M_DEFINE_BUILTIN_FUNCTION("string   date.get_string_from_seconds (in uint16{min=1583} ref_year, in uint40 number_of_seconds)");
 
@@ -2916,19 +2916,19 @@ string    build_types2 (istream             & is,
 string    build_types (istream             & is,
                        T_type_definitions  & type_definitions)
 {
-  // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
-  // change the locale for LC_NUMERIC (so 0.236 is a valid number)
-  const char  * locale_save = setlocale(LC_NUMERIC, "C");
+    // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
+    // change the locale for LC_NUMERIC (so 0.236 is a valid number)
+    const char  * locale_save = setlocale(LC_NUMERIC, "C");
 
-  const string  NOT_understood_word = build_types2 (is, type_definitions);
+    const string  NOT_understood_word = build_types2 (is, type_definitions);
 
-  // restore the saved locale
-  setlocale(LC_NUMERIC, locale_save);
+    // restore the saved locale
+    setlocale(LC_NUMERIC, locale_save);
 
-  build_types_finalize(type_definitions);
+    build_types_finalize(type_definitions);
 
 
-  return  NOT_understood_word;
+    return  NOT_understood_word;
 }
 
 //****************************************************************************

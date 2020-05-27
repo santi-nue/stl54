@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1129,7 +1129,7 @@ C_value  string_count_cpp_to_fdesc(const string::size_type  cpp_count)
     // So use UINT32_MAX instead.
     // - good : can     use  uint32 = string.find(...) 
     // - bad  : can NOT use  string.find(...) < 0
-//	const long long        count = (cpp_count == string::npos) ? -1LL : cpp_count;
+//    const long long        count = (cpp_count == string::npos) ? -1LL : cpp_count;
     const long long        count = (cpp_count == string::npos) ? UINT32_MAX : cpp_count;
     C_value          fdesc_count(count);
 
@@ -1372,12 +1372,12 @@ T_expression::compute_expression_function(
     {
         A_value = * P_parameter_values[0];
 
-//			A_value = A_value.get_str().find(str, idx);
-//			A_value = A_value.get_str().find_first_not_of(str,idx);
-//			A_value = A_value.get_str().find_first_of(str,idx);
-//			A_value = A_value.get_str().find_last_not_of(str,idx);
-//			A_value = A_value.get_str().find_last_of(str,idx);
-//			A_value = A_value.get_str().rfind(str,idx);
+//        A_value = A_value.get_str().find(str, idx);
+//        A_value = A_value.get_str().find_first_not_of(str,idx);
+//        A_value = A_value.get_str().find_first_of(str,idx);
+//        A_value = A_value.get_str().find_last_not_of(str,idx);
+//        A_value = A_value.get_str().find_last_of(str,idx);
+//        A_value = A_value.get_str().rfind(str,idx);
     }
 #endif
     else
@@ -1445,7 +1445,7 @@ T_expression::compute_expression_operation(
     // compute     : minimal computation
     //               for condition/logical operators
 
-    if (A_operation == E_operation_condition)	// operator ? :
+    if (A_operation == E_operation_condition)   // operator ? :
     {
         bool  condition = true;
         if ((pre_compute == false) || (pre_compute_result_left == true))
@@ -1588,8 +1588,8 @@ T_expression::compute_expression_operation(
         }
     }
 
-//	if (pre_compute && pre_compute_result)
-//	{
-//		A_value_alreay_computed = true;
-//	}
+//    if (pre_compute && pre_compute_result)
+//    {
+//        A_value_alreay_computed = true;
+//    }
 }

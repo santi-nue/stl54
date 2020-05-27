@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -97,7 +97,7 @@ struct T_frame_data : public CT_debug_object_counter<T_frame_data>
 
 
     // Interface dedicated to T_decode_stream_frame
-    void		 n_bits_data_appended(long    n_bits) { A_initial_sizeof_bits += n_bits; A_remaining_bits += n_bits; }
+    void        n_bits_data_appended(long    n_bits) { A_initial_sizeof_bits += n_bits; A_remaining_bits += n_bits; }
 
 private:
 protected:

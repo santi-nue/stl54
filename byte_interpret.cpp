@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1060,7 +1060,7 @@ void    frame_append_data(T_decode_stream_frame  * P_decode_stream_frame,
         M_FATAL_COMMENT("frame_append_data no data");
     }
 
-    P_decode_stream_frame->write_less_1_byte(data, data_bit_size);		// ICIOA signed !
+    P_decode_stream_frame->write_less_1_byte(data, data_bit_size);      // ICIOA signed !
 }
 
 //*****************************************************************************
@@ -1088,7 +1088,7 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
     // Compute frame address.
     T_decode_stream_frame  * P_decode_stream_frame = NULL;
     {
-        const C_value	 & frame_value = field_type_name.fct_parameters[0].compute_expression(
+        const C_value  & frame_value = field_type_name.fct_parameters[0].compute_expression(
                                        type_definitions, interpret_data, in_out_frame_data,
                                        data_name, data_simple_name, os_out, os_err);
         if (frame_value.get_type() == C_value::E_type_integer)
@@ -1108,7 +1108,7 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
                                    data_name, data_simple_name, os_out, os_err);
     if (obj_value.get_type() == C_value::E_type_integer)
     {
-//		M_TRACE_DEBUG("obj_value.external_type=" << obj_value.get_external_type());
+//        M_TRACE_DEBUG("obj_value.external_type=" << obj_value.get_external_type());
         M_FATAL_IF_EQ(obj_value.get_external_type_bit_size(), 0);
 
         frame_append_data(P_decode_stream_frame,
@@ -1443,7 +1443,7 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
         // Copy 6 bit data into frame.
         decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded1), 6);
         nb_of_bits_needed -= 6;
-//		M_TRACE_DEBUG ("xxxx 1) -6 = ", nb_of_bits_needed);
+//        M_TRACE_DEBUG ("xxxx 1) -6 = ", nb_of_bits_needed);
 
         if ((byte_encoded4 == '=') && (byte_encoded3 == '='))
         {
@@ -1454,13 +1454,13 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
 
             decode_stream_frame.write_less_1_byte(val, nb_of_bits_available);
             nb_of_bits_needed -= nb_of_bits_available;
-//			M_TRACE_DEBUG ("xx== 2) -2 = ", nb_of_bits_needed);
+//            M_TRACE_DEBUG ("xx== 2) -2 = ", nb_of_bits_needed);
         }
         else if (byte_encoded4 == '=')
         {
             decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded2), 6);
             nb_of_bits_needed -= 6;
-//			M_TRACE_DEBUG ("xxx= 2) -6 = ", nb_of_bits_needed);
+//            M_TRACE_DEBUG ("xxx= 2) -6 = ", nb_of_bits_needed);
 
             const int  nb_of_bits_available = 4;
 
@@ -1469,19 +1469,19 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
 
             decode_stream_frame.write_less_1_byte(val, nb_of_bits_available);
             nb_of_bits_needed -= nb_of_bits_available;
-//			M_TRACE_DEBUG ("xxx= 3) -4 = ", nb_of_bits_needed);
+//            M_TRACE_DEBUG ("xxx= 3) -4 = ", nb_of_bits_needed);
         }
         else
         {
             decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded2), 6);
             nb_of_bits_needed -= 6;
-//			M_TRACE_DEBUG ("xxxx 2) -6 = ", nb_of_bits_needed);
+//            M_TRACE_DEBUG ("xxxx 2) -6 = ", nb_of_bits_needed);
             decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded3), 6);
             nb_of_bits_needed -= 6;
-//			M_TRACE_DEBUG ("xxxx 3) -6 = ", nb_of_bits_needed);
+//            M_TRACE_DEBUG ("xxxx 3) -6 = ", nb_of_bits_needed);
             decode_stream_frame.write_less_1_byte(convert_base64(byte_encoded4), 6);
             nb_of_bits_needed -= 6;
-//			M_TRACE_DEBUG ("xxxx 4) -6 = ", nb_of_bits_needed);
+//            M_TRACE_DEBUG ("xxxx 4) -6 = ", nb_of_bits_needed);
         }
     }
 
@@ -1835,7 +1835,7 @@ void    decode_data_size (
     }
 
     // Check that the decoded size is >= at the asked size
-    const long	decoded_bits = decode_stream_frame.frame_data.get_remaining_bits() - remaining_bits;
+    const long  decoded_bits = decode_stream_frame.frame_data.get_remaining_bits() - remaining_bits;
     if (decoded_bits < TYPE_BIT_SIZE)
     {
         M_FATAL_COMMENT("decoded_bits(" <<
@@ -1865,9 +1865,9 @@ void    decode_data_bytes_until (
                    const char                   * p_ending_char_2)
 {
     M_TRACE_ENTER ("decode_data_bytes_until", interpret_data.get_decode_function());
-//	M_TRACE_DEBUG("p_ending_char_x "
-//				       << (const void *)p_ending_char_1 << " and "
-//				       << (const void *)p_ending_char_2);
+//    M_TRACE_DEBUG("p_ending_char_x "
+//                  << (const void *)p_ending_char_1 << " and "
+//                  << (const void *)p_ending_char_2);
 
     C_interpret_decode_in_progress  idip(interpret_data);
 
@@ -1906,7 +1906,7 @@ void    decode_data_bytes_until (
         }
 
         // Check that the decoded size is >= at the asked size
-        const long	decoded_bits = decode_stream_frame.decoded_data_bit_size - current_decoded_data_bit_size;
+        const long  decoded_bits = decode_stream_frame.decoded_data_bit_size - current_decoded_data_bit_size;
         if (decoded_bits < 8)
         {
             M_FATAL_COMMENT("decoded_bits(" << decoded_bits << ") < 8");
@@ -1927,13 +1927,13 @@ void    decode_data_bytes_until (
             while (decode_stream_frame.frame_data.can_move_1_byte_forward() == true)
             {
                 const T_byte  decoded_byte = decode_stream_frame.frame_data.read_1_byte();
-//				M_TRACE_DEBUG("Decoded byte " << (int)decoded_byte << " 0x" << hex << (int)decoded_byte);
+//                M_TRACE_DEBUG("Decoded byte " << (int)decoded_byte << " 0x" << hex << (int)decoded_byte);
 
                 if ((decoded_byte == ending_char_1) ||
                     (decoded_byte == ending_char_2))
                 {
                     is_final_character_found = true;
-//					M_TRACE_DEBUG("found");
+//                    M_TRACE_DEBUG("found");
                     break;
                 }
             }
@@ -1943,7 +1943,7 @@ void    decode_data_bytes_until (
 
             if (is_final_character_found == true)
             {
-//				M_TRACE_DEBUG("found so break");
+//                M_TRACE_DEBUG("found so break");
                 break;
             }
         }
@@ -2615,13 +2615,13 @@ bool    frame_to_field_other(
                 // Blocks which are not VISUALLY groups
                 (field_type_name.name == "") ||                      // inline
                 (field_type_name.type == "call") ||                  // function (ie inline)
-//				(field_type_name.type == "if") ||
-//				(field_type_name.type == "while") ||
-//				(field_type_name.type == "do") ||
-//				(field_type_name.type == "do_while") ||
-//				(field_type_name.type == "loop_size_bytes") ||
-//				(field_type_name.type == "loop_size_bits") ||
-//				(field_type_name.type == "loop_nb_items") ||
+//                (field_type_name.type == "if") ||
+//                (field_type_name.type == "while") ||
+//                (field_type_name.type == "do") ||
+//                (field_type_name.type == "do_while") ||
+//                (field_type_name.type == "loop_size_bytes") ||
+//                (field_type_name.type == "loop_size_bits") ||
+//                (field_type_name.type == "loop_nb_items") ||
 
                 (field_type_name.type == "msg") ||
 
@@ -2755,7 +2755,7 @@ bool    frame_to_field_other(
                 else if (type == "switch")
                 {
                     // Inline switch
-//					if (frame_to_switch_inline (type_definitions,
+//                    if (frame_to_switch_inline (type_definitions,
                     if (frame_to_switch (type_definitions,
                                          in_out_frame_data,
                                          interpret_data,
@@ -2937,8 +2937,8 @@ bool    frame_to_struct_base (const T_type_definitions    & type_definitions,
     }
     catch (C_byte_interpret_exception_normal  & val)
     {
-//		catched_exception = val;        // slicing pb
-//		P_catched_exception = &val;     // scope pb
+//        catched_exception = val;        // slicing pb
+//        P_catched_exception = &val;     // scope pb
 
 #if 1
         // Even with a normal exception, I try to print the text.
@@ -3307,7 +3307,7 @@ void    post_treatment_value_display (
     }
     else if (field_type_name.str_display_expression != "")
     {
-//		M_TRACE_ENTER ("post_treatment_value", "display expression");
+//        M_TRACE_ENTER ("post_treatment_value", "display expression");
         const C_value &  value = attribute_value.get_value();
 
         // Add this value into the interpret_data (to be accessible inside compute_expression).
@@ -3576,7 +3576,7 @@ bool    T_expression_frame_to_function_base2 (
 
         // Compute value.
         bool       pre_compute_result_local = true;
-        C_value	   obj_value = (idx >= fct_parameters.size()) ?
+        C_value    obj_value = (idx >= fct_parameters.size()) ?
             function_parameter.get_default_value() :
             fct_parameters[idx].compute_expression(
                                     type_definitions, interpret_data, in_out_frame_data,
@@ -3647,7 +3647,7 @@ bool    T_expression_frame_to_function_base2 (
                 // string implementation could be shared,
                 //  so copy does not duplicate data and keeps the original pointer.
                 // Which means, if out parameter, that the original string will be modified !
-//				dyncall_parameter.str = obj_value.get_str();
+//                dyncall_parameter.str = obj_value.get_str();
                 // Using c_str() avoid share. Except if share implementation method works on raw pointer !
                 dyncall_parameter.str = obj_value.get_str().c_str();
                 // Called function will directly write on raw pointer of string object !
@@ -3869,7 +3869,7 @@ bool    T_expression_frame_to_function_base (
 {
     T_interpret_read_values::T_id    last_data_id = interpret_data.get_id_of_last_read_variable ();
 
-    bool	result = T_expression_frame_to_function_base2 (type_definitions,
+    bool    result = T_expression_frame_to_function_base2 (type_definitions,
                                    interpret_data,
                                    in_out_frame_data,
                                    fct_def,
@@ -4551,10 +4551,10 @@ bool    frame_to_print_any (
             os_out << final_type << " : ";
         }
 // useless because printf_result_value is a simple string
-//		if (final_type == "debug_print")
-//		{
-//			printf_result = get_string(printf_result_value);
-//		}
+//        if (final_type == "debug_print")
+//        {
+//            printf_result = get_string(printf_result_value);
+//        }
 
         os_out << printf_result << endl;
         interpret_builder_cb(type_definitions, in_out_frame_data,
@@ -4646,7 +4646,7 @@ bool    frame_to_print (
         str += "data is " + data_byte_order + " and ";
         str += "host is " + host_byte_order + " so ";
         str += "integer or float read are ";
-        str	+= interpret_data.must_invert_bytes() ? "" : "not ";
+        str += interpret_data.must_invert_bytes() ? "" : "not ";
         str += "inverted.";
 
         os_out << str << endl;
@@ -5437,7 +5437,7 @@ bool    G_is_a_variable_ICIOA = false;
             if (is_enum)                                                      \
                 type_bit_size_for_builder = -1;   /* ICIOA trick to know it is an enum !!! */    \
                                                                               \
-            obj_value = field_type_name.get_var_expression().								\
+            obj_value = field_type_name.get_var_expression().                 \
                 compute_expression(type_definitions, interpret_data, in_out_frame_data,     \
                                            data_name, data_simple_name, os_out, os_err);    \
             if (strcmp(TYPE_NAME, "msg") == 0)                                \
@@ -6733,17 +6733,17 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
     M_TRACE_ENTER ("interpret_bytes",
                    "sizeof_bytes=" << in_out_sizeof_bytes);
 
-  // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
-  // change the locale for LC_NUMERIC (so 0.236 is a valid number)
-  const char  * locale_save = setlocale(LC_NUMERIC, "C");
+    // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
+    // change the locale for LC_NUMERIC (so 0.236 is a valid number)
+    const char  * locale_save = setlocale(LC_NUMERIC, "C");
 
 
-//	C_interpret_data_set_temporary  interpret_data_set_temporary(interpret_data);  // ICIOA
+//    C_interpret_data_set_temporary  interpret_data_set_temporary(interpret_data);  // ICIOA
 
     T_frame_data           frame_data(in_out_P_bytes, 0, in_out_sizeof_bytes * 8);
     T_decode_stream_frame                             decode_stream_frame;
     C_decode_stream_frame_set_temporary_if_necessary  dsfstin(interpret_data, decode_stream_frame);
-//	interpret_data.set_decode_stream_frame(&decode_stream_frame);
+//    interpret_data.set_decode_stream_frame(&decode_stream_frame);
     interpret_data.add_read_variable("internal_frame", (long long)interpret_data.get_P_decode_stream_frame());
 
     bool    result = false;
@@ -6783,13 +6783,13 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
         {
             const string         str_interpret = "fatal  \"" + str_interpret_fatal_text + "\" ;";
 
-            interpret_bytes ( 				   type_definitions,
-                                               in_out_P_bytes,
-                                               in_out_sizeof_bytes,
-                                               str_interpret,
-                                               os_out,
-                                               os_err,
-                                               interpret_data);
+            interpret_bytes (   type_definitions,
+                                in_out_P_bytes,
+                                in_out_sizeof_bytes,
+                                str_interpret,
+                                os_out,
+                                os_err,
+                                interpret_data);
         }
     }
 
@@ -6810,8 +6810,8 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
         }
     }
 
-  // restore the saved locale
-  setlocale(LC_NUMERIC, locale_save);
+    // restore the saved locale
+    setlocale(LC_NUMERIC, locale_save);
 
     return  result;
 }
@@ -6896,16 +6896,16 @@ bool    build_types_and_interpret_bytes (
     M_TRACE_ENTER ("build_types_and_interpret_bytes",
                    "sizeof_bits=" << in_out_frame_data.get_remaining_bits());
 
-  // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
-  // change the locale for LC_NUMERIC (so 0.236 is a valid number)
-  const char  * locale_save = setlocale(LC_NUMERIC, "C");
+    // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
+    // change the locale for LC_NUMERIC (so 0.236 is a valid number)
+    const char  * locale_save = setlocale(LC_NUMERIC, "C");
 
     // Set the interpret_data.
     T_interpret_data    interpret_data;
-//	C_interpret_data_set_temporary    idst(interpret_data);
+//    C_interpret_data_set_temporary    idst(interpret_data);
     T_decode_stream_frame                             decode_stream_frame;
     C_decode_stream_frame_set_temporary_if_necessary  dsfstin(interpret_data, decode_stream_frame);
-//	interpret_data.set_decode_stream_frame(&decode_stream_frame);
+//    interpret_data.set_decode_stream_frame(&decode_stream_frame);
     interpret_data.add_read_variable("internal_frame", get_string((long long)interpret_data.get_P_decode_stream_frame()));
 
     // Reads type definitions.
@@ -6928,22 +6928,22 @@ bool    build_types_and_interpret_bytes (
         }
     }
 
-  // restore the saved locale
-  setlocale(LC_NUMERIC, locale_save);
+    // restore the saved locale
+    setlocale(LC_NUMERIC, locale_save);
 
-  if (result == true)
-  {
-    // Verify that this is the end of stream.
-    M_FATAL_IF_NE (last_extracted_word, "");
-    M_ASSERT (is.eof ());
-
-    const long  inside_frame_remaining_bits = interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits();
-    if (inside_frame_remaining_bits != 0)
+    if (result == true)
     {
-        M_TRACE_ERROR("inside_frame_remaining_bits=" << inside_frame_remaining_bits << " should be zero"); 
-        result = false;
+        // Verify that this is the end of stream.
+        M_FATAL_IF_NE (last_extracted_word, "");
+        M_ASSERT (is.eof ());
+
+        const long  inside_frame_remaining_bits = interpret_data.get_decode_stream_frame().frame_data.get_remaining_bits();
+        if (inside_frame_remaining_bits != 0)
+        {
+            M_TRACE_ERROR("inside_frame_remaining_bits=" << inside_frame_remaining_bits << " should be zero"); 
+            result = false;
+        }
     }
-  }
   
     return  result;
 }

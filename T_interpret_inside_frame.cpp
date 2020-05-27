@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2013-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -98,7 +98,7 @@ T_decode_stream_frame::write_less_1_byte(T_byte  data, short  data_bit_size)
 
     if (data_bit_size <= 8)
     {
-        frame_data_write.write_less_1_byte(data, data_bit_size);		// ICIOA signed !
+        frame_data_write.write_less_1_byte(data, data_bit_size);        // ICIOA signed !
         decoded_data_bit_size = frame_data_write.get_bit_offset();
 
         frame_data.n_bits_data_appended(data_bit_size);
@@ -141,7 +141,7 @@ C_decode_stream_frame_set_temporary_if_necessary::C_decode_stream_frame_set_temp
     // - UT does not need it (...interpret_bytes check there is no remaining data in it)
     M_FATAL_IF_NE(interpret_inside_frame.get_P_decode_stream_frame(), NULL);
 
-//	if (interpret_inside_frame.get_P_decode_stream_frame() == NULL)
+//    if (interpret_inside_frame.get_P_decode_stream_frame() == NULL)
     {
         interpret_inside_frame.set_decode_stream_frame(&A_decode_stream_frame);
         A_value_set = true;

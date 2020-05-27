@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2014 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@ bool  S_must_output_time = false;
 void  output_time_spent (const char  * comment)
 {
 #ifndef WIN32
-	struct tms       tms_var;
+    struct tms       tms_var;
     static time_t    S_begin_time = times (&tms_var);
     static time_t    S_last_time = S_begin_time;
 
@@ -67,17 +67,17 @@ void  output_time_spent (const char  * comment)
 //*****************************************************************************
 
 bool    is_string_ended_by (const char  * file_name,
-							const char  * suffix)
+                            const char  * suffix)
 {
-	const size_t    suffix_length = strlen (suffix);
-	const size_t    file_name_length = strlen (file_name);
+    const size_t    suffix_length = strlen (suffix);
+    const size_t    file_name_length = strlen (file_name);
 
-	if (file_name_length < suffix_length)
-		return  false;
+    if (file_name_length < suffix_length)
+        return  false;
 
-	const char  * file_name_suffix = file_name + file_name_length - suffix_length;
+    const char  * file_name_suffix = file_name + file_name_length - suffix_length;
 
-	return  strcmp (file_name_suffix, suffix) == 0;
+    return  strcmp (file_name_suffix, suffix) == 0;
 }
 
 //*****************************************************************************
@@ -86,12 +86,12 @@ bool    is_string_ended_by (const char  * file_name,
 
 bool    is_frame_desc_file_name (const char  * file_name)
 {
-	return  is_string_ended_by (file_name, ".fdesc");
+    return  is_string_ended_by (file_name, ".fdesc");
 }
 
 bool    is_frame_desc_file_name (const string  & file_name)
 {
-	return  is_frame_desc_file_name (file_name.c_str ());
+    return  is_frame_desc_file_name (file_name.c_str ());
 }
 
 //*****************************************************************************
@@ -100,12 +100,12 @@ bool    is_frame_desc_file_name (const string  & file_name)
 
 bool    is_frame_bin_file_name (const char  * file_name)
 {
-	return  is_string_ended_by (file_name, ".fbin");
+    return  is_string_ended_by (file_name, ".fbin");
 }
 
 bool    is_frame_bin_file_name (const string  & file_name)
 {
-	return  is_frame_bin_file_name (file_name.c_str ());
+    return  is_frame_bin_file_name (file_name.c_str ());
 }
 
 //*****************************************************************************
@@ -114,13 +114,13 @@ bool    is_frame_bin_file_name (const string  & file_name)
 
 bool    is_frame_hexa_file_name (const char  * file_name)
 {
-	return  is_string_ended_by (file_name, ".fhex") ||
+    return  is_string_ended_by (file_name, ".fhex") ||
             is_string_ended_by (file_name, ".frame");
 }
 
 bool    is_frame_hexa_file_name (const string  & file_name)
 {
-	return  is_frame_hexa_file_name (file_name.c_str ());
+    return  is_frame_hexa_file_name (file_name.c_str ());
 }
 
 //*****************************************************************************
@@ -134,7 +134,7 @@ bool    is_frame_hexa_dump_file_name (const char  * file_name)
 
 bool    is_frame_hexa_dump_file_name (const string  & file_name)
 {
-	return  is_frame_hexa_dump_file_name (file_name.c_str ());
+    return  is_frame_hexa_dump_file_name (file_name.c_str ());
 }
 
 //*****************************************************************************
@@ -143,9 +143,9 @@ bool    is_frame_hexa_dump_file_name (const string  & file_name)
 
 void    wait_for_any_operator_input ()
 {
-	cout << "Enter to exit" << endl;
-	char    do_not_care;
-	cin.get (do_not_care);
+    cout << "Enter to exit" << endl;
+    char    do_not_care;
+    cin.get (do_not_care);
 }
 
 //*****************************************************************************
@@ -170,7 +170,7 @@ void  usage (const char  * prog_name)
 "\n";
     help_role (prog_name);
 
-	os <<
+    os <<
 "\n*** "
 "Options are : \n"
 "-help  : print this.\n"
@@ -239,7 +239,7 @@ void  usage (const char  * prog_name)
 
 #ifdef WIN32
     // To avoid window closing.
-	wait_for_any_operator_input ();
+    wait_for_any_operator_input ();
 #endif
 }
 
@@ -295,11 +295,11 @@ int   main (int  argc, const char * const  argv[])
     istream  * P_istream = NULL_PTR;
     string     types_and_commands;
 
-	if (strcmp (argv[arg_idx], "-help_syntax") == 0)
-	{
+    if (strcmp (argv[arg_idx], "-help_syntax") == 0)
+    {
         ++arg_idx;
         P_istream = new istringstream ("print syntax ;");
-	}
+    }
     else if ((strcmp (argv[arg_idx], "-fdesc") == 0) ||
         (is_frame_desc_file_name (argv[arg_idx])))
     {
@@ -312,16 +312,16 @@ int   main (int  argc, const char * const  argv[])
         if ((file_name == "-") || (file_name == "stdin"))
             P_istream = &cin;
         else
-		{
+        {
             P_istream = new ifstream (file_name.c_str ());
 
-			const string::size_type  last_separator = file_name.find_last_of("/\\");
-			if (last_separator != string::npos)
-			{
-				const string    directory = file_name.substr(0, last_separator);
-				byte_interpret_set_include_directory(directory);
-			}
-		}
+            const string::size_type  last_separator = file_name.find_last_of("/\\");
+            if (last_separator != string::npos)
+            {
+                const string    directory = file_name.substr(0, last_separator);
+                byte_interpret_set_include_directory(directory);
+            }
+        }
     }
     else
     {
@@ -450,10 +450,10 @@ int   main (int  argc, const char * const  argv[])
         return  4;
     }
 
-	// Do not use cerr to avoid order problems between cout and cerr.
-	ostream  & os_err = cout;
+    // Do not use cerr to avoid order problems between cout and cerr.
+    ostream  & os_err = cout;
 
-	const T_byte  * P_bytes = byte_vector.size () ? &byte_vector[0] : NULL;
+    const T_byte  * P_bytes = byte_vector.size () ? &byte_vector[0] : NULL;
     size_t          sizeof_bytes = byte_vector.size ();
 
     bool    result = build_types_and_interpret_bytes (P_bytes, sizeof_bytes,

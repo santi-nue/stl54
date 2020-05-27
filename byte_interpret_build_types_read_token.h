@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -160,9 +160,9 @@ bool       read_token_simple_word_or_string (
 // (param1, ..., paramN)
 //*****************************************************************************
 
-bool   read_token_parameters_vector(istream				  & is,
-                                    vector<string>		  & fct_parameters_vector,
-                                    const E_parser_cfg		parser_cfg = K_parser_cfg_normal);
+bool   read_token_parameters_vector(istream               & is,
+                                    vector<string>        & fct_parameters_vector,
+                                    const E_parser_cfg      parser_cfg = K_parser_cfg_normal);
 
 //*****************************************************************************
 // read_token_function_name

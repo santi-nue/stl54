@@ -39,8 +39,8 @@ extern "C" {
  * dissect
  *****************************************************************************/
 
-proto_tree  * cpp_dissect_generic_add_tree(const int           proto_idx,
-										         proto_item  * proto_item_void);
+proto_tree  * cpp_dissect_generic_add_tree(const int        proto_idx,
+                                           proto_item     * proto_item_void);
 
 
 #define K_WHOLE_WSGD_FIELD_IDX    0

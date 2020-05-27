@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -726,7 +726,7 @@ C_value    string_to_numeric(const T_type_definitions  & type_definitions,
     {
         // Could be a static expression (without any attribute/variable).
         val = compute_expression_static (type_definitions, val.as_string());
-//		M_FATAL_COMMENT(attr << " (" << str << ") is not a numeric value");
+//        M_FATAL_COMMENT(attr << " (" << str << ") is not a numeric value");
     }
 
     return  val;
@@ -739,7 +739,7 @@ void
 T_type_definitions::set_field_type(T_field_type_name_base  & field,
                      const string             & type_param) const
 {
-//	M_FATAL_IF_NE(field.type, "");
+//    M_FATAL_IF_NE(field.type, "");
     field.type = this->get_final_type (type_param);
 }
 
@@ -747,7 +747,7 @@ void
 T_type_definitions::set_field_name(T_field_type_name_base  & field,
                      const string             & name_param) const
 {
-//	M_FATAL_IF_NE(field.name, "");
+//    M_FATAL_IF_NE(field.name, "");
     field.name = name_param;
 }
 
@@ -755,7 +755,7 @@ void
 T_type_definitions::set_field_condition_expression(T_field_type_name_base  & field,
                      const string             & name_param) const
 {
-//	M_FATAL_IF_NE(field.name, "");
+//    M_FATAL_IF_NE(field.name, "");
     field.name = name_param;
 }
 
@@ -1276,12 +1276,12 @@ T_type_definitions::is_a_basic_type_name(const string   & type_name) const
         (type_name ==  "int48") ||
         (type_name == "uint48") ||
         (type_name ==  "int64") ||
-//		(type_name == "uint64") ||
+//        (type_name == "uint64") ||
         (type_name == "float32") ||
         (type_name == "float64") ||
-//		(type_name == "bool8") ||
-//		(type_name == "bool16") ||
-//		(type_name == "bool32") ||
+//        (type_name == "bool8") ||
+//        (type_name == "bool16") ||
+//        (type_name == "bool32") ||
         (type_name == "spare") ||
         (type_name ==  "char") ||
         (type_name == "schar") ||

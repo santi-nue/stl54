@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -91,12 +91,12 @@ struct T_interpret_read_values : public C_reference_counter,
                                               const string  & var_name) const;
 
     // ref_name is a reference to (the value of) var_name.
-    T_id	add_ref_variable(const string  & ref_name,
+    T_id    add_ref_variable(const string  & ref_name,
                              const string  & var_name);
 
     // msg_name is a reference to msg data.
-//	T_id	add_msg_variable(const string  & msg_name,
-//							 const string  & var_name);
+//    T_id    add_msg_variable(const string  & msg_name,
+//                             const string  & var_name);
 
     void    reset();
     void    reset_position_offset_sizes();
@@ -111,19 +111,19 @@ struct T_interpret_read_values : public C_reference_counter,
     typedef vector<T_var_name_P_value>    T_var_name_P_values;
 
     // NB: interpret_read_values_src could not be this
-    void	copy_global_values(
+    void        copy_global_values(
                       const T_interpret_read_values  & interpret_read_values_src);
-    void	copy_multiple_values(
+    void        copy_multiple_values(
                       const T_interpret_read_values  & interpret_read_values_src,
                       const std::string                var_name_with_star,
                             int                        dest_idx_begin,
                       const int                        dest_idx_end);
 
-    void    get_multiple_P_attribute_value_of_read_variable (
+    void        get_multiple_P_attribute_value_of_read_variable (
                             const string               & var_name_with_star,
                                   T_var_name_P_values  & name_values) const;
 
-    void	duplicate_multiple_values(
+    void        duplicate_multiple_values(
                       const std::string                var_name_src,
                       const std::string                var_name_dst);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,7 +77,7 @@ ostream &  operator<< (ostream  & os, const C_value        & rhs)
     os << "str=" << rhs.A_str << "  ";
     os << "bit_position_offset=" << rhs.A_bit_position_offset << "  ";
     os << "bit_position_size=" << rhs.A_bit_position_size << "  ";
-//	os << "external_type__cvtbd=" << rhs.A_external_type__cvtbd << "  ";
+//    os << "external_type__cvtbd=" << rhs.A_external_type__cvtbd << "  ";
     os << "external_type_bit_size__cvtbd=" << rhs.A_external_type_bit_size__cvtbd << "  ";
 
     return  os;
@@ -253,7 +253,7 @@ C_value::operator=(const C_value  & rhs)
 void
 C_value::set_external_type(const std::string  & final_type)
 {
-//	A_external_type__cvtbd = final_type;
+//    A_external_type__cvtbd = final_type;
     A_external_type_bit_size__cvtbd = 0;
 
     long    bit_size = 0;
@@ -654,12 +654,12 @@ class C_value_set_position_offset
 
 public:
     C_value_set_position_offset(C_value  & val, int pos, int offset,
-//						  const string   & external_type__cvtbd)//,
+//                          const string   & external_type__cvtbd)//,
                                 int        external_type_bit_size__cvtbd)
         :A_value_to_set(val),
          A_pos(pos),
          A_offset(offset),
-//		 A_external_type__cvtbd(external_type__cvtbd)//,
+//         A_external_type__cvtbd(external_type__cvtbd)//,
          A_external_type_bit_size__cvtbd(external_type_bit_size__cvtbd)
     {
     }
@@ -667,7 +667,7 @@ public:
     ~C_value_set_position_offset()
     {
         A_value_to_set.set_bit_position_offset_size(A_pos, A_offset);
-//		A_value_to_set.set_external_type(A_external_type__cvtbd);
+//        A_value_to_set.set_external_type(A_external_type__cvtbd);
         A_value_to_set.set_external_type_bit_size(A_external_type_bit_size__cvtbd);
     }
 };

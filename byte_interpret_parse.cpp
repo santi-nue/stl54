@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -347,7 +347,7 @@ bool    append_to_string_until_base (istream       & is,
 
             if ((parser_cfg & K_parser_cfg_ignore_comments_sharp) &&
                 (c_read == K_COMMENT_START) &&
-                (result.empty ()))					// comment must have a space before
+                (result.empty ()))                  // comment must have a space before
             {
                 // This is a comment.
 #if 1
@@ -933,7 +933,7 @@ void    promote_printf_string_to_64bits(string   & printf_string)
     const string::size_type  size_before = printf_string.size();
 
     string::size_type  idx_any = 0;
-    while ((idx_any	= printf_string.find ('%', idx_any)) != string::npos)
+    while ((idx_any = printf_string.find ('%', idx_any)) != string::npos)
     {
         ++idx_any;
 

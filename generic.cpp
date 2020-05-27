@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2020 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -682,8 +682,8 @@ void    register_fields_field_type_name(T_generic_protocol_data          & proto
             // voir proto_test
             if (false) { }
             M_READ_SIMPLE_TYPE_BASE(final_type.c_str(),bit_size,signed int,32,"signed int", false);
-//			M_READ_SIMPLE_TYPE_BASE(final_type.c_str(),bit_size,signed int,32,"signed int", S_ICIOA_in_bitfield);
-//			field_type_name.basic_type_bit_size = TYPE_BIT_SIZE;  // ce champ est deja calcule dans post_build_field_base MAIS pas suffisant pb sur les bitfield
+//            M_READ_SIMPLE_TYPE_BASE(final_type.c_str(),bit_size,signed int,32,"signed int", S_ICIOA_in_bitfield);
+//            field_type_name.basic_type_bit_size = TYPE_BIT_SIZE;  // ce champ est deja calcule dans post_build_field_base MAIS pas suffisant pb sur les bitfield
             }
             else
             {
@@ -1110,7 +1110,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
     }
 
     /* Register configuration preferences */
-//	module_t  * module = prefs_register_protocol(protocol_data.ws_data.proto_generic, prefs_apply_cb);
+//    module_t  * module = prefs_register_protocol(protocol_data.ws_data.proto_generic, prefs_apply_cb);
     module_t  * module = prefs_register_protocol(protocol_data.ws_data.proto_generic, NULL);
     prefs_register_bool_preference(module, "try_heuristic_first",
         "Try heuristic sub-dissectors first",
@@ -1195,12 +1195,12 @@ void    trace_locales()
     M_TRACE_DEBUG ("locale LC_NUMERIC     = " << setlocale(LC_NUMERIC, NULL));
     M_TRACE_DEBUG ("locale LC_TIME        = " << setlocale(LC_TIME, NULL));
 #if 0
-LC_ALL		The entire locale.
-LC_COLLATE	Affects the behavior of strcoll and strxfrm.
-LC_CTYPE	Affects character handling functions (all functions of <cctype>, except isdigit and isxdigit), and the multibyte and wide character functions
-LC_MONETARY	Affects monetary formatting information returned by localeconv.
-LC_NUMERIC	Affects the decimal-point character in formatted input/output operations and string formatting functions, as well as non-monetary information returned by localeconv.
-LC_TIME		Affects the behavior of strftime.
+LC_ALL          The entire locale.
+LC_COLLATE      Affects the behavior of strcoll and strxfrm.
+LC_CTYPE        Affects character handling functions (all functions of <cctype>, except isdigit and isxdigit), and the multibyte and wide character functions
+LC_MONETARY     Affects monetary formatting information returned by localeconv.
+LC_NUMERIC      Affects the decimal-point character in formatted input/output operations and string formatting functions, as well as non-monetary information returned by localeconv.
+LC_TIME         Affects the behavior of strftime.
 #endif
 }
 
@@ -1241,7 +1241,7 @@ void    cpp_proto__register_generic2(void)
             build_types_context_include_file_open (wsgd_file_name_short);
 #endif
             cpp_proto_register_generic(wsgd_file_name, proto_idx);
-//	    	build_types_context_include_file_close(wsgd_file_name_short);
+//            build_types_context_include_file_close(wsgd_file_name_short);
         }
         catch(C_byte_interpret_exception  & error_str)
         {
@@ -2343,7 +2343,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
                 }
                 else
                 {
-                    pinfo->desegment_len = 0;			// 2011/05/15
+                    pinfo->desegment_len = 0;           // 2011/05/15
                     return  msg_total_length.get_int();
                 }
             }
@@ -2398,7 +2398,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             M_TRACE_FATAL (protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) NOT found");
             const string         str_interpret = "fatal  \"value of " + protocol_data.MSG_ID_FIELD_NAME + " (MSG_ID_FIELD_NAME) NOT found into " + protocol_data.MSG_HEADER_TYPE + " (MSG_HEADER_TYPE)\" ;";
 
-            interpret_bytes (				   protocol_data.type_definitions,
+            interpret_bytes (               protocol_data.type_definitions,
                                             in_out_P_bytes,
                                             in_out_sizeof_bytes,
                                             str_interpret,
@@ -2549,7 +2549,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
                 const string         str_interpret = "error  \"" + get_string(in_out_sizeof_bytes) + " bytes NOT read into message\" ;";
                 istringstream        iss(str_interpret.c_str());
 
-                interpret_bytes ( 				   protocol_data.type_definitions,
+                interpret_bytes (                   protocol_data.type_definitions,
                                                     in_out_P_bytes,
                                                     in_out_sizeof_bytes,
                                                     iss,
@@ -2569,7 +2569,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             const string         str_interpret = "error  \"" + get_string(sizeof_bytes_NOT_given_to_interpretor) + " bytes NOT read into packet\" ;";
             istringstream        iss(str_interpret.c_str());
 
-            interpret_bytes ( 				   protocol_data.type_definitions,
+            interpret_bytes (                   protocol_data.type_definitions,
                                                 in_out_P_bytes,
                                                 in_out_sizeof_bytes,
                                                 iss,
@@ -2586,7 +2586,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             // -> voir offset de tvbbuf ???
             // tvb_reported_length & tvb_reported_length_remaining ???
             pinfo->desegment_offset = length_raw_data - sizeof_bytes_NOT_given_to_interpretor;
-            pinfo->desegment_len = 0;		// 2011/05/15 
+            pinfo->desegment_len = 0;           // 2011/05/15 
 //          pinfo->desegment_len = 10;         // ICIOA essai avec une taille de msg en dur -> dissector non rappele
 //          pinfo->desegment_len = DESEGMENT_ONE_MORE_SEGMENT;    // ICIOA -> dissector non rappele
         }
@@ -2612,7 +2612,7 @@ static guint
 get_generic_pdu_len(packet_info  * pinfo _U_, tvbuff_t  * tvb, int  offset)  // ICIOA absolument pas termine
 {
     guint    length = tvb_get_ntohs(tvb, offset+2);
-//	guint    length = tvb_get_guint8(tvb, offset+2);
+//    guint    length = tvb_get_guint8(tvb, offset+2);
     length = 32;
     return length;
 }
@@ -2623,12 +2623,12 @@ get_generic_pdu_len(packet_info  * pinfo _U_, tvbuff_t  * tvb, int  offset)  // 
 //*****************************************************************************
 
 gint    dissect_generic_proto(    T_generic_protocol_data  & protocol_data,
-                                  tvbuff_t     * tvb,
-                            const void         * ptr_raw_data,
-                            const int            length_raw_data,
-                                  packet_info  * pinfo,
-                                  proto_tree   * tree,
-                            const long           msg_number_inside_packet)
+                                  tvbuff_t                 * tvb,
+                            const void                     * ptr_raw_data,
+                            const int                        length_raw_data,
+                                  packet_info              * pinfo,
+                                  proto_tree               * tree,
+                            const long                       msg_number_inside_packet)
 {
     M_TRACE_ENTER ("dissect_generic_proto", protocol_data.PROTOABBREV << " ("
                     << pinfo->fd->num << "/"
@@ -2737,10 +2737,10 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
         ++msg_number_inside_packet;
 
         // Stop the loop if 
-        if ((pinfo->desegment_len != 0) ||										// Message not entirely read
-            (offset_where_dissection_stops >= tvb_length_remaining(tvb, 0)) ||	// No more data to read
-            (protocol_data.PACKET_CONTAINS_ONLY_1_MSG) ||						// Only 1 msg per packet
-            (sub_offset_where_dissection_stops <= 0))							// Nothing has been read
+        if ((pinfo->desegment_len != 0) ||                                      // Message not entirely read
+            (offset_where_dissection_stops >= tvb_length_remaining(tvb, 0)) ||  // No more data to read
+            (protocol_data.PACKET_CONTAINS_ONLY_1_MSG) ||                       // Only 1 msg per packet
+            (sub_offset_where_dissection_stops <= 0))                           // Nothing has been read
         {
             break;
         }

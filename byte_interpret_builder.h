@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,18 +47,18 @@ class C_byte_interpret_builder;
 class C_interpret_builder_set_temporary
 {
 public:
-	C_interpret_builder_set_temporary(C_byte_interpret_builder  * P_builder);
-	~C_interpret_builder_set_temporary();
+    C_interpret_builder_set_temporary(C_byte_interpret_builder  * P_builder);
+    ~C_interpret_builder_set_temporary();
 
-	void    set(C_byte_interpret_builder  * P_builder);
-	void    unset();
-	void    forget();
+    void    set(C_byte_interpret_builder  * P_builder);
+    void    unset();
+    void    forget();
 
 private:
-	C_interpret_builder_set_temporary(const C_interpret_builder_set_temporary  &);
+    C_interpret_builder_set_temporary(const C_interpret_builder_set_temporary  &);
 
-	C_byte_interpret_builder  * previous_value;
-	bool                        value_modified;
+    C_byte_interpret_builder  * previous_value;
+    bool                        value_modified;
 };
 
 
@@ -73,16 +73,16 @@ void    interpret_builder_begin(const T_type_definitions  & type_definitions);
 //*****************************************************************************
 
 void    interpret_builder_value(const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-									const T_field_type_name   & field_type_name,
-									const string              & data_name,
-									const string              & data_simple_name,
-									const T_attribute_value   & attribute_value,
-									const string              & data_value,
-									const string              & final_type,
-									const int                   type_bit_size,
-									const bool                  is_little_endian,
-									const bool                  error);
+                                const T_frame_data        & in_out_frame_data,
+                                const T_field_type_name   & field_type_name,
+                                const string              & data_name,
+                                const string              & data_simple_name,
+                                const T_attribute_value   & attribute_value,
+                                const string              & data_value,
+                                const string              & final_type,
+                                const int                   type_bit_size,
+                                const bool                  is_little_endian,
+                                const bool                  error);
 
 //*****************************************************************************
 // interpret_builder_raw_data
@@ -90,61 +90,61 @@ void    interpret_builder_value(const T_type_definitions  & type_definitions,
 
 enum E_raw_data_type
 {
-	E_raw_data_any,
-	E_raw_data_sub_proto,
-	E_raw_data_ins_proto
+    E_raw_data_any,
+    E_raw_data_sub_proto,
+    E_raw_data_ins_proto
 };
 void    interpret_builder_raw_data(const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-									const T_interpret_data    & interpret_data,
-									const T_field_type_name   & field_type_name,
-									const string              & data_name,
-									const string              & data_simple_name,
-									const int                   type_bit_size,
-									const E_raw_data_type       raw_data_type);
+                                   const T_frame_data        & in_out_frame_data,
+                                   const T_interpret_data    & interpret_data,
+                                   const T_field_type_name   & field_type_name,
+                                   const string              & data_name,
+                                   const string              & data_simple_name,
+                                   const int                   type_bit_size,
+                                   const E_raw_data_type       raw_data_type);
 
 //*****************************************************************************
 // interpret_builder_group_begin **********************************************
 //*****************************************************************************
 
 void    interpret_builder_group_begin(const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-									const T_field_type_name   & field_type_name,
-									const string              & data_name,
-									const string              & data_simple_name);
+                                      const T_frame_data        & in_out_frame_data,
+                                      const T_field_type_name   & field_type_name,
+                                      const string              & data_name,
+                                      const string              & data_simple_name);
 
 //*****************************************************************************
 // interpret_builder_group_append_text ****************************************
 //*****************************************************************************
 
 void    interpret_builder_group_append_text(const T_type_definitions  & type_definitions,
-									   const T_frame_data        & in_out_frame_data,
-//									   const T_field_type_name   & field_type_name,
-									   const string              & data_name,
-									   const string              & data_simple_name,
-									   const string              & text);
+                                            const T_frame_data        & in_out_frame_data,
+//                                            const T_field_type_name   & field_type_name,
+                                            const string              & data_name,
+                                            const string              & data_simple_name,
+                                            const string              & text);
 
 //*****************************************************************************
 // interpret_builder_group_end ************************************************
 //*****************************************************************************
 
 void    interpret_builder_group_end(const T_type_definitions  & type_definitions,
-									   const T_frame_data        & in_out_frame_data,
-									   const T_field_type_name   & field_type_name,
-									   const string              & data_name,
-									   const string              & data_simple_name,
-									   const int                   type_bit_size);
+                                    const T_frame_data        & in_out_frame_data,
+                                    const T_field_type_name   & field_type_name,
+                                    const string              & data_name,
+                                    const string              & data_simple_name,
+                                    const int                   type_bit_size);
 
 //*****************************************************************************
 // interpret_builder_error ****************************************************
 //*****************************************************************************
 
 void    interpret_builder_error    (const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-									const T_field_type_name   & field_type_name,
-									const string              & data_name,
-									const string              & data_simple_name,
-									const string              & error);
+                                    const T_frame_data        & in_out_frame_data,
+                                    const T_field_type_name   & field_type_name,
+                                    const string              & data_name,
+                                    const string              & data_simple_name,
+                                    const string              & error);
 
 #define interpret_builder_fatal    interpret_builder_error
 
@@ -153,23 +153,23 @@ void    interpret_builder_error    (const T_type_definitions  & type_definitions
 //*****************************************************************************
 
 void    interpret_builder_missing_data
-								   (const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-									const T_interpret_data    & interpret_data,
-									const T_field_type_name   & field_type_name,
-									const string              & data_name,
-									const string              & data_simple_name,
-									const string              & error);
+                                   (const T_type_definitions  & type_definitions,
+                                    const T_frame_data        & in_out_frame_data,
+                                    const T_interpret_data    & interpret_data,
+                                    const T_field_type_name   & field_type_name,
+                                    const string              & data_name,
+                                    const string              & data_simple_name,
+                                    const string              & error);
 
 //*****************************************************************************
 // interpret_builder_cmd_error ************************************************
 //*****************************************************************************
 
 void    interpret_builder_cmd_error(const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-									const T_field_type_name   & field_type_name,
-									const string              & data_name,
-									const string              & text_to_print);
+                                    const T_frame_data        & in_out_frame_data,
+                                    const T_field_type_name   & field_type_name,
+                                    const string              & data_name,
+                                    const string              & text_to_print);
 
 //*****************************************************************************
 // interpret_builder_cmd_fatal
@@ -182,21 +182,21 @@ void    interpret_builder_cmd_error(const T_type_definitions  & type_definitions
 //*****************************************************************************
 
 void    interpret_builder_cmd_print(const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-									const T_field_type_name   & field_type_name,
-									const string              & data_name,
-									const string              & text_to_print);
+                                    const T_frame_data        & in_out_frame_data,
+                                    const T_field_type_name   & field_type_name,
+                                    const string              & data_name,
+                                    const string              & text_to_print);
 
 //*****************************************************************************
 // T_interpret_builder_cmd_print_cb *******************************************
 //*****************************************************************************
 
 typedef void  (* T_interpret_builder_cmd_print_cb)(
-									const T_type_definitions  & type_definitions,
-									const T_frame_data        & in_out_frame_data,
-									const T_field_type_name   & field_type_name,
-									const string              & data_name,
-									const string              & text_to_print);
+                                    const T_type_definitions  & type_definitions,
+                                    const T_frame_data        & in_out_frame_data,
+                                    const T_field_type_name   & field_type_name,
+                                    const string              & data_name,
+                                    const string              & text_to_print);
 
 
 #endif /* BYTE_INTERPRET_BUILDER_H */

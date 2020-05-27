@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -344,12 +344,12 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 
                     const T_interpret_read_values  * P_interpret_read_values_msg = 
                                                  static_cast<const T_interpret_read_values  *>(msg);
-//					if (P_interpret_read_values_msg == NULL_PTR)
-//					{
-//						M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
-//										var_name << ") not found. Bug");
-//						return  NULL_PTR;
-//					}
+//                    if (P_interpret_read_values_msg == NULL_PTR)
+//                    {
+//                        M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
+//                                        var_name << ") not found. Bug");
+//                        return  NULL_PTR;
+//                    }
                     const T_attribute_value  * P_attribute_value =
                         P_interpret_read_values_msg->get_P_attribute_value_of_read_variable(following_name);
 
@@ -357,7 +357,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
                     // At this time reference is only for in_out parameter, and
                     //  since I do not want to modify data of another msg,
                     //  it is normal.
-//					var_id = A_msg.size() - (iter - A_msg.rbegin()) - 1;
+//                    var_id = A_msg.size() - (iter - A_msg.rbegin()) - 1;
                     var_id = -1;
 
                     return  P_attribute_value;
@@ -421,12 +421,12 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
 
                     const T_interpret_read_values  * P_interpret_read_values_msg =
                                                  static_cast<const T_interpret_read_values  *>(msg);
-//					if (P_interpret_read_values_msg == NULL_PTR)
-//					{
-//						M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
-//										var_name << ") not found. Bug");
-//						return  NULL_PTR;
-//					}
+//                    if (P_interpret_read_values_msg == NULL_PTR)
+//                    {
+//                        M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
+//                                        var_name << ") not found. Bug");
+//                        return  NULL_PTR;
+//                    }
                     const T_attribute_value  * P_attribute_value =
                         P_interpret_read_values_msg->get_P_attribute_value_of_read_variable(following_name);
 
@@ -434,7 +434,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
                     // At this time reference is only for in_out parameter, and
                     //  since I do not want to modify data of another msg,
                     //  it is normal.
-//					var_id = A_msg.size() - (iter - A_msg.rbegin()) - 1;
+//                    var_id = A_msg.size() - (iter - A_msg.rbegin()) - 1;
                     var_id = -1;
 
                     return  P_attribute_value;
@@ -573,12 +573,12 @@ T_interpret_read_values::get_P_interpret_read_values_min_max (
 
                 const T_interpret_read_values  * P_interpret_read_values_msg = 
                                              static_cast<const T_interpret_read_values  *>(msg);
-//					if (P_interpret_read_values_msg == NULL_PTR)
-//					{
-//						M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
-//										var_name << ") not found. Bug");
-//						return  NULL_PTR;
-//					}
+//                if (P_interpret_read_values_msg == NULL_PTR)
+//                {
+//                    M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
+//                                    var_name << ") not found. Bug");
+//                    return  NULL_PTR;
+//                }
                 P_result =
                     P_interpret_read_values_msg->
                     get_P_interpret_read_values_min_max(following_name, var_idx_min, var_idx_max, idx_end_var_name);

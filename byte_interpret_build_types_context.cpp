@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,7 +71,7 @@ T_build_types_context_file  & get_current_context()
 {
     if (A_include_files.empty())
     {
-//		M_FATAL_COMMENT("Bug in the software");
+//        M_FATAL_COMMENT("Bug in the software");
         A_include_files.push_back(T_build_types_context_file("Not known file or not a file"));
     }
 

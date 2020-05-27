@@ -1,5 +1,5 @@
 /* generic.c
- * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2008-2020 Olivier Aveline <wsgd@free.fr>
  *
  * $Id: 
  *
@@ -614,7 +614,7 @@ void    read_file_wsgd (const string                   & wsgd_file_name,
         if (keyword == "DEBUG")
         {
             protocol_data.DEBUG = E_debug_status_ON;
-            //		set_debug(protocol_data.DEBUG);
+//            set_debug(protocol_data.DEBUG);
             continue;
         }
         else if (keyword == "DEBUG_NO_TIME")

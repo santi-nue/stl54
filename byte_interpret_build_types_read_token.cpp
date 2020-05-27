@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,7 +65,7 @@ bool       read_token_simple_word (
         {
             break;
         }
-//		if (isspace(peek_char) || iscntrl(peek_char))
+//        if (isspace(peek_char) || iscntrl(peek_char))
         if (isgraph(peek_char) == 0)
         {
             break;
@@ -291,8 +291,8 @@ bool       read_token_field_name (
                             istream       & is,
                             string        & str_result)
 {
-//	bool    result = read_token_simple_word(is, str_result);   // NOT ok on ID{ext=a c};  or   ID{ext="a c"};
-//	bool    result = read_token_type_complex(is, str_result);  // NOT ok on ID{ext=a c};  or   ID{ext="a c"};
+//    bool    result = read_token_simple_word(is, str_result);   // NOT ok on ID{ext=a c};  or   ID{ext="a c"};
+//    bool    result = read_token_type_complex(is, str_result);  // NOT ok on ID{ext=a c};  or   ID{ext="a c"};
     bool    result = read_token_left_any(is, str_result);
     
     if (result == true)
@@ -310,9 +310,9 @@ bool       read_token_field_name (
 // read_token_parameters_vector
 //*****************************************************************************
 
-bool   read_token_parameters_vector(istream				  & is,
-                                    vector<string>		  & fct_parameters_vector,
-                                    const E_parser_cfg		parser_cfg)
+bool   read_token_parameters_vector(istream               & is,
+                                    vector<string>        & fct_parameters_vector,
+                                    const E_parser_cfg      parser_cfg)
 {
     string    fct_parameters;
     bool      ret = read_token_parameters(is, fct_parameters, parser_cfg);

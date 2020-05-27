@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -92,8 +92,6 @@ struct T_expression : public CT_debug_object_counter<T_expression>
     };
 
     T_expression();
-//	T_expression(		 const T_type_definitions  & type_definitions,
-//						 const std::string         & str);
 
     bool             is_defined() const           { return  A_type != E_type_none; }
 
@@ -203,7 +201,7 @@ private:
 
     // The value.
     // compute_expression always return this value.
-    mutable C_value		                A_value;
+    mutable C_value                     A_value;
 
     // Name of the variable or name of the function.
     std::string                         A_variable_or_function_name;
@@ -227,7 +225,7 @@ private:
         //  the result of the expression.
         int           idx_inside_reduced_variable_name;
     };
-//	std::vector<T_array>        A_arrays;
+//    std::vector<T_array>        A_arrays;
 #endif
 
     friend std::ostream &  operator<< (std::ostream    & os,

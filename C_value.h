@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -87,7 +87,7 @@ struct C_value : public CT_debug_object_counter<C_value>
     // Only set the external basic type (uint3, float32, string(7) ...)
     // The type itself is not modified
     void                 set_external_type(const std::string  & external_type);
-//	const std::string  & get_external_type ()  const;
+//    const std::string  & get_external_type ()  const;
     bool                 get_external_type_signed ()  const;
     int                  get_external_type_bit_size ()  const;
     int                  get_external_type_byte_size ()  const;
@@ -198,7 +198,7 @@ private:
 
     E_type         A_type;
     int            A_external_type_bit_size__cvtbd;
-//	std::string    A_external_type__cvtbd;
+//    std::string    A_external_type__cvtbd;
     long long      A_integer;
     double         A_flt;
     std::string    A_str;

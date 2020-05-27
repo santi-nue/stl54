@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 Olivier Aveline <wsgd@free.fr>
+ * Copyright 2005-2020 Olivier Aveline <wsgd@free.fr>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,9 +54,9 @@ struct T_interpret_value : public CT_debug_object_counter<T_interpret_value>
     T_interpret_value(const std::string        & name,
                       const T_attribute_value  & attribute_value);
 
-//	T_interpret_value(const T_interpret_value  & rhs);
-//	T_interpret_value &  operator=(const T_interpret_value  & rhs);
-//	~T_interpret_value();
+//    T_interpret_value(const T_interpret_value  & rhs);
+//    T_interpret_value &  operator=(const T_interpret_value  & rhs);
+//    ~T_interpret_value();
 
     E_type                     get_type() const             { return  (E_type)A_type; }
     const std::string        & get_name() const             { return  A_name; }
