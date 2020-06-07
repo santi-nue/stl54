@@ -31,7 +31,6 @@
 #include "byte_interpret_parse.h"
 #include "byte_interpret.h"
 #include "byte_interpret_build_types_context.h"
-#include "byte_interpret_build_types_netpdl.h"
 
 #include <fstream>
 
@@ -789,14 +788,6 @@ void    read_file_wsgd (const string                   & wsgd_file_name,
         else if (result == "DEBUG_NO_TIME")
         {
             debug_type_definitions.set(E_debug_status_ON_NO_TIME);
-            continue;
-        }
-        else if (result == "NETPDL")
-        {
-            string  file_name;
-            ifs >> file_name;
-            build_netpdl_types(file_name, protocol_data.type_definitions);
-            must_ouput_types = true;
             continue;
         }
 

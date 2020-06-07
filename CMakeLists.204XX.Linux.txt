@@ -53,7 +53,6 @@ set(DISSECTOR_CORE_UT_SRC
 )
 
 set (DISSECTOR_CORE_OTHER_SRC
-	byte_interpret_build_types_netpdl.cpp
 	tinystr.cpp tinyxml.cpp tinyxmlerror.cpp tinyxmlparser.cpp
 )
 
