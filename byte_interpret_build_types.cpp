@@ -360,12 +360,6 @@ void    post_build_field_base (
                     }
                 }
             }
-#if 0
-            else if ((strncmp(str_display_or_transform.c_str(), "te=", 3) == 0))
-            {
-                type_definitions.set_field_transform_expression(field_type_name, str_display_or_transform.c_str()+3);
-            }
-#endif
             else if ((strncmp(str_display_or_transform.c_str(), "tei=", 4) == 0))
             {
                 type_definitions.set_field_transform_expression_integer(field_type_name, str_display_or_transform.c_str()+4);
@@ -374,12 +368,6 @@ void    post_build_field_base (
             {
                 type_definitions.set_field_transform_expression_float(field_type_name, str_display_or_transform.c_str()+4);
             }
-#if 0
-            else if ((strncmp(str_display_or_transform.c_str(), "tes=", 4) == 0))
-            {
-                type_definitions.set_field_transform_expression_string(field_type_name, str_display_or_transform.c_str()+4);
-            }
-#endif
             else if ((strncmp(str_display_or_transform.c_str(), "min=", 4) == 0) ||
                      (strncmp(str_display_or_transform.c_str(), "max=", 4) == 0))
             {

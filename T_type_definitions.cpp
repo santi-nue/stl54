@@ -812,19 +812,6 @@ T_type_definitions::set_field_transform_offset (T_field_type_name_base  & field,
 }
 
 void 
-T_type_definitions::set_field_transform_expression (
-                                        T_field_type_name_base  & field,
-                                  const string                  & expr_param) const
-{
-    M_FATAL_IF_NE(field.transform_quantum.as_string(), "");
-    M_FATAL_IF_NE(field.transform_offset.as_string(), "");
-    M_FATAL_IF_NE(field.transform_expression.is_defined(), false);
-
-    field.transform_expression.build_expression(*this, expr_param);
-    field.transform_expression_type = C_value::E_type_msg;  /* means unspecified */
-}
-
-void 
 T_type_definitions::set_field_transform_expression_integer (
                                         T_field_type_name_base  & field,
                                   const string                  & expr_param) const
@@ -848,19 +835,6 @@ T_type_definitions::set_field_transform_expression_float (
 
     field.transform_expression.build_expression(*this, expr_param);
     field.transform_expression_type = C_value::E_type_float;
-}
-
-void 
-T_type_definitions::set_field_transform_expression_string (
-                                        T_field_type_name_base  & field,
-                                  const string                  & expr_param) const
-{
-    M_FATAL_IF_NE(field.transform_quantum.as_string(), "");
-    M_FATAL_IF_NE(field.transform_offset.as_string(), "");
-    M_FATAL_IF_NE(field.transform_expression.is_defined(), false);
-
-    field.transform_expression.build_expression(*this, expr_param);
-    field.transform_expression_type = C_value::E_type_string;
 }
 
 void 

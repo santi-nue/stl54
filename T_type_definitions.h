@@ -607,13 +607,9 @@ struct T_type_definitions
     void    set_field_transform_offset (T_field_type_name_base  & field,
                                   const string             & offset_param) const;
 
-    void    set_field_transform_expression (T_field_type_name_base  & field,
-                                      const string             & expr_param) const;
     void    set_field_transform_expression_integer (T_field_type_name_base  & field,
                                       const string             & expr_param) const;
     void    set_field_transform_expression_float (T_field_type_name_base  & field,
-                                      const string             & expr_param) const;
-    void    set_field_transform_expression_string (T_field_type_name_base  & field,
                                       const string             & expr_param) const;
 
     void    add_field_constraint_min_max(T_field_type_name_base  & field,
