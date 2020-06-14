@@ -64,26 +64,6 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
                                T_interpret_data    & in_out_interpret_data);
 
 //*****************************************************************************
-// interpret_bytes ************************************************************
-//*****************************************************************************
-// idem without interpret_data
-//*****************************************************************************
-#if 0
-bool    interpret_bytes (const T_type_definitions  & type_definitions,
-                         const T_byte             *& in_out_P_bytes,
-                               size_t              & in_out_sizeof_bytes,
-                               istream             & input_stream,
-                               ostream             & os_out,
-                               ostream             & os_err);
-
-bool    interpret_bytes (const T_type_definitions  & type_definitions,
-                         const T_byte             *& in_out_P_bytes,
-                               size_t              & in_out_sizeof_bytes,
-                         const string              & in_input_string,
-                               ostream             & os_out,
-                               ostream             & os_err);
-#endif
-//*****************************************************************************
 // build_types_and_interpret_bytes ********************************************
 //*****************************************************************************
 // Idem above except that

@@ -44,31 +44,6 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-//*****************************************************************************
-// test_remote_command
-//*****************************************************************************
-#if 0
-// compile mais ne linke pas
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-#include <epan/packet.h>
-#include <capture.h>
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-void    test_remote_command()
-{
-    capture_options    capture_opts;
-
-    capture_stop(&capture_opts);
-}
-#endif
-
 /******************************************************************************
  * 
  *****************************************************************************/

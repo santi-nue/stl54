@@ -196,25 +196,6 @@ void    remove_string_limits (string  & str)
 }
 
 //*****************************************************************************
-// remove_spaces **************************************************************
-// space : blank, tab, new line ...
-//*****************************************************************************
-#if 0
-void    remove_spaces (string  & str)
-{
-    istringstream    is (str.c_str ());
-
-    string    result;
-    string    tmp;
-    while ((is >> ws) && (is >> tmp))
-    {
-        result += tmp;
-    }
-
-    str = result;
-}
-#endif
-//*****************************************************************************
 // is_separator
 //*****************************************************************************
 // A separator is anything which could not be used into an identifier or an
@@ -350,21 +331,13 @@ bool    append_to_string_until_base (istream       & is,
                 (result.empty ()))                  // comment must have a space before
             {
                 // This is a comment.
-#if 1
                 // Ignore it.
                 string  end_of_line;
                 getline (is, end_of_line);
                 build_types_context_line_new(is);
                 continue;
-#else
-                // Get it.
-                getline (is, result);
-                build_types_context_line_new(is);
-                return  true;
-#endif
             }
 
-#if 1
             if ((parser_cfg != K_parser_cfg_parameters) &&    // 20090521 manage "..."+"..."
                 (is_str_limit (c_read)) &&
                 (result.empty () == false))
@@ -372,14 +345,6 @@ bool    append_to_string_until_base (istream       & is,
                 // A string begins (and so previous token is terminated).
                 return  true;
             }
-#else
-            if ((is_str_limit (c_read)) &&
-                (result.empty () == false))
-            {
-                // A string begins (and so previous token is terminated).
-                return  true;
-            }
-#endif
         }
 
         // Transform any space into blank.

@@ -151,39 +151,6 @@ C_value    string_to_numeric(const T_type_definitions  & type_definitions,
                              const string              & field_name,
                              const char                * attr);
 
-#if 0
-//*****************************************************************************
-// check_field_name ***********************************************************
-//*****************************************************************************
-// Authorized : alphanum and _.
-// I refuse - (accepted by wireshark) because used into expression.
-//*****************************************************************************
-
-void    check_field_name(const string   & field_name,
-                         const char       also_authorized = '\0')
-{
-#if 1
-    if (is_a_valid_short_variable_name(field_name, also_authorized) == false)
-    {
-        M_FATAL_COMMENT("Unexpected field name (" << field_name << ") only alphanumeric and _ accepted. Must not start by a number.");
-    }
-#else
-    for (string::const_iterator  iter  = field_name.begin();
-                                 iter != field_name.end();
-                               ++iter)
-    {
-        if ((isalnum(*iter) == 0) && (*iter != '_'))
-        {
-            if (*iter == ':')
-                continue;
-
-            M_FATAL_COMMENT("Unexpected field name (" << field_name << ") only alphanumeric and _ accepted.");
-        }
-    }
-#endif
-}
-#endif
-
 //*****************************************************************************
 // check_field_name ***********************************************************
 //*****************************************************************************
@@ -230,11 +197,6 @@ void    check_field_name(      T_field_type_name  & field_type_name,
             M_FATAL_COMMENT("Unexpected parameter (" << str_parameter << ") inside field name.");
         }
     }
-#if 0
-    if (field_type_name.display_name  == "")  field_type_name.display_name  = field_type_name.name;
-    if (field_type_name.filter_name   == "")  field_type_name.filter_name   = field_type_name.name;
-    if (field_type_name.extended_name == "")  field_type_name.extended_name = field_type_name.name;
-#endif
 
     const string &  field_name = field_type_name.name;
     if (is_a_valid_short_variable_name(field_name, also_authorized) == false)
@@ -840,15 +802,8 @@ string    build_field (istream                           & is,
     // data: inline struct
     if (field_type_name.type == "struct")
     {
-#if 0
-    ICIOA pb build_struct_unnamed
-    - type_definitions    doit     etre const car build_field utilise dans frame_to_main
-    - type_definitions NE doit PAS etre const car build_struct_unnamed rajoute une struct dedans
-        field_type_name.type = build_struct_unnamed (is, type_definitions);
-#else
         field_type_name.P_sub_struct.reset(new T_struct_definition);
         build_struct_base (is, type_definitions, *field_type_name.P_sub_struct, return_type);
-#endif
 
         M_FATAL_IF_FALSE (read_token_field_name (is, field_type_name.name));
         // NB : "" not authorized : non sense and not coded into generic (register)
@@ -933,74 +888,6 @@ string    build_field (istream                           & is,
             field_type_name.P_switch_inline->is_switch_expr = is_switch_expr;
             build_switch_unnamed (field_type_name.type, is, type_definitions, *field_type_name.P_switch_inline, return_type);
 
-#if 1
-            // Inline switch is a command control bloc (like if and loops)
-            // -> no name
-            // -> no ; after }
-            M_FINISH_build_field_check();
-            M_FINISH_build_field_read_next();
-#else
-            M_FATAL_IF_FALSE (read_token_right_any (is, field_type_name.name));
-
-            if (field_type_name.name == ";")
-            {
-                field_type_name.name = "";
-                M_FINISH_build_field_check();
-                M_FINISH_build_field_read_next();
-            }
-            else if (field_type_name.name == "\"\"")
-            {
-                field_type_name.name = "";
-            }
-            else
-            {
-                check_field_name(field_type_name);
-            }
-
-            M_FINISH_build_field();
-#endif
-        }
-    }
-
-
-#if 0
-    // command: inline frame
-    {
-        bool    is_an_inline_frame = false;
-        string  inline_frame_parameter;
-        if (field_type_name.type == "frame_bytes")
-        {
-            is_an_inline_frame = true;
-        }
-        else if (strncmp(field_type_name.type.c_str(), "frame_bytes(", 12) == 0)
-        {
-            is_an_inline_frame = true;
-            inline_frame_parameter = field_type_name.type.substr(12);
-            if ((inline_frame_parameter.size() < 2) ||
-                (inline_frame_parameter[inline_frame_parameter.size()-1] != ')'))
-            {
-                M_FATAL_COMMENT("invalid parameter for inline frame " << field_type_name.type);
-            }
-            inline_frame_parameter.erase(inline_frame_parameter.size()-1);
-        }
-        if (is_an_inline_frame)
-        {
-            string    word_open_brace;
-            M_FATAL_IF_FALSE (read_token_key_word (is, word_open_brace));
-            M_FATAL_IF_FALSE (word_open_brace == "{");
-
-            field_type_name.str_size_or_parameter = inline_frame_parameter;
-            field_type_name.type = "frame_bytes";
-
-            field_type_name.P_sub_struct.reset(new T_struct_definition);
-            build_struct_fields (is, type_definitions,
-                                 field_type_name.P_sub_struct->fields,
-                                 "}",
-                                 NULL_PTR,
-                                 NULL_PTR,
-                                 field_scope,
-                                 return_type);
-
             // Inline switch is a command control bloc (like if and loops)
             // -> no name
             // -> no ; after }
@@ -1008,7 +895,7 @@ string    build_field (istream                           & is,
             M_FINISH_build_field_read_next();
         }
     }
-#endif
+
 
     // command: inline frame
     if (field_type_name.type == "frame_old")    // Not finished and deprecated
@@ -1343,36 +1230,6 @@ void    build_struct_base ( istream              & is,
     }
 }
 
-//*****************************************************************************
-// build_struct_unnamed
-// ----------------------------------------------------------------------------
-// Format :
-// struct  [ print ("...", ..., ...) ]
-// {
-//    <type_name>  <field_name>
-//    ...
-//    <type_name>  <field_name>
-// }
-//*****************************************************************************
-#if 0
-static int    ICIOA_struct_unnamed_counter = 0;
-string    build_struct_unnamed (
-                            istream             & is,
-                            T_type_definitions  & type_definitions)
-{
-    M_TRACE_ENTER ("build_struct_unnamed", "");
-
-    const string  struct_name = "wsgd_struct_unnamed_" + get_string(++ICIOA_struct_unnamed_counter);
-
-    // Check it is possible to define a new type with this name.
-    // No returned value, FATAL is called if it is not possible.
-    type_definitions.could_define_new_type(struct_name, T_type_definitions::E_type_struct, E_override_no);
-
-    build_struct_base (is, type_definitions, type_definitions.map_struct_definition[struct_name]);
-
-    return  struct_name;
-}
-#endif
 //*****************************************************************************
 // M_CHECK_FORWARD
 // If the next character is ; (ie end of statement),
@@ -1736,15 +1593,6 @@ void    build_enum (const E_override            must_override,
     }
 
     def_rep.bit_size = sizeof_enum;
-#if 0
-// ICIOA 20091010 error for enum3 (e.g.) outside bitfield/bitstream      AND
-// ICIOA 20091012 no interest inside bitfield/bitstream
-    if ((sizeof_enum % 8) != 0)
-    {
-        sizeof_enum += 8;
-        sizeof_enum -= sizeof_enum % 8;
-    }
-#endif
     def_rep.representation_type =
                 string (def_rep.is_signed ? "" : "u") +
                 "int" +
@@ -2414,56 +2262,6 @@ void    build_library  (const E_override            must_override,
 #endif
 
 //*****************************************************************************
-// use_non_portable_types
-// Completely deprecated function.
-// Not supposed to be called (since nobody knows the command which permits
-//  to call it).
-//*****************************************************************************
-#if 0
-void    use_non_portable_types (const string              & key_word,
-                                      istream             & is,
-                                      T_type_definitions  & type_definitions)
-{
-    M_TRACE_ENTER ("use_non_portable_types", "");
-
-    {
-#define M_ADD_ALIAS_MATCH_SIZE(TYPE,PORTABLE_TYPE_NAME,PORTABLE_TYPE_SIZE)    \
-        if (sizeof (TYPE) == (PORTABLE_TYPE_SIZE / 8))                        \
-            type_definitions.map_alias_type[#TYPE] = PORTABLE_TYPE_NAME
-
-        M_ADD_ALIAS_MATCH_SIZE (float , "float32", 32);
-        M_ADD_ALIAS_MATCH_SIZE (double, "float64", 64);
-
-        M_ADD_ALIAS_MATCH_SIZE (bool, "bool8" ,  8);
-        M_ADD_ALIAS_MATCH_SIZE (bool, "bool16", 16);
-        M_ADD_ALIAS_MATCH_SIZE (bool, "bool32", 32);
-
-        M_ADD_ALIAS_MATCH_SIZE (  short, "int8" ,  8);
-        M_ADD_ALIAS_MATCH_SIZE (  short, "int16", 16);
-
-        M_ADD_ALIAS_MATCH_SIZE (  ushort, "uint8" ,  8);
-        M_ADD_ALIAS_MATCH_SIZE (  ushort, "uint16", 16);
-
-        M_ADD_ALIAS_MATCH_SIZE (   int, "int16", 16);
-        M_ADD_ALIAS_MATCH_SIZE (   int, "int32", 32);
-
-        M_ADD_ALIAS_MATCH_SIZE (  uint, "uint16", 16);
-        M_ADD_ALIAS_MATCH_SIZE (  uint, "uint32", 32);
-
-        M_ADD_ALIAS_MATCH_SIZE (  long, "int32", 32);
-        M_ADD_ALIAS_MATCH_SIZE (  long, "int64", 64);
-
-        M_ADD_ALIAS_MATCH_SIZE ( ulong, "uint32", 32);
-        M_ADD_ALIAS_MATCH_SIZE ( ulong, "uint64", 64);
-
-        M_ADD_ALIAS_MATCH_SIZE (  longlong, "int64", 64);
-
-        M_ADD_ALIAS_MATCH_SIZE ( ulonglong, "uint64", 64);
-    }
-}
-#endif
-
-//*****************************************************************************
 // build_types_no_include
 // - search for alias, struct, enum, switch definitions
 // - add the definition into the associated map
@@ -2478,14 +2276,6 @@ string    build_types_no_include (istream             & is,
     string    key_word;
     while (read_token_left_any (is, key_word))
     {
-#if 0
-        if (key_word == "use_non_portable_types")
-        {
-            use_non_portable_types (key_word, is, type_definitions);
-            continue;
-        }
-#endif
-
         E_override    must_override = E_override_no;
         if (key_word == "override")
         {

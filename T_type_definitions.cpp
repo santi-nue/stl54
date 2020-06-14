@@ -210,13 +210,12 @@ T_field_type_name::must_force_manage_as_biggest_float() const
     // See coment into C_byte_interpret_wsgd_builder::value
     // So "var float64  toto = 12.3" is identic to :
     //    "var float32  toto = 12.3"
-#if 1
     if ((new_expression.is_defined() == true) &&
         (strncmp(type.c_str(), "float", 5) == 0))
     {
         return  true;
     }
-#endif
+
     return  false;
 }
 
@@ -236,14 +235,12 @@ T_field_type_name::must_force_manage_as_biggest_int() const
         }
 
         // ICIOA 2010/12/30 see comment into must_force_manage_as_biggest_float
-#if 1
         if ((new_expression.is_defined() == true) &&
             (strncmp(type.c_str(), "float", 5) != 0) &&
             (strncmp(type.c_str(), "string", 6) != 0))
         {
             return  true;
         }
-#endif
     }
 
     return  false;

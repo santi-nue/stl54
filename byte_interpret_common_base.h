@@ -136,25 +136,6 @@ string    get_string (const long long&   rhs)
 }
 #endif
 //****************************************************************************
-// find : Frhed did not succeed to find it !
-//****************************************************************************
-#if 0
-#ifdef FRHED
-template <class T_iter,
-          class T_value>
-inline
-T_iter     find (      T_iter     _First,
-                       T_iter     _Last,
-                 const T_value  & _Val)
-{
-    for (; _First != _Last; ++_First)
-        if (*_First == _Val)
-            break;
-    return (_First);
-}
-#endif
-#endif
-//****************************************************************************
 // rfind : reverse find
 //****************************************************************************
 template <class T_iter,

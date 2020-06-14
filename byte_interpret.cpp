@@ -201,52 +201,6 @@ E_return_code    decompose_type_sep_value_sep (
 
 //*****************************************************************************
 // ----------------------------------------------------------------------------
-// Format :
-// <simple_type>[<str_array_size>]
-// NB: <str_array_size> is :
-//     - an integer > 0 or
-//     - the name of the integer variable which contains the size
-//*****************************************************************************
-#if 0
-bool    is_an_array (const T_type_definitions  & type_definitions,
-                           T_interpret_data    & interpret_data,
-                     const string              & orig_type,
-                           string              & simple_type,
-                           string              & str_array_size,
-                           long                & array_size)
-{
-    array_size = -1;
-    bool    result = is_an_array (orig_type, simple_type, str_array_size);
-
-    if (result != true)
-    {
-        return  false;
-    }
-
-    // Verify special cases.
-    if ((str_array_size == "*") || (str_array_size == "+"))
-    {
-        array_size = LONG_MAX;
-        return  true;
-    }
-
-    // Compute the array size.
-    C_value    value = compute_expression_no_io(type_definitions, interpret_data, str_array_size);
-
-    if (value.get_type () != C_value::E_type_integer)
-    {
-        // Error trace/display done by caller.
-        return  true;
-    }
-
-    array_size = static_cast<long>(value.get_int ());
-
-    return  true;
-}
-#endif
-
-//*****************************************************************************
-// ----------------------------------------------------------------------------
 // Returns :
 // <array_name>[<idx>]
 // OR if <array_name> is <begin_array_name>[...][...][...]
@@ -283,99 +237,6 @@ string  get_array_idx_name (const string  & array_name,
             "[" + get_string (idx) + "]" +
             string (P_current);
 }
-
-//*****************************************************************************
-// ----------------------------------------------------------------------------
-// Format :
-// <key_word>               if could_have_no_size        or
-// <key_word>()             if could_have_no_size        or
-// <key_word>(<str_size>)
-//*****************************************************************************
-#if 0
-bool    is_a_key_word_op_size_cp (const string   & key_word,
-                                  const bool       could_have_no_size,
-                                  const string   & orig_type,
-                                        string   & str_size)
-{
-    str_size = "";
-
-    if (could_have_no_size)
-    {
-        if ((orig_type == key_word) ||
-            (orig_type == key_word+"()"))
-            return  true;
-    }
-
-    if (strncmp (orig_type.c_str (), key_word.c_str(), key_word.size()) != 0)
-        return  false;
-    if (orig_type[key_word.size()] != '(')
-        return  false;
-
-    string       left_part;
-    if (decompose_type_sep_value_sep (orig_type, '(', ')',
-                                      left_part,
-                                      str_size) != E_rc_ok)
-        return  false;
-
-    if (left_part != key_word)
-        return  false;
-
-    return  true;
-}
-
-//*****************************************************************************
-// ----------------------------------------------------------------------------
-// Format :
-// <key_word> or <key_word>()                      if could_have_no_size
-// NB: unknow size, must search the "end" into the data
-// ----------------------------------------------------------------------------
-// Format :
-// <key_word>(<str_size>)
-// NB: <str_size> is :
-//     - an integer > 0 or
-//     - the name of the integer variable which contains the size
-//*****************************************************************************
-
-bool    is_a_key_word_op_size_cp (const T_type_definitions  & type_definitions,
-                                        T_interpret_data    & interpret_data,
-                                  const string              & key_word,
-                                  const bool                  could_have_no_size,
-                                  const char                * special_size,
-                                  const string              & orig_type,
-                                        string              & str_size,
-                                        long                & size)
-{
-    size = 0;
-    bool    result = is_a_key_word_op_size_cp (key_word, could_have_no_size, orig_type, str_size);
-
-    if (result != true)
-    {
-        return  false;
-    }
-
-    if (str_size == "")
-        return  true;
-
-    if (special_size)
-    {
-        if (str_size == special_size)
-            return  true;
-    }
-
-    // Compute the string size.
-    C_value    value = compute_expression_no_io(type_definitions, interpret_data, str_size);
-
-    if (value.get_type () != C_value::E_type_integer)
-    {
-        // Error trace/display done by caller.
-        return  true;
-    }
-
-    size = static_cast<long>(value.get_int ());
-
-    return  true;
-}
-#endif
 
 //*****************************************************************************
 // size_expression_to_int
@@ -514,110 +375,7 @@ void    promote_enum_symbolic_name (const T_type_definitions  & type_definitions
 
     return;
 }
-#if 0
-//*****************************************************************************
-// printf_args_to_string ******************************************************
-//*****************************************************************************
 
-C_value    printf_args_to_string (const T_type_definitions  & type_definitions,
-                                        T_interpret_data    & interpret_data,
-                               T_frame_data            & in_out_frame_data,
-                                  const string              & print_args,
-                         const std::string             & data_name,
-                         const std::string             & data_simple_name,
-                               std::ostream            & os_out,
-                               std::ostream            & os_err,
-                               bool                    & could_be_and_is_multiple_value)
-{
-    const bool  could_be_multiple_value = could_be_and_is_multiple_value;
-    could_be_and_is_multiple_value = false;
-
-    string    printf_result = print_args;
-
-    remove_string_limits(printf_result);
-
-    if (printf_result != print_args)
-    {
-        // There was "...", so it is a simple string.
-        // Nothing more to do.
-    }
-    else if ((printf_result != "") &&
-             (printf_result[0] == '(') &&
-             (printf_result[printf_result.size()-1] == ')'))
-    {
-        // There is (...), so it is a printf.
-
-        // Remove ( and ).
-        printf_result.erase(0, 1);
-        printf_result.erase(printf_result.size()-1);
-
-        // Split on ,.
-        vector<string>    words;
-        string_to_words(printf_result, words, K_parser_cfg_parameters);
-
-        //
-        remove_string_limits(words[0]);
-        promote_printf_string_to_64bits(words[0]);
-
-        // Compute values to print.
-        vector<C_value>    values_to_print;
-        for (unsigned int   idx = 1; idx < words.size(); ++idx)
-        {
-            values_to_print.push_back(compute_expression(type_definitions, interpret_data, in_out_frame_data,
-                                                         words[idx],
-                                                         data_name, data_simple_name, os_out, os_err));
-        }
-
-        // printf.
-        return  C_value::sprintf_values(words[0], values_to_print);
-    }
-    else
-    {
-        // There is no "", so it is a value.
-        if (( could_be_multiple_value) &&
-            (printf_result.find('*') != string::npos))
-        {
-            could_be_and_is_multiple_value = true;
-        }
-
-        {
-            C_value       value;
-            if (get_complex_value (type_definitions, interpret_data, printf_result, value) == E_rc_ok)
-            {
-                printf_result += " -> ";
-                printf_result += value.as_string();
-            }
-        }
-    }
-
-    return  printf_result;
-}
-
-//*****************************************************************************
-// printf_args_to_string ******************************************************
-//*****************************************************************************
-
-C_value    printf_args_to_string (const T_type_definitions  & type_definitions,
-                                        T_interpret_data    & interpret_data,
-                               T_frame_data            & in_out_frame_data,
-                                  const string              & print_args,
-                         const std::string             & data_name,
-                         const std::string             & data_simple_name,
-                               std::ostream            & os_out,
-                               std::ostream            & os_err)
-{
-    bool    could_be_multiple_value = false;
-    return  printf_args_to_string (type_definitions,
-                                   interpret_data,
-                                   in_out_frame_data,
-                                   print_args,
-                                   data_name,
-                                   data_simple_name,
-                                   os_out,
-                                   os_err,
-                                   could_be_multiple_value);
-}
-#else
 //*****************************************************************************
 // printf_args_to_string ******************************************************
 //*****************************************************************************
@@ -744,15 +502,10 @@ C_value    printf_args_to_string (const T_type_definitions      & type_definitio
         E_return_code  return_code = get_complex_value (type_definitions, interpret_data, printf_result, value);
         if (return_code == E_rc_ok)
         {
-#if 1
             T_interpret_read_values::T_var_name_P_value    var_name_P_value;
             var_name_P_value.var_name = printf_result;
             var_name_P_value.P_value = & interpret_data.get_attribute_value_of_read_variable(printf_result);
             var_name_P_values.push_back(var_name_P_value);
-#else
-            printf_result += " -> ";
-            printf_result += value.as_string();
-#endif
         }
         else if (return_code == E_rc_multiple_value)
         {
@@ -762,7 +515,7 @@ C_value    printf_args_to_string (const T_type_definitions      & type_definitio
 
     return  printf_result;
 }
-#endif
+
 //*****************************************************************************
 // 
 //*****************************************************************************
@@ -2940,7 +2693,6 @@ bool    frame_to_struct_base (const T_type_definitions    & type_definitions,
 //        catched_exception = val;        // slicing pb
 //        P_catched_exception = &val;     // scope pb
 
-#if 1
         // Even with a normal exception, I try to print the text.
         // But it is possible (because of break, continue, return ...)
         //  that the data to print is not available
@@ -2960,7 +2712,7 @@ bool    frame_to_struct_base (const T_type_definitions    & type_definitions,
                                                 data_name, data_simple_name,
                                                 printf_result);
         }
-#endif
+
         if ((must_catch_return != true) ||                 // inline struct
             (val.get_cause() == E_byte_interpret_exception_loop_deep_break) ||
             (val.get_cause() == E_byte_interpret_exception_loop_deep_continue))
@@ -3163,14 +2915,7 @@ bool    frame_to_switch (const T_type_definitions      & type_definitions,
                                                                          discriminant_str);
 
     const bool    is_discriminant_value_int = discriminant_value.get_type() == C_value::E_type_integer;
-#if 0
-    if (type_definitions.is_an_enum(switch_def.case_type))
-    {
-        promote_enum_symbolic_name (type_definitions,
-                                    switch_def.case_type,
-                                    discriminant_value);
-    }
-#endif
+
     for (T_switch_cases::size_type  idx = 0; idx < switch_cases.size (); ++idx)
     {
         bool    case_found = false;
@@ -4818,115 +4563,6 @@ string    enum_value_to_attribute_value (
 
     return  attribute_value_to_string(attribute_value);
 }
-
-#if 0
-//*****************************************************************************
-// read_simple_type ***********************************************************
-//*****************************************************************************
-
-template 
-void read_simple_type(const string  & TYPE_NAME,
-                      const int       TYPE_BIT_SIZE,
-                      TYPE_IMPL
-                      const int       TYPE_IMPL_BIT_SIZE,
-                      const string  & TYPE_IMPL_STR)
-{
-    #define M_READ_SIMPLE_TYPE_BASE(,,,,)    \
-    else if (final_type == TYPE_NAME)                                         \
-    {                                                                         \
-        M_FATAL_IF_GT (TYPE_BIT_SIZE, TYPE_IMPL_BIT_SIZE);                    \
-                                                                              \
-        int   type_bit_size_for_builder = TYPE_BIT_SIZE;                      \
-        T_frame_data    in_out_frame_data_for_builder = in_out_frame_data;    \
-                                                                              \
-        C_value      obj_value;                                               \
-                                                                              \
-        if (field_type_name.is_a_variable() == false)                         \
-        {                                                                     \
-            const int   bit_position_offset_into_initial_frame = in_out_frame_data.get_bit_offset_into_initial_frame();   \
-            TYPE_IMPL    value = 0;                                           \
-            read_decode_data (type_definitions, in_out_frame_data,                   \
-                       field_type_name, data_name, data_simple_name,          \
-                       &value,                                                \
-                       TYPE_NAME, TYPE_BIT_SIZE,                              \
-                       TYPE_IMPL_STR, TYPE_IMPL_BIT_SIZE,                     \
-                       interpret_data.must_invert_bytes(),                    \
-                       final_type[0] == 'i' /* != 'u' */);                    \
-            in_out_frame_data_for_builder = in_out_frame_data;                \
-            obj_value = value;                                                \
-            obj_value.set_bit_position_offset_size(bit_position_offset_into_initial_frame, TYPE_BIT_SIZE);  \
-        }                                                                     \
-        else                                                                  \
-        {                                                                     \
-            type_bit_size_for_builder = 0;   /* to avoid hexa data highligth (-1 forbidden) */    \
-            if (is_enum)                                                      \
-                type_bit_size_for_builder = -1;   /* ICIOA trick to know it is an enum !!! */    \
-                                                                              \
-            obj_value = compute_expression(type_definitions, interpret_data, in_out_frame_data,  \
-                                           field_type_name.get_var_expression(),                 \
-                                           data_name, data_simple_name, os_out, os_err);         \
-            if (strcmp(TYPE_NAME, "msg") == 0)                                \
-            {                                                                 \
-                if (obj_value.get_type() != C_value::E_type_msg)              \
-                {                                                             \
-                    M_FATAL_COMMENT("Expecting msg and expression gives " << obj_value.get_type());    \
-                }                                                             \
-            }                                                                 \
-            else                                                              \
-            if (strncmp(TYPE_NAME, "float", 5) != 0)                          \
-            {                                                                 \
-                TYPE_IMPL  value = static_cast<TYPE_IMPL>(obj_value.get_int());          \
-                C_value  value_to_compare(value);                             \
-                if (value_to_compare != obj_value)                            \
-                {                                                             \
-                    M_FATAL_COMMENT("Overflow : " << obj_value.get_int() << " gives " << value_to_compare.get_int());         \
-                }                                                             \
-            }                                                                 \
-            const int   bit_position_offset_into_initial_frame = obj_value.get_bit_position_offset();        \
-            const int   bit_position_size = obj_value.get_bit_position_size();            \
-            if ((bit_position_offset_into_initial_frame >= 0) && (bit_position_size > 0))        \
-            {                                                                 \
-                type_bit_size_for_builder = bit_position_size;                \
-                in_out_frame_data_for_builder.set_bit_offset_into_initial_frame(bit_position_offset_into_initial_frame + type_bit_size_for_builder);    \
-                if (is_enum)                                                  \
-                    type_bit_size_for_builder = -type_bit_size_for_builder;   /* ICIOA trick to know it is an enum !!! */    \
-            }                                                                 \
-        }                                                                     \
-                                                                              \
-        if (strncmp (final_type.c_str (), "spare", 5) == 0)                   \
-            return  true;                                                     \
-                                                                              \
-        bool    no_error = true;                                              \
-        T_attribute_value    attribute_value;                                 \
-        string  str_value;                                                    \
-        if (is_enum)                                                          \
-            str_value = enum_value_to_attribute_value (obj_value,             \
-                                    P_enum_def->definition, attribute_value, no_error);     \
-        else                                                                                \
-            str_value = simple_value_to_attribute_value_main (                \
-                                type_definitions, interpret_data,             \
-                                obj_value, final_type,                        \
-                                field_type_name, attribute_value, no_error);  \
-                                                                                            \
-        interpret_data.add_read_variable (data_name, data_simple_name, attribute_value);    \
-                                                                              \
-        if (interpret_data.must_NOT_output ())                                \
-            return  true;                                                     \
-                                                                              \
-        os_out << data_name << " ";                                           \
-        os_out << "= ";                                                       \
-        os_out << str_value << endl;                                          \
-        interpret_builder_value(type_definitions, in_out_frame_data_for_builder,          \
-                                field_type_name, data_name, data_simple_name, \
-                                attribute_value, str_value,                   \
-                                final_type, type_bit_size_for_builder,        \
-                                interpret_data.is_little_endian(), ! no_error);           \
-                                                                              \
-        return  true;                                                         \
-    }
-
-}
-#endif
 
 //*****************************************************************************
 // frame_to_string ************************************************************

@@ -90,7 +90,7 @@ int     dissector_try_uint_return_size(dissector_table_t   sub_dissectors,
                                        proto_tree         *tree)
 {
     int  dissector_result = 0;    // means nothing done (dissector not found)
-#if 1
+
     dissector_handle_t  dissector_handle = dissector_get_uint_handle(sub_dissectors, uint_val);
     if (dissector_handle != NULL)
     {
@@ -98,10 +98,6 @@ int     dissector_try_uint_return_size(dissector_table_t   sub_dissectors,
     }
 
     return  dissector_result;
-#else
-    int   result = dissector_try_uint(sub_dissectors, uint_val, tvb, pinfo, tree);
-    return  result;
-#endif
 }
 
 /******************************************************************************
@@ -328,10 +324,6 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
     if (field_type_name.wsgd_field_idx < 0)
         return;
 
-//    const string    text = field_type_name.name + ": " + data_value;
-#if 0
-    const string    text = data_simple_name + ": " + data_value;    // new array management
-#else
     string    text = data_simple_name + ": " + data_value;    // new array management
     {
         const string& field_name = field_type_name.name;
@@ -340,8 +332,8 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
         {
             text.replace(0, field_name.size(), field_display_name);
         }
-        }
-#endif
+    }
+
     const int       error_code = error ? PI_ERROR : 0;
 
     M_TRACE_DEBUG("wsgd add item = " << text);
@@ -905,7 +897,6 @@ C_byte_interpret_wsgd_builder::group_begin(const T_type_definitions  & /* type_d
 
     T_wsgd_group_data& group_data = A_wsgd_group_data.back();
 
-#if 1
     string    text = data_simple_name;    // new array management
     {
         const string& field_name = field_type_name.name;
@@ -915,7 +906,6 @@ C_byte_interpret_wsgd_builder::group_begin(const T_type_definitions  & /* type_d
             text.replace(0, field_name.size(), field_display_name);
         }
     }
-#endif
 
     // Ajout d'un item.
     // La taille est re-specifiee apres.
@@ -930,12 +920,7 @@ C_byte_interpret_wsgd_builder::group_begin(const T_type_definitions  & /* type_d
                                                     in_out_frame_data.get_bit_offset_into_initial_frame(),
                                                     field_type_name.basic_type_bit_size,   // ICIOA -1 ou 0
                                                     false,                             // little_endian
-//                                                    field_type_name.name.c_str(),
-#if 0
-                                                    data_simple_name.c_str(),          // new array management
-#else
                                                     text.c_str(),          // new array management
-#endif
                                                     0);                                // no error_code
 
     A_interpret_wsgd.wsgd_tree = cpp_dissect_generic_add_tree(A_interpret_wsgd.proto_idx, group_data.item);
