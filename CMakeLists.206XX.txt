@@ -62,7 +62,6 @@ set(DISSECTOR_CORE_UT_SRC
 )
 
 set (DISSECTOR_CORE_OTHER_SRC
-	tinystr.cpp tinyxml.cpp tinyxmlerror.cpp tinyxmlparser.cpp
 )
 
 set (DISSECTOR_CORE_SRC
