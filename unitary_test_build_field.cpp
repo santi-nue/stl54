@@ -26,6 +26,9 @@ using namespace std;
 #include "byte_interpret_parse.h"
 #include "byte_interpret.h"
 
+#define M_TEST_EXPR_STR_EQ(VAL1,VAL2)            M_TEST_EQ(VAL1,VAL2)
+
+
 //*****************************************************************************
 // test_build_field
 //*****************************************************************************
@@ -691,5 +694,79 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.P_bitfield_inline->fields_definition[3].is_a_variable(), true);
         M_TEST_EQ(field_type_name.P_bitfield_inline->fields_definition[3].get_var_expression().get_original_string_expression(),
                                                                           "((last_bitfield_value >> 20) & 7)");
+    }
+
+    // loop_size_bytes
+    {
+        string         first_word = "show";
+        istringstream  iss(" "
+            " loop_size_bytes  12"
+            " {"
+            "   uint8  c0;"
+            "    int8  c1;"
+            " }");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), true);                       // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "loop_size_bytes");                         // type
+//		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EQ(field_type_name.name, "12");
+        M_TEST_EQ(field_type_name.condition_expression.get_original_string_expression(), "12");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].type, "uint8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
+    }
+
+    // loop_size_bits
+    {
+        string         first_word = "show";
+        istringstream  iss(" "
+            " loop_size_bits  (12 + 7)"
+            " {"
+            "   uint8  c0;"
+            "    int8  c1;"
+            " }");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), true);                       // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "loop_size_bits");                          // type
+//		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "(12 + 7)");
+        M_TEST_EXPR_STR_EQ(field_type_name.condition_expression.get_original_string_expression(), "(12 + 7)");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].type, "uint8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
     }
 }
