@@ -769,4 +769,163 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
     }
+
+    // if
+    {
+        string         first_word = "forget";   // currently accepted, but ...
+        istringstream  iss(" "
+            " if  (12 + 7 > 18)"
+            " {"
+            "   uint8  c0;"
+            "    int8  c1;"
+            " }");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, true);                       // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "if");                              // type
+//		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "(12 + 7 > 18)");
+        M_TEST_EXPR_STR_EQ(field_type_name.condition_expression.get_original_string_expression(), "(12 + 7 > 18)");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].type, "uint8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
+    }
+
+    // if else
+    {
+        string         first_word = "forget";   // currently accepted, but ...
+        istringstream  iss(" "
+            " if  (12 + 7 > 18)"
+            " {"
+            "   uint8  c0;"
+            "    int8  c1;"
+            " }"
+            " else"
+            " {"
+            "   string    c2;"
+            "   int13[2]  c3;"
+            " }");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, true);                       // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "if");                              // type
+//		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "(12 + 7 > 18)");
+        M_TEST_EXPR_STR_EQ(field_type_name.condition_expression.get_original_string_expression(), "(12 + 7 > 18)");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].type, "uint8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
+        M_TEST_EQ(field_type_name.sub_struct_2.size(), 2);
+        M_TEST_EQ(field_type_name.sub_struct_2[0].type, "string");
+        M_TEST_EQ(field_type_name.sub_struct_2[0].name, "c2");
+        M_TEST_EQ(field_type_name.sub_struct_2[1].type, "int13");
+        M_TEST_EQ(field_type_name.sub_struct_2[1].name, "c3");
+    }
+
+    // while
+    {
+        string         first_word = "hide";   // currently accepted, but ...
+        istringstream  iss(" "
+            " while  (12 + 7 > 18)"
+            " {"
+            "   uint8  c0;"
+            "    int8  c1;"
+            " }");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "while");                           // type
+//		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "(12 + 7 > 18)");
+        M_TEST_EXPR_STR_EQ(field_type_name.condition_expression.get_original_string_expression(), "(12 + 7 > 18)");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].type, "uint8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
+    }
+
+    // do while
+    {
+        string         first_word = "hide";   // currently accepted, but ...
+        istringstream  iss(" "
+            " do"
+            " {"
+            "   uint8  c0;"
+            "    int8  c1;"
+            " }"
+            " while  (12 + 7 > 18) ;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "do_while");                        // type
+//		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "(12 + 7 > 18)");
+        M_TEST_EXPR_STR_EQ(field_type_name.condition_expression.get_original_string_expression(), "(12 + 7 > 18)");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].type, "uint8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
+    }
 }
