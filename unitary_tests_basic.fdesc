@@ -606,3 +606,15 @@ struct T_forget
 {
   var int32  struct_counter = struct_counter + 1;
 }
+
+###############################################################################
+#
+###############################################################################
+
+function void  return_nothing ()
+{
+}
+
+function void  return_nothing_2 (in int64  value, out bool8  value_modified)
+{
+}
