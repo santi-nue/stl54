@@ -1143,4 +1143,166 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
         M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
     }
+
+    // save_position
+    {
+        string         first_word = "save_position";
+        istringstream  iss(" pos_name ;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "save_position");                   // type
+//        M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//        M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "pos_name");
+        M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
+        M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
+    }
+
+    // goto_position
+    {
+        string         first_word = "goto_position";
+        istringstream  iss(" pos::name ;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "goto_position");                   // type
+//        M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//        M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "pos::name");
+        M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
+        M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
+    }
+
+    // move_position_bytes
+    {
+        string         first_word = "move_position_bytes";
+        istringstream  iss(" 11+ 2 ;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "move_position_bytes");             // type
+//        M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//        M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "11+ 2");
+        M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
+        M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
+    }
+
+    // move_position_bits
+    {
+        string         first_word = "move_position_bits";
+        istringstream  iss(" 11- 3 ;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "move_position_bits");              // type
+//        M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//        M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "11- 3");
+        M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
+        M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
+    }
+
+    // byte_order
+    {
+        string         first_word = "byte_order";
+        istringstream  iss(" little_endian ;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "byte_order");              // type
+//        M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//        M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "little_endian");
+        M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
+        M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
+    }
+
+    // break
+    {
+        string         first_word = "break";
+        istringstream  iss("  ;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_show(), false);                      // show
+        M_TEST_EQ(field_type_name.must_forget, false);                      // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "break");              // type
+//        M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+//        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+//        M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EXPR_STR_EQ(field_type_name.name, "");
+        M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
+        M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
+    }
 }
