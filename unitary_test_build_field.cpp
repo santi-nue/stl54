@@ -321,7 +321,7 @@ M_TEST_FCT(test_build_field)
             C_byte_interpret_exception);
     }
 
-    // Valid const syntax field name
+    // Invalid const syntax field name
     {
         string         first_word = "konst";
         istringstream  iss("uint32 konst::one_hundred = 100;");

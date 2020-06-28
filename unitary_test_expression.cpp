@@ -998,6 +998,37 @@ M_TEST_FCT(test_expression)
     }
 
     //-------------------------------------------------------------------------
+    // Test array multiple
+    //-------------------------------------------------------------------------
+    interpret_data.add_read_variable("a_multiple_array[0][0]", "00");
+    interpret_data.add_read_variable("a_multiple_array[0][1]", "01");
+    interpret_data.add_read_variable("a_multiple_array[1][0]", "10");
+    interpret_data.add_read_variable("a_multiple_array[1][1]", "11");
+    interpret_data.add_read_variable("a_multiple_array[2][0]", "20");
+    interpret_data.add_read_variable("a_multiple_array[2][1]", "21");
+    interpret_data.add_read_variable("a_multiple_array[3][0]", "30");
+    interpret_data.add_read_variable("a_multiple_array[3][1]", "31");
+    interpret_data.add_read_variable("idx", 1);
+    {
+        C_value   value = compute_expression_no_io (type_definitions, interpret_data, "a_multiple_array[idx+2][idx-1]");
+        M_TEST_EQ(value.get_str(), "30");
+    }
+
+    interpret_data.add_read_variable("s_multiple_array[0][0].toto", "00");
+    interpret_data.add_read_variable("s_multiple_array[0][1].toto", "01");
+    interpret_data.add_read_variable("s_multiple_array[1][0].toto", "10");
+    interpret_data.add_read_variable("s_multiple_array[1][1].toto", "11");
+    interpret_data.add_read_variable("s_multiple_array[2][0].toto", "20");
+    interpret_data.add_read_variable("s_multiple_array[2][1].toto", "21");
+    interpret_data.add_read_variable("s_multiple_array[3][0].toto", "30");
+    interpret_data.add_read_variable("s_multiple_array[3][1].toto", "31");
+    interpret_data.add_read_variable("idx", 1);
+    {
+        C_value   value = compute_expression_no_io(type_definitions, interpret_data, "s_multiple_array[idx+1][idx].toto");
+        M_TEST_EQ(value.get_str(), "21");
+    }
+
+    //-------------------------------------------------------------------------
     // NOT static expression build and compute
     //-------------------------------------------------------------------------
     {

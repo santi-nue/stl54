@@ -702,8 +702,13 @@ T_expression::build_expression_array(
         A_expressions.push_back(T_expression());
         A_expressions.back().build_expression_str(type_definitions, str_array_index);
 
-        if (right_part == "")
+        if (right_part == "")    // nothing remains
         {
+            break;
+        }
+        if (right_part.find('[') == string::npos)    // no array remains
+        {
+            reduced_variable_name += right_part;
             break;
         }
     }

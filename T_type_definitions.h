@@ -154,7 +154,8 @@ struct T_field_type_name_base
     //------------------------------------------------------------
 
     T_field_type_name_base()
-        :basic_type_bit_size (-1)
+        : basic_type_bit_size (-1)
+        , transform_expression_type(C_value::E_type_msg)  // not set
     {
     }
 };
