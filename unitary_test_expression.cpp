@@ -569,23 +569,10 @@ M_TEST_FCT(test_expression)
                 value = compute_expression_static (type_definitions, expr);
             }
 #endif
-            cout << "    gives " << value.as_string();
+            cout << "    gives " << value.as_string() << endl;
             M_TEST_EQ(value.get_int(), expected_result);
             M_TEST_EQ(value.get_bit_position_offset(), -1);
             M_TEST_EQ(value.get_bit_position_size(), -1);
-
-            T_expression    expression;
-            expression.build_expression(type_definitions, expr);
-            C_value    value_new = expression.compute_expression_static(type_definitions);
-            if (value_new.get_int() != expected_result)
-            {
-                cout << "    and " << value_new.as_string();
-            }
-            M_TEST_EQ(value_new.get_int(), expected_result);
-            M_TEST_EQ(value_new.get_bit_position_offset(), -1);
-            M_TEST_EQ(value_new.get_bit_position_size(), -1);
-
-            cout << endl;
         }
     }
 
@@ -629,23 +616,10 @@ M_TEST_FCT(test_expression)
             cout.width(25);
             cout << expr;
             C_value    value = compute_expression_static (type_definitions, expr);
-            cout << "    gives " << value.as_string();
+            cout << "    gives " << value.as_string() << endl;
             M_TEST_EQ(value.get_bool(), expected_result);
             M_TEST_EQ(value.get_bit_position_offset(), -1);
             M_TEST_EQ(value.get_bit_position_size(), -1);
-
-            T_expression    expression;
-            expression.build_expression(type_definitions, expr);
-            C_value    value_new = expression.compute_expression_static(type_definitions);
-            if (value_new.get_int() != expected_result)
-            {
-                cout << "    and " << value_new.as_string();
-            }
-            M_TEST_EQ(value_new.get_bool(), expected_result);
-            M_TEST_EQ(value_new.get_bit_position_offset(), -1);
-            M_TEST_EQ(value_new.get_bit_position_size(), -1);
-
-            cout << endl;
         }
     }
 
@@ -693,23 +667,10 @@ M_TEST_FCT(test_expression)
                 continue;
             }
             C_value    value = compute_expression_static (type_definitions, expr);
-            cout << "    gives " << value.as_string();
+            cout << "    gives " << value.as_string() << endl;
             M_TEST_EQ(value.get_flt(), expected_result);
             M_TEST_EQ(value.get_bit_position_offset(), -1);
             M_TEST_EQ(value.get_bit_position_size(), -1);
-
-            T_expression    expression;
-            expression.build_expression(type_definitions, expr);
-            C_value    value_new = expression.compute_expression_static(type_definitions);
-            if (value_new.get_flt() != expected_result)
-            {
-                cout << "    and " << value_new.as_string();
-            }
-            M_TEST_EQ(value_new.get_flt(), expected_result);
-            M_TEST_EQ(value_new.get_bit_position_offset(), -1);
-            M_TEST_EQ(value_new.get_bit_position_size(), -1);
-
-            cout << endl;
         }
     }
 
@@ -747,23 +708,10 @@ M_TEST_FCT(test_expression)
             cout.width(25);
             cout << expr;
             C_value    value = compute_expression_static (type_definitions, expr);
-            cout << "    gives : " << value.as_string();
+            cout << "    gives : " << value.as_string() << endl;
             M_TEST_EQ(value.get_str(), expected_result);
             M_TEST_EQ(value.get_bit_position_offset(), -1);
             M_TEST_EQ(value.get_bit_position_size(), -1);
-
-            T_expression    expression;
-            expression.build_expression(type_definitions, expr);
-            C_value    value_new = expression.compute_expression_static(type_definitions);
-            if (value_new.get_str() != expected_result)
-            {
-                cout << "    and " << value_new.as_string();
-            }
-            M_TEST_EQ(value_new.get_str(), expected_result);
-            M_TEST_EQ(value_new.get_bit_position_offset(), -1);
-            M_TEST_EQ(value_new.get_bit_position_size(), -1);
-
-            cout << endl;
         }
     }
 
@@ -772,15 +720,6 @@ M_TEST_FCT(test_expression)
     //-------------------------------------------------------------------------
     {
         C_value    value = compute_expression_static (type_definitions, "T_Operation::MODIFICATION");
-        M_TEST_EQ(value.get_int(), 1);
-        M_TEST_EQ(value.get_bit_position_offset(), -1);
-        M_TEST_EQ(value.get_bit_position_size(), -1);
-        value.as_string();
-    }
-    {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "T_Operation::MODIFICATION");
-        C_value    value = expression.compute_expression_static (type_definitions);
         M_TEST_EQ(value.get_int(), 1);
         M_TEST_EQ(value.get_bit_position_offset(), -1);
         M_TEST_EQ(value.get_bit_position_size(), -1);
@@ -802,26 +741,7 @@ M_TEST_FCT(test_expression)
         value.as_string();
     }
     {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "salut");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
-        M_TEST_EQ(value.get_int(), -32);
-        M_TEST_EQ(value.get_bit_position_offset(), 12);
-        M_TEST_EQ(value.get_bit_position_size(), 7);
-        value.as_string();
-    }
-
-    {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "niv.salut");
-        M_TEST_EQ(value.get_int(), -32);
-        M_TEST_EQ(value.get_bit_position_offset(), 12);
-        M_TEST_EQ(value.get_bit_position_size(), 7);
-        value.as_string();
-    }
-    {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "niv.salut");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
         M_TEST_EQ(value.get_int(), -32);
         M_TEST_EQ(value.get_bit_position_offset(), 12);
         M_TEST_EQ(value.get_bit_position_size(), 7);
@@ -839,26 +759,7 @@ M_TEST_FCT(test_expression)
         value.as_string();
     }
     {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "salut * e2.toi");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
-        M_TEST_EQ(value.get_int(), 110400000);
-        M_TEST_EQ(value.get_bit_position_offset(), 12);
-        M_TEST_EQ(value.get_bit_position_size(), 22);
-        value.as_string();
-    }
-
-    {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "salut * e2.toi + T_Operation::DELETION");
-        M_TEST_EQ(value.get_int(), 110400000 + 2);
-        M_TEST_EQ(value.get_bit_position_offset(), 12);
-        M_TEST_EQ(value.get_bit_position_size(), 22);
-        value.as_string();
-    }
-    {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "salut * e2.toi + T_Operation::DELETION");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
         M_TEST_EQ(value.get_int(), 110400000 + 2);
         M_TEST_EQ(value.get_bit_position_offset(), 12);
         M_TEST_EQ(value.get_bit_position_size(), 22);
@@ -875,15 +776,6 @@ M_TEST_FCT(test_expression)
         M_TEST_EQ(value.get_bit_position_size(), 49);
         value.as_string();
     }
-    {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "salut * e2.toi / eau.la");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
-        M_TEST_EQ(value.get_int(), 32);
-        M_TEST_EQ(value.get_bit_position_offset(), 12);
-        M_TEST_EQ(value.get_bit_position_size(), 49);
-        value.as_string();
-    }
 
     interpret_data.add_read_variable("matelas", get_flt_value_bit_pos_size(45.3465,67,2));
     {
@@ -894,16 +786,6 @@ M_TEST_FCT(test_expression)
         value.as_string();
     }
     {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "niv.salut * niv.e2.toi / niv.eau.la - niv.matelas");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
-        M_TEST_EQ_APPROX(value.get_flt(), -13.3465);
-        M_TEST_EQ(value.get_bit_position_offset(), 12);
-        M_TEST_EQ(value.get_bit_position_size(), 57);
-        value.as_string();
-    }
-
-    {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "addition(niv.salut * niv.e2.toi, niv.eau.la / niv.matelas)");
         M_TEST_EQ_APPROX(value.get_flt(), 110475607.5556);
         M_TEST_EQ(value.get_bit_position_offset(), 12);
@@ -911,26 +793,7 @@ M_TEST_FCT(test_expression)
         value.as_string();
     }
     {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "addition(niv.salut * niv.e2.toi, niv.eau.la / niv.matelas)");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
-        M_TEST_EQ_APPROX(value.get_flt(), 110475607.5556);
-        M_TEST_EQ(value.get_bit_position_offset(), 12);
-        M_TEST_EQ(value.get_bit_position_size(), 57);
-        value.as_string();
-    }
-
-    {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "perf(niv.eau.la, 3402341)");
-        M_TEST_EQ(value.get_int(), 6804680);
-        M_TEST_EQ(value.get_bit_position_offset(), 30);
-        M_TEST_EQ(value.get_bit_position_size(), 31);
-        value.as_string();
-    }
-    {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "perf(niv.eau.la, 3402341)");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
         M_TEST_EQ(value.get_int(), 6804680);
         M_TEST_EQ(value.get_bit_position_offset(), 30);
         M_TEST_EQ(value.get_bit_position_size(), 31);
@@ -949,13 +812,6 @@ M_TEST_FCT(test_expression)
         M_TEST_EQ(value.get_int(), 1000);
         value.as_string();
     }
-    {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "an_array[0]");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
-        M_TEST_EQ(value.get_int(), 1000);
-        value.as_string();
-    }
 
     interpret_data.add_read_variable("idx", 1);
     {
@@ -964,35 +820,12 @@ M_TEST_FCT(test_expression)
         value.as_string();
     }
     {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "an_array[idx]");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
-        M_TEST_EQ(value.get_int(), 1001);
-        value.as_string();
-    }
-
-    {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "an_array[idx-1]");
         M_TEST_EQ(value.get_int(), 1000);
         value.as_string();
     }
     {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "an_array[idx-1]");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
-        M_TEST_EQ(value.get_int(), 1000);
-        value.as_string();
-    }
-
-    {
         C_value   value = compute_expression_no_io (type_definitions, interpret_data, "an_array[idx+2]");
-        M_TEST_EQ(value.get_int(), 1003);
-        value.as_string();
-    }
-    {
-        T_expression    expression;
-        expression.build_expression(type_definitions, "an_array[idx+2]");
-        C_value    value = expression.compute_expression_no_io (type_definitions, interpret_data);
         M_TEST_EQ(value.get_int(), 1003);
         value.as_string();
     }

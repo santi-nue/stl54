@@ -123,9 +123,6 @@ string    words_to_string(const vector<string>      & words)
 
 //*****************************************************************************
 // compute_expression
-// ----------------------------------------------------------------------------
-// Format :
-// 
 //*****************************************************************************
 #include "T_expression.h"
 C_value    compute_expression (
@@ -155,8 +152,6 @@ C_value    compute_expression (
 
 //*****************************************************************************
 // compute_expression_no_io
-// ----------------------------------------------------------------------------
-// 
 //*****************************************************************************
 
 C_value    compute_expression_no_io (
@@ -164,29 +159,27 @@ C_value    compute_expression_no_io (
                                T_interpret_data    & interpret_data,
                          const std::string         & str)
 {
-    T_frame_data        in_out_frame_data;
-    const string        data_name;
-    const string      & data_simple_name = data_name;
-    ostringstream       os_out;
-    ostringstream     & os_err = os_out;
+    M_TRACE_ENTER("compute_expression_no_io", str);
 
-    return  compute_expression(type_definitions, interpret_data, in_out_frame_data,
-                               str,
-                               data_name, data_simple_name, os_out, os_err);
+    T_expression    expression;
+    expression.build_expression(type_definitions, str);
+
+    return  expression.compute_expression_no_io(type_definitions, interpret_data);
 }
 
 //*****************************************************************************
 // compute_expression_static
-// ----------------------------------------------------------------------------
-// 
 //*****************************************************************************
 
 C_value    compute_expression_static (const T_type_definitions  & type_definitions,
                                       const std::string         & str)
 {
-    T_interpret_data    interpret_data;
+    M_TRACE_ENTER("compute_expression_static", str);
 
-    return  compute_expression_no_io(type_definitions, interpret_data, str);
+    T_expression    expression;
+    expression.build_expression(type_definitions, str);
+
+    return  expression.compute_expression_static(type_definitions);
 }
 
 //*****************************************************************************
