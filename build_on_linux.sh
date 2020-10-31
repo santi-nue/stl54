@@ -110,10 +110,10 @@ fi
 [ X"$1" == X"--packages:no" ]         && wsgd_os_install_packages="no"
 
 # Set wirewhark version
-[ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=302XX
-[ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=3.2
-[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v3.2.0
-[ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=30200
+[ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=304XX
+[ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=3.4
+[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v3.4.0
+[ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=30400
 
 
 # Set sources repositories
@@ -226,6 +226,7 @@ then
 		sudo apt-get --assume-yes install libgcrypt-dev
 		sudo apt-get --assume-yes install flex
 		sudo apt-get --assume-yes install bison
+		sudo apt-get --assume-yes install libc-ares-dev
 
 		sudo apt-get --assume-yes install qtdeclarative5-dev
 		sudo apt-get --assume-yes install qttools5-dev
@@ -261,6 +262,7 @@ then
 		sudo yum --assumeyes install glib2-devel
 		sudo yum --assumeyes install flex
 		sudo yum --assumeyes install bison
+		sudo yum --assumeyes install c-ares-devel
 
 		sudo yum --assumeyes install qt5-qttools
 		sudo yum --assumeyes install qt5-qtbase-devel
@@ -291,6 +293,7 @@ then
 		sudo zypper --non-interactive in libgcrypt-devel
 		sudo zypper --non-interactive in flex
 		sudo zypper --non-interactive in bison
+		sudo zypper --non-interactive in c-ares-devel
 
 		sudo zypper --non-interactive in libQt5Core-devel
 		sudo zypper --non-interactive in libqt5-linguist-devel
