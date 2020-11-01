@@ -95,6 +95,8 @@ struct C_value : public CT_debug_object_counter<C_value>
 
     // Fatal if internal type does not match.
     long long            get_int ()  const;
+    std::size_t          get_int_size_t()  const;  // fatal if value exceeds size_t limits
+    int                  get_int_int()  const;     // fatal if value exceeds int limits
     bool                 get_bool () const;     // internal type must be integer
     double               get_flt ()  const;
     const std::string  & get_str ()  const;

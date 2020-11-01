@@ -326,6 +326,24 @@ C_value::get_int ()  const
     return  A_integer;
 }
 
+std::size_t
+C_value::get_int_size_t()  const
+{
+    M_FATAL_IF_NE(A_type, E_type_integer);
+    M_FATAL_IF_LT(A_integer, 0);
+    M_FATAL_IF_GT(A_integer, SIZE_MAX);
+    return  static_cast<std::size_t>(A_integer);
+}
+
+int
+C_value::get_int_int()  const
+{
+    M_FATAL_IF_NE(A_type, E_type_integer);
+    M_FATAL_IF_LT(A_integer, INT_MIN);
+    M_FATAL_IF_GT(A_integer, INT_MAX);
+    return  static_cast<int>(A_integer);
+}
+
 double
 C_value::get_flt ()  const
 {
