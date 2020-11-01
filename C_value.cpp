@@ -373,9 +373,9 @@ C_value::as_string () const
 // Fatal if fail to promote value to a numeric value.
 //*****************************************************************************
 void
-C_value::to_numeric()
+C_value::convert_to_numeric()
 {
-    M_TRACE_ENTER("to_numeric", "");
+    M_TRACE_ENTER("convert_to_numeric", "");
 
     promote();
 
@@ -386,9 +386,9 @@ C_value::to_numeric()
 // Fatal if fail to promote value to a int value.
 //*****************************************************************************
 void
-C_value::to_int(int  base)
+C_value::convert_to_int(int  base)
 {
-    M_TRACE_ENTER("to_int", "");
+    M_TRACE_ENTER("convert_to_int", "");
 
     if (A_type == E_type_float)
     {
@@ -421,9 +421,9 @@ C_value::to_int(int  base)
 // Fatal if fail to promote value to a float value.
 //*****************************************************************************
 void
-C_value::to_float()
+C_value::convert_to_float()
 {
-    M_TRACE_ENTER("to_float", "");
+    M_TRACE_ENTER("convert_to_float", "");
 
     if (A_type == E_type_integer)
     {

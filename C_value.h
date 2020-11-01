@@ -104,13 +104,13 @@ struct C_value : public CT_debug_object_counter<C_value>
     const std::string  & as_string () const;
 
     // Transform the type of value to a string.
-    void                 to_string ()       { A_type = E_type_string; }
+    void                 convert_to_string ()       { A_type = E_type_string; }
 
     // Transform the type of value to a numeric type.
     // Fatal if not possible.
-    void                 to_numeric ();
-    void                 to_int (int  base = 0);
-    void                 to_float ();
+    void                 convert_to_numeric ();
+    void                 convert_to_int (int  base = 0);
+    void                 convert_to_float ();
 
     // Try to apply format to the value.
     // Only str modified.

@@ -1214,17 +1214,17 @@ T_expression::compute_expression_function(
     else if (A_variable_or_function_name == "to_string")
     {
         A_value = * P_parameter_values[0];
-        A_value.to_string();
+        A_value.convert_to_string();
     }
     else if (A_variable_or_function_name == "to_numeric")
     {
         A_value = * P_parameter_values[0];
-        A_value.to_numeric();
+        A_value.convert_to_numeric();
     }
     else if (A_variable_or_function_name == "to_float")
     {
         A_value = * P_parameter_values[0];
-        A_value.to_float();
+        A_value.convert_to_float();
     }
     else if (A_variable_or_function_name == "to_integer")
     {
@@ -1236,7 +1236,7 @@ T_expression::compute_expression_function(
             value_base = * P_parameter_values[1];
         }
 
-        A_value.to_int(value_base.get_int());
+        A_value.convert_to_int(value_base.get_int());
     }
     else if (A_variable_or_function_name == "getenv")
     {
