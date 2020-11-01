@@ -72,7 +72,11 @@ ostream &  operator<<(ostream & os, const T_perf_time  & rhs)
 {
     char  time_str[99+1];
 #ifdef WIN32
+#ifdef _USE_32BIT_TIME_T
     sprintf(time_str, "%d.%03d", rhs.A_perf_time.time, rhs.A_perf_time.millitm);
+#else
+    sprintf(time_str, "%lld.%03d", rhs.A_perf_time.time, rhs.A_perf_time.millitm);
+#endif
 #else
 #ifdef  WSGD_USE_TIMES
     clock_t    modulo = rhs.A_perf_times % WSGD_CLK_TCK;
@@ -90,7 +94,8 @@ long    perf_time_diff_ms(const T_perf_time  & timeb_val_lhs,
                           const T_perf_time  & timeb_val_rhs)
 {
 #ifdef WIN32
-    long  diff_total_ms = (timeb_val_lhs.A_perf_time.time - timeb_val_rhs.A_perf_time.time) * 1000 + (timeb_val_lhs.A_perf_time.millitm - timeb_val_rhs.A_perf_time.millitm);
+    long  diff_total_ms = static_cast<long>((timeb_val_lhs.A_perf_time.time - timeb_val_rhs.A_perf_time.time) * 1000 +
+                                            (timeb_val_lhs.A_perf_time.millitm - timeb_val_rhs.A_perf_time.millitm));
 #else
 #ifdef  WSGD_USE_TIMES
     long  diff_total_ms = (timeb_val_lhs.A_perf_times - timeb_val_rhs.A_perf_times) * 1000 / WSGD_CLK_TCK;

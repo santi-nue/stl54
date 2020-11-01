@@ -47,6 +47,7 @@
 #ifdef WIN32
 #include <process.h>
 #define getpid  _getpid
+#define strdup  _strdup
 #else
 #include <unistd.h>
 #endif
@@ -2108,13 +2109,13 @@ void    update_pinfo_ports(const T_generic_protocol_data  & protocol_data,
             interpret_data.get_int_value_of_read_variable(
                                         protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_1,
                                         srcport);
-            pinfo->srcport  = srcport;
+            pinfo->srcport  = static_cast<guint32>(srcport);
 
             longlong    destport;
             interpret_data.get_int_value_of_read_variable(
                                         protocol_data.SUBPROTO_SUBFIELD_FROM_REAL_2,
                                         destport);
-            pinfo->destport = destport;
+            pinfo->destport = static_cast<guint32>(destport);
 
             return;
         }
@@ -2338,13 +2339,13 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
                 {
                     // Not an error, wait for the next segment.
                     pinfo->desegment_offset = 0;             /* Start at beginning next time */
-                    pinfo->desegment_len = msg_total_length.get_int() - length_raw_data;
+                    pinfo->desegment_len = static_cast<guint32>(msg_total_length.get_int() - length_raw_data);
                     return  0;
                 }
                 else
                 {
                     pinfo->desegment_len = 0;           // 2011/05/15
-                    return  msg_total_length.get_int();
+                    return  msg_total_length.get_int_int();
                 }
             }
 
@@ -2418,13 +2419,13 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             {
                 // Not an error, wait for the next segment.
                 pinfo->desegment_offset = 0;             /* Start at beginning next time */
-                pinfo->desegment_len = msg_total_length.get_int() - length_raw_data;
+                pinfo->desegment_len = static_cast<guint32>(msg_total_length.get_int() - length_raw_data);
                 return  0;
             }
 
             // Reduce the interpretor accessible data.
-            in_out_sizeof_bytes = msg_total_length.get_int();
-            sizeof_bytes_NOT_given_to_interpretor = length_raw_data - msg_total_length.get_int();
+            in_out_sizeof_bytes = msg_total_length.get_int_size_t();
+            sizeof_bytes_NOT_given_to_interpretor = length_raw_data - msg_total_length.get_int_size_t();
 
             // All the input data is present.
             wsgd_builder.set_is_input_data_complete(true);
@@ -2468,7 +2469,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             {
                 const T_generic_protocol_data::T_parent  & parent = * parent_iter;
 
-                for (int   idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_int.size(); ++idx)
+                for (size_t   idx = 0; idx < parent.PARENT_SUBFIELD_VALUES_int.size(); ++idx)
                 {
                     if (pinfo->srcport == parent.PARENT_SUBFIELD_VALUES_int[idx])
                     {

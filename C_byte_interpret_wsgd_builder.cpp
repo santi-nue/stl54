@@ -124,7 +124,7 @@ int     dissector_try_value(T_generic_protocol_data  & protocol_data,
         }
         else
         {
-            dissector_result = dissector_try_uint_return_size(subdissector_data.dissector_table, P_value->get_int(), next_tvb, pinfo, tree);
+            dissector_result = dissector_try_uint_return_size(subdissector_data.dissector_table, P_value->get_int_size_t(), next_tvb, pinfo, tree);
         }
     }
 
@@ -506,7 +506,7 @@ C_byte_interpret_wsgd_builder::value(const T_type_definitions  & /* type_definit
                 is_little_endian,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
                 text.c_str(),
                 error_code,
-                attribute_value.get_value().get_flt());
+                static_cast<float>(attribute_value.get_value().get_flt()));
         }
         else
         {

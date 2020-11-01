@@ -550,7 +550,7 @@ bool    read_data_bits (     T_frame_data  & in_out_frame_data,
 
     if (TYPE_BIT_SIZE < 8)
     {
-        *P_value = in_out_frame_data.read_less_1_byte(TYPE_BIT_SIZE);
+        *P_value = in_out_frame_data.read_less_1_byte(static_cast<short>(TYPE_BIT_SIZE));
 #if 0
         if (is_signed_integer == false)
             return  true;
@@ -574,7 +574,7 @@ bool    read_data_bits (     T_frame_data  & in_out_frame_data,
     }
     else
     {
-        in_out_frame_data.read_n_bits(TYPE_BIT_SIZE, P_value, TYPE_SIZE);
+        in_out_frame_data.read_n_bits(static_cast<short>(TYPE_BIT_SIZE), P_value, static_cast<short>(TYPE_SIZE));
 
         if (must_invert_bytes)
         {
@@ -593,7 +593,7 @@ bool    read_data_bits (     T_frame_data  & in_out_frame_data,
         {                                                                     \
             TYPE_IMPL  * P_value_sign = (TYPE_IMPL *)P_value_param;           \
             /* The bit sign is the higher bit. */                             \
-            const TYPE_IMPL    sign_mask = 1 << (TYPE_BIT_SIZE-1);            \
+            const TYPE_IMPL    sign_mask = uint64_t(1) << (TYPE_BIT_SIZE-1);  \
             if (*P_value_sign & sign_mask)                                    \
             {                                                                 \
                 /* The value is signed.                                       \
@@ -678,7 +678,7 @@ bool    read_data (      T_frame_data  & in_out_frame_data,
         }
     }
 
-    in_out_frame_data.read_n_bytes(TYPE_SIZE, P_value);
+    in_out_frame_data.read_n_bytes(static_cast<short>(TYPE_SIZE), P_value);
 
     if (must_invert_bytes)
     {
@@ -813,7 +813,7 @@ void    frame_append_data(T_decode_stream_frame  * P_decode_stream_frame,
         M_FATAL_COMMENT("frame_append_data no data");
     }
 
-    P_decode_stream_frame->write_less_1_byte(data, data_bit_size);      // ICIOA signed !
+    P_decode_stream_frame->write_less_1_byte(static_cast<T_byte>(data), data_bit_size);      // ICIOA signed !
 }
 
 //*****************************************************************************
@@ -950,14 +950,14 @@ bool    frame_append_data_array (
     }
 
     // Compute value of data size.
-    long long        data_size = 0;
+    int        data_size = 0;
     {
         const C_value  & obj_value = field_type_name.fct_parameters[2].compute_expression(
                                        type_definitions, interpret_data, in_out_frame_data,
                                        data_name, data_simple_name, os_out, os_err);
         if (obj_value.get_type() == C_value::E_type_integer)
         {
-            data_size = obj_value.get_int();
+            data_size = obj_value.get_int_int();
             if (data_size < 0)
             {
                 M_FATAL_COMMENT("frame_append_data_array expect param3 = data size (integer) >= 0");
@@ -1172,7 +1172,7 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
                                T_frame_data            & in_out_frame_data,
                                T_interpret_data        & UNUSED(interpret_data),
                                T_decode_stream_frame   & decode_stream_frame,
-                               long long                 nb_of_bits_needed_ll,
+                               long long                 nb_of_bits_needed,
                          const string                  & UNUSED(decode_function_name),
                          const T_function_definition   & UNUSED(fct_def),
                          const vector<T_expression>    & UNUSED(fct_parameters),
@@ -1181,9 +1181,7 @@ bool    decoder_base64 ( const T_type_definitions      & UNUSED(type_definitions
                                ostream                 & UNUSED(os_out),
                                ostream                 & UNUSED(os_err))
 {
-    M_TRACE_ENTER ("decoder_base64", nb_of_bits_needed_ll);
-
-    int  nb_of_bits_needed = nb_of_bits_needed_ll;
+    M_TRACE_ENTER ("decoder_base64", nb_of_bits_needed);
 
     while (nb_of_bits_needed > 0)
     {
@@ -1732,7 +1730,7 @@ void    read_decode_data (
     {
         T_decode_stream_frame  & decode_stream_frame = interpret_data.get_decode_stream_frame();
         T_frame_data           & inside_frame = decode_stream_frame.frame_data;
-        if (inside_frame.get_remaining_bits() >= TYPE_BIT_SIZE)
+        if (inside_frame.get_remaining_bits() >= static_cast<long>(TYPE_BIT_SIZE))
         {
             // Enough data into inside_frame, so simply use it (decoder is useless for now)
             P_in_out_frame_data = & inside_frame;
@@ -2461,7 +2459,7 @@ bool    frame_to_field_other(
                         C_value    value = compute_expression(type_definitions, interpret_data, in_out_frame_data,
                                                               field_type_name.str_size_or_parameter,
                                                               data_name, data_simple_name, os_out, os_err);
-                        size_bytes = value.get_int();
+                        size_bytes = value.get_int_int();
                     }
 
                     T_frame_data    frame_data(in_out_frame_data.get_P_bytes(), 0, size_bytes * 8);
@@ -3253,7 +3251,7 @@ bool    T_expression_frame_to_function_base2 (
     }
 
     // Check the number of parameters
-    if (fct_parameters.size() < fct_def.get_nb_of_mandatory_parameters())
+    if (fct_parameters.size() < static_cast<size_t>(fct_def.get_nb_of_mandatory_parameters()))
     {
         M_FATAL_COMMENT("Too few parameters for function " << data_simple_name);
     }
@@ -4808,7 +4806,7 @@ bool    frame_to_string (
 
             if (string_size >= 0)
             {
-                M_FATAL_IF_GT(value.size(), string_size);
+                M_FATAL_IF_GT(value.size(), static_cast<size_t>(string_size));
             }
 
             bit_position_offset_into_initial_frame = obj_value.get_bit_position_offset();
@@ -5312,7 +5310,8 @@ M_FCT_READ_SIMPLE_TYPE (uchar,    8, unsigned char)
 M_FCT_READ_SIMPLE_TYPE (msg,      1, unsigned char)
 
 #undef  M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT
-#define M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)
+#define M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT(TYPE_NAME,TYPE_BIT_SIZE,TYPE_IMPL,TYPE_IMPL_BIT_SIZE,TYPE_IMPL_STR)  \
+    P_enum_def;  // avoid warning C4189 unused variable
 M_FCT_READ_SIMPLE_TYPE (spare,    8, unsigned char)
 
 //*****************************************************************************
@@ -5698,7 +5697,7 @@ bool    frame_to_any_save_position (
                             T_frame_data          & in_out_frame_data,
                             T_interpret_data      & interpret_data,
                       const T_field_type_name     & UNUSED(field_type_name),
-                      const string                & data_name,
+                      const string                & UNUSED(data_name),
                       const string                & data_simple_name,
                             ostream               & UNUSED(os_out),
                             ostream               & UNUSED(os_err))

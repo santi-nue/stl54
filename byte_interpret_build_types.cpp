@@ -770,7 +770,7 @@ string    build_field (istream                           & is,
         vector<string>  fct_parameters_vector;
         M_FATAL_IF_FALSE(read_token_parameters_vector(is, fct_parameters_vector, E_parser_cfg_parameters));
 
-        for (int  idx_parameters = 0; idx_parameters < fct_parameters_vector.size(); ++idx_parameters)
+        for (size_t  idx_parameters = 0; idx_parameters < fct_parameters_vector.size(); ++idx_parameters)
         {
             const string  & fct_parameter = fct_parameters_vector[idx_parameters];
             T_expression    expression;

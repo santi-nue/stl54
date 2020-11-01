@@ -143,7 +143,7 @@ T_interpret_read_values::sup_read_variable (T_id    var_id)
     M_TRACE_ENTER("sup_read_variable", A_current_path << " " << var_id);
 
     if ((var_id < 0) ||
-        (var_id >= A_msg.size()))
+        (static_cast<size_t>(var_id) >= A_msg.size()))
     {
         M_FATAL_COMMENT("suppress of an unknow variable/field id (" << var_id << ")");
     }
@@ -161,7 +161,7 @@ T_interpret_read_values::sup_read_variable (T_id    var_id)
 
     if (interpret_value.get_type() == T_interpret_value::E_type_reference)
     {
-        A_msg[interpret_value.get_attribute_value().get_value().get_int()].decr_reference_counter();
+        A_msg[interpret_value.get_attribute_value().get_value().get_int_size_t()].decr_reference_counter();
     }
 
     if (var_id == (A_msg.size() - 1))
@@ -191,7 +191,7 @@ T_interpret_read_values::sup_all_read_variables_after (T_id    var_id)
 {
     M_TRACE_ENTER("sup_all_read_variables_after", var_id);
 
-    if (var_id >= A_msg.size())
+    if (var_id < 0 || static_cast<size_t>(var_id) >= A_msg.size())
     {
         return;
     }
@@ -314,7 +314,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
             {
                 if (interpret_value.get_type() == T_interpret_value::E_type_reference)
                 {
-                    var_id = interpret_value.get_attribute_value().get_value().get_int();
+                    var_id = interpret_value.get_attribute_value().get_value().get_int_int();
                     return  & A_msg[var_id].get_attribute_value();
                 }
                 else
@@ -395,7 +395,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
             {
                 if (interpret_value.get_type() == T_interpret_value::E_type_reference)
                 {
-                    var_id = interpret_value.get_attribute_value().get_value().get_int();
+                    var_id = interpret_value.get_attribute_value().get_value().get_int_int();
                     return  & A_msg[var_id].get_attribute_value();
                 }
                 else

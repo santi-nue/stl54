@@ -244,7 +244,7 @@ string  date_get_string_from_seconds(int ref_year, long long  number_of_seconds)
     const int        hours = number_of_hours % 24;
     const long long  days = (number_of_hours - hours) / 24;
 
-    string  str = date_get_string_from_days(ref_year, days);
+    string  str = date_get_string_from_days(ref_year, static_cast<int>(days));
 
     {
         char  str_tmp[99+1];
@@ -559,7 +559,7 @@ T_expression::build_expression_words(
         else if (P_fct != NULL_PTR)
         {
             // Check the number of parameters
-            if (fct_parameters.size() < P_fct->get_nb_of_mandatory_parameters())
+            if (static_cast<int>(fct_parameters.size()) < P_fct->get_nb_of_mandatory_parameters())
             {
                 M_FATAL_COMMENT("Too few parameters for function " << function_name);
             }
@@ -1061,8 +1061,8 @@ T_expression::compute_expression_variable_array(
 //*****************************************************************************
 
 long long  get_pointer_pos_len_bits(T_frame_data  & in_out_frame_data,
-                                    unsigned int    pos_bits,
-                                    unsigned int    length_bits)
+                                    std::size_t     pos_bits,
+                                    std::size_t     length_bits)
 {
     // Save current position
     const long  pos_current_bits = in_out_frame_data.get_bit_offset();
@@ -1086,20 +1086,20 @@ long long  get_pointer_pos_len_bits(T_frame_data  & in_out_frame_data,
 }
 
 long long  get_pointer_pos_len_bytes(T_frame_data  & in_out_frame_data,
-                                     unsigned int    pos_bytes,
-                                     unsigned int    length_bytes)
+                                     std::size_t     pos_bytes,
+                                     std::size_t     length_bytes)
 {
     return  get_pointer_pos_len_bits(in_out_frame_data, pos_bytes * 8, length_bytes * 8);
 }
 
 long long  get_pointer_len_bits(T_frame_data  & in_out_frame_data,
-                                unsigned int    length_bits)
+                                std::size_t     length_bits)
 {
     return  get_pointer_pos_len_bits(in_out_frame_data, in_out_frame_data.get_bit_offset(), length_bits);
 }
 
 long long  get_pointer_len_bytes(T_frame_data  & in_out_frame_data,
-                                 unsigned int    length_bytes)
+                                 std::size_t     length_bytes)
 {
     return  get_pointer_pos_len_bits(in_out_frame_data, in_out_frame_data.get_bit_offset(), length_bytes * 8);
 }
@@ -1115,7 +1115,7 @@ long long  get_pointer_len_bytes(T_frame_data  & in_out_frame_data,
 string::size_type  string_count_fdesc_to_cpp(const C_value  & fdesc_count)
 {
     const long long        count = fdesc_count.get_int();
-    string::size_type  cpp_count = ((count < 0) || (count >= UINT32_MAX)) ? string::npos : count;
+    string::size_type  cpp_count = ((count < 0) || (count >= UINT32_MAX)) ? string::npos : static_cast<string::size_type>(count);
 
     return  cpp_count;
 }
@@ -1236,7 +1236,7 @@ T_expression::compute_expression_function(
             value_base = * P_parameter_values[1];
         }
 
-        A_value.convert_to_int(value_base.get_int());
+        A_value.convert_to_int(value_base.get_int_int());
     }
     else if (A_variable_or_function_name == "getenv")
     {
@@ -1259,7 +1259,7 @@ T_expression::compute_expression_function(
             cpp_count = string_count_fdesc_to_cpp(* P_parameter_values[2]);
         }
 
-        A_value = A_value.get_str().substr(value_idx.get_int(), cpp_count);
+        A_value = A_value.get_str().substr(value_idx.get_int_size_t(), cpp_count);
     }
     else if (A_variable_or_function_name == "string.erase")
     {
@@ -1274,7 +1274,7 @@ T_expression::compute_expression_function(
         }
 
         string  str_copy = A_value.get_str();
-        str_copy.erase(value_idx.get_int(), cpp_count);
+        str_copy.erase(value_idx.get_int_size_t(), cpp_count);
         A_value = str_copy;
     }
     else if (A_variable_or_function_name == "string.insert")
@@ -1285,7 +1285,7 @@ T_expression::compute_expression_function(
         C_value  value_str = * P_parameter_values[2];
 
         string  str_copy = A_value.get_str();
-        str_copy.insert(value_idx.get_int(), value_str.get_str());
+        str_copy.insert(value_idx.get_int_size_t(), value_str.get_str());
         A_value = str_copy;
     }
     else if (A_variable_or_function_name == "string.replace")
@@ -1297,7 +1297,7 @@ T_expression::compute_expression_function(
         C_value            value_str = * P_parameter_values[3];
 
         string  str_copy = A_value.get_str();
-        str_copy.replace(value_idx.get_int(), cpp_count,value_str.get_str());
+        str_copy.replace(value_idx.get_int_size_t(), cpp_count,value_str.get_str());
         A_value = str_copy;
     }
     else if (A_variable_or_function_name == "string.replace_all")
@@ -1321,7 +1321,7 @@ T_expression::compute_expression_function(
             value_idx = * P_parameter_values[2];
         }
 
-        A_value = string_count_cpp_to_fdesc(A_value.get_str().find(value_str.get_str(), value_idx.get_int()));
+        A_value = string_count_cpp_to_fdesc(A_value.get_str().find(value_str.get_str(), value_idx.get_int_size_t()));
     }
     else if (A_variable_or_function_name == "date.get_string_from_days")
     {
@@ -1329,7 +1329,7 @@ T_expression::compute_expression_function(
 
         C_value  number_of_days = * P_parameter_values[1];
 
-        const string  str_date = date_get_string_from_days(A_value.get_int(), number_of_days.get_int());
+        const string  str_date = date_get_string_from_days(A_value.get_int_int(), number_of_days.get_int_int());
         A_value = str_date;
     }
     else if (A_variable_or_function_name == "date.get_string_from_seconds")
@@ -1338,34 +1338,34 @@ T_expression::compute_expression_function(
 
         C_value  number_of_seconds = * P_parameter_values[1];
 
-        const string  str_date = date_get_string_from_seconds(A_value.get_int(), number_of_seconds.get_int());
+        const string  str_date = date_get_string_from_seconds(A_value.get_int_int(), number_of_seconds.get_int());
         A_value = str_date;
     }
     else if (A_variable_or_function_name == "get_pointer_len_bytes")
     {
         const C_value  & length_bytes = * P_parameter_values[0];
 
-        A_value = get_pointer_len_bytes(in_out_frame_data, length_bytes.get_int());
+        A_value = get_pointer_len_bytes(in_out_frame_data, length_bytes.get_int_size_t());
     }
     else if (A_variable_or_function_name == "get_pointer_len_bits")
     {
         const C_value  & length_bits = * P_parameter_values[0];
 
-        A_value = get_pointer_len_bits(in_out_frame_data, length_bits.get_int());
+        A_value = get_pointer_len_bits(in_out_frame_data, length_bits.get_int_size_t());
     }
     else if (A_variable_or_function_name == "get_pointer_pos_len_bytes")
     {
         const C_value  & pos_bytes    = * P_parameter_values[0];
         const C_value  & length_bytes = * P_parameter_values[1];
 
-        A_value = get_pointer_pos_len_bytes(in_out_frame_data, pos_bytes.get_int(), length_bytes.get_int());
+        A_value = get_pointer_pos_len_bytes(in_out_frame_data, pos_bytes.get_int_size_t(), length_bytes.get_int_size_t());
     }
     else if (A_variable_or_function_name == "get_pointer_pos_len_bits")
     {
         const C_value  & pos_bits    = * P_parameter_values[0];
         const C_value  & length_bits = * P_parameter_values[1];
 
-        A_value = get_pointer_pos_len_bits(in_out_frame_data, pos_bits.get_int(), length_bits.get_int());
+        A_value = get_pointer_pos_len_bits(in_out_frame_data, pos_bits.get_int_size_t(), length_bits.get_int_size_t());
     }
 #if 0
     else if (A_variable_or_function_name == "string.")

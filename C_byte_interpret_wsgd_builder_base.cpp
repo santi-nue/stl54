@@ -245,7 +245,7 @@ proto_item  * cpp_dissect_generic_add_item_uint32(
         tvb,
         offset,
         field_byte_size,
-        value,
+        static_cast<guint32>(value),
         "%s", text);
     if (error_code > 0)
     {
@@ -299,7 +299,7 @@ proto_item  * cpp_dissect_generic_add_item_int32(
         tvb,
         offset,
         field_byte_size,
-        value,
+        static_cast<gint>(value),
         "%s", text);
     if (error_code > 0)
     {
