@@ -141,6 +141,26 @@ M_TEST_FCT(test_build_field)
     {
         string         first_word = "hide";
         istringstream  iss(" var"
+            " uint3{ns=0}"
+            " toto = 4;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+    }
+    {
+        string         first_word = "hide";
+        istringstream  iss(" var"
+            " uint3{ns=0}{q=.2:o=-.2}"
+            " toto = 4;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+    }
+    {
+        string         first_word = "hide";
+        istringstream  iss(" var"
             " uint3{ns=0}{q=.2:o=-.2}{min=-3.2:max=2.3}{de=\"hello world\"}[ val + 2 ]"
             " toto = 4;");
 
