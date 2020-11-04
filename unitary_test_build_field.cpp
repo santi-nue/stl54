@@ -559,4 +559,39 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[2].fields.size(), 1);
         M_TEST_EQ(field_type_name.P_switch_inline->switch_cases[2].fields[0].name, "df");
     }
+
+    // struct inline
+    {
+        string         first_word = "forget";
+        istringstream  iss(" "
+            " struct"
+            " {"
+            "   uint8  c0;"
+            "    int8  c1;"
+            " } toto;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), false);                      // hide
+        M_TEST_EQ(field_type_name.must_forget, true);                       // forget
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "struct");                          // type
+    //		M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+    //		M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+    //		M_TEST_EQ(field_type_name.transform_offset.get_int(), 0);           // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 0);                   // min & max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 0);
+        M_TEST_EQ(field_type_name.name, "toto");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields.size(), 2);
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].type, "uint8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[0].name, "c0");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
+        M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
+    }
 }
