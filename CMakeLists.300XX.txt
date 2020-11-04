@@ -39,26 +39,36 @@ include(cmake_wireshark_version_number.cmake)
 # Dissector core sources.
 # All files specified here do NOT depend of wireshark.
 set(DISSECTOR_CORE_UT_SRC
-	byte_interpret.cpp
-	byte_interpret_compute_expression.cpp T_expression.cpp
-	T_interpret_data.cpp T_interpret_read_values.cpp T_interpret_byte_order.cpp
-	T_interpret_output.cpp T_interpret_decode.cpp T_interpret_inside_frame.cpp T_interpret_chrono.cpp
-	T_perf_time.cpp
-	T_interpret_value.cpp
-	T_attribute_value.cpp T_frame_data.cpp T_frame_data_write.cpp T_type_definitions.cpp
-	C_value.cpp
-	byte_interpret_builder.cpp
-	byte_interpret_build_types.cpp
-	byte_interpret_build_types_context.cpp
-	byte_interpret_build_types_read_token.cpp
-	byte_interpret_parse.cpp
-	byte_interpret_common.cpp
-	byte_interpret_common_base.cpp
-	byte_interpret_common_exception.cpp
-	byte_interpret_common_fatal.cpp
-	byte_interpret_common_trace.cpp
-	CT_debug_object_counter.cpp
-	shark_wsutil_aes.c
+	byte_interpret.cpp byte_interpret.h
+	byte_interpret_compute_expression.cpp byte_interpret_compute_expression.h
+	T_expression.cpp T_expression.h
+	T_interpret_data.cpp T_interpret_data.h
+	T_interpret_read_values.cpp T_interpret_read_values.h
+	T_interpret_byte_order.cpp T_interpret_byte_order.h
+	T_interpret_output.cpp T_interpret_output.h
+	T_interpret_decode.cpp T_interpret_decode.h
+	T_interpret_inside_frame.cpp T_interpret_inside_frame.h
+	T_interpret_chrono.cpp T_interpret_chrono.h
+	T_perf_time.cpp T_perf_time.h
+	T_interpret_value.cpp T_interpret_value.h
+	T_attribute_value.cpp T_attribute_value.h
+	T_frame_data.cpp T_frame_data.h
+	T_frame_data_write.cpp T_frame_data_write.h
+	T_type_definitions.cpp T_type_definitions.h
+	C_value.cpp C_value.h
+	byte_interpret_builder.cpp byte_interpret_builder.h
+	byte_interpret_build_types.cpp byte_interpret_build_types.h
+	byte_interpret_build_types_context.cpp byte_interpret_build_types_context.h
+	byte_interpret_build_types_read_token.cpp byte_interpret_build_types_read_token.h
+	byte_interpret_parse.cpp byte_interpret_parse.h
+	byte_interpret_common.cpp byte_interpret_common.h
+	byte_interpret_common_base.cpp byte_interpret_common_base.h
+	byte_interpret_common_exception.cpp byte_interpret_common_exception.h
+	byte_interpret_common_fatal.cpp byte_interpret_common_fatal.h
+	byte_interpret_common_trace.cpp byte_interpret_common_trace.h
+	byte_interpret_common_utils.h
+	CT_debug_object_counter.cpp CT_debug_object_counter.h
+	shark_wsutil_aes.c shark_wsutil_aes.h
 )
 
 set (DISSECTOR_CORE_OTHER_SRC
@@ -75,8 +85,10 @@ set (DISSECTOR_CORE_SRC
 # used to generate "register.c").
 set (DISSECTOR_SUPPORT_SRC
 	${DISSECTOR_CORE_SRC}
-	generic.cpp T_generic_protocol_data.cpp
-	C_byte_interpret_wsgd_builder.cpp C_byte_interpret_wsgd_builder_base.cpp
+	generic.cpp generic.h
+	T_generic_protocol_data.cpp T_generic_protocol_data.h
+	C_byte_interpret_wsgd_builder.cpp C_byte_interpret_wsgd_builder.h
+	C_byte_interpret_wsgd_builder_base.cpp C_byte_interpret_wsgd_builder_base.h
 )
 
 

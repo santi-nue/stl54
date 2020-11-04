@@ -28,6 +28,7 @@
 #include <sstream>
 using namespace std;
 
+#include "byte_interpret_common_utils.h"
 #include "T_static_executor.h"
 #include "T_static_executor_manager.h"
 
@@ -89,6 +90,12 @@ void fct_name()
 #define M_TEST_GT(VAL1,VAL2)    M_TEST_fail_compare(VAL1, <=, VAL2)
 #define M_TEST_LE(VAL1,VAL2)    M_TEST_fail_compare(VAL1, > , VAL2)
 #define M_TEST_LT(VAL1,VAL2)    M_TEST_fail_compare(VAL1, >=, VAL2)
+
+#define M_TEST_TRIM_EQ(VAL1,VAL2)                                             \
+    ++G_TEST_nb_tests;                                                        \
+    if (VAL1 != VAL2)                                                         \
+        if (get_trim(VAL1) != get_trim(VAL2))                                 \
+            M_TEST_failure(VAL1, !=, VAL2)
 
 
 //*****************************************************************************

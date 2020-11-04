@@ -66,6 +66,7 @@ set(DISSECTOR_CORE_UT_SRC
 	byte_interpret_common_exception.cpp byte_interpret_common_exception.h
 	byte_interpret_common_fatal.cpp byte_interpret_common_fatal.h
 	byte_interpret_common_trace.cpp byte_interpret_common_trace.h
+	byte_interpret_common_utils.h
 	CT_debug_object_counter.cpp CT_debug_object_counter.h
 	shark_wsutil_aes.c shark_wsutil_aes.h
 )

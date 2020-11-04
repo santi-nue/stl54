@@ -227,7 +227,7 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.str_display_expression, "");
         M_TEST_EQ(field_type_name.str_arrays.size(), 1);
         M_TEST_EQ(field_type_name.str_arrays[0].size_type, T_field_type_name::T_array::E_size_normal);
-        M_TEST_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + 2 ");
+        M_TEST_TRIM_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + 2 ");
         M_TEST_EQ(field_type_name.name, "toto");
         M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
     }
@@ -258,7 +258,7 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.str_display, "string is %s");
         M_TEST_EQ(field_type_name.str_arrays.size(), 1);
         M_TEST_EQ(field_type_name.str_arrays[0].size_type, T_field_type_name::T_array::E_size_normal);
-        M_TEST_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + 2 ");
+        M_TEST_TRIM_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + 2 ");
         M_TEST_EQ(field_type_name.name, "toto");
         M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
     }
@@ -365,7 +365,7 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.str_display_expression, "");
         M_TEST_EQ(field_type_name.str_arrays.size(), 1);
         M_TEST_EQ(field_type_name.str_arrays[0].size_type, T_field_type_name::T_array::E_size_normal);
-        M_TEST_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + T_enum2::enu2 ");
+        M_TEST_TRIM_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + T_enum2::enu2 ");
         M_TEST_EQ(field_type_name.name, "toto");
         M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
     }
@@ -401,7 +401,7 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.str_display_expression, "");
         M_TEST_EQ(field_type_name.str_arrays.size(), 1);
         M_TEST_EQ(field_type_name.str_arrays[0].size_type, T_field_type_name::T_array::E_size_normal);
-        M_TEST_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + (T_enum3::value0 != 0 ? 1 : 2) ");
+        M_TEST_TRIM_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + (T_enum3::value0 != 0 ? 1 : 2) ");
         M_TEST_EQ(field_type_name.name, "toto");
         M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
     }
