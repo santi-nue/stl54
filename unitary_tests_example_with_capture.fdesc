@@ -505,55 +505,6 @@ struct  T_test_switch
 }
 
 ###############################################################################
-# Frame                  In progress
-###############################################################################
-
-struct  T_test_frame
-{
-  save_position    position_outside_frame_begin;
-
-  frame_old  size_bytes=12+4
-  {
-    save_position    position_frame_begin;
-    uint16      val16;
-    uint32      val32;
-    string(4)   str4;
-    
-    var uint16  var16   = 0;
-    var  int64  var64   = val16 * val32;
-    var string  varstr4 = str4;
-        
-    # * could be used at the end of known size frame
-    raw(*)    ten_bytes;
-  }
-  var  int64  outside_var64 = val16 * val32;
-  var string  outside_varstr4 = str4;
-
-  if (position_outside_frame_begin != position_frame_begin)
-  {
-    fatal "";
-  }
-
-  goto_position    position_frame_begin;
-  uint16           outside_val16;
-  uint32           outside_val32;
-  string(4)        outside_str4;
-
-  if (outside_val16 != val16)
-  {
-    fatal "";
-  }
-  if (outside_val32 != val32)
-  {
-    fatal "";
-  }
-  if (outside_str4 != str4)
-  {
-    fatal "";
-  }
-}
-
-###############################################################################
 # Pinfo
 ###############################################################################
 
@@ -623,10 +574,6 @@ struct  T_msg_sc_start_ack
   print  "Let's try the switch" ;
   hide chrono                   test_switch;
   T_test_switch            test_switch;
-
-  print  "Let's try the frame" ;
-  hide chrono                   test_frame;
-  T_test_frame             test_frame;
 
   # pinfo will NOT work (or partially work) with wireshark != 1.2.X
   # Well, to be more precise :

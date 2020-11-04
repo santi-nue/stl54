@@ -2443,51 +2443,6 @@ bool    frame_to_field_other(
                         os_err << "Error field data= " << data_name << endl;
                     }
                 }
-                else if (type == "frame_bytes")
-                {
-                    if (in_out_frame_data.is_physically_at_beginning_of_byte() != true)
-                    {
-                        M_FATAL_COMMENT(type << " managed only a entire byte position");
-                        // must change T_frame_data interface
-                    }
-
-                    // Remaining size.
-                    long    size_bytes = in_out_frame_data.get_remaining_entire_bytes();
-                    if (field_type_name.str_size_or_parameter != "")
-                    {
-                        // Size specified.
-                        C_value    value = compute_expression(type_definitions, interpret_data, in_out_frame_data,
-                                                              field_type_name.str_size_or_parameter,
-                                                              data_name, data_simple_name, os_out, os_err);
-                        size_bytes = value.get_int_int();
-                    }
-
-                    T_frame_data    frame_data(in_out_frame_data.get_P_bytes(), 0, size_bytes * 8);
-                    frame_data.set_initial_frame_starting_bit_offset(in_out_frame_data.get_bit_offset_into_initial_frame());
-
-                    // Inline frame_bytes
-                    if (frame_to_struct_inline (type_definitions,
-                                         frame_data,
-                                         interpret_data,
-                                        *field_type_name.P_sub_struct,
-                                         new_data_array_name /*new_data_name*/,
-                                         data_simple_array_name /*field_type_name.name*/,
-                                         os_out,
-                                         os_err) != true)
-                    {
-                        os_err << "Error field data= " << data_name << endl;
-                    }
-
-                    // Bit size effectively read.
-                    long    size_bits = frame_data.get_bit_offset();
-                    if (field_type_name.str_size_or_parameter != "")
-                    {
-                        // Size specified.
-                        size_bits = size_bytes * 8;
-                    }
-
-                    in_out_frame_data.move_bit_forward(size_bits);
-                }
                 else if (type == "bitfield")
                 {
                     // Inline bitfield

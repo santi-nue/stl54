@@ -897,40 +897,6 @@ string    build_field (istream                           & is,
     }
 
 
-    // command: inline frame
-    if (field_type_name.type == "frame_old")    // Not finished and deprecated
-    {
-        field_type_name.type = "frame_bytes";
-
-        string  str_open_brace_or_size;
-        M_FATAL_IF_FALSE (read_token_right_any (is, str_open_brace_or_size));
-
-        if (str_open_brace_or_size.compare(0, 11, "size_bytes=") == 0)
-        {
-            str_open_brace_or_size.erase(0, 11);
-            field_type_name.str_size_or_parameter = str_open_brace_or_size;
-
-            M_FATAL_IF_FALSE (read_token_key_word (is, str_open_brace_or_size));
-        }
-
-        M_FATAL_IF_FALSE (str_open_brace_or_size == "{");
-
-        field_type_name.P_sub_struct.reset(new T_struct_definition);
-        build_struct_fields (is, type_definitions,
-                             field_type_name.P_sub_struct->fields,
-                             "}",
-                             NULL_PTR,
-                             NULL_PTR,
-                             field_scope,
-                             return_type);
-
-        // Inline frame is a command control bloc (like if and loops)
-        // -> no name
-        // -> no ; after }
-        M_FINISH_build_field_check();
-        M_FINISH_build_field_read_next();
-    }
-
     // command: decoder
     if (field_type_name.type == "decoder")
     {

@@ -410,12 +410,11 @@ void    register_fields_field_type_name(T_generic_protocol_data          & proto
         return;
     }
 
-    // struct or frame_bytes ?
+    // struct ?
     {
         T_struct_definition  * P_struct = NULL;
 
-        if ((final_type == "struct") ||
-            (final_type == "frame_bytes"))
+        if (final_type == "struct")
         {
             P_struct = field_type_name.P_sub_struct.get();
             M_FATAL_IF_EQ (P_struct, NULL);
@@ -451,8 +450,7 @@ void    register_fields_field_type_name(T_generic_protocol_data          & proto
                     register_fields_field_type_name(protocol_data, field_idx, fs_field_type_name, fs_field_type_name.type);
                 }
             }
-            if ((final_type == "struct") ||
-                (final_type == "frame_bytes"))
+            if (final_type == "struct")
             {
                 // must manage inline struct
                 M_FATAL_IF_EQ (field_type_name.P_sub_struct.get(), NULL);
