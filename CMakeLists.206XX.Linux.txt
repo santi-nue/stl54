@@ -160,6 +160,7 @@ set (DISSECTOR_UT_TOOLS_SRC
 	T_static_executor.cpp T_static_executor.h
 	T_static_executor_manager.cpp T_static_executor_manager.h
 	C_perf_chrono.cpp C_perf_chrono.h
+	unitary_tests_ut_interpret_bytes.cpp unitary_tests_ut_interpret_bytes.h
 )
 
 set (DISSECTOR_UT_SRC
