@@ -1326,54 +1326,22 @@ void    build_const (const E_override            must_override,
 }
 
 //*****************************************************************************
-// build_bitfield_unnamed
-// ----------------------------------------------------------------------------
-// Format :
-// bitfieldXX  
-// {
-//    <type_name>  <var_name>
-//    ...
-//    <type_name>  <var_name>
-// }
-// NB: bitfieldXX : XX is the size (in bits) of the bitfield (could be 8, 16, 24 or 32)
+// build_bitfield_unnamed_helper
 //*****************************************************************************
-void    build_bitfield_unnamed (
-                        const string                 & key_word,
-                              istream                & is,
+void    build_bitfield_unnamed_helper (
+                        const bool                     is_a_bitstream,
+                        const long                     sizeof_bitfield_total,
                         const T_type_definitions     & type_definitions,
                               T_bitfield_definition  & def_rep)
 {
-    M_TRACE_ENTER ("build_bitfield_unnamed", "key_word=" << key_word);
+    M_TRACE_ENTER ("build_bitfield_unnamed_helper", "");
 
-    long    sizeof_bitfield_total = 0;
-    if (strncmp(key_word.c_str (), "bitfield", 8) == 0)
-    {
-        def_rep.is_a_bitstream = false;
-        M_FATAL_IF_FALSE (get_number (key_word.c_str () + strlen ("bitfield"),
-                                      &sizeof_bitfield_total));
-    }
-    else
-    {
-        def_rep.is_a_bitstream = true;
-        M_FATAL_IF_FALSE (get_number (key_word.c_str () + strlen ("bitstream"),
-                                      &sizeof_bitfield_total));
-    }
-
-    read_token_key_word_specified (is, "{");
+    def_rep.is_a_bitstream = is_a_bitstream;
 
     def_rep.master_field.name = "last_bitfield_value";            // name used by the following fields
     def_rep.master_field.type = "uint" + get_string(sizeof_bitfield_total);
     def_rep.master_field.output_directive = T_field_type_name::E_output_directive_hide;
     def_rep.master_field.str_display = "hex";
-
-
-    // lecture struct dans def_rep.fields_definition
-    build_struct_fields (is, type_definitions,
-                         def_rep.fields_definition,
-                         "}",
-                         NULL_PTR,
-                         NULL_PTR,
-                         E_field_scope_bitfield);
 
     // Transform each "normal" structure field 
     //  to a bitfield field.
@@ -1434,6 +1402,53 @@ void    build_bitfield_unnamed (
 
 //    def_rep.bit_size = sizeof_bitfield;
 //    def_rep.representation_type = "uint" + get_string (def_rep.bit_size);
+}
+
+//*****************************************************************************
+// build_bitfield_unnamed
+// ----------------------------------------------------------------------------
+// Format :
+// bitfieldXX  
+// {
+//    <type_name>  <var_name>
+//    ...
+//    <type_name>  <var_name>
+// }
+// NB: bitfieldXX : XX is the size (in bits) of the bitfield (could be 8, 16, 24 or 32)
+//*****************************************************************************
+void    build_bitfield_unnamed (
+                        const string                 & key_word,
+                              istream                & is,
+                        const T_type_definitions     & type_definitions,
+                              T_bitfield_definition  & def_rep)
+{
+    M_TRACE_ENTER ("build_bitfield_unnamed", "key_word=" << key_word);
+
+    long    sizeof_bitfield_total = 0;
+    if (strncmp(key_word.c_str (), "bitfield", 8) == 0)
+    {
+        def_rep.is_a_bitstream = false;
+        M_FATAL_IF_FALSE (get_number (key_word.c_str () + strlen ("bitfield"),
+                                      &sizeof_bitfield_total));
+    }
+    else
+    {
+        def_rep.is_a_bitstream = true;
+        M_FATAL_IF_FALSE (get_number (key_word.c_str () + strlen ("bitstream"),
+                                      &sizeof_bitfield_total));
+    }
+
+    read_token_key_word_specified (is, "{");
+
+    // lecture struct dans def_rep.fields_definition
+    build_struct_fields (is, type_definitions,
+                         def_rep.fields_definition,
+                         "}",
+                         NULL_PTR,
+                         NULL_PTR,
+                         E_field_scope_bitfield);
+
+    build_bitfield_unnamed_helper(def_rep.is_a_bitstream, sizeof_bitfield_total, type_definitions, def_rep);
 }
 
 //*****************************************************************************
