@@ -341,6 +341,37 @@ M_TEST_FCT(test_build_field)
             " uint3"
             "{ns=T_enum3::value0}"
             "{q=konst::int_enum:o=T_enum4::Val13}"
+            "{min=konst::int_enum:max=T_enum4::Val13}"
+            "[ val + T_enum2::enu2 ]"
+            " toto;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "uint3");                           // type
+        M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
+        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
+        M_TEST_EQ(field_type_name.transform_offset.get_int(), 13);          // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), true);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 1);                   // min & max
+        M_TEST_EQ(field_type_name.constraints[0].min.get_int(), 0);         // min
+        M_TEST_EQ(field_type_name.constraints[0].max.get_int(), 13);        // max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 1);
+        M_TEST_EQ(field_type_name.str_arrays[0].size_type, T_field_type_name::T_array::E_size_normal);
+        M_TEST_TRIM_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + T_enum2::enu2 ");
+        M_TEST_EQ(field_type_name.name, "toto");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+    }
+    {
+        string         first_word = "hide";
+        istringstream  iss(" "
+            " uint3"
+            "{ns=T_enum3::value0}"
             "{tef=.2*this-.2+T_enum3::value0}"
             "{min=konst::int_enum:max=T_enum4::Val13}"
             "[ val + T_enum2::enu2 ]"
@@ -349,13 +380,12 @@ M_TEST_FCT(test_build_field)
         T_field_type_name    field_type_name;
 
         M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
-
         M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
         M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
         M_TEST_EQ(field_type_name.type, "uint3");                           // type
         M_TEST_EQ(field_type_name.no_statement.get_int(), 0);               // ns
-        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 0);          // q
-        M_TEST_EQ(field_type_name.transform_offset.get_int(), 13);          // o
+        M_TEST_EQ(field_type_name.transform_quantum.as_string(), "");       // q
+        M_TEST_EQ(field_type_name.transform_offset.as_string(), "");        // o
         M_TEST_EQ(field_type_name.transform_expression.is_defined(), true);
         M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
         M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), true);
@@ -377,6 +407,37 @@ M_TEST_FCT(test_build_field)
             " uint3"
             "{ns=T_enum3::value0 == 0 ? 1 : 2}"
             "{q=T_enum4::Val13 != 13 ? konst::int_enum : 12:o=(konst::int_enum != 0 ? T_enum3::value0 : T_enum4::Val13)}"
+            "{min=T_enum4::Val13 == 13 ? konst::int_enum : 12:max=(konst::int_enum == 0 ? T_enum4::Val13 : T_enum3::value0)}"
+            "[ val + (T_enum3::value0 != 0 ? 1 : 2) ]"
+            " toto;");
+
+        T_field_type_name    field_type_name;
+
+        M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
+        M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
+        M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
+        M_TEST_EQ(field_type_name.type, "uint3");                           // type
+        M_TEST_EQ(field_type_name.no_statement.get_int(), 1);               // ns
+        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 12);         // q
+        M_TEST_EQ(field_type_name.transform_offset.get_int(), 13);          // o
+        M_TEST_EQ(field_type_name.transform_expression.is_defined(), false);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), true);
+        M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), false);
+        M_TEST_EQ(field_type_name.constraints.size(), 1);                   // min & max
+        M_TEST_EQ(field_type_name.constraints[0].min.get_int(), 0);         // min
+        M_TEST_EQ(field_type_name.constraints[0].max.get_int(), 13);        // max
+        M_TEST_EQ(field_type_name.str_display_expression, "");
+        M_TEST_EQ(field_type_name.str_arrays.size(), 1);
+        M_TEST_EQ(field_type_name.str_arrays[0].size_type, T_field_type_name::T_array::E_size_normal);
+        M_TEST_TRIM_EQ(field_type_name.str_arrays[0].size_expression.get_original_string_expression(), " val + (T_enum3::value0 != 0 ? 1 : 2) ");
+        M_TEST_EQ(field_type_name.name, "toto");
+        M_TEST_EQ(field_type_name.get_var_expression().is_defined(), false);
+    }
+    {
+        string         first_word = "hide";
+        istringstream  iss(" "
+            " uint3"
+            "{ns=T_enum3::value0 == 0 ? 1 : 2}"
             "{tef=.2*this-.2+(konst::int_enum == 0 ? T_enum3::value0 : T_enum4::Val13)}"
             "{min=T_enum4::Val13 == 13 ? konst::int_enum : 12:max=(konst::int_enum == 0 ? T_enum4::Val13 : T_enum3::value0)}"
             "[ val + (T_enum3::value0 != 0 ? 1 : 2) ]"
@@ -385,13 +446,12 @@ M_TEST_FCT(test_build_field)
         T_field_type_name    field_type_name;
 
         M_TEST_EQ(build_field(iss, type_definitions, first_word, field_type_name), "");
-
         M_TEST_EQ(field_type_name.must_hide(), true);                       // hide
         M_TEST_EQ(field_type_name.is_a_variable(), false)                   // var
         M_TEST_EQ(field_type_name.type, "uint3");                           // type
         M_TEST_EQ(field_type_name.no_statement.get_int(), 1);               // ns
-        M_TEST_EQ(field_type_name.transform_quantum.get_int(), 12);         // q
-        M_TEST_EQ(field_type_name.transform_offset.get_int(), 13);          // o
+        M_TEST_EQ(field_type_name.transform_quantum.as_string(), "");       // q
+        M_TEST_EQ(field_type_name.transform_offset.as_string(), "");        // o
         M_TEST_EQ(field_type_name.transform_expression.is_defined(), true);
         M_TEST_EQ(field_type_name.must_force_manage_as_biggest_int(), false);
         M_TEST_EQ(field_type_name.must_force_manage_as_biggest_float(), true);

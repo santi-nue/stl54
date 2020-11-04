@@ -343,6 +343,12 @@ ostream &  operator<< (ostream & os, const T_field_type_name  & rhs)
         os << " ;";
     }
 
+    if (!rhs.fct_parameters.empty())
+    {
+        os << endl;
+        print(os, rhs.fct_parameters, "fct_parameter : ");
+    }
+
     return  os;
 }
 
@@ -795,6 +801,7 @@ T_type_definitions::set_field_transform_quantum(T_field_type_name_base  & field,
 {
     M_FATAL_IF_NE(field.transform_quantum.as_string(), "");
     M_FATAL_IF_NE(field.transform_offset.as_string(), "");
+    M_FATAL_IF_NE(field.transform_expression.is_defined(), false);
 
     field.transform_quantum = string_to_numeric(*this, val_param, field.name, "quantum");
 }
@@ -804,6 +811,7 @@ T_type_definitions::set_field_transform_offset (T_field_type_name_base  & field,
                                   const string             & val_param) const
 {
     M_FATAL_IF_NE(field.transform_offset.as_string(), "");
+    M_FATAL_IF_NE(field.transform_expression.is_defined(), false);
 
     field.transform_offset = string_to_numeric(*this, val_param, field.name, "offset");
 }
