@@ -234,6 +234,9 @@ private:
                              const T_expression::E_type    & rhs);
     friend std::ostream &  operator<< (std::ostream               & os,
                              const T_expression::E_operation  & rhs);
+
+public:
+    const std::vector<T_expression>& get_expressions_for_UT() const { return A_expressions; }
 };
 
 std::ostream &  operator<< (std::ostream    & os,

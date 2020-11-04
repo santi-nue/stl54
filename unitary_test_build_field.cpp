@@ -1066,7 +1066,7 @@ M_TEST_FCT(test_build_field)
     // set
     {
         string         first_word = "set";
-        istringstream  iss(" name = 22 +7 ;");
+        istringstream  iss(" name = 22 +variable[7][2].toto ;");
 
         T_field_type_name    field_type_name;
 
@@ -1087,7 +1087,16 @@ M_TEST_FCT(test_build_field)
         M_TEST_EQ(field_type_name.str_arrays.size(), 0);
         M_TEST_EXPR_STR_EQ(field_type_name.name, "name");
         M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
-        M_TEST_EQ(field_type_name.new_expression.get_original_string_expression(), "22 +7");
+        M_TEST_EQ(field_type_name.new_expression.get_original_string_expression(), "22 +variable[7][2].toto");
+
+        auto expressions = field_type_name.new_expression.get_expressions_for_UT();
+        M_TEST_EQ(expressions.size(), 2);
+        M_TEST_EQ(expressions[1].is_a_variable(), true);
+
+        auto array_expressions = expressions[1].get_expressions_for_UT();
+        M_TEST_EQ(array_expressions.size(), 2);
+        M_TEST_EQ(array_expressions[0].get_original_string_expression(), "7");
+        M_TEST_EQ(array_expressions[1].get_original_string_expression(), "2");
     }
 
     // return
