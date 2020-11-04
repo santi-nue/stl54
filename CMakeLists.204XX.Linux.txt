@@ -127,6 +127,35 @@ CHECKAPI(
 # byte_interpret
 add_executable(byte_interpret byte_interpret_main.cpp ${DISSECTOR_CORE_SRC})
 
+set (DISSECTOR_UT_TOOLS_SRC
+	${DISSECTOR_CORE_UT_SRC}
+	unitary_tests_tools.cpp unitary_tests_tools.h
+	T_static_executor.cpp T_static_executor.h
+	T_static_executor_manager.cpp T_static_executor_manager.h
+	C_perf_chrono.cpp C_perf_chrono.h
+)
+
+set (DISSECTOR_UT_SRC
+	${DISSECTOR_UT_TOOLS_SRC}
+	unitary_test_build_field.cpp
+	unitary_test_decode_stream_frame.cpp
+	unitary_test_decompose_left_sep_middle_sep_right.cpp
+	unitary_test_decompose_type_sep_value_sep.cpp
+	unitary_test_expression.cpp
+	unitary_test_frame_data.cpp
+	unitary_test_get_before_separator_after.cpp
+	unitary_test_get_number.cpp
+	unitary_test_read_token.cpp
+	unitary_test_read_token_word_cplx.cpp
+	unitary_test_read_values.cpp
+	unitary_test_scoped_copyable_ptr.cpp
+	unitary_test_string_to_words.cpp
+	unitary_test_value_format.cpp
+	unitary_test_value_printf.cpp
+	unitary_tests_functions.cpp
+	unitary_tests_misc.cpp
+)
+
 # unitary_tests
-add_executable(unitary_tests unitary_tests.cpp ${DISSECTOR_CORE_UT_SRC})
+add_executable(unitary_tests unitary_tests.cpp ${DISSECTOR_UT_SRC})
 

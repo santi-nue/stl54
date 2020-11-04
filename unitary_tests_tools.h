@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef F_COMMON_TEST_TOOLS_H
-#define F_COMMON_TEST_TOOLS_H
+#ifndef UNITARY_TEST_TOOLS_H
+#define UNITARY_TEST_TOOLS_H
 
 //*****************************************************************************
 // Includes
@@ -28,6 +28,9 @@
 #include <sstream>
 using namespace std;
 
+#include "T_static_executor.h"
+#include "T_static_executor_manager.h"
+
 #define wait_for_any_operator_input_if_necessary()
 
 
@@ -37,9 +40,25 @@ using namespace std;
 // Counter of errors detected already known (minor errors).
 //*****************************************************************************
 
-int   G_TEST_nb_tests = 0;
-int   G_TEST_nb_errors = 0;
-int   G_TEST_nb_errors_already_known = 0;
+extern int   G_TEST_nb_tests;
+extern int   G_TEST_nb_errors;
+extern int   G_TEST_nb_errors_already_known;
+
+
+//*****************************************************************************
+// Declare a function containing test
+// The function will be called automatically
+//*****************************************************************************
+#define M_TEST_FCT(fct_name)                                                  \
+extern void fct_name();                                                       \
+M_static_executor(fct_name);                                                  \
+void fct_name()
+
+
+// The function will NOT be called automatically
+#define M_TEST_FCT_IGNORE(fct_name)                                           \
+void fct_name()
+
 
 //*****************************************************************************
 // Test macro.
@@ -159,8 +178,8 @@ int   G_TEST_nb_errors_already_known = 0;
 // error_already_known flag 
 //*****************************************************************************
 
-bool         G_TEST_is_an_error_already_known = false;
-std::string  G_TEST_error_already_known_explain;
+extern bool         G_TEST_is_an_error_already_known;
+extern std::string  G_TEST_error_already_known_explain;
 class C_TEST_error_already_known
 {
 public:
@@ -265,4 +284,4 @@ private:
 #endif
 
 
-#endif /* F_COMMON_TEST_TOOLS_H */
+#endif
