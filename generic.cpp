@@ -42,6 +42,7 @@
 #include "byte_interpret_builder.h"
 #include "C_byte_interpret_wsgd_builder.h"
 #include "C_byte_interpret_wsgd_builder_base.h"
+#include "C_setlocale_numeric_C_guard.h"
 #include <fstream>
 
 #ifdef WIN32
@@ -1357,9 +1358,7 @@ void    cpp_proto_register_generic(void)
 
     M_TRACE_ENTER ("cpp_proto_register_generic", "");
 
-    // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
-    // change the locale for LC_NUMERIC (so 0.236 is a valid number)
-    const char  * locale_save = setlocale(LC_NUMERIC, "C");
+    C_setlocale_numeric_C_guard  locale_guard;
 
     try
     {
@@ -1368,9 +1367,6 @@ void    cpp_proto_register_generic(void)
     catch(...)
     {
     }
-
-    // restore the saved locale
-    setlocale(LC_NUMERIC, locale_save);
 }
 
 //*****************************************************************************

@@ -38,6 +38,7 @@
 #include <algorithm>
 using namespace std;
 
+#include "C_setlocale_numeric_C_guard.h"
 #include "C_value.h"
 #include "byte_interpret.h"
 #include "byte_interpret_common.h"
@@ -6323,10 +6324,7 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
     M_TRACE_ENTER ("interpret_bytes",
                    "sizeof_bytes=" << in_out_sizeof_bytes);
 
-    // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
-    // change the locale for LC_NUMERIC (so 0.236 is a valid number)
-    const char  * locale_save = setlocale(LC_NUMERIC, "C");
-
+    C_setlocale_numeric_C_guard  locale_guard;
 
 //    C_interpret_data_set_temporary  interpret_data_set_temporary(interpret_data);  // ICIOA
 
@@ -6399,9 +6397,6 @@ bool    interpret_bytes (const T_type_definitions  & type_definitions,
             result = false;
         }
     }
-
-    // restore the saved locale
-    setlocale(LC_NUMERIC, locale_save);
 
     return  result;
 }
@@ -6486,9 +6481,7 @@ bool    build_types_and_interpret_bytes (
     M_TRACE_ENTER ("build_types_and_interpret_bytes",
                    "sizeof_bits=" << in_out_frame_data.get_remaining_bits());
 
-    // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
-    // change the locale for LC_NUMERIC (so 0.236 is a valid number)
-    const char  * locale_save = setlocale(LC_NUMERIC, "C");
+    C_setlocale_numeric_C_guard  locale_guard;
 
     // Set the interpret_data.
     T_interpret_data    interpret_data;
@@ -6517,9 +6510,6 @@ bool    build_types_and_interpret_bytes (
           break;
         }
     }
-
-    // restore the saved locale
-    setlocale(LC_NUMERIC, locale_save);
 
     if (result == true)
     {

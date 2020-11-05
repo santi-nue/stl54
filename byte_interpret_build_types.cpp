@@ -44,6 +44,7 @@ using namespace std;
 #include "byte_interpret_build_types.h"
 #include "byte_interpret_build_types_context.h"
 #include "byte_interpret_build_types_read_token.h"
+#include "C_setlocale_numeric_C_guard.h"
 
 // plugin needs gmodule/glib
 // Linux 300X must find (cmake) g_module to enable it
@@ -2675,14 +2676,9 @@ string    build_types2 (istream             & is,
 string    build_types (istream             & is,
                        T_type_definitions  & type_definitions)
 {
-    // save the current locale for LC_NUMERIC (used for numeric input/output, e.g. strtoll)
-    // change the locale for LC_NUMERIC (so 0.236 is a valid number)
-    const char  * locale_save = setlocale(LC_NUMERIC, "C");
+    C_setlocale_numeric_C_guard  locale_guard;
 
     const string  NOT_understood_word = build_types2 (is, type_definitions);
-
-    // restore the saved locale
-    setlocale(LC_NUMERIC, locale_save);
 
     build_types_finalize(type_definitions);
 

@@ -56,6 +56,7 @@ set(DISSECTOR_CORE_UT_SRC
 	T_frame_data_write.cpp T_frame_data_write.h
 	T_type_definitions.cpp T_type_definitions.h
 	C_value.cpp C_value.h
+	C_setlocale_numeric_C_guard.cpp C_setlocale_numeric_C_guard.h
 	byte_interpret_builder.cpp byte_interpret_builder.h
 	byte_interpret_build_types.cpp byte_interpret_build_types.h
 	byte_interpret_build_types_context.cpp byte_interpret_build_types_context.h
