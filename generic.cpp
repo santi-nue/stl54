@@ -1610,7 +1610,14 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
             continue;
         }
       
-#if WIRESHARK_VERSION_NUMBER >= 20000
+#if WIRESHARK_VERSION_NUMBER >= 30400
+        heur_dissector_add(parent_name.c_str(),
+                            P_protocol_ws_data->P_heuristic_fct,
+                            protocol_data.PROTONAME.c_str(),
+                            protocol_data.PROTOABBREV.c_str(),
+                            P_protocol_ws_data->proto_generic,
+                            HEURISTIC_ENABLE);
+#elif WIRESHARK_VERSION_NUMBER >= 20000
         heur_dissector_add(parent_name.c_str(),
                             P_protocol_ws_data->P_heuristic_fct,
                             protocol_data.PROTONAME.c_str(),
