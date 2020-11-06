@@ -26,10 +26,6 @@
 #include "C_byte_interpret_wsgd_builder.h"
 #include "T_generic_protocol_data.h"
 
-#if WIRESHARK_VERSION_NUMBER < 10600
-#define dissector_try_uint  dissector_try_port
-#endif
-
 
 /******************************************************************************
  * dissector_try_heuristic
@@ -44,14 +40,8 @@ int     dissector_try_heuristic(T_generic_protocol_data  & protocol_data,
     T_generic_protocol_subdissector_data  & subdissector_data = protocol_data.ws_data.subdissector_data;
 
     /* do lookup with the heuristic subdissector table */
-#if WIRESHARK_VERSION_NUMBER >= 11200
     heur_dtbl_entry_t *hdtbl_entry = NULL;
     const int  dissector_result = dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, &hdtbl_entry, NULL);
-#elif WIRESHARK_VERSION_NUMBER >= 11000
-    const int  dissector_result = dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, NULL);
-#else
-    const int  dissector_result = dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree);
-#endif
 
     return  dissector_result;
 }
@@ -166,11 +156,7 @@ int     call_subdissector_or_data2( T_generic_protocol_data  & protocol_data,
     const int    offset = bit_offset / 8;
     const int    length_of_subdissector_data = bit_length_of_subdissector_data / 8;
 
-#if WIRESHARK_VERSION_NUMBER >= 20400
     tvbuff_t* next_tvb = tvb_new_subset_length_caplen(tvb, offset, length_of_subdissector_data, length_of_subdissector_data);
-#else
-    tvbuff_t* next_tvb = tvb_new_subset(tvb, offset, length_of_subdissector_data, length_of_subdissector_data);
-#endif
 
     /* If the user has a "Follow UDP Stream" window loading, pass a pointer
      * to the payload tvb through the tap system. */
@@ -611,23 +597,15 @@ void
 C_packet_info_save_restore::partial_copy(packet_info& to, const packet_info& from)
 {
 #define M_PINFO_COPY(NAME)    to.NAME = from.NAME
-#if WIRESHARK_VERSION_NUMBER >= 11200
 #define M_PINFO_COPY_ADDRESS(NAME)    copy_address_shallow(&to.NAME, &from.NAME)
-#else
-#define M_PINFO_COPY_ADDRESS(NAME)    COPY_ADDRESS_SHALLOW(&to.NAME, &from.NAME)
-#endif
 
-#if WIRESHARK_VERSION_NUMBER >= 20200
     M_PINFO_COPY(num);
     M_PINFO_COPY(abs_ts);
     M_PINFO_COPY(vlan_id);
-#endif
 
     M_PINFO_COPY(current_proto);
     //M_PINFO_COPY(cinfo);
-#if WIRESHARK_VERSION_NUMBER >= 11200
     M_PINFO_COPY(rel_ts);
-#endif
     //M_PINFO_COPY(fd);
     //M_PINFO_COPY(pseudo_header);
     //M_PINFO_COPY(phdr);
@@ -638,10 +616,6 @@ C_packet_info_save_restore::partial_copy(packet_info& to, const packet_info& fro
     M_PINFO_COPY_ADDRESS(net_dst);
     M_PINFO_COPY_ADDRESS(src);
     M_PINFO_COPY_ADDRESS(dst);
-#if WIRESHARK_VERSION_NUMBER < 20600
-    M_PINFO_COPY(ctype);
-    M_PINFO_COPY(circuit_id);
-#endif
     M_PINFO_COPY(noreassembly_reason);
     M_PINFO_COPY(fragmented);
     M_PINFO_COPY(flags);
@@ -660,9 +634,7 @@ C_packet_info_save_restore::partial_copy(packet_info& to, const packet_info& fro
     M_PINFO_COPY(p2p_dir);
     //M_PINFO_COPY(private_table);
     //M_PINFO_COPY(layers);
-#if WIRESHARK_VERSION_NUMBER >= 11200
     M_PINFO_COPY(curr_layer_num);
-#endif
     M_PINFO_COPY(link_number);
     M_PINFO_COPY(clnp_srcref);
     M_PINFO_COPY(clnp_dstref);
@@ -736,16 +708,10 @@ C_columns_save_restore::save()
     //col_set_fence(A_packet_info.cinfo, COL_PROTOCOL);
     //col_set_fence(A_packet_info.cinfo, COL_INFO);
 
-#if WIRESHARK_VERSION_NUMBER < 20200
-    // <= 2.0 : can not specify the column
-    A_save_col_writable = col_get_writable(A_packet_info.cinfo);
-    col_set_writable(A_packet_info.cinfo, false);
-#else
     A_save_col_writable = col_get_writable(A_packet_info.cinfo, -1);
     // Seems to NOT work for destination and source
     // Normally, I need only COL_PROTOCOL & COL_INFO
     col_set_writable(A_packet_info.cinfo, -1/*all*/, false);
-#endif                
 }
 
 void
@@ -758,11 +724,7 @@ C_columns_save_restore::restore()
     //col_clear_fence(A_packet_info.cinfo, COL_PROTOCOL);
     //col_clear_fence(A_packet_info.cinfo, COL_INFO);
 
-#if WIRESHARK_VERSION_NUMBER < 20200
-    col_set_writable(A_packet_info.cinfo, A_save_col_writable);
-#else
     col_set_writable(A_packet_info.cinfo, -1/*all*/, A_save_col_writable);
-#endif
 }
 
 //*****************************************************************************

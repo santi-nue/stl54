@@ -25,16 +25,6 @@ using namespace std;
 #include "unitary_tests_tools.h"
 #include "byte_interpret_parse.h"
 
-//*****************************************************************************
-// strtod accept/reject hexadecimal as float
-//*****************************************************************************
-
-#if WIRESHARK_VERSION_NUMBER < 20600
-#if defined WIN32
-#define STRTOD_REJECT_HEXADECIMAL_AS_FLOAT
-#endif
-#endif
-
 
 //*****************************************************************************
 // test_get_number
@@ -82,17 +72,10 @@ M_TEST_FCT(test_get_number)
     M_TEST_INT_FLT(" 32",   32,   32.0);
     M_TEST_INT_FLT(" -132", -132, -132.0);
 
-#if defined STRTOD_REJECT_HEXADECIMAL_AS_FLOAT
-    // VC++ strtod reject hexadecimal
-    M_TEST_INT(  "0xa32",  0xa32);
-    M_TEST_INT( " 0Xa32",  0xa32);
-    M_TEST_INT("-0Xfa32",  -0xfa32);
-#else
-    // gcc strtod accept hexadecimal
+    // strtod accept hexadecimal
     M_TEST_INT_FLT(  "0xa32",  0xa32, 2610.0);
     M_TEST_INT_FLT( " 0Xa32",  0xa32, 2610.0);
     M_TEST_INT_FLT("-0Xfa32",  -0xfa32, -64050.0);
-#endif
 
     M_TEST_INT(   "032",   032);
     M_TEST_INT( "-0777", -0777);

@@ -29,19 +29,11 @@
 // Includes
 //*****************************************************************************
 
-#if WIRESHARK_VERSION_NUMBER >= 20200
 #include "config.h"
-#else
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-#endif
 
 #include <glib.h>
 #include <epan/packet.h>
-#if WIRESHARK_VERSION_NUMBER >= 11200
 #include <epan/expert.h>
-#endif
 
 #include <string>
 #include <vector>
@@ -74,7 +66,6 @@ struct T_generic_protocol_enum_values_data : public CT_debug_object_counter<T_ge
   vector<T_generic_protocol_enum_value>    enum_values;
 };
 
-#if WIRESHARK_VERSION_NUMBER >= 11200
 struct T_generic_protocol_expert_data : public CT_debug_object_counter<T_generic_protocol_expert_data>
 {
   expert_field              ei_malformed_comment;
@@ -94,7 +85,6 @@ struct T_generic_protocol_expert_data : public CT_debug_object_counter<T_generic
     ei_malformed_error = ei_initializer;
   }
 };
-#endif
 
 struct T_generic_protocol_subdissector_data : public CT_debug_object_counter<T_generic_protocol_subdissector_data>
 {
@@ -163,21 +153,14 @@ struct T_generic_protocol_ws_data : public CT_debug_object_counter<T_generic_pro
   /* Wireshark ID of the protocol */
   int       proto_generic;
 
-#if WIRESHARK_VERSION_NUMBER >= 11000
   gint      ( * P_dissect_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *);
   gboolean  ( * P_heuristic_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *);
-#else
-  gint      ( * P_dissect_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree);
-  gboolean  ( * P_heuristic_fct )(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree);
-#endif
 
   dissector_handle_t                    dissector_handle;
 
   T_generic_protocol_fields_data        fields_data;
   T_generic_protocol_enum_values_data   enum_values_data;
-#if WIRESHARK_VERSION_NUMBER >= 11200
   T_generic_protocol_expert_data        expert_data;
-#endif
 
   T_generic_protocol_subdissector_data  subdissector_data;
 

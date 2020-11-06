@@ -58,16 +58,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <epan/tvbuff.h>
-#if WIRESHARK_VERSION_NUMBER >= 20400
 #include <wsutil/filesystem.h>
 #include <wsutil/report_message.h>
-#elif WIRESHARK_VERSION_NUMBER >= 11200
-#include <wsutil/filesystem.h>
-#include <wsutil/report_err.h>
-#else
-#include <epan/filesystem.h>
-#include <epan/report_err.h>
-#endif
 #include <epan/conversation.h>
 #include <epan/tap.h>
 #include <epan/stats_tree.h>
@@ -81,15 +73,6 @@ extern "C" {
 
 #ifndef WIRESHARK_VERSION_NUMBER
 #error you must define WIRESHARK_VERSION_NUMBER as <major><minor_on_2_digits><micro_on_2_digits>
-#endif
-
-#if WIRESHARK_VERSION_NUMBER < 10600
-#define dissector_add_uint(abbrev, pattern, handle) \
-    dissector_add(abbrev, pattern, handle)
-#endif
-
-#if WIRESHARK_VERSION_NUMBER >= 20000
-#define tvb_length_remaining tvb_reported_length_remaining
 #endif
 
 //*****************************************************************************
@@ -938,12 +921,8 @@ void    compute_wsgd_file_names(vector<string>  & wsgd_file_names)
     M_SEARCH_IN_DIR(get_profiles_dir());
     M_SEARCH_IN_DIR(get_persdatafile_dir());
     M_SEARCH_IN_DIR(get_datafile_dir());
-#if WIRESHARK_VERSION_NUMBER >= 20600
     M_SEARCH_IN_DIR_EPAN(get_plugins_dir_with_version());
     M_SEARCH_IN_DIR_EPAN(get_plugins_pers_dir_with_version());
-#else
-    M_SEARCH_IN_DIR(get_plugin_dir());
-#endif
     M_SEARCH_IN_DIR(get_progfile_dir());
     M_SEARCH_IN_DIR(".");
 }
@@ -1020,7 +999,6 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
     proto_register_subtree_array (&P_protocol_ws_data->fields_data.ett[0],
                                   P_protocol_ws_data->fields_data.ett.size());
 
-#if WIRESHARK_VERSION_NUMBER >= 11200
     {
         ei_register_info   eri = 
             { &P_protocol_ws_data->expert_data.ei_malformed_comment,
@@ -1070,7 +1048,6 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
     expert_register_field_array(expert_proto,
                                 &P_protocol_ws_data->expert_data.ei[0],
                                  P_protocol_ws_data->expert_data.ei.size());
-#endif
 
 
     /* subdissector code */
@@ -1084,29 +1061,16 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
                         protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str());
 
         protocol_data.ws_data.subdissector_data.dissector_table =
-#if WIRESHARK_VERSION_NUMBER >= 20200
         register_dissector_table(protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str(),
                                  protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str(),
                                  protocol_data.ws_data.proto_generic,
                                  protocol_data.SUBPROTO_SUBFIELD_TYPE_WS,
                                  BASE_DEC);
-#else
-        register_dissector_table(protocol_data.SUBPROTO_SUBFIELD_PARAM.c_str(),
-                                 protocol_data.SUBPROTO_SUBFIELD_PARAM_UI.c_str(),
-                                 protocol_data.SUBPROTO_SUBFIELD_TYPE_WS, BASE_DEC);
-#endif
 
         M_FATAL_IF_EQ(protocol_data.ws_data.subdissector_data.dissector_table, NULL);
 
-#if WIRESHARK_VERSION_NUMBER >= 20200
         protocol_data.ws_data.subdissector_data.heur_dissector_list = register_heur_dissector_list(protocol_data.PROTOABBREV.c_str(),
                                                                                                    protocol_data.ws_data.proto_generic);
-#elif WIRESHARK_VERSION_NUMBER >= 20000
-        protocol_data.ws_data.subdissector_data.heur_dissector_list = register_heur_dissector_list(protocol_data.PROTOABBREV.c_str());
-#else
-        register_heur_dissector_list(protocol_data.PROTOABBREV.c_str(),
-                                    &protocol_data.ws_data.subdissector_data.heur_dissector_list);
-#endif
     }
 
     /* Register configuration preferences */
@@ -1121,11 +1085,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
                   protocol_data.PROTOABBREV << " " <<
                   P_protocol_ws_data->P_dissect_fct << " " <<
                   P_protocol_ws_data->proto_generic);
-#if WIRESHARK_VERSION_NUMBER >= 20200
     register_dissector(protocol_data.PROTOABBREV.c_str(), P_protocol_ws_data->P_dissect_fct, P_protocol_ws_data->proto_generic);
-#else
-    new_register_dissector(protocol_data.PROTOABBREV.c_str(), P_protocol_ws_data->P_dissect_fct, P_protocol_ws_data->proto_generic);
-#endif
 
     protocol_data.ws_data.tap_data.proto_tap = register_tap(protocol_data.PROTOABBREV.c_str());
     M_TRACE_DEBUG("proto_tap=" << protocol_data.ws_data.tap_data.proto_tap);
@@ -1168,12 +1128,8 @@ void    trace_version_infos()
 void    trace_dirs()
 {
     M_TRACE_DEBUG ("get_progfile_dir                  = " << get_progfile_dir());
-#if WIRESHARK_VERSION_NUMBER >= 20600
     M_TRACE_DEBUG ("get_plugins_dir_with_version      = " << get_plugins_dir_with_version());
     M_TRACE_DEBUG ("get_plugins_pers_dir_with_version = " << get_plugins_pers_dir_with_version());
-#else
-    M_TRACE_DEBUG ("get_plugin_dir                    = " << get_plugin_dir());
-#endif
     M_TRACE_DEBUG ("get_datafile_dir                  = " << get_datafile_dir());
     M_TRACE_DEBUG ("get_systemfile_dir                = " << get_systemfile_dir());
     M_TRACE_DEBUG ("get_profiles_dir                  = " << get_profiles_dir());
@@ -1426,28 +1382,20 @@ stat_tree_packet_return_type
     M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), NULL);
     T_interpret_data  & last_msg_interpret_data = * tap_data.RCP_last_msg_interpret_data;
 
-#if WIRESHARK_VERSION_NUMBER >= 10200
-// since revision 25716 (1.2.0 or before)
-#define NEEDED_CAST_FOR_10X
-#else
-// until revision 25084
-#define NEEDED_CAST_FOR_10X  (const guint8*)
-#endif
-
     {
-        tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_id, 0, FALSE);
+        tick_stat_node(st, tap_data.st_str_msg_id, 0, FALSE);
 
         const string  str_msg_id = last_msg_interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
-        /*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X str_msg_id.c_str(), tap_data.st_node_msg_id, TRUE);
+        /*int           reqs_by_msg_id =*/ tick_stat_node(st, str_msg_id.c_str(), tap_data.st_node_msg_id, TRUE);
     }
 
     if (protocol_data.MSG_TOTAL_LENGTH != "")
     {
         M_TRACE_ERROR("st_node_msg_length=" << tap_data.st_node_msg_length);
-        tick_stat_node(st, NEEDED_CAST_FOR_10X tap_data.st_str_msg_length, 0, FALSE);
+        tick_stat_node(st, tap_data.st_str_msg_length, 0, FALSE);
 
         C_value       val_length = compute_expression_no_io(protocol_data.type_definitions, last_msg_interpret_data, protocol_data.MSG_TOTAL_LENGTH);
-        /*int           reqs_by_msg_id =*/ tick_stat_node(st, NEEDED_CAST_FOR_10X val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
+        /*int           reqs_by_msg_id =*/ tick_stat_node(st, val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
     }
 
     return  stat_tree_packet_return_value;
@@ -1470,15 +1418,10 @@ static void    generic_stats_tree_cleanup(stats_tree  * st)
 static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_data)
 {
     M_TRACE_ENTER ("register_generic_stats_trees", "");
-    stats_tree_register(NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
-                        NEEDED_CAST_FOR_10X protocol_data.PROTOABBREV.c_str(),
-                        NEEDED_CAST_FOR_10X (protocol_data.PROTOABBREV + "/Msg").c_str(),
-#if WIRESHARK_VERSION_NUMBER >= 10300
-                        // since revision 28645 (1.3.5 or before)
+    stats_tree_register(protocol_data.PROTOABBREV.c_str(),
+                        protocol_data.PROTOABBREV.c_str(),
+                        (protocol_data.PROTOABBREV + "/Msg").c_str(),
                         0,
-#else
-                        // until revision 27407
-#endif
                         generic_stats_tree_packet,
                         generic_stats_tree_init,
                         NULL);
@@ -1489,21 +1432,8 @@ static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_
 //*****************************************************************************
 bool  is_an_heuristic_dissector(const string &  parent_name)
 {
-#if WIRESHARK_VERSION_NUMBER >= 11200
-    bool  result = has_heur_dissector_list(parent_name.c_str());
-#else
-    // Will NOT work : find_heur_dissector_list is not accessible (ie NOT exported)
-    //  bool  result = false;
-    //  heur_dissector_list_t *  heur_dissector_list = find_heur_dissector_list(parent_name.c_str());
-    //  if (heur_dissector_list != NULL)
-    //    result = true;
-
-    M_TRACE_WARNING ("wsgd is NOT able to check if " << parent_name << " is an heuristic dissector");
-    M_TRACE_WARNING ("--> If it is NOT an heuristic dissector, it will NOT work and perhaps crash");
-    bool  result = true;
-#endif
-
-   return  result;
+    const bool  result = has_heur_dissector_list(parent_name.c_str());
+    return  result;
 }
 
 //*****************************************************************************
@@ -1519,13 +1449,8 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
     T_generic_protocol_ws_data      * P_protocol_ws_data = &protocol_data.ws_data;
 
     // Create the dissector handle.
-#if WIRESHARK_VERSION_NUMBER >= 20200
     P_protocol_ws_data->dissector_handle = create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
                                                                    P_protocol_ws_data->proto_generic);
-#else
-    P_protocol_ws_data->dissector_handle = new_create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
-                                                                       P_protocol_ws_data->proto_generic);
-#endif
     M_FATAL_IF_EQ(P_protocol_ws_data->dissector_handle, NULL);
 
 
@@ -1617,17 +1542,13 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
                             protocol_data.PROTOABBREV.c_str(),
                             P_protocol_ws_data->proto_generic,
                             HEURISTIC_ENABLE);
-#elif WIRESHARK_VERSION_NUMBER >= 20000
+#else
         heur_dissector_add(parent_name.c_str(),
                             P_protocol_ws_data->P_heuristic_fct,
                             protocol_data.PROTONAME.c_str(),
                             protocol_data.PROTOSHORTNAME.c_str(),
                             P_protocol_ws_data->proto_generic,
                             HEURISTIC_ENABLE);
-#else
-        heur_dissector_add(parent_name.c_str(),
-                            P_protocol_ws_data->P_heuristic_fct,
-                            P_protocol_ws_data->proto_generic);
 #endif
     }
 
@@ -1956,13 +1877,6 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
         M_ADD_PINFO_FD(cap_len);     /* Amount actually captured */
         M_ADD_PINFO_FD(cum_bytes);   /* Cumulative bytes into the capture */
         M_ADD_PINFO_FD_NSTIME(abs_ts);      /* Absolute timestamp */
-#if WIRESHARK_VERSION_NUMBER < 11200
-        M_ADD_PINFO_FD_NSTIME(rel_ts);      /* Relative timestamp (yes, it can be negative) */
-#endif
-#if WIRESHARK_VERSION_NUMBER < 11000
-        M_ADD_PINFO_FD_NSTIME(del_dis_ts);  /* Delta timestamp to previous displayed frame (yes, it can be negative) */
-        M_ADD_PINFO_FD_NSTIME(del_cap_ts);  /* Delta timestamp to previous captured frame (yes, it can be negative) */
-#endif
         M_ADD_PINFO_FD(file_off);    /* File offset */
         interpret_data.read_variable_group_end();
     }
@@ -1974,15 +1888,6 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
     M_ADD_PINFO_ADDRESS(net_dst);		/* network-layer destination address */
     M_ADD_PINFO_ADDRESS(src);			/* source address (net if present, DL otherwise )*/
     M_ADD_PINFO_ADDRESS(dst);			/* destination address (net if present, DL otherwise )*/
-#if WIRESHARK_VERSION_NUMBER < 11200
-    M_ADD_PINFO(ethertype);
-#endif
-#if WIRESHARK_VERSION_NUMBER < 20000
-    M_ADD_PINFO(ipproto);
-#endif
-#if WIRESHARK_VERSION_NUMBER < 11200
-    M_ADD_PINFO(ipxptype);
-#endif
 
     // In wireshark 1.1.z, there is a new field here.
     // So, all following fields are not at the same place.
@@ -1992,24 +1897,13 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
     const char  * version_exec   = epan_get_version();
     if (strncmp(version_compil, version_exec, 4) == 0)
     {
-#if WIRESHARK_VERSION_NUMBER < 20600
-        M_ADD_PINFO(ctype);               /* type of circuit, for protocols with a VC identifier */
-        M_ADD_PINFO(circuit_id);
-#endif
         M_ADD_PINFO_STR(noreassembly_reason);  /* reason why reassembly wasn't done, if any */
         M_ADD_PINFO(fragmented);          /* TRUE if the protocol is only a fragment */
-#if WIRESHARK_VERSION_NUMBER < 10800
-        M_ADD_PINFO(in_error_pkt);        /* TRUE if we're inside an {ICMP,CLNP,...} error packet */
-#endif
         M_ADD_PINFO(ptype);               /* type of the following two port numbers */
         M_ADD_PINFO(srcport);
         M_ADD_PINFO(destport);
-#if WIRESHARK_VERSION_NUMBER < 11200
-        M_ADD_PINFO(match_port);
-#endif
         M_ADD_PINFO_STR(match_string);
 
-#if WIRESHARK_VERSION_NUMBER >= 20400
         M_ADD_PINFO(can_desegment);
         M_ADD_PINFO(saved_can_desegment);
         M_ADD_PINFO(desegment_offset);
@@ -2065,7 +1959,6 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
         //	}
         //	interpret_data.read_variable_group_end();
         //}
-#endif
     }
 
     interpret_data.pinfo_variable_group_end();
@@ -2710,17 +2603,13 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
     do
     {
         // compute new tvb 
-#if WIRESHARK_VERSION_NUMBER >= 20400
         tvbuff_t  * sub_tvb = tvb_new_subset_length_caplen(tvb, offset_where_dissection_stops, -1, -1);
-#else
-        tvbuff_t  * sub_tvb = tvb_new_subset(tvb, offset_where_dissection_stops, -1, -1);
-#endif
 
         gint    sub_offset_where_dissection_stops = 
                                         dissect_generic_proto(protocol_data,
                                                             sub_tvb,
                                                             tvb_get_ptr(sub_tvb, 0, -1),
-                                                            tvb_length_remaining(sub_tvb, 0),
+                                                            tvb_reported_length_remaining(sub_tvb, 0),
                                                             pinfo,
                                                             tree,
                                                             msg_number_inside_packet);
@@ -2739,10 +2628,10 @@ dissect_generic_proto(const int    proto_idx, tvbuff_t *tvb, packet_info *pinfo,
         ++msg_number_inside_packet;
 
         // Stop the loop if 
-        if ((pinfo->desegment_len != 0) ||                                      // Message not entirely read
-            (offset_where_dissection_stops >= tvb_length_remaining(tvb, 0)) ||  // No more data to read
-            (protocol_data.PACKET_CONTAINS_ONLY_1_MSG) ||                       // Only 1 msg per packet
-            (sub_offset_where_dissection_stops <= 0))                           // Nothing has been read
+        if ((pinfo->desegment_len != 0) ||                                               // Message not entirely read
+            (offset_where_dissection_stops >= tvb_reported_length_remaining(tvb, 0)) ||  // No more data to read
+            (protocol_data.PACKET_CONTAINS_ONLY_1_MSG) ||                                // Only 1 msg per packet
+            (sub_offset_where_dissection_stops <= 0))                                    // Nothing has been read
         {
             break;
         }
@@ -2783,7 +2672,7 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
         try
         {
             const void           * ptr_raw_data = tvb_get_ptr(tvb, 0, -1);
-            const int              length_raw_data = tvb_length_remaining(tvb, 0);
+            const int              length_raw_data = tvb_reported_length_remaining(tvb, 0);
             if ((ptr_raw_data == NULL) || (length_raw_data <= 0))
             {
                 return  false;

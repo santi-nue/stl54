@@ -56,11 +56,7 @@ M_TEST_FCT(test_value_printf)
     M_TEST_OK("0%o",  123, "0173");
     M_TEST_OK("%s",   123, "123");
     M_TEST_OK("%f",   123.0, "123.000000");     // NB: do not care about precise format
-#ifdef FLOAT_PRINT_FORMAT_EXP_XXX
-    M_TEST_OK("%e",   123.0, "1.230000e+002");  // NB: do not care about precise format
-#else
-    M_TEST_OK("%e",   123.0, "1.230000e+02");  // NB: do not care about precise format
-#endif
+    M_TEST_OK("%e",   123.0, "1.230000e+02");   // NB: do not care about precise format
 
     M_TEST_OK("%d",   -123, "-123");
 //	M_TEST_OK("0x%x", -123, "-0x7b");     // donne 0xffffff85
@@ -68,11 +64,7 @@ M_TEST_FCT(test_value_printf)
 
     M_TEST_OK("%s",   -123, "-123");
     M_TEST_OK("%f",   -123.0, "-123.000000");     // NB: do not care about precise format
-#ifdef FLOAT_PRINT_FORMAT_EXP_XXX
-    M_TEST_OK("%e",   -123.0, "-1.230000e+002");  // NB: do not care about precise format
-#else
-    M_TEST_OK("%e",   -123.0, "-1.230000e+02");  // NB: do not care about precise format
-#endif
+    M_TEST_OK("%e",   -123.0, "-1.230000e+02");   // NB: do not care about precise format
 
     M_TEST_OK("augmentation = %d%% (non consolide)", 123, "augmentation = 123% (non consolide)");
     M_TEST_OK("augmentation = %s%% (non consolide)", 123, "augmentation = 123% (non consolide)");

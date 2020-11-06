@@ -43,17 +43,6 @@ using namespace std;
 #include "byte_interpret_build_types_read_token.h"
 #include "T_expression.h"
 
-//*****************************************************************************
-// float print format :
-// - 8.8275e+020		WIN32 before 20600
-// - 8.8275e+20			others
-//*****************************************************************************
-
-#if WIRESHARK_VERSION_NUMBER < 20600
-#if defined WIN32
-#define FLOAT_PRINT_FORMAT_EXP_XXX
-#endif
-#endif
 
 //*****************************************************************************
 // test_interpret_simple
@@ -127,11 +116,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
     M_TEST_SIMPLE("e23f6a77cbf367a9", "int64  val ;", "val = -2143877834849687639" K_eol);
 
     // ATTENTION : NOT really checked
-#ifdef FLOAT_PRINT_FORMAT_EXP_XXX
-    M_TEST_SIMPLE("e23f6a77", "float32  val ;", "val = -8.8275e+020" K_eol);
-#else
     M_TEST_SIMPLE("e23f6a77", "float32  val ;", "val = -8.8275e+20" K_eol);
-#endif
     M_TEST_SIMPLE("e23f6a77cbf367a9", "float64  val ;", "val = -1.80912e+165" K_eol);
 
 
@@ -168,11 +153,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
 
     // float
     // ATTENTION : NOT really checked
-#ifdef FLOAT_PRINT_FORMAT_EXP_XXX
-    M_TEST_SIMPLE("776a3fe2", "float32  val ;", "val = -8.8275e+020" K_eol);
-#else
     M_TEST_SIMPLE("776a3fe2", "float32  val ;", "val = -8.8275e+20" K_eol);
-#endif
     M_TEST_SIMPLE("a967f3cb776a3fe2", "float64  val ;", "val = -1.80912e+165" K_eol);
 
     // string
@@ -1449,11 +1430,7 @@ M_TEST_FCT_IGNORE(test_library)
 #endif
 {
     T_type_definitions    type_definitions;
-#if WIRESHARK_VERSION_NUMBER >= 20200
     build_types ("unitary_tests_library.fdesc",
-#else
-    build_types ("unitary_tests_library.old_path.fdesc",
-#endif
                  type_definitions);
 
     T_interpret_data      interpret_data;
@@ -1468,8 +1445,7 @@ M_TEST_FCT_IGNORE(test_library)
     M_TEST_SIMPLE("", "var string  notmodified = original;",             "notmodified = Hello WORLD !" K_eol);
 
 
-    // crc is not inside wsutil before wireshark 18X
-#if WIRESHARK_VERSION_NUMBER >= 10800
+    // crc
     build_types ("unitary_tests_library_part2.fdesc",
                  type_definitions);
 
@@ -1490,10 +1466,9 @@ M_TEST_FCT_IGNORE(test_library)
     M_TEST_CRC32( 8, 4,   0,            0);
 //	M_TEST_CRC32( 9, 4,   0,            0);    // out of bounds
 //	M_TEST_CRC32(12, 4,   0,            0);    // out of bounds
-#endif
 
-    // base64 is not inside wsutil before wireshark 112X
-#if WIRESHARK_VERSION_NUMBER >= 11200
+
+    // base64
     build_types ("unitary_tests_library_part3.fdesc",
                  type_definitions);
 
@@ -1508,7 +1483,6 @@ M_TEST_FCT_IGNORE(test_library)
     M_TEST_BASE64("V3NnZA==", "Wsgd" K_eol);
     M_TEST_BASE64("SSBoYXZlIGEgYmFzZTY0IGVuY29kZWQgc3RyaW5n", "I have a base64 encoded string" K_eol);
     M_TEST_BASE64("T3V0a2FzdCAvIEhleSBZYQ==", "Outkast / Hey Ya" K_eol);
-#endif
 }
 
 //*****************************************************************************

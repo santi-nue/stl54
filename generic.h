@@ -2,13 +2,7 @@
 #ifndef __GENERIC_H__
 #define __GENERIC_H__
 
-#if WIRESHARK_VERSION_NUMBER >= 20200
 #include "config.h"
-#else
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-#endif
 
 #include <stdio.h>
 #include <glib.h>

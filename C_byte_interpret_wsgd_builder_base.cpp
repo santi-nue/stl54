@@ -31,11 +31,7 @@ extern "C" {
 
 #include <epan/expert.h>
 #include <epan/tvbuff.h>
-#if WIRESHARK_VERSION_NUMBER >= 11200
 #include <wsutil/filesystem.h>
-#else
-#include <epan/filesystem.h>
-#endif
 #include <epan/conversation.h>
 #include <epan/tap.h>
 #include <epan/prefs.h>
@@ -64,7 +60,6 @@ extern "C" {
         field_byte_size = offset_end - offset;                               \
     }
 
-#if WIRESHARK_VERSION_NUMBER >= 11200
 #define wsgd_expert_add_info_format(pinfo,proto_item_1,PI_MALFORMED,error_code,format,text)                        \
 {                                                                                                                  \
     expert_field  * p_expert_field = &P_protocol_ws_data->expert_data.ei_malformed_error;                          \
@@ -76,9 +71,6 @@ extern "C" {
     else if (error_code == PI_ERROR)    p_expert_field = &P_protocol_ws_data->expert_data.ei_malformed_error;      \
     expert_add_info_format(pinfo, proto_item_1, p_expert_field, format, text);                                     \
 }
-#else
-#define wsgd_expert_add_info_format expert_add_info_format
-#endif
 
 /******************************************************************************
  * cpp_dissect_generic_add_item

@@ -38,11 +38,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#if WIRESHARK_VERSION_NUMBER >= 11200
 #include <wsutil/filesystem.h>
-#else
-#include <epan/filesystem.h>
-#endif
 
 #ifdef __cplusplus
 }
@@ -268,7 +264,6 @@ T_generic_protocol_data::check_config_parameters_initialized() const
 
 int   S_proto_idx_dissect_in_progress = -1;
 
-#if WIRESHARK_VERSION_NUMBER >= 11000
 #define M_DEFINE_DISSECT_FCT(PROTO_IDX)                                                   \
 static gint                                                                               \
 dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *)       \
@@ -300,39 +295,7 @@ heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *
                                                                                           \
     return  result;                                                                       \
 }
-#else
-#define M_DEFINE_DISSECT_FCT(PROTO_IDX)                                                   \
-static gint                                                                               \
-dissect_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)       \
-{                                                                                         \
-    M_TRACE_ENTER("dissect_generic_proto", PROTO_IDX);                                    \
-                                                                                          \
-    const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
-    S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
-                                                                                          \
-    const int   result = dissect_generic_proto(PROTO_IDX, tvb, pinfo, tree);              \
-                                                                                          \
-    S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
-                                                                                          \
-    return  result;                                                                       \
-}
 
-#define M_DEFINE_HEURISTIC_FCT(PROTO_IDX)                                                 \
-static gboolean                                                                           \
-heuristic_generic_ ## PROTO_IDX (tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)     \
-{                                                                                         \
-    M_TRACE_ENTER("heuristic_generic_proto", PROTO_IDX);                                  \
-                                                                                          \
-    const int   previous_proto_idx_dissect_in_progress = S_proto_idx_dissect_in_progress; \
-    S_proto_idx_dissect_in_progress = PROTO_IDX;                                          \
-                                                                                          \
-    const int   result = heuristic_generic_proto(PROTO_IDX, tvb, pinfo, tree);            \
-                                                                                          \
-    S_proto_idx_dissect_in_progress = previous_proto_idx_dissect_in_progress;             \
-                                                                                          \
-    return  result;                                                                       \
-}
-#endif
 
 #define M_DEFINE_PROTO_FCT(PROTO_IDX)                                                     \
         M_DEFINE_DISSECT_FCT(PROTO_IDX)                                                   \
@@ -764,11 +727,7 @@ void    read_file_wsgd (const string                   & wsgd_file_name,
 
     {
         protocol_data.type_definitions.map_const_value["shark::progfile_dir"] = get_progfile_dir();
-#if WIRESHARK_VERSION_NUMBER < 20600
-        protocol_data.type_definitions.map_const_value["shark::plugin_dir"] = get_plugin_dir();
-#else
         protocol_data.type_definitions.map_const_value["shark::plugin_dir"] = get_plugins_dir_with_version();
-#endif
         protocol_data.type_definitions.map_const_value["shark::datafile_dir"] = get_datafile_dir();
         protocol_data.type_definitions.map_const_value["shark::systemfile_dir"] = get_systemfile_dir();
         protocol_data.type_definitions.map_const_value["shark::profiles_dir"] = get_profiles_dir();
