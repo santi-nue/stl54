@@ -26,15 +26,6 @@ set_module_info(generic 0 5 2 0)
 
 include(cmake_wireshark_version_number.cmake)
 
-# Dyncall (for all : generic, byte_interpret & unitary_tests)
-#set(DYNCALL_PATH dyncall-0.7-${WIRESHARK_TARGET_PLATFORM}-msvc/dyncall)
-#set(DYNCALL_INC_PATH ${DYNCALL_PATH}/include)
-#set(DYNCALL_LIB_PATH ${DYNCALL_PATH}/lib)
-#find_library(libdynload_LIBRARY libdynload_s PATHS ${DYNCALL_LIB_PATH})
-#find_library(libdyncall_LIBRARY libdyncall_s PATHS ${DYNCALL_LIB_PATH})
-#add_definitions(-DBYTE_INTERPRET_USE_LIBRARY_DYNCALL)
-#add_definitions(-I${DYNCALL_INC_PATH})
-
 
 # Dissector core sources.
 # All files specified here do NOT depend of wireshark.
@@ -123,7 +114,7 @@ register_plugin_files(plugin.c
 )
 
 add_plugin_library(generic epan)
-target_link_libraries(generic ${libdynload_LIBRARY} ${libdyncall_LIBRARY} epan)
+target_link_libraries(generic epan)
 
 install_plugin(generic epan)
 
@@ -142,12 +133,8 @@ CHECKAPI(
 
 
 
-find_library(libgmodule_LIBRARY gmodule-2.0 PATHS ../../../../libs/wireshark-${WIRESHARK_TARGET_PLATFORM}-libs-2.6/gtk2/lib)
-
 # byte_interpret
 add_executable(byte_interpret byte_interpret_main.cpp ${DISSECTOR_CORE_SRC})
-target_link_libraries(byte_interpret PUBLIC ${libgmodule_LIBRARY})
-target_link_libraries(byte_interpret PUBLIC ${libdynload_LIBRARY} ${libdyncall_LIBRARY})
 
 set (DISSECTOR_UT_TOOLS_SRC
 	${DISSECTOR_CORE_UT_SRC}
@@ -181,5 +168,3 @@ set (DISSECTOR_UT_SRC
 
 # unitary_tests
 add_executable(unitary_tests unitary_tests.cpp ${DISSECTOR_UT_SRC})
-target_link_libraries(unitary_tests PUBLIC ${libgmodule_LIBRARY})
-target_link_libraries(unitary_tests PUBLIC ${libdynload_LIBRARY} ${libdyncall_LIBRARY})
