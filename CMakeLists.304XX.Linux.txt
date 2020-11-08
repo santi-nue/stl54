@@ -143,6 +143,15 @@ set (DISSECTOR_UT_TOOLS_SRC
 set (DISSECTOR_UT_SRC
 	${DISSECTOR_UT_TOOLS_SRC}
 	unitary_test_build_field.cpp
+	unitary_test_build_field_bitfield_bitstream.cpp
+	unitary_test_build_field_call_function.cpp
+	unitary_test_build_field_const_enum.cpp
+	unitary_test_build_field_invalid_syntax.cpp
+	unitary_test_build_field_loop_condition.cpp
+	unitary_test_build_field_misc.cpp
+	unitary_test_build_field_position.cpp
+	unitary_test_build_field_switch_struct.cpp
+	unitary_test_build_field_ternary.cpp
 	unitary_test_decode_stream_frame.cpp
 	unitary_test_decompose_left_sep_middle_sep_right.cpp
 	unitary_test_decompose_type_sep_value_sep.cpp
