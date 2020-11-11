@@ -1447,7 +1447,7 @@ bool    frame_to_function_base_decoder (
     };
 
     // Search for built-in decoder
-    for (int idx = 0; idx < M_SIZE_TAB(decoder_builtin); ++idx)
+    for (size_t idx = 0; idx < M_SIZE_TAB(decoder_builtin); ++idx)
     {
         if (decode_function_name == decoder_builtin[idx].decode_function_name)
         {
@@ -2105,10 +2105,11 @@ bool    frame_to_field_loop_nb_times(
     if (new_data_name != "")
         new_data_name += K_ATTRIBUTE_SEPARATOR;
 
-    long long       nb_times = condition_expression.compute_expression(type_definitions, interpret_data, in_out_frame_data,
-                                                  data_name, data_simple_name, os_out, os_err).get_int ();
-    size_t          idx_while = 0;
-    while (idx_while < nb_times)
+    const long long  nb_times = condition_expression.compute_expression(type_definitions,
+                                                                        interpret_data, in_out_frame_data,
+                                                                        data_name, data_simple_name,
+                                                                        os_out, os_err).get_int ();
+    for (int idx_while = 0; idx_while < nb_times; ++idx_while)
     {
         try {
             if (frame_to_struct_inline (type_definitions,
@@ -2131,7 +2132,6 @@ bool    frame_to_field_loop_nb_times(
                 break;
             // nothing to do on continue
         }
-        ++idx_while;
     }
 
     return  true;

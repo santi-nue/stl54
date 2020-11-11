@@ -419,15 +419,13 @@ T_generic_protocol_data  & get_protocol_data_from_proto_abbrev(const char  * pro
     return  *(T_generic_protocol_data*)NULL;        // avoid compiler warning
 }
 
-void    set_max_nb_of_protocol_data(const int   max_nb)
+void    set_max_nb_of_protocol_data(const size_t   max_nb)
 {
     M_TRACE_ENTER("set_max_nb_of_protocol_data", max_nb);
 
-    M_FATAL_IF_LT(max_nb, 0);
-
     // WARNING_ADDRESSES
     // It is mandatory to add all items now.
-    for (int proto_idx = 0; proto_idx < max_nb; ++proto_idx)
+    for (size_t proto_idx = 0; proto_idx < max_nb; ++proto_idx)
     {
         T_generic_protocol_data    protocol_data;
 

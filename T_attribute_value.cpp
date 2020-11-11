@@ -60,7 +60,8 @@ T_attribute_value::reset(const C_value  & value)
 }
 
 T_attribute_value::T_attribute_value(const T_attribute_value  & rhs)
-    :transformed(rhs.transformed),
+    :CT_debug_object_counter<T_attribute_value>(rhs),
+     transformed(rhs.transformed),
      P_error(NULL),
      original(rhs.original)
 {

@@ -152,7 +152,7 @@ void    wait_for_any_operator_input ()
 // help_role ******************************************************************
 //*****************************************************************************
 
-void    help_role (const char  * prog_name)
+void    help_role (const char  * UNUSED(prog_name))
 {
     cerr << "Interpret binary data." << endl;
 }
@@ -467,6 +467,11 @@ int   main (int  argc, const char * const  argv[])
     {
         os_err << sizeof_bytes << " bytes have NOT been read." << endl;
         return  6;
+    }
+    else if (result == false)
+    {
+        os_err << "Error during build_types_and_interpret_bytes." << endl;
+        return  5;
     }
 
     return  0;

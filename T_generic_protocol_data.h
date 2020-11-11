@@ -270,7 +270,7 @@ T_generic_protocol_data  & new_protocol_data(const int   proto_idx);
 
 T_generic_protocol_data  & get_protocol_data_from_proto_abbrev(const char  * proto_abbrev);
 
-void    set_max_nb_of_protocol_data(const int   max_nb);
+void    set_max_nb_of_protocol_data(const size_t   max_nb);
 
 //*****************************************************************************
 // read_file_wsgd

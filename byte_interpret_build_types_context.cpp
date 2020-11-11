@@ -224,7 +224,7 @@ string  build_types_context_include_file_where()
     result += "In file ";
     result += A_include_files.back().file_name;
 
-    for (int   idx = A_include_files.size()-2; idx >= 0; --idx)
+    for (int   idx = static_cast<int>(A_include_files.size())-2; idx >= 0; --idx)
     {
         result += ",\n";
         result += " included in file ";
@@ -263,7 +263,7 @@ string    build_types_context_where()
     result += "In file ";
     result += A_include_files.back().file_name;
 
-    for (int   idx = A_include_files.size()-2; idx >= 0; --idx)
+    for (int   idx = static_cast<int>(A_include_files.size())-2; idx >= 0; --idx)
     {
         result += ",\n";
         result += " included in file ";

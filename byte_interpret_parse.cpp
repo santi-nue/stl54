@@ -412,20 +412,17 @@ bool    append_to_string_until (istream       & is,
     if (ok && (result != ""))
     {
         // Remove all blanks at the end.
-        string::size_type  idx = result.size() - 1;
-        while (idx >= 0)
+        for (long long  idx = result.size() - 1; idx >= 0; --idx)
         {
             if (isspace(result[idx]) == 0)
             {
                 ++idx;
-                if (idx < result.size())
+                if (static_cast<size_t>(idx) < result.size())
                 {
                     result.erase(idx);
                 }
                 break;
             }
-
-            --idx;
         }
     }
 

@@ -31,6 +31,9 @@ using namespace std;
 
 #include "C_setlocale_numeric_C_guard.h"
 
+#ifdef WIN32
+#define strdup  _strdup
+#endif
 
 //*****************************************************************************
 // C_setlocale_numeric_C_guard
