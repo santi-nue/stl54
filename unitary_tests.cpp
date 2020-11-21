@@ -894,8 +894,17 @@ M_TEST_FCT(test_interpret_simple_decoder_base64)
 
 
     // 56334E6E 5A413D3D --> V3Nn ZA== --> 0x 57 73 67  64 --> "Wsgd" (if it is a string)
+    M_TEST_SIMPLE("56334E6E5A413D3D", "decoder    decoder_base64;"
+                                      " uint8     val1 ;"
+                                      "uint24     val2 ;"
+                                      "decoder    nil;",
+                                      "val1 = 87" K_eol "val2 = 7563108" K_eol);
+    // Idem, but previous presentation seems better
+    // Here, we can think there are 2 different encoded buffers
     M_TEST_SIMPLE("56334E6E5A413D3D", " uint8{decoder=decoder_base64}     val1 ;"
-                                      "uint24{decoder=decoder_base64}     val2 ;", "val1 = 87" K_eol "val2 = 7563108" K_eol);
+                                      "uint24{decoder=decoder_base64}     val2 ;",
+                                      "val1 = 87" K_eol "val2 = 7563108" K_eol);
+
     // Specifying a size for string works only if encoded size is the same size
     M_TEST_SIMPLE("56334E6E5A413D3D", "stringBase64(4)  val  ;", "val = Wsgd" K_eol);
     // Does not work, the 5th byte is missing
