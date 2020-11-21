@@ -152,6 +152,7 @@ set (DISSECTOR_UT_SRC
 	unitary_test_build_field_position.cpp
 	unitary_test_build_field_switch_struct.cpp
 	unitary_test_build_field_ternary.cpp
+	unitary_test_build_types_and_interpret_bytes.cpp
 	unitary_test_decode_stream_frame.cpp
 	unitary_test_decompose_left_sep_middle_sep_right.cpp
 	unitary_test_decompose_type_sep_value_sep.cpp
@@ -159,6 +160,13 @@ set (DISSECTOR_UT_SRC
 	unitary_test_frame_data.cpp
 	unitary_test_get_before_separator_after.cpp
 	unitary_test_get_number.cpp
+	unitary_test_interpret_forget.cpp
+	unitary_test_interpret_simple.cpp
+	unitary_test_interpret_simple_decoder_aes.cpp
+	unitary_test_interpret_simple_decoder_base64.cpp
+	unitary_test_interpret_simple_internal_frame.cpp
+	unitary_test_interpret_simple_trailer.cpp
+	unitary_test_is_existing_field_or_variable.cpp
 	unitary_test_read_token.cpp
 	unitary_test_read_token_word_cplx.cpp
 	unitary_test_read_values.cpp
