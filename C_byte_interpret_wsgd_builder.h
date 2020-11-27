@@ -71,7 +71,8 @@ public:
                      const string              & data_name,
                      const string              & data_simple_name,
                      const int                   type_bit_size,
-                     const E_raw_data_type       raw_data_type);
+                     const E_raw_data_type       raw_data_type,
+                     const bool                  is_decoded_data);
 
     //*****************************************************************************
     // NB: group_end will be called

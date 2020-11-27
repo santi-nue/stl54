@@ -734,13 +734,14 @@ C_columns_save_restore::restore()
 
 void
 C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_definitions */,
-										const T_frame_data        & in_out_frame_data,
-										const T_interpret_data    & interpret_data,
-										const T_field_type_name   & field_type_name,
-										const string              & data_name,
-										const string              & data_simple_name,
-										const int                   type_bit_size,
-										const E_raw_data_type       raw_data_type)
+                                        const T_frame_data        & in_out_frame_data,
+                                        const T_interpret_data    & interpret_data,
+                                        const T_field_type_name   & field_type_name,
+                                        const string              & data_name,
+                                        const string              & data_simple_name,
+                                        const int                   type_bit_size,
+                                        const E_raw_data_type       raw_data_type,
+                                        const bool                  is_decoded_data)
 {
     M_TRACE_ENTER("interpret_builder_raw_data",
                   "data_name=" << data_name <<
@@ -749,6 +750,21 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 
     if (A_interpret_wsgd.proto_idx < 0)
         return;
+
+
+    tvbuff_t* p_tvbuff = A_interpret_wsgd.wsgd_tvb;
+    int       bit_offset_in_tvbuff = in_out_frame_data.get_bit_offset_into_initial_frame() - type_bit_size;
+    if (is_decoded_data)
+    {
+        // Compute tvb with the decoded data
+        const int type_byte_size = type_bit_size / 8;
+        p_tvbuff = tvb_new_real_data(
+            in_out_frame_data.get_P_bytes() - type_byte_size,  // data, 
+            type_byte_size,                                    // length,
+            type_byte_size);                                   // reported_length)
+        bit_offset_in_tvbuff = 0;
+    }
+
 
     if (field_type_name.wsgd_field_idx < 0)
     {
@@ -782,11 +798,12 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
             C_columns_save_restore      columns_save_restore(*A_interpret_wsgd.wsgd_pinfo, is_insproto);
             C_packet_info_save_restore  packet_info_save_restore(*A_interpret_wsgd.wsgd_pinfo, is_insproto);
 
+
             call_subdissector_or_data(
                 protocol_data,
                 dissector_to_call_handle,
-                A_interpret_wsgd.wsgd_tvb,
-                in_out_frame_data.get_bit_offset_into_initial_frame() - type_bit_size,
+                p_tvbuff,
+                bit_offset_in_tvbuff,
                 A_interpret_wsgd.wsgd_pinfo,
                 tree,
                 type_bit_size,
@@ -799,28 +816,33 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 
             //			A_interpret_wsgd.wsgd_msg_root_tree = root_tree_saved;
         }
+    }
+    else
+    {
+        //	const string    text = data_simple_name;    // new array management
 
-        return;
+        M_TRACE_DEBUG("wsgd add item raw data");
+
+        {
+            // Ajout d'un item.
+            // La taille specifiee ici est connue ET necessaire pour les types simples
+            cpp_dissect_generic_add_item(
+                A_interpret_wsgd.proto_idx,
+                p_tvbuff,
+                A_interpret_wsgd.wsgd_pinfo,
+                A_interpret_wsgd.wsgd_tree,
+                field_type_name.wsgd_field_idx,
+                bit_offset_in_tvbuff,
+                type_bit_size /* field_type_name.basic_type_bit_size */,
+                false,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
+                NULL,     // l'affichage du texte est fait par Wireshark
+                0);       // no error_code
+        }
     }
 
-    //	const string    text = data_simple_name;    // new array management
-
-    M_TRACE_DEBUG("wsgd add item raw data");
-
+    if (is_decoded_data)
     {
-        // Ajout d'un item.
-        // La taille specifiee ici est connue ET necessaire pour les types simples
-        cpp_dissect_generic_add_item(
-            A_interpret_wsgd.proto_idx,
-            A_interpret_wsgd.wsgd_tvb,
-            A_interpret_wsgd.wsgd_pinfo,
-            A_interpret_wsgd.wsgd_tree,
-            field_type_name.wsgd_field_idx,
-            in_out_frame_data.get_bit_offset_into_initial_frame() - type_bit_size,
-            type_bit_size /* field_type_name.basic_type_bit_size */,
-            false,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
-            NULL,     // l'affichage du texte est fait par Wireshark
-            0);       // no error_code
+        tvb_free(p_tvbuff);
     }
 }
 

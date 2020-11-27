@@ -4858,8 +4858,8 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
     T_frame_data           * P_in_out_frame_data = & in_out_frame_data_param;
     T_decode_stream_frame  & decode_stream_frame = interpret_data.get_decode_stream_frame();
 
-    if ((interpret_data.is_decode_in_progress() == false) &&
-        (final_type == "raw"))
+    bool  is_decoded_data = false;
+    if (interpret_data.is_decode_in_progress() == false)
     {
         T_frame_data           & inside_frame = decode_stream_frame.frame_data;
 
@@ -4870,6 +4870,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
             {
                 // Enough data into inside_frame, so simply use it (decoder is useless for now)
                 P_in_out_frame_data = & inside_frame;
+                is_decoded_data = true;
             }
             else if (interpret_data.must_decode_now() == false)
             {
@@ -4883,6 +4884,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
                 else
                 {
                     // No data into inside_frame and no decoder, so simply use normal frame
+                    is_decoded_data = false;
                 }
             }
             else
@@ -4897,6 +4899,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
                                   final_type.c_str(), TYPE_BIT_SIZE - inside_frame.get_remaining_bits());
 
                 P_in_out_frame_data = & inside_frame;
+                is_decoded_data = true;
             }
         }
         else
@@ -4912,6 +4915,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
                           final_type.c_str(),
                           NULL, NULL);
                 P_in_out_frame_data = & decode_stream_frame.frame_data;
+                is_decoded_data = true;
             }
             else if (inside_frame.get_remaining_bits() > 0)
             {
@@ -4923,12 +4927,14 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
                                     " bits) and data into packet (" << in_out_frame_data_param.get_remaining_bits() << ")");
                 }
                 P_in_out_frame_data = & inside_frame;
+                is_decoded_data = true;
             }
         }
     }
     else
     {
         // inside_frame and decoder not used during decoding
+        is_decoded_data = true;
     }
 
 
@@ -4983,7 +4989,8 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
             interpret_builder_raw_data(type_definitions, in_out_frame_data, interpret_data,
                                     field_type_name, data_name, data_simple_name,
                                     string_size * 8,
-                                    raw_data_type);
+                                    raw_data_type,
+                                    is_decoded_data);
         }
 
         decode_stream_frame.synchronize();  // mandatory each time something has been read into its frame_data

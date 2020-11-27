@@ -223,16 +223,18 @@ void    interpret_builder_raw_data( const T_type_definitions  & type_definitions
                                     const string              & data_name,
                                     const string              & data_simple_name,
                                     const int                   type_bit_size,
-                                    const E_raw_data_type       raw_data_type)
+                                    const E_raw_data_type       raw_data_type,
+                                    const bool                  is_decoded_data)
 {
     M_TRACE_CHECK();
 
     if (S_P_builder != NULL)
     {
         S_P_builder->raw_data (type_definitions, in_out_frame_data, interpret_data,
-                             field_type_name, data_name, data_simple_name,
-                             type_bit_size,
-                             raw_data_type);
+                              field_type_name, data_name, data_simple_name,
+                              type_bit_size,
+                              raw_data_type,
+                              is_decoded_data);
     }
 
     if (type_definitions.vector_plugin_output_definition.empty() == false)

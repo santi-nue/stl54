@@ -1,4 +1,6 @@
 
+2020/11/27  Fix : Dissectors called by subproto, insproto and raw now receive decoded data
+2020/11/07  Sup : Source code is now incompatible with wireshark <= 2.4
 2020/01/19  Add : MSG_TRAILER_LENGTH  <fixed_size_in_bytes>
 2019/06/13  Mod : trace file can be created into persdatafile_dir (e.g. C:\Users\...\Documents)
 2019/01/20  Add : ADD_FOR_DECODE_AS_TABLE <table_name>

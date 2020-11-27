@@ -101,7 +101,8 @@ void    interpret_builder_raw_data(const T_type_definitions  & type_definitions,
                                    const string              & data_name,
                                    const string              & data_simple_name,
                                    const int                   type_bit_size,
-                                   const E_raw_data_type       raw_data_type);
+                                   const E_raw_data_type       raw_data_type,
+                                   const bool                  is_decoded_data);
 
 //*****************************************************************************
 // interpret_builder_group_begin **********************************************
