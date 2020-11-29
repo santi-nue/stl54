@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# For wireshark >= 2.4
+# For wireshark >= 2.6
 # Script for clone/build wireshark and clone/build wsgd
 # sudo is used for install packages mandatory to build wireshark
 # More precise script sequence is displayed when you launch it
@@ -9,7 +9,9 @@
 # - CentOS 7.6         (wsl)    wireshark 2.4 to 3.2
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.2
 # - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.2
-# - Ubuntu 20.04       (wsl)    wireshark        3.2
+# - Ubuntu 20.04       (wsl)    wireshark 3.2 to 3.4
+
+# Wsgd source code is now incompatible with wireshark <= 2.4
 
 
 ################################################################################
