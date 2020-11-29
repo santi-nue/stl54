@@ -39,8 +39,8 @@ using namespace std;
 M_TEST_FCT(test_interpret_simple_decoder_aes)
 {
     T_type_definitions    type_definitions;
-    build_types ("unitary_tests_basic.fdesc",
-                 type_definitions);
+    istringstream         iss("");
+    build_types(iss, type_definitions);
 
     T_interpret_data      interpret_data;
 

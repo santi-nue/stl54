@@ -1,5 +1,4 @@
 
-
 ###############################################################################
 # Function for decoder
 ###############################################################################
@@ -12,18 +11,6 @@ function void  decode_stream_nothing (in frame  frame, in uint32   nb_of_bits_ne
     hide uint1  bit1;
     call frame_append_data (frame, bit1);
     set nb_of_bits_needed = nb_of_bits_needed - 1;
-  }
-}
-
-# It is silly but it is just a test
-function void  decode_stream_nothing_byte (in frame  frame, in uint32   nb_of_bits_needed)
-{
-  hide var uint32   nb_of_bytes_needed = nb_of_bits_needed / 8;
-  while (nb_of_bytes_needed > 0)
-  {
-    hide uint8  byte1;
-    call frame_append_data (frame, byte1);
-    set nb_of_bytes_needed = nb_of_bytes_needed - 1;
   }
 }
 
@@ -65,212 +52,14 @@ function void  decode_invert_4_bytes (in frame  frame, in uint32   nb_of_bits_ne
 # stringUtf8, stringUtf16Le & stringUtf16Be using decoder
 ###############################################################################
 
-# NB: decoder_utf8 is now built-in
-function void  decoder_utf8_is_now_builtin (in frame  frame, in uint32   nb_of_bits_needed)
-{
-  if ((nb_of_bits_needed % 8) != 0)
-  {
-    fatal "Only entire byte";
-    return;
-  }
-
-  while (nb_of_bits_needed > 0)
-  {
-    hide uint8  byte1;
-  
-    if ((byte1 & 0x80) != 0)
-    {
-      if ((byte1 & 0xF0) == 0xF0)
-      {
-        hide uint8  byte2;
-        hide uint8  byte3;
-        hide uint8  byte4;
-      }
-      else
-      {
-        if ((byte1 & 0xE0) == 0xE0)
-        {
-          hide uint8  byte2;
-          hide uint8  byte3;
-        }
-        else
-        {
-          hide uint8  byte2;
-        }
-      }
-  
-      set byte1 = 46; # means "." to say unknow char
-    }
-    
-    call frame_append_data (frame, byte1);
-    set nb_of_bits_needed = nb_of_bits_needed - 8;
-  }
-}
-
 alias stringUtf8  string{decoder=decoder_utf8};
-
-
-# NB: decoder_utf16le is now built-in
-function void  decoder_utf16le_is_now_builtin (in frame  frame, in uint32   nb_of_bits_needed)
-{
-  if ((nb_of_bits_needed % 8) != 0)
-  {
-    fatal "Only entire byte";
-    return;
-  }
-
-  while (nb_of_bits_needed > 0)
-  {
-    hide uint8  byte1;
-    hide uint8  byte2;
- 
-    if (byte2 != 0)
-    {
-      set byte1 = 46; # means "." to say unknow char
-
-      if ((byte2 & 0xfc) == 0xd8)
-      {
-        hide uint8  byte3;
-        hide uint8  byte4;        
-      }
-    }
-   
-    call frame_append_data (frame, byte1);
-    set nb_of_bits_needed = nb_of_bits_needed - 8;
-  }
-}
-
 alias stringUtf16Le  string{decoder=decoder_utf16le};
-
-
-# NB: decoder_utf16be is now built-in
-function void  decoder_utf16be_is_now_builtin (in frame  frame, in uint32   nb_of_bits_needed)
-{
-  if ((nb_of_bits_needed % 8) != 0)
-  {
-    fatal "Only entire byte";
-    return;
-  }
-
-  while (nb_of_bits_needed > 0)
-  {
-    hide uint8  byte2;
-    hide uint8  byte1;
- 
-    if (byte2 != 0)
-    {
-      set byte1 = 46; # means "." to say unknow char
-
-      if ((byte2 & 0xfc) == 0xd8)
-      {
-        hide uint8  byte3;
-        hide uint8  byte4;        
-      }
-    }
-   
-    call frame_append_data (frame, byte1);
-    set nb_of_bits_needed = nb_of_bits_needed - 8;
-  }
-}
-
 alias stringUtf16Be  string{decoder=decoder_utf16be};
 
 
 ###############################################################################
-# Base64 using decoder
-###############################################################################
-
-function int8  read_base64_to_int ()
-{
-  hide uint8  val;
-
-  if (val >= 0x41 && val <= 0x5A)    # 0x41=A  0x5A=Z
-  {
-    return  val - 0x41;
-  }
-  if (val >= 0x61 && val <= 0x7A)    # 0x61=a  0x7A=z
-  {
-    return  (val - 0x61) + 26;
-  }
-  if (val >= 0x30 && val <= 0x39)    # 0x30=0  0x39=9
-  {
-    return  (val - 0x30) + 52;
-  }
-  if (val == 0x2B)    # 0x2B=+
-  {
-    return  62;
-  }
-  if (val == 0x2F)    # 0x2F=/
-  {
-    return  63;
-  }
-  if (val == 0x3D)    # 0x3D==
-  {
-    return  -1;
-  }
-  return  -2;
-}
-
-function void  read_base64_to_frame (in frame  frame)
-{
-  hide var int8  val_signed = read_base64_to_int();
-  if (val_signed >= 0)
-  {
-    hide var uint6  val = val_signed;
-	 call frame_append_data (frame, val);
-	 return;
-  }
-  if (val_signed != -1)
-  {
-    fatal "Bad base64 input value";
-    return;
-  }
-}
-
-# NB: decoder_base64 is now built-in
-function void  decoder_base64_is_now_builtin (in frame  frame, in uint32   nb_of_bits_needed_uint)
-{
-  hide var int32   nb_of_bits_needed = nb_of_bits_needed_uint;
-  
-  while (nb_of_bits_needed > 0)
-  {
-    call  read_base64_to_frame (frame);
-    call  read_base64_to_frame (frame);
-    call  read_base64_to_frame (frame);
-    call  read_base64_to_frame (frame);
-
-    set nb_of_bits_needed = nb_of_bits_needed - (4 * 6);
-  }
-}
-
-# NB: base64 encoding can encode anything, not only string
-# This alias is only for particular case where 1 and only 1 string is encoded.
-alias stringBase64  string{decoder=decoder_base64};
-
-# If you have many consecutive strings encoded together, you can NOT use stringBase64.
-# You should do :
-# decoder  decoder_base64;
-# string   val1;
-# string   val2;
-# ...
-# decoder  nil;
-
-###############################################################################
 # Print ip
 ###############################################################################
-
-function string  print_ip3 ( in uint32  ip )
-{
-#  hide var uint8   ip_a = ( ip >> 24 ) & 255;        # NOT ok
-#  hide var uint8   ip_a =  255;                      #     ok
-#  hide var uint8   ip_a = ip & 255;                  # NOT ok
-#  hide var uint8   ip_a = ip >> 24;                  # NOT ok
-#  hide var uint32   ip_a = ip >> 24;                 # NOT ok
-#  hide var uint32   ip_a = ip + 24;                  # NOT ok
-  hide var uint32   ip_a = 255;
-  hide var uint32   ip_b = ( ip_a >> 2 ) & 0x03;
-  return  "ICIOA_print_ip";
-}
 
 function string  print_ip ( in uint32  ip )
 {
@@ -282,19 +71,8 @@ function string  print_ip ( in uint32  ip )
   return  ip_str;
 }
 
-function string  print_ip4 ( in int64  ip2 )
-{
-  hide var uint32  ip = 49727;
-  hide var uint8   ip_a = ( ip >> 24 ) & 255;
-  hide var uint8   ip_b = ( ip >> 16 ) & 255;
-  hide var uint8   ip_c = ( ip >>  8 ) & 255;
-  hide var uint8   ip_d = ( ip       ) & 255;
-  hide var string  ip_str = print("%d.%d.%d.%d", ip_a, ip_b, ip_c, ip_d);
-  return  ip_str;
-}
-
 ###############################################################################
-# Print ip
+# 
 ###############################################################################
 
 struct  T_struct_16_16
@@ -596,25 +374,4 @@ struct T_is_existing_field_or_variable
   hide var bool8   is_in_if_end          = is_existing_field_or_variable("in_if");
   hide var bool8   is_in_else_end        = is_existing_field_or_variable("in_else");
   hide var bool8   is_in_while_end       = is_existing_field_or_variable("in_while");
-}
-
-###############################################################################
-# forget
-###############################################################################
-
-struct T_forget
-{
-  var int32  struct_counter = struct_counter + 1;
-}
-
-###############################################################################
-#
-###############################################################################
-
-function void  return_nothing ()
-{
-}
-
-function void  return_nothing_2 (in int64  value, out bool8  value_modified)
-{
 }

@@ -33,8 +33,34 @@ using namespace std;
 #include "T_interpret_data.h"
 #include "byte_interpret_parse.h"
 #include "byte_interpret.h"
+#include "byte_interpret_build_types.h"
 #include "unitary_tests_ut_interpret_bytes.h"
 
+
+//*****************************************************************************
+// ut_interpret_bytes_init ****************************************************
+//*****************************************************************************
+
+void ut_interpret_bytes_init(T_type_definitions& type_definitions)
+{
+    if (type_definitions.is_a_function("decode_stream_nothing"))
+    {
+        return;
+    }
+
+    istringstream iss(
+        "    function void  decode_stream_nothing (in frame  frame, in uint32   nb_of_bits_needed)"
+        "    {"
+        "        while (nb_of_bits_needed > 0)"
+        "        {"
+        "            hide uint1  bit1;"
+        "            call frame_append_data (frame, bit1);"
+        "            set nb_of_bits_needed = nb_of_bits_needed - 1;"
+        "        }"
+        "    }");
+
+    build_types(iss, type_definitions);
+}
 
 //*****************************************************************************
 // ut_interpret_bytes_base ****************************************************

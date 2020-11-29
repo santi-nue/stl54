@@ -38,8 +38,15 @@ M_TEST_FCT(test_build_field_call_function)
     T_type_definitions    type_definitions;
 
     // Add some types
-    build_types ("unitary_tests_basic.fdesc",
-                 type_definitions);
+    istringstream         iss(
+        "function void  return_nothing () "
+        "{ "
+        "} "
+        "function void  return_nothing_2 (in int64  value, out bool8  value_modified) "
+        "{ "
+        "} "
+    );
+    build_types(iss, type_definitions);
 
     // call function
     {

@@ -40,8 +40,14 @@ using namespace std;
 M_TEST_FCT(test_interpret_forget)
 {
     T_type_definitions    type_definitions;
-    build_types ("unitary_tests_basic.fdesc",
-                 type_definitions);
+    ut_interpret_bytes_init(type_definitions);
+    istringstream         iss(
+        "struct T_forget "
+        "{ "
+        "    var int32  struct_counter = struct_counter + 1; "
+        "} "
+    );
+    build_types(iss, type_definitions);
 
     T_interpret_data      interpret_data;
 

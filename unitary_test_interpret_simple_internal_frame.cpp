@@ -39,7 +39,7 @@ using namespace std;
 M_TEST_FCT(test_interpret_simple_internal_frame)
 {
     T_type_definitions    type_definitions;
-    build_types ("unitary_tests_basic.fdesc",
+    build_types ("unitary_tests_basic.fdesc",    // decode_invert_4_bytes
                  type_definitions);
 
     T_interpret_data      interpret_data;
