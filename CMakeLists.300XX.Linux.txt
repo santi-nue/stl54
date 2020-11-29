@@ -171,6 +171,7 @@ set (DISSECTOR_UT_SRC
 	unitary_test_interpret_simple_decoder_aes.cpp
 	unitary_test_interpret_simple_decoder_base64.cpp
 	unitary_test_interpret_simple_internal_frame.cpp
+	unitary_test_interpret_simple_position.cpp
 	unitary_test_interpret_simple_trailer.cpp
 	unitary_test_is_existing_field_or_variable.cpp
 	unitary_test_read_token.cpp
