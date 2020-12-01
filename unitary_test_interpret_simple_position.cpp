@@ -67,7 +67,6 @@ M_TEST_FCT(test_interpret_simple_position)
         "var_a = 6" K_eol);  // 6 = 3 << 1
 }
 
-
 //*****************************************************************************
 // test_interpret_simple_position_decode
 //*****************************************************************************
@@ -117,5 +116,49 @@ M_TEST_FCT(test_interpret_simple_position_decode)
     M_TEST_ERROR_ALREADY_KNOWN__OPEN(0, "..._position... not compatible with decoder")
         // Here "move_position_bytes 4" moves of 4 physical bytes (instead of 8 using decoder)
         M_TEST_SIMPLE("0102030405060708090A", "decoder decode_remove_1_byte; move_position_bytes 4; uint8  var_a;", "var_a = 10" K_eol);  // gives 6
+    }
+}
+
+//*****************************************************************************
+// test_interpret_simple_position_internal_frame
+//*****************************************************************************
+
+M_TEST_FCT(test_interpret_simple_position_internal_frame)
+{
+    T_type_definitions    type_definitions;
+    ut_interpret_bytes_init(type_definitions);
+    istringstream         iss(
+        "function void  decode_remove_1_byte (in frame  frame, in uint32   nb_of_bits_needed) "
+        "{ "
+        "    while (nb_of_bits_needed > 0) "
+        "    { "
+        "        hide uint8  byte1; "
+        "        hide uint8  byte2; "
+        "        call frame_append_data (frame, byte2); "
+        "        set nb_of_bits_needed = nb_of_bits_needed - 8; "
+        "    } "
+        "} "
+    );
+    build_types(iss, type_definitions);
+
+    T_interpret_data      interpret_data;
+    interpret_data.set_big_endian();
+
+
+    // internal_frame test
+    // No real data, data is read from internal_frame.
+    M_TEST_SIMPLE("",
+        "call frame_append_hexa_data (internal_frame, \" e2 3f 6a 77 \") ; "
+        "uint32{d=hex}  val ;",
+        "val = 0xe23f6a77 (3795806839)" K_eol);
+
+
+    // move_position_..., save_position, goto_position fails with internal_frame
+    // Ie ..._position... do not take care of internal_frame
+    M_TEST_ERROR_ALREADY_KNOWN__OPEN(0, "..._position... not compatible with internal_frame")
+        M_TEST_SIMPLE("",
+            "call frame_append_hexa_data (internal_frame, \" e2 3f 6a 77 \") ; "
+            "move_position_bytes 4;",
+            "");
     }
 }
