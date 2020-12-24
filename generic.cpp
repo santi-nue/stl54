@@ -1336,6 +1336,7 @@ static void    generic_stats_tree_init(stats_tree  * st)
     M_TRACE_ENTER ("generic_stats_tree_init", st->cfg->name);
 
     T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
+    tap_data.tap_is_needed = true;
 
     tap_data.st_node_msg_id = stats_tree_create_node(st, tap_data.st_str_msg_id, 0,
 #if WIRESHARK_VERSION_NUMBER >= 30000
@@ -1401,30 +1402,26 @@ stat_tree_packet_return_type
     return  stat_tree_packet_return_value;
 }
 
-#if 0
 static void    generic_stats_tree_cleanup(stats_tree  * st)
 {
     T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
     C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
     M_TRACE_ENTER ("generic_stats_tree_cleanup", st->cfg->name);
 
-#if 0
-    st_node_packets = stats_tree_create_node(st, st_str_packets, 0, TRUE);
-    st_node_packet_types = stats_tree_create_pivot(st, st_str_packet_types, st_node_packets);
-#endif
+    T_generic_protocol_tap_data& tap_data = protocol_data.ws_data.tap_data;
+    tap_data.tap_is_needed = false;
 }
-#endif
 
 static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_data)
 {
     M_TRACE_ENTER ("register_generic_stats_trees", "");
-    stats_tree_register(protocol_data.PROTOABBREV.c_str(),
-                        protocol_data.PROTOABBREV.c_str(),
-                        (protocol_data.PROTOABBREV + "/Msg").c_str(),
-                        0,
-                        generic_stats_tree_packet,
-                        generic_stats_tree_init,
-                        NULL);
+    stats_tree_register_plugin(protocol_data.PROTOABBREV.c_str(),
+                               protocol_data.PROTOABBREV.c_str(),
+                               (protocol_data.PROTOABBREV + "/Msg").c_str(),
+                               0,
+                               generic_stats_tree_packet,
+                               generic_stats_tree_init,
+                               generic_stats_tree_cleanup);
 }
 
 //*****************************************************************************
@@ -2044,8 +2041,12 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
     ostream                  & os = get_interpret_ostream();
 
     // It could be mandatory to interpret the entire msg (even if msg_root_tree is NULL)
-    bool      mandatory_to_interpret_the_entire_msg = false;
+    bool      mandatory_to_interpret_the_entire_msg = (tree != NULL);
     if (protocol_data.GLOBAL_DATA_TYPE != "")
+    {
+        mandatory_to_interpret_the_entire_msg = true;
+    }
+    else if (protocol_data.ws_data.tap_data.tap_is_needed)
     {
         mandatory_to_interpret_the_entire_msg = true;
     }
@@ -2256,7 +2257,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
         summary += "  ";
     }
 
-    if (tree || mandatory_to_interpret_the_entire_msg)
+    if (mandatory_to_interpret_the_entire_msg)
     {
         // Retrieve all the MSG_SUMMARY_SUBSIDIARY values and complete summary.
         for (vector<string>::const_iterator  iter  = protocol_data.MSG_SUMMARY_SUBSIDIARY_FIELD_NAMES.begin();

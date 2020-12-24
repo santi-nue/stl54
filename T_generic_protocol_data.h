@@ -111,6 +111,7 @@ struct T_generic_protocol_tap_data : public CT_debug_object_counter<T_generic_pr
   int           st_node_msg_length;
   const char  * st_str_msg_length;
 
+  bool                   tap_is_needed;    // for statistics
   T_RCP_interpret_data   RCP_last_msg_interpret_data;
 
   T_generic_protocol_tap_data()
@@ -118,7 +119,8 @@ struct T_generic_protocol_tap_data : public CT_debug_object_counter<T_generic_pr
        st_node_msg_id(-1),
        st_str_msg_id("Msg id"),
        st_node_msg_length(-1),
-       st_str_msg_length("Msg length")
+       st_str_msg_length("Msg length"),
+       tap_is_needed(false)
   { }
 };
 
