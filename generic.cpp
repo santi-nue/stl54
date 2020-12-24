@@ -1087,6 +1087,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
                   P_protocol_ws_data->proto_generic);
     register_dissector(protocol_data.PROTOABBREV.c_str(), P_protocol_ws_data->P_dissect_fct, P_protocol_ws_data->proto_generic);
 
+    // Must use PROTOABBREV because generic_stats_tree_... rely on it
     protocol_data.ws_data.tap_data.proto_tap = register_tap(protocol_data.PROTOABBREV.c_str());
     M_TRACE_DEBUG("proto_tap=" << protocol_data.ws_data.tap_data.proto_tap);
 }
@@ -1331,30 +1332,27 @@ void    cpp_proto_register_generic(void)
 
 static void    generic_stats_tree_init(stats_tree  * st)
 {
-    T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
-    C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
+    // st->cfg->abbr is not the proto_abbrev
+    // tapname is identic to proto_abbrev
+    T_generic_protocol_data      & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->tapname);
+    C_debug_set_temporary          debug_stats(protocol_data.DEBUG);
     M_TRACE_ENTER ("generic_stats_tree_init", st->cfg->name);
 
     T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
     tap_data.tap_is_needed = true;
 
-    tap_data.st_node_msg_id = stats_tree_create_node(st, tap_data.st_str_msg_id, 0,
-#if WIRESHARK_VERSION_NUMBER >= 30000
-                                                     STAT_DT_INT,
-#endif
-                                                     TRUE);
-    if (protocol_data.MSG_TOTAL_LENGTH != "")
+    T_stats_sub_group  & sub_group = tap_data.stats.get_sub_group_by_full_name(st->cfg->name);
+
+    for (auto iter = sub_group.topics.begin(); iter != sub_group.topics.end(); ++iter)
     {
-        tap_data.st_node_msg_length = stats_tree_create_node(st, tap_data.st_str_msg_length, 0,
+        T_stats_topic  & topic = *iter;
+
+        topic.node_id = stats_tree_create_node(st, topic.topic_name.c_str(), 0,
 #if WIRESHARK_VERSION_NUMBER >= 30000
-                                                             STAT_DT_INT,
+                                               STAT_DT_INT,
 #endif
-                                                             TRUE);
+                                               TRUE);
     }
-#if 0
-    st_node_packets = stats_tree_create_node(st, st_str_packets, 0, TRUE);
-    st_node_packet_types = stats_tree_create_pivot(st, st_str_packet_types, st_node_packets);
-#endif
 }
 
 #if WIRESHARK_VERSION_NUMBER >= 30000
@@ -1374,29 +1372,24 @@ stat_tree_packet_return_type
     T_generic_protocol_data  & protocol_data = *(T_generic_protocol_data*)p;
     C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
     M_TRACE_ENTER ("generic_stats_tree_packet", st->cfg->name <<
-                    "  pinfo=" << pinfo <<
-                    "  edt=" << edt <<
-                    "  p=" << p);
+                   "  pinfo=" << pinfo <<
+                   "  edt=" << edt <<
+                   "  p=" << p);
 
     T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
+    T_stats_sub_group            & sub_group = tap_data.stats.get_sub_group_by_full_name(st->cfg->name);
 
     M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), NULL);
-    T_interpret_data  & last_msg_interpret_data = * tap_data.RCP_last_msg_interpret_data;
+    T_interpret_data& last_msg_interpret_data = *tap_data.RCP_last_msg_interpret_data;
 
+    for (auto iter = sub_group.topics.begin(); iter != sub_group.topics.end(); ++iter)
     {
-        tick_stat_node(st, tap_data.st_str_msg_id, 0, FALSE);
+        T_stats_topic  & topic = *iter;
 
-        const string  str_msg_id = last_msg_interpret_data.get_full_str_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
-        /*int           reqs_by_msg_id =*/ tick_stat_node(st, str_msg_id.c_str(), tap_data.st_node_msg_id, TRUE);
-    }
+        tick_stat_node(st, topic.topic_name.c_str(), 0, FALSE);
 
-    if (protocol_data.MSG_TOTAL_LENGTH != "")
-    {
-        M_TRACE_ERROR("st_node_msg_length=" << tap_data.st_node_msg_length);
-        tick_stat_node(st, tap_data.st_str_msg_length, 0, FALSE);
-
-        C_value       val_length = compute_expression_no_io(protocol_data.type_definitions, last_msg_interpret_data, protocol_data.MSG_TOTAL_LENGTH);
-        /*int           reqs_by_msg_id =*/ tick_stat_node(st, val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
+        const string  value = last_msg_interpret_data.get_full_str_value_of_read_variable(topic.variable_name);
+        /*int           reqs_by_msg_id =*/ tick_stat_node(st, value.c_str(), topic.node_id, TRUE);
     }
 
     // Msg is ended, some data are no more necessary
@@ -1407,7 +1400,9 @@ stat_tree_packet_return_type
 
 static void    generic_stats_tree_cleanup(stats_tree  * st)
 {
-    T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->abbr);
+    // st->cfg->abbr is not the proto_abbrev
+    // tapname is identic to proto_abbrev
+    T_generic_protocol_data  & protocol_data = get_protocol_data_from_proto_abbrev((const char*)st->cfg->tapname);
     C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
     M_TRACE_ENTER ("generic_stats_tree_cleanup", st->cfg->name);
 
@@ -1418,13 +1413,27 @@ static void    generic_stats_tree_cleanup(stats_tree  * st)
 static void    register_generic_stats_trees(T_generic_protocol_data  & protocol_data)
 {
     M_TRACE_ENTER ("register_generic_stats_trees", "");
-    stats_tree_register_plugin(protocol_data.PROTOABBREV.c_str(),
-                               protocol_data.PROTOABBREV.c_str(),
-                               (protocol_data.PROTOABBREV + "/Msg").c_str(),
-                               0,
-                               generic_stats_tree_packet,
-                               generic_stats_tree_init,
-                               generic_stats_tree_cleanup);
+
+    auto& stats_groups = protocol_data.ws_data.tap_data.stats.groups;
+    for (auto iter = stats_groups.begin(); iter != stats_groups.end(); ++iter)
+    {
+        const T_stats_group& group = *iter;
+
+        for (auto iter = group.sub_groups.begin(); iter != group.sub_groups.end(); ++iter)
+        {
+            const T_stats_sub_group& sub_group = *iter;
+
+            const std::string & full_name = sub_group.full_name;
+
+            stats_tree_register_plugin(protocol_data.PROTOABBREV.c_str(),
+                                       full_name.c_str(),              // must be unique
+                                       full_name.c_str(),
+                                       0,
+                                       generic_stats_tree_packet,
+                                       generic_stats_tree_init,
+                                       generic_stats_tree_cleanup);
+        }
+    }
 }
 
 //*****************************************************************************

@@ -45,6 +45,46 @@ using namespace std;
 
 
 /******************************************************************************
+ * Stats
+ *****************************************************************************/
+
+struct T_stats_topic
+{
+    std::string  topic_name;
+    std::string  variable_name;    // variable used for statistics
+    int          node_id;          // stats_tree_create_node
+
+    T_stats_topic()
+        : node_id(-1)
+    {
+    }
+};
+
+struct T_stats_sub_group
+{
+    std::string                 sub_group_name;   // Sub menu of <group_name>
+    std::string                 full_name;        // stats_tree st->cfg->name
+    std::vector<T_stats_topic>  topics;
+};
+
+struct T_stats_group
+{
+    std::string                     group_name;   // Appears into Statistics menu
+    std::vector<T_stats_sub_group>  sub_groups;
+
+    T_stats_sub_group & get_or_create_sub_group(const std::string& sub_group_name);
+};
+
+struct T_stats
+{
+    std::vector<T_stats_group>  groups;
+
+    T_stats_group     & get_or_create_group(const std::string         & group_name);
+    T_stats_sub_group & get_sub_group_by_full_name(const std::string  & full_name);
+};
+
+
+/******************************************************************************
  * T_generic_protocol_ws_data
  *****************************************************************************/
 
@@ -105,21 +145,12 @@ struct T_generic_protocol_subdissector_data : public CT_debug_object_counter<T_g
 struct T_generic_protocol_tap_data : public CT_debug_object_counter<T_generic_protocol_tap_data>
 {
   int                    proto_tap;
-
-  int           st_node_msg_id;
-  const char  * st_str_msg_id;
-  int           st_node_msg_length;
-  const char  * st_str_msg_length;
-
+  T_stats                stats;
   bool                   tap_is_needed;    // for statistics
   T_RCP_interpret_data   RCP_last_msg_interpret_data;
 
   T_generic_protocol_tap_data()
       :proto_tap (-1),
-       st_node_msg_id(-1),
-       st_str_msg_id("Msg id"),
-       st_node_msg_length(-1),
-       st_str_msg_length("Msg length"),
        tap_is_needed(false)
   { }
 };
