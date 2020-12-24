@@ -1399,6 +1399,9 @@ stat_tree_packet_return_type
         /*int           reqs_by_msg_id =*/ tick_stat_node(st, val_length.as_string().c_str(), tap_data.st_node_msg_length, TRUE);
     }
 
+    // Msg is ended, some data are no more necessary
+    last_msg_interpret_data.msg_is_ended();
+
     return  stat_tree_packet_return_value;
 }
 
@@ -2490,7 +2493,11 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
         if (result == true)
         {
             // Msg is ended, some data are no more necessary
-            interpret_data.msg_is_ended();
+            if (protocol_data.ws_data.tap_data.tap_is_needed == false)
+            {
+                interpret_data.msg_is_ended();
+            }
+            // else generic_stats_tree_packet will do it
         }
 
         return  proto_item_len;
