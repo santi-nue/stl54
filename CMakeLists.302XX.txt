@@ -99,12 +99,24 @@ set(CLEAN_FILES
 	${PLUGIN_FILES}
 )
 
-if (WERROR_COMMON_FLAGS)
-	set_source_files_properties(
-		${CLEAN_FILES}
-		PROPERTIES
-		COMPILE_FLAGS ${WERROR_COMMON_FLAGS}
-	)
+if (UNIX)
+	if (WERROR_COMMON_FLAGS)
+		set_source_files_properties(
+			${CLEAN_FILES}
+			PROPERTIES
+	# Too many errors (sign compare, ...)
+	#		COMPILE_FLAGS "${WERROR_COMMON_FLAGS}"
+			COMPILE_FLAGS ""
+		)
+	endif()
+else()
+	if (WERROR_COMMON_FLAGS)
+		set_source_files_properties(
+			${CLEAN_FILES}
+			PROPERTIES
+			COMPILE_FLAGS ${WERROR_COMMON_FLAGS}
+		)
+	endif()
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

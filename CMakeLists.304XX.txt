@@ -95,11 +95,21 @@ set(PLUGIN_FILES
 	${DISSECTOR_SRC}
 )
 
-set_source_files_properties(
-	${PLUGIN_FILES}
-	PROPERTIES
-	COMPILE_FLAGS "${WERROR_COMMON_FLAGS}"
-)
+if (UNIX)
+	set_source_files_properties(
+		${PLUGIN_FILES}
+		PROPERTIES
+	# Too many errors (sign compare, ...)
+	#	COMPILE_FLAGS "${WERROR_COMMON_FLAGS}"
+		COMPILE_FLAGS ""
+	)
+else()
+	set_source_files_properties(
+		${PLUGIN_FILES}
+		PROPERTIES
+		COMPILE_FLAGS "${WERROR_COMMON_FLAGS}"
+	)
+endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
