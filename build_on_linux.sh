@@ -147,7 +147,7 @@ fi
 install_packages_disabled="DISABLED: "
 [ "${wsgd_os_install_packages}" == "yes" ] && install_packages_disabled=""
 
-echo "For wireshark >= 2.4"
+echo "For wireshark >= 2.6"
 echo
 echo "Script sequence (specific values depends on configuration) :"
 echo "- ${install_packages_disabled}install every package mandatory to build wireshark"
@@ -164,7 +164,7 @@ echo "- if  generic  does not exist"
 echo "  - git clone  ${wsgd_wsgd_repository}   generic"
 echo "- configure generic directory"
 echo "- cd  ../.."
-echo "- add ${wsgd_wireshark_src_plugin_subdir}/generic into CMakeLists.txt"
+echo "- add ${wsgd_wireshark_src_plugin_subdir}/generic into CMakeListsCustom.txt"
 echo "- cmake ."
 echo "- make"
 echo
@@ -378,7 +378,7 @@ fi
 wsgd__cd  generic
 wsgd_wsgd_src_dir=$(pwd)
 
-
+# Add CMakeLists.txt if not already done
 if [ ! -e CMakeLists.txt ]
 then
 	wsgd__echo "cp -p  ${wsgd_wsgd_CMakeLists}  CMakeLists.txt"
@@ -386,6 +386,7 @@ then
 	wsgd__check_exists  CMakeLists.txt
 fi
 
+# Add cmake_wireshark_version_number.cmake if not already done
 if [ ! -e cmake_wireshark_version_number.cmake ]
 then
 	wsgd__echo "Copy/edit wsgd cmake_wireshark_version_number.cmake"
@@ -398,24 +399,32 @@ fi
 wsgd__cd  ${wsgd_wireshark_src_dir}
 
 
-[ ! -e CMakeLists.txt ] && wsgd__echo "File CMakeLists.txt not found !"    && exit 1
-grep  "${wsgd_wireshark_src_plugin_subdir}/generic"  CMakeLists.txt
+# Add CMakeListsCustom.txt if not already done
+if [ ! -e CMakeListsCustom.txt ]
+then
+	wsgd__check_exists  CMakeListsCustom.txt.example
+
+	wsgd__echo "cp -p  CMakeListsCustom.txt.example  CMakeListsCustom.txt"
+	cp -p  CMakeListsCustom.txt.example  CMakeListsCustom.txt
+fi
+
+wsgd__check_exists  CMakeListsCustom.txt
+
+# Check if generic is into CMakeListsCustom.txt
+grep  "${wsgd_wireshark_src_plugin_subdir}/generic"  CMakeListsCustom.txt
 if [ $? -ne 0 ]
 then
-    if [ ! -e CMakeLists.txt.generic ]
-	then
-		wsgd__echo "Save CMakeLists.txt to CMakeLists.txt.generic"
-		cp -p CMakeLists.txt CMakeLists.txt.generic
-		wsgd__check_exists  CMakeLists.txt.generic
-	fi
+	wsgd__echo "Save CMakeListsCustom.txt to CMakeListsCustom.txt.generic"
+	cp -p CMakeListsCustom.txt CMakeListsCustom.txt.generic
+	wsgd__check_exists  CMakeListsCustom.txt.generic
 	
-	wsgd__echo "Add ${wsgd_wireshark_src_plugin_subdir}/generic to wireshark CMakeLists.txt"
-	awk -v wsgd_wireshark_src_plugin_subdir=${wsgd_wireshark_src_plugin_subdir} '{ if (index($0, "gryphon") > 0) { printf("\t\t%s/generic\n", wsgd_wireshark_src_plugin_subdir); print; next } else { print; }}' CMakeLists.txt.generic > CMakeLists.txt
+	wsgd__echo "Add ${wsgd_wireshark_src_plugin_subdir}/generic to wireshark CMakeListsCustom.txt"
+	awk -v wsgd_wireshark_src_plugin_subdir=${wsgd_wireshark_src_plugin_subdir} '{ if (index($0, "plugins/epan/foo") > 0) { print; printf("\t%s/generic\n", wsgd_wireshark_src_plugin_subdir); next } else { print; }}' CMakeListsCustom.txt.generic > CMakeListsCustom.txt
 
-	grep  "${wsgd_wireshark_src_plugin_subdir}/generic"  CMakeLists.txt
+	grep  "${wsgd_wireshark_src_plugin_subdir}/generic"  CMakeListsCustom.txt
 	if [ $? -ne 0 ]
 	then
-		wsgd__echo "Fail to add ${wsgd_wireshark_src_plugin_subdir}/generic to wireshark CMakeLists.txt"
+		wsgd__echo "Fail to add ${wsgd_wireshark_src_plugin_subdir}/generic to wireshark CMakeListsCustom.txt"
 		exit 1
 	fi
 fi
