@@ -39,10 +39,10 @@ struct T_stats_topic
 {
     std::string  topic_name;
     std::string  variable_name;    // variable used for statistics
-    int          node_id;          // stats_tree_create_node
+    int          pivot_id;         // stats_tree_create_pivot
 
     T_stats_topic()
-        : node_id(-1)
+        : pivot_id(-1)
     {
     }
 };
@@ -51,7 +51,15 @@ struct T_stats_sub_group
 {
     std::string                 sub_group_name;   // Sub menu of <group_name>
     std::string                 full_name;        // stats_tree st->cfg->name
+    std::string                 node_name;        // stats_tree_create_node param
+    int                         node_id;          // stats_tree_create_node result
     std::vector<T_stats_topic>  topics;
+
+    T_stats_sub_group()
+        : node_name("All messages")
+        , node_id(-1)
+    {
+    }
 };
 
 struct T_stats_group

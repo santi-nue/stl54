@@ -1343,15 +1343,17 @@ static void    generic_stats_tree_init(stats_tree  * st)
 
     T_stats_sub_group  & sub_group = tap_data.stats.get_sub_group_by_full_name(st->cfg->name);
 
+    sub_group.node_id = stats_tree_create_node(st, sub_group.node_name.c_str(), 0,
+#if WIRESHARK_VERSION_NUMBER >= 30000
+                                                   STAT_DT_INT,
+#endif
+                                                   TRUE);
+
     for (auto iter = sub_group.topics.begin(); iter != sub_group.topics.end(); ++iter)
     {
         T_stats_topic  & topic = *iter;
 
-        topic.node_id = stats_tree_create_node(st, topic.topic_name.c_str(), 0,
-#if WIRESHARK_VERSION_NUMBER >= 30000
-                                               STAT_DT_INT,
-#endif
-                                               TRUE);
+        topic.pivot_id = stats_tree_create_pivot(st, topic.topic_name.c_str(), sub_group.node_id);
     }
 }
 
@@ -1382,14 +1384,17 @@ stat_tree_packet_return_type
     M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), NULL);
     T_interpret_data& last_msg_interpret_data = *tap_data.RCP_last_msg_interpret_data;
 
+    tick_stat_node(st, sub_group.node_name.c_str(), 0, FALSE);
+
     for (auto iter = sub_group.topics.begin(); iter != sub_group.topics.end(); ++iter)
     {
         T_stats_topic  & topic = *iter;
 
-        tick_stat_node(st, topic.topic_name.c_str(), 0, FALSE);
-
-        const string  value = last_msg_interpret_data.get_full_str_value_of_read_variable(topic.variable_name);
-        /*int           reqs_by_msg_id =*/ tick_stat_node(st, value.c_str(), topic.node_id, TRUE);
+        if (last_msg_interpret_data.is_read_variable(topic.variable_name))
+        {
+            const string  value = last_msg_interpret_data.get_full_str_value_of_read_variable(topic.variable_name);
+            stats_tree_tick_pivot(st, topic.pivot_id, value.c_str());
+        }
     }
 
     // Msg is ended, some data are no more necessary
