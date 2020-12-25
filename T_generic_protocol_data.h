@@ -1,7 +1,5 @@
-/* generic.c
- * Copyright 2008-2019 Olivier Aveline <wsgd@free.fr>
- *
- * $Id: 
+/*
+ * Copyright 2008-2020 Olivier Aveline <wsgd@free.fr>
  *
  * Wireshark - Network traffic analyzer
  * By Gerald Combs <gerald@wireshark.org>
@@ -42,46 +40,7 @@ using namespace std;
 
 #include "byte_interpret_build_types.h"
 #include "T_interpret_data.h"
-
-
-/******************************************************************************
- * Stats
- *****************************************************************************/
-
-struct T_stats_topic
-{
-    std::string  topic_name;
-    std::string  variable_name;    // variable used for statistics
-    int          node_id;          // stats_tree_create_node
-
-    T_stats_topic()
-        : node_id(-1)
-    {
-    }
-};
-
-struct T_stats_sub_group
-{
-    std::string                 sub_group_name;   // Sub menu of <group_name>
-    std::string                 full_name;        // stats_tree st->cfg->name
-    std::vector<T_stats_topic>  topics;
-};
-
-struct T_stats_group
-{
-    std::string                     group_name;   // Appears into Statistics menu
-    std::vector<T_stats_sub_group>  sub_groups;
-
-    T_stats_sub_group & get_or_create_sub_group(const std::string& sub_group_name);
-};
-
-struct T_stats
-{
-    std::vector<T_stats_group>  groups;
-
-    T_stats_group     & get_or_create_group(const std::string         & group_name);
-    T_stats_sub_group & get_sub_group_by_full_name(const std::string  & full_name);
-};
+#include "T_generic_statistics.h"
 
 
 /******************************************************************************
