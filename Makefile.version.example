@@ -1,4 +1,0 @@
-
-# WIRESHARK_VERSION_NUMBER=<major><minor_on_2_digits><micro_on_2_digits>
-# Example for Wireshark 1.12.3
-WIRESHARK_VERSION_NUMBER=11203
