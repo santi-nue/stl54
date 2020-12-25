@@ -217,4 +217,45 @@ M_TEST_FCT(test_read_file_wsgd_statistics)
         iss >> keyword;
         M_TEST_EQ(keyword, "another_thing");
     }
+
+
+
+    // Check all data
+    M_TEST_EQ(stats.groups.size(), 3);
+
+    M_TEST_EQ(stats.groups[0].group_name, "Samsung TV Remote Control Type");
+    M_TEST_EQ(stats.groups[0].sub_groups.size(), 1);
+    M_TEST_EQ(stats.groups[0].sub_groups[0].sub_group_name, "");
+    M_TEST_EQ(stats.groups[0].sub_groups[0].full_name, "Samsung TV Remote Control Type");
+    M_TEST_EQ(stats.groups[0].sub_groups[0].topics.size(), 1);
+    M_TEST_EQ(stats.groups[0].sub_groups[0].topics[0].topic_name, "Message Type");
+    M_TEST_EQ(stats.groups[0].sub_groups[0].topics[0].variable_name, "MessageType");
+
+    M_TEST_EQ(stats.groups[1].group_name, "Samsung TV Remote Control Title");
+    M_TEST_EQ(stats.groups[1].sub_groups.size(), 1);
+    M_TEST_EQ(stats.groups[1].sub_groups[0].sub_group_name, "");
+    M_TEST_EQ(stats.groups[1].sub_groups[0].full_name, "Samsung TV Remote Control Title");
+    M_TEST_EQ(stats.groups[1].sub_groups[0].topics.size(), 1);
+    M_TEST_EQ(stats.groups[1].sub_groups[0].topics[0].topic_name, "Message Title");
+    M_TEST_EQ(stats.groups[1].sub_groups[0].topics[0].variable_name, "Msg_Title");
+
+    M_TEST_EQ(stats.groups[2].group_name, "Samsung TV Remote Control");
+    M_TEST_EQ(stats.groups[2].sub_groups.size(), 3);
+    M_TEST_EQ(stats.groups[2].sub_groups[0].sub_group_name, "Type");
+    M_TEST_EQ(stats.groups[2].sub_groups[0].full_name, "Samsung TV Remote Control/Type");
+    M_TEST_EQ(stats.groups[2].sub_groups[0].topics.size(), 1);
+    M_TEST_EQ(stats.groups[2].sub_groups[0].topics[0].topic_name, "Message Type");
+    M_TEST_EQ(stats.groups[2].sub_groups[0].topics[0].variable_name, "MessageType");
+    M_TEST_EQ(stats.groups[2].sub_groups[1].sub_group_name, "Title");
+    M_TEST_EQ(stats.groups[2].sub_groups[1].full_name, "Samsung TV Remote Control/Title");
+    M_TEST_EQ(stats.groups[2].sub_groups[1].topics.size(), 1);
+    M_TEST_EQ(stats.groups[2].sub_groups[1].topics[0].topic_name, "Message Title");
+    M_TEST_EQ(stats.groups[2].sub_groups[1].topics[0].variable_name, "Msg_Title");
+    M_TEST_EQ(stats.groups[2].sub_groups[2].sub_group_name, "Type & Title");
+    M_TEST_EQ(stats.groups[2].sub_groups[2].full_name, "Samsung TV Remote Control/Type & Title");
+    M_TEST_EQ(stats.groups[2].sub_groups[2].topics.size(), 2);
+    M_TEST_EQ(stats.groups[2].sub_groups[2].topics[0].topic_name, "Message Type");
+    M_TEST_EQ(stats.groups[2].sub_groups[2].topics[0].variable_name, "MessageType");
+    M_TEST_EQ(stats.groups[2].sub_groups[2].topics[1].topic_name, "Message Title");
+    M_TEST_EQ(stats.groups[2].sub_groups[2].topics[1].variable_name, "Msg_Title");
 }
