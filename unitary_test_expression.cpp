@@ -551,10 +551,10 @@ M_TEST_FCT(test_expression)
             // function
             { " addition (3, 7) ", 10 }
         };
-        for (int  idx = 0; idx < sizeof(expressions)/sizeof(expressions[0]); ++idx)
+        for (const auto & expr_result : expressions)
         {
-            const char       * expr            = expressions[idx].expr;
-            const long long    expected_result = expressions[idx].expected_result;
+            const char       * expr            = expr_result.expr;
+            const long long    expected_result = expr_result.expected_result;
 
             cout << "int expression : ";
             cout.width(25);
@@ -607,10 +607,10 @@ M_TEST_FCT(test_expression)
             { "007 == 0x5 || 007 == 0x7", 1 },
             { "1   == 0x1", 1 }
         };
-        for (int  idx = 0; idx < sizeof(expressions)/sizeof(expressions[0]); ++idx)
+        for (const auto & expr_result : expressions)
         {
-            const char       * expr            = expressions[idx].expr;
-            const long long    expected_result = expressions[idx].expected_result;
+            const char       * expr            = expr_result.expr;
+            const long long    expected_result = expr_result.expected_result;
 
             cout << "int expression : ";
             cout.width(25);
@@ -653,15 +653,15 @@ M_TEST_FCT(test_expression)
             { "235.9 + k::flt", 1 },			// const
             { " addition (3.0, 7) ", 10}
         };
-        for (int  idx = 0; idx < sizeof(expressions)/sizeof(expressions[0]); ++idx)
+        for (const auto& expr_result : expressions)
         {
-            const char   * expr            = expressions[idx].expr;
-            const double   expected_result = expressions[idx].expected_result;
+            const char   * expr = expr_result.expr;
+            const double   expected_result = expr_result.expected_result;
 
             cout << "flt expression : ";
             cout.width(25);
             cout << expr;
-            if ((idx == 3) || (idx == 4)) 
+            if (!strcmp(expr, "-234.9E-1") || !strcmp(expr, "-234.9E+1"))
             {
                 M_TEST_EXCEPTION_ALREADY_KNOWN(compute_expression_static (type_definitions, expr));
                 continue;
@@ -699,10 +699,10 @@ M_TEST_FCT(test_expression)
             { "\"136\" + k::str", "136hello world" },			// const
             { " addition (\"3.0\", \"7\") ", "3.07"}
         };
-        for (int  idx = 0; idx < sizeof(expressions)/sizeof(expressions[0]); ++idx)
+        for (const auto & expr_result : expressions)
         {
-            const char  * expr            = expressions[idx].expr;
-            const string  expected_result = expressions[idx].expected_result;
+            const char       * expr            = expr_result.expr;
+            const string       expected_result = expr_result.expected_result;
 
             cout << "str expression : ";
             cout.width(25);
