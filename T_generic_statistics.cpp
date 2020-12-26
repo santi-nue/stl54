@@ -34,10 +34,8 @@
 T_stats_sub_group&
 T_stats_group::get_or_create_sub_group(const std::string& sub_group_name)
 {
-    for (auto sub_group_iter = sub_groups.begin(); sub_group_iter != sub_groups.end(); ++sub_group_iter)
+    for (auto& sub_group : sub_groups)
     {
-        T_stats_sub_group& sub_group = *sub_group_iter;
-
         if (sub_group_name == sub_group.sub_group_name)
         {
             return  sub_group;
@@ -71,10 +69,8 @@ T_stats_group::get_or_create_sub_group(const std::string& sub_group_name)
 T_stats_group&
 T_stats::get_or_create_group(const std::string& group_name)
 {
-    for (auto group_iter = groups.begin(); group_iter != groups.end(); ++group_iter)
+    for (auto& group : groups)
     {
-        T_stats_group& group = *group_iter;
-
         if (group_name == group.group_name)
         {
             return  group;
@@ -94,14 +90,10 @@ T_stats::get_or_create_group(const std::string& group_name)
 T_stats_sub_group&
 T_stats::get_sub_group_by_full_name(const std::string& full_name)
 {
-    for (auto group_iter = groups.begin(); group_iter != groups.end(); ++group_iter)
+    for (auto& group : groups)
     {
-        T_stats_group& group = *group_iter;
-
-        for (auto sub_group_iter = group.sub_groups.begin(); sub_group_iter != group.sub_groups.end(); ++sub_group_iter)
+        for (auto& sub_group : group.sub_groups)
         {
-            T_stats_sub_group& sub_group = *sub_group_iter;
-
             if (full_name == sub_group.full_name)
             {
                 return  sub_group;
