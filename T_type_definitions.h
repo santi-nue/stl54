@@ -467,7 +467,7 @@ struct T_function_definition : public T_function_prototype_definition
     int                     idx_library_function_def;
 
     T_function_definition()
-        : P_library_def(NULL)
+        : P_library_def(nullptr)
         , idx_library_function_def(-1)
     {
     }
@@ -521,7 +521,7 @@ struct T_library_function_definition
     void *         funptr;
 
     T_library_function_definition()
-        : funptr(NULL)
+        : funptr(nullptr)
     {
     }
 };
@@ -534,7 +534,7 @@ struct T_library_definition
     vector<T_library_function_definition>  library_functions;
 
     T_library_definition()
-        : DLLib_handle(NULL)
+        : DLLib_handle(nullptr)
     {
     }
 };

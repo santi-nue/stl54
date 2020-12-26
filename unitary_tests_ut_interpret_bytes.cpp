@@ -95,7 +95,7 @@ bool    ut_interpret_bytes_base (const T_type_definitions  & type_definitions,
     }
 
 
-    const T_byte    * P_bytes = in_byte_vector.empty() ? NULL : &in_byte_vector[0];
+    const T_byte    * P_bytes = in_byte_vector.empty() ? nullptr : &in_byte_vector[0];
     size_t            sizeof_bytes = in_byte_vector.size();
 
     bool  result = false;
@@ -182,7 +182,7 @@ void ut_interpret_bytes (const T_type_definitions  & type_definitions,
             output_str_normal = oss.str();
 
             // Compare to expected output.
-            if (output_expected != NULL)
+            if (output_expected != nullptr)
             {
                 if (output_str_normal != output_expected)
                 {

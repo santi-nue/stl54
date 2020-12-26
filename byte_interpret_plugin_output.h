@@ -25,9 +25,6 @@
 
 #include "byte_interpret_plugin.h"
 
-#ifndef NULL
-#define NULL 0
-#endif
 
 //*****************************************************************************
 // T_byte_interpret_plugin_output_context
@@ -42,10 +39,10 @@ struct T_byte_interpret_plugin_output_context
 
 #ifdef __cplusplus
     T_byte_interpret_plugin_output_context()
-        :P_null1(NULL),
-         P_null2(NULL),
-         P_library_name(NULL),
-         P_user_data(NULL)
+        :P_null1(nullptr),
+         P_null2(nullptr),
+         P_library_name(nullptr),
+         P_user_data(nullptr)
     {
     }
 #endif

@@ -162,12 +162,12 @@ T_field_type_name::T_field_type_name()
      output_directive(E_output_directive_none),
      A_is_a_variable(false),
      wsgd_field_idx (-1),
-     pf_frame_to_any(NULL),
-     pf_frame_to_field(NULL),
-     P_type_enum_def(NULL),
-     P_type_struct_def(NULL),
-     P_type_switch_def(NULL),
-     P_type_bitfield_def(NULL)
+     pf_frame_to_any(nullptr),
+     pf_frame_to_field(nullptr),
+     P_type_enum_def(nullptr),
+     P_type_struct_def(nullptr),
+     P_type_switch_def(nullptr),
+     P_type_bitfield_def(nullptr)
 {
 }
 
@@ -560,7 +560,7 @@ void    check_function_parameter_value(
 #define M_READ_SIMPLE_TYPE(TYPE_NAME,TYPE_SIZE,TYPE_IMPL)                     \
     M_READ_SIMPLE_TYPE_BASE(TYPE_NAME, (TYPE_SIZE / 8), TYPE_IMPL, sizeof (TYPE_IMPL))
 
-        const T_enum_definition_representation  * P_enum = NULL;
+        const T_enum_definition_representation  * P_enum = nullptr;
 
         if (function_parameter.type == "any") ;
         else if (function_parameter.type == "pointer") ;
@@ -578,7 +578,7 @@ void    check_function_parameter_value(
         M_READ_SIMPLE_TYPE ("uint48",  48,  unsigned long long)
         M_READ_SIMPLE_TYPE ( "int64",  64,    signed long long)
         M_READ_SIMPLE_TYPE ("uint64",  64,  unsigned long long)
-        else if ((P_enum = type_definitions.get_P_enum(function_parameter.type)) != NULL)
+        else if ((P_enum = type_definitions.get_P_enum(function_parameter.type)) != nullptr)
         {
             if (P_enum->get_symbolic_name(obj_value.get_int()) == "")
             {
@@ -1003,13 +1003,13 @@ T_type_definitions::get_P_enum(const string      & type_name) const
         return  &iter->second;
     }
 
-    return  NULL;
+    return  nullptr;
 }
 
 bool
 T_type_definitions::is_an_enum   (const string      & type_name) const
 {
-    return  get_P_enum(type_name) != NULL_PTR;
+    return  get_P_enum(type_name) != nullptr;
 }
 
 const T_struct_definition  *
@@ -1023,7 +1023,7 @@ T_type_definitions::get_P_struct(const string      & type_name) const
         return  &iter->second;
     }
 
-    return  NULL;
+    return  nullptr;
 }
 
 T_struct_definition  *
@@ -1037,13 +1037,13 @@ T_type_definitions::get_P_struct(const string      & type_name)
         return  &iter->second;
     }
 
-    return  NULL;
+    return  nullptr;
 }
 
 bool
 T_type_definitions::is_a_struct   (const string      & type_name) const
 {
-    return  get_P_struct(type_name) != NULL_PTR;
+    return  get_P_struct(type_name) != nullptr;
 }
 
 const T_bitfield_definition *
@@ -1057,13 +1057,13 @@ T_type_definitions::get_P_bitfield(const string      & type_name) const
         return  &iter->second;
     }
 
-    return  NULL;
+    return  nullptr;
 }
 
 bool
 T_type_definitions::is_a_bitfield (const string      & type_name) const
 {
-    return  get_P_bitfield(type_name) != NULL_PTR;
+    return  get_P_bitfield(type_name) != nullptr;
 }
 
 const T_switch_definition &
@@ -1071,7 +1071,7 @@ T_type_definitions::get_switch  (const string      & type_name) const
 {
     const T_switch_definition  * P_switch_def = get_P_switch(type_name);
 
-    if (P_switch_def == NULL)
+    if (P_switch_def == nullptr)
     {
         M_FATAL_COMMENT("Switch " << type_name << " unknow.");
     }
@@ -1090,19 +1090,19 @@ T_type_definitions::get_P_switch  (const string      & type_name) const
         return  &iter->second;
     }
 
-    return  NULL;
+    return  nullptr;
 }
 
 bool
 T_type_definitions::is_a_switch   (const string      & type_name) const
 {
-    return  get_P_switch(type_name) != NULL_PTR;
+    return  get_P_switch(type_name) != nullptr;
 }
 bool
 T_type_definitions::is_a_switch_value   (const string      & type_name) const
 {
     T_switch_definition const *  ptr = get_P_switch(type_name);
-    if ((ptr != NULL_PTR) && (ptr->is_switch_expr == false))
+    if ((ptr != nullptr) && (ptr->is_switch_expr == false))
         return  true;
     return  false;
 }
@@ -1110,7 +1110,7 @@ bool
 T_type_definitions::is_a_switch_expr   (const string      & type_name) const
 {
     T_switch_definition const *  ptr = get_P_switch(type_name);
-    if ((ptr != NULL_PTR) && (ptr->is_switch_expr == true))
+    if ((ptr != nullptr) && (ptr->is_switch_expr == true))
         return  true;
     return  false;
 }
@@ -1120,7 +1120,7 @@ T_type_definitions::get_function  (const string      & type_name) const
 {
     const T_function_definition  * P_fct_def = get_P_function(type_name);
 
-    if (P_fct_def == NULL)
+    if (P_fct_def == nullptr)
     {
         M_FATAL_COMMENT("Function " << type_name << " unknow.");
     }
@@ -1139,13 +1139,13 @@ T_type_definitions::get_P_function(const string      & type_name) const
         return  &iter->second;
     }
 
-    return  NULL;
+    return  nullptr;
 }
 
 bool
 T_type_definitions::is_a_function (const string      & type_name) const
 {
-    return  get_P_function(type_name) != NULL_PTR;
+    return  get_P_function(type_name) != nullptr;
 }
 
 // Enum  : get integer value from symbolic value.
@@ -1163,7 +1163,7 @@ T_type_definitions::get_type_value (const string   & in_symbolic_name,
                                     str_right) == E_rc_ok)
     {
         const T_enum_definition_representation  * P_enum = get_P_enum(str_left);
-        if (P_enum != NULL)
+        if (P_enum != nullptr)
         {
             long long    integer_value = -1;
             if (P_enum->get_integer_value(str_right, integer_value))

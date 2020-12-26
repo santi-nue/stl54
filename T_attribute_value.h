@@ -51,7 +51,7 @@ public:
 
     // error text (unknow enum value, constraints ...)
     void    set_error(const std::string  & in_error);
-    bool    has_error() const                        { return  (P_error != NULL); }
+    bool    has_error() const                        { return  (P_error != nullptr); }
     const std::string *  get_P_error() const         { return  P_error; }
 
     void    set_bit_position_offset_size(int  offset, int  size);

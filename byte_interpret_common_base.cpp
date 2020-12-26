@@ -83,14 +83,14 @@ int   get_files_in_dir (const string          & dir_name,
 
     DIR  * dir = opendir(dir_name.c_str());
 
-    if (dir == NULL)
+    if (dir == nullptr)
     {
         M_TRACE_ERROR("dir " << dir_name << " not found");
         return  -1;
     }
 
     for (struct dirent * dp  = readdir(dir);
-                         dp != NULL;
+                         dp != nullptr;
                          dp  = readdir(dir))
     {
 #ifdef __linux__

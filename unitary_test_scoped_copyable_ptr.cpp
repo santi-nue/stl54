@@ -70,15 +70,15 @@ M_TEST_FCT(test_scoped_copyable_ptr)
     // Empty
     scoped_copyable_ptr<C_scoped_copyable_ptr_object>  scptr_a;
 
-    M_TEST_EQ(scptr_a.get(), NULL);
+    M_TEST_NULL(scptr_a.get());
 
     // Empty reset 
-    scptr_a.reset(NULL);
-    M_TEST_EQ(scptr_a.get(), NULL);
+    scptr_a.reset(nullptr);
+    M_TEST_NULL(scptr_a.get());
 
     // reset initialize
     scptr_a.reset(new C_scoped_copyable_ptr_object);
-    M_TEST_NE(scptr_a.get(), NULL);
+    M_TEST_NOT_NULL(scptr_a.get());
     M_TEST_EQ(scptr_a->id, 1);
     M_TEST_EQ((*scptr_a).id, 1);
     M_TEST_EQ(scptr_a->generation, 1);
@@ -86,7 +86,7 @@ M_TEST_FCT(test_scoped_copyable_ptr)
     // Create not empty
     scoped_copyable_ptr<C_scoped_copyable_ptr_object>  scptr_b(new C_scoped_copyable_ptr_object);
 
-    M_TEST_NE(scptr_b.get(), NULL);
+    M_TEST_NOT_NULL(scptr_b.get());
     M_TEST_EQ(scptr_b->id, 2);
     M_TEST_EQ(scptr_b->generation, 1);
 
@@ -95,16 +95,16 @@ M_TEST_FCT(test_scoped_copyable_ptr)
     // Do not compile : forbidden
 //	scoped_copyable_ptr<C_scoped_copyable_ptr_object>  scptr_c = new C_scoped_copyable_ptr_object;
 
-    scoped_copyable_ptr<C_scoped_copyable_ptr_object>  scptr_c(NULL);
-    M_TEST_EQ(scptr_c.get(), NULL);
+    scoped_copyable_ptr<C_scoped_copyable_ptr_object>  scptr_c(nullptr);
+    M_TEST_NULL(scptr_c.get());
 
     scptr_c = scptr_a;    // deep copy
 
-    M_TEST_NE(scptr_c.get(), NULL);
+    M_TEST_NOT_NULL(scptr_c.get());
     M_TEST_EQ(scptr_c->id, 1);
     M_TEST_EQ(scptr_c->generation, 2);    // deep copy
 
-    M_TEST_NE(scptr_a.get(), NULL);
+    M_TEST_NOT_NULL(scptr_a.get());
     M_TEST_EQ(scptr_a->id, 1);
     M_TEST_EQ(scptr_a->generation, 1);
 
@@ -112,7 +112,7 @@ M_TEST_FCT(test_scoped_copyable_ptr)
     {
         scoped_copyable_ptr<C_scoped_copyable_ptr_object>  scptr_d(scptr_c);    // deep copy
 
-        M_TEST_NE(scptr_d.get(), NULL);
+        M_TEST_NOT_NULL(scptr_d.get());
         M_TEST_EQ(scptr_d->id, 1);
         M_TEST_EQ(scptr_d->generation, 3);    // deep copy
     }
@@ -124,24 +124,24 @@ M_TEST_FCT(test_scoped_copyable_ptr)
     // swap
     swap(scptr_c, scptr_b);
 
-    M_TEST_NE(scptr_b.get(), NULL);
+    M_TEST_NOT_NULL(scptr_b.get());
     M_TEST_EQ(scptr_b->id, 1);
     M_TEST_EQ(scptr_b->generation, 2);
 
-    M_TEST_NE(scptr_c.get(), NULL);
+    M_TEST_NOT_NULL(scptr_c.get());
     M_TEST_EQ(scptr_c->id, 2);
     M_TEST_EQ(scptr_c->generation, 1);
 
     // swap on itself
     swap(scptr_c, scptr_c);
 
-    M_TEST_NE(scptr_c.get(), NULL);
+    M_TEST_NOT_NULL(scptr_c.get());
     M_TEST_EQ(scptr_c->id, 2);
     M_TEST_EQ(scptr_c->generation, 1);
 
     // Destruction reset 
-    scptr_a.reset(NULL);
-    M_TEST_EQ(scptr_a.get(), NULL);
+    scptr_a.reset(nullptr);
+    M_TEST_NULL(scptr_a.get());
 
     M_TEST_EQ(C_scoped_copyable_ptr_object::last_deleted_id, 1);
     M_TEST_EQ(C_scoped_copyable_ptr_object::last_deleted_generation, 1);
@@ -149,7 +149,7 @@ M_TEST_FCT(test_scoped_copyable_ptr)
     // Destruction reset initialize
     scptr_a.reset(new C_scoped_copyable_ptr_object);
 
-    M_TEST_NE(scptr_a.get(), NULL);
+    M_TEST_NOT_NULL(scptr_a.get());
     M_TEST_EQ(scptr_a->id, 3);
     M_TEST_EQ(scptr_a->generation, 1);
 
@@ -160,7 +160,7 @@ M_TEST_FCT(test_scoped_copyable_ptr)
     M_TEST_EQ(C_scoped_copyable_ptr_object::last_deleted_id, 3);
     M_TEST_EQ(C_scoped_copyable_ptr_object::last_deleted_generation, 1);
 
-    M_TEST_NE(scptr_a.get(), NULL);
+    M_TEST_NOT_NULL(scptr_a.get());
     M_TEST_EQ(scptr_a->id, 4);
     M_TEST_EQ(scptr_a->generation, 1);
 }

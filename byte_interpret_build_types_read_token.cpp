@@ -186,9 +186,9 @@ bool       read_token_simple_word_check_unexpected (
     if (read_token_simple_word(is, str_result) == false)
         return  false;
 
-    if (P_unexpected_char != NULL)
+    if (P_unexpected_char != nullptr)
     {
-        if (strpbrk(str_result.c_str(), P_unexpected_char) != NULL)
+        if (strpbrk(str_result.c_str(), P_unexpected_char) != nullptr)
         {
             M_TRACE_ERROR("read_token_simple_word unexpected character into " << str_result);
             return  false;
@@ -223,7 +223,7 @@ bool       read_token_key_word (
     if (str_result == "{")
         return  true;
 
-    if (strchr(str_result.c_str(), '{') != NULL)
+    if (strchr(str_result.c_str(), '{') != nullptr)
     {
         M_TRACE_ERROR("read_token_simple_word unexpected character into " << str_result);
         return  false;

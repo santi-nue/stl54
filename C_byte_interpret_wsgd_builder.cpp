@@ -40,8 +40,8 @@ int     dissector_try_heuristic(T_generic_protocol_data  & protocol_data,
     T_generic_protocol_subdissector_data  & subdissector_data = protocol_data.ws_data.subdissector_data;
 
     /* do lookup with the heuristic subdissector table */
-    heur_dtbl_entry_t *hdtbl_entry = NULL;
-    const int  dissector_result = dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, &hdtbl_entry, NULL);
+    heur_dtbl_entry_t *hdtbl_entry = nullptr;
+    const int  dissector_result = dissector_try_heuristic(subdissector_data.heur_dissector_list, next_tvb, pinfo, tree, &hdtbl_entry, nullptr);
 
     return  dissector_result;
 }
@@ -60,7 +60,7 @@ int   dissector_try_string_return_size(dissector_table_t   sub_dissectors,
     int  dissector_result = 0;    // means nothing done (dissector not found)
 
     dissector_handle_t  dissector_handle = dissector_get_string_handle(sub_dissectors, string);
-    if (dissector_handle != NULL)
+    if (dissector_handle != nullptr)
     {
         dissector_result = call_dissector(dissector_handle, tvb, pinfo, tree);
     }
@@ -82,7 +82,7 @@ int     dissector_try_uint_return_size(dissector_table_t   sub_dissectors,
     int  dissector_result = 0;    // means nothing done (dissector not found)
 
     dissector_handle_t  dissector_handle = dissector_get_uint_handle(sub_dissectors, uint_val);
-    if (dissector_handle != NULL)
+    if (dissector_handle != nullptr)
     {
         dissector_result = call_dissector(dissector_handle, tvb, pinfo, tree);
     }
@@ -104,7 +104,7 @@ int     dissector_try_value(T_generic_protocol_data  & protocol_data,
 {
     int  dissector_result = 0;    // means nothing done (no value or dissector not found)
 
-    if (P_value != NULL)
+    if (P_value != nullptr)
     {
         M_TRACE_DEBUG ("subdissector try *P_value_x=" << P_value->as_string());
         T_generic_protocol_subdissector_data  & subdissector_data = protocol_data.ws_data.subdissector_data;
@@ -176,7 +176,7 @@ int     call_subdissector_or_data2( T_generic_protocol_data  & protocol_data,
     }
 #endif
 
-    if (dissector_to_call_handle != NULL)
+    if (dissector_to_call_handle != nullptr)
     {
         return  call_dissector(dissector_to_call_handle, next_tvb, pinfo, tree);
     }
@@ -789,7 +789,7 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
 
 
             // Compute the handle of the dissector to call
-            dissector_handle_t  dissector_to_call_handle = NULL;
+            dissector_handle_t  dissector_to_call_handle = nullptr;
             if (field_type_name.str_dissector != "")
             {
                 dissector_to_call_handle = find_dissector(field_type_name.str_dissector.c_str());
@@ -835,7 +835,7 @@ C_byte_interpret_wsgd_builder::raw_data(const T_type_definitions  & /* type_defi
                 bit_offset_in_tvbuff,
                 type_bit_size /* field_type_name.basic_type_bit_size */,
                 false,    // ICIOA je suppose que wireshark applique ca seulement aux types adequats
-                NULL,     // l'affichage du texte est fait par Wireshark
+                nullptr,  // l'affichage du texte est fait par Wireshark
                 0);       // no error_code
         }
     }
@@ -928,7 +928,7 @@ C_byte_interpret_wsgd_builder::group_append_text(const T_type_definitions  & /* 
 
     T_wsgd_group_data    group_data = A_wsgd_group_data.back();
 
-    if (group_data.item != NULL)
+    if (group_data.item != nullptr)
     {
         proto_item_append_text(group_data.item, "%s", text.c_str());
     }
@@ -955,7 +955,7 @@ C_byte_interpret_wsgd_builder::group_end(const T_type_definitions  & /* type_def
     A_wsgd_group_data.pop_back();
 
 
-    if (group_data.item != NULL)
+    if (group_data.item != nullptr)
     {
         if ((type_bit_size % 8) != 0)
         {

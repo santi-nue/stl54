@@ -57,7 +57,7 @@ public:
     typedef T element_type;
 
     // Do not use <scoped_copyable_ptr object>.get() as parameter !!!
-    explicit scoped_copyable_ptr(T * p = 0): ptr(p) // never throws
+    explicit scoped_copyable_ptr(T * p = nullptr): ptr(p) // never throws
     {
     }
 
@@ -70,9 +70,9 @@ public:
 #endif
 
     explicit scoped_copyable_ptr(scoped_copyable_ptr const & rhs)
-        :ptr(NULL)
+        :ptr(nullptr)
     {
-        if (rhs.ptr != NULL)
+        if (rhs.ptr != nullptr)
         {
             ptr = new T(*rhs.ptr);
         }
@@ -105,7 +105,7 @@ public:
     }
 
     // Do not use <scoped_copyable_ptr object>.get() as parameter !!!
-    void reset(T * p = 0) // never throws
+    void reset(T * p = nullptr) // never throws
     {
         if (p != ptr)
         {
@@ -131,12 +131,12 @@ public:
 
     bool operator! () const // never throws
     {
-        return ptr == 0;
+        return ptr == nullptr;
     }
 
     operator bool () const
     {
-        return ptr != 0;
+        return ptr != nullptr;
     }
 
     void swap(scoped_copyable_ptr & b) // never throws

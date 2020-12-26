@@ -48,7 +48,7 @@ extern "C" {
 
 // Only 1 data handle for all dissectors.
 // Initialized only once.
-dissector_handle_t  T_generic_protocol_subdissector_data::data_handle = NULL;    // recursive call ok
+dissector_handle_t  T_generic_protocol_subdissector_data::data_handle = nullptr;    // recursive call ok
 
 
 //*****************************************************************************
@@ -68,7 +68,9 @@ void    check_not_already_initialized(const int    val)
 //*****************************************************************************
 void    check_initialized(const string  & val)
 {
-    M_FATAL_IF_EQ(val, "");
+
+
+    M_FATAL_IF_EQ(val, "");  // I like line 73
 }
 void    check_initialized(const int    val)
 {
@@ -100,9 +102,9 @@ void    check_initialized(const vector<int>  & val)
 
 void    dump_hf_data(const hf_register_info  * hf)
 {
-    M_FATAL_IF_FALSE(hf != NULL);
+    M_FATAL_IF_FALSE(hf != nullptr);
 
-    M_FATAL_IF_FALSE(hf->p_id != NULL);
+    M_FATAL_IF_FALSE(hf->p_id != nullptr);
     trace_value_ptr ("c   hf->p_id",  hf->p_id);
     trace_value_int ("c  *hf->p_id", *hf->p_id);
 
@@ -131,8 +133,8 @@ void    dump_hf_data(const hf_register_info  * hf)
     M_FATAL_IF_FALSE(hf->hfinfo.parent == 0);
     M_FATAL_IF_FALSE(hf->hfinfo.ref_count == 0);
     M_FATAL_IF_FALSE(hf->hfinfo.bitshift == 0);
-    M_FATAL_IF_FALSE(hf->hfinfo.same_name_next == NULL);
-    M_FATAL_IF_FALSE(hf->hfinfo.same_name_prev == NULL);
+    M_FATAL_IF_FALSE(hf->hfinfo.same_name_next == nullptr);
+    M_FATAL_IF_FALSE(hf->hfinfo.same_name_prev == nullptr);
 }
 
 //*****************************************************************************
@@ -207,8 +209,8 @@ void    dump_fields_data(const T_generic_protocol_ws_data  * P_protocol_ws_data,
         //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.parent == 0);
         //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.ref_count == 0);
         //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.bitshift == 0);
-        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_next == NULL);
-        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_prev == NULL);
+        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_next == nullptr);
+        //M_FATAL_IF_FALSE(P_protocol_ws_data->fields_data.hf[idx_data].hfinfo.same_name_prev == nullptr);
     }
 }
 #endif
@@ -373,7 +375,7 @@ T_generic_protocol_data  & new_protocol_data(const int   proto_idx)
 
 #undef M_DEFINE_PROTO_FCT
 
-    M_FATAL_IF_EQ(S_protocol_data[proto_idx].ws_data.P_dissect_fct, NULL);
+    M_FATAL_IF_EQ(S_protocol_data[proto_idx].ws_data.P_dissect_fct, nullptr);
 
 
     return  S_protocol_data[proto_idx];
@@ -414,7 +416,7 @@ T_generic_protocol_data  & get_protocol_data_from_proto_abbrev(const char  * pro
 
     M_FATAL_COMMENT("Proto abbrev " << proto_abbrev << " NOT found.");
 
-    return  *(T_generic_protocol_data*)NULL;        // avoid compiler warning
+    return  *(T_generic_protocol_data*)nullptr;        // avoid compiler warning
 }
 
 void    set_max_nb_of_protocol_data(const size_t   max_nb)

@@ -77,7 +77,7 @@ M_TEST_FCT(test_build_field_bitfield_bitstream)
         M_TEST_EQ(field_type_name.condition_expression.get_original_string_expression(), "");
         M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
         M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
-        M_TEST_EQ(field_type_name.P_sub_struct, NULL);
+        M_TEST_NULL(field_type_name.P_sub_struct);
         M_TEST_EQ(field_type_name.sub_struct_2.size(), 0);
         M_TEST_EQ(field_type_name.P_bitfield_inline->is_a_bitstream, false);
         M_TEST_EQ(field_type_name.P_bitfield_inline->master_field.type, "uint16");
@@ -95,14 +95,14 @@ M_TEST_FCT(test_build_field_bitfield_bitstream)
         M_TEST_EQ(field_type_name.P_bitfield_inline->fields_definition[1].is_a_variable(), true);
         M_TEST_EQ(field_type_name.P_bitfield_inline->fields_definition[1].get_var_expression().get_original_string_expression(),
                                                                           "((last_bitfield_value >> 1) & 7)");
-        M_TEST_EQ(field_type_name.P_switch_inline, NULL);
+        M_TEST_NULL(field_type_name.P_switch_inline);
         M_TEST_EQ(field_type_name.wsgd_field_idx, -1);
-        M_TEST_EQ(field_type_name.pf_frame_to_any, NULL);
-        M_TEST_EQ(field_type_name.pf_frame_to_field, NULL);
-        M_TEST_EQ(field_type_name.P_type_enum_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_struct_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_switch_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_bitfield_def, NULL);
+        M_TEST_NULL(field_type_name.pf_frame_to_any);
+        M_TEST_NULL(field_type_name.pf_frame_to_field);
+        M_TEST_NULL(field_type_name.P_type_enum_def);
+        M_TEST_NULL(field_type_name.P_type_struct_def);
+        M_TEST_NULL(field_type_name.P_type_switch_def);
+        M_TEST_NULL(field_type_name.P_type_bitfield_def);
     }
 
     // bitstream inline
@@ -147,7 +147,7 @@ M_TEST_FCT(test_build_field_bitfield_bitstream)
         M_TEST_EQ(field_type_name.condition_expression.get_original_string_expression(), "");
         M_TEST_EQ(field_type_name.return_expression.get_original_string_expression(), "");
         M_TEST_EQ(field_type_name.fct_parameters.size(), 0);
-        M_TEST_EQ(field_type_name.P_sub_struct, NULL);
+        M_TEST_NULL(field_type_name.P_sub_struct);
         M_TEST_EQ(field_type_name.sub_struct_2.size(), 0);
         M_TEST_EQ(field_type_name.P_bitfield_inline->is_a_bitstream, true);
         M_TEST_EQ(field_type_name.P_bitfield_inline->master_field.type, "uint24");
@@ -169,13 +169,13 @@ M_TEST_FCT(test_build_field_bitfield_bitstream)
         M_TEST_EQ(field_type_name.P_bitfield_inline->fields_definition[3].is_a_variable(), true);
         M_TEST_EQ(field_type_name.P_bitfield_inline->fields_definition[3].get_var_expression().get_original_string_expression(),
                                                                           "((last_bitfield_value >> 20) & 7)");
-        M_TEST_EQ(field_type_name.P_switch_inline, NULL);
+        M_TEST_NULL(field_type_name.P_switch_inline);
         M_TEST_EQ(field_type_name.wsgd_field_idx, -1);
-        M_TEST_EQ(field_type_name.pf_frame_to_any, NULL);
-        M_TEST_EQ(field_type_name.pf_frame_to_field, NULL);
-        M_TEST_EQ(field_type_name.P_type_enum_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_struct_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_switch_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_bitfield_def, NULL);
+        M_TEST_NULL(field_type_name.pf_frame_to_any);
+        M_TEST_NULL(field_type_name.pf_frame_to_field);
+        M_TEST_NULL(field_type_name.P_type_enum_def);
+        M_TEST_NULL(field_type_name.P_type_struct_def);
+        M_TEST_NULL(field_type_name.P_type_switch_def);
+        M_TEST_NULL(field_type_name.P_type_bitfield_def);
     }
 }

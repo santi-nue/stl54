@@ -42,7 +42,7 @@ struct T_build_types_context_file
 {
     T_build_types_context_file(string    file_name_param)
         :file_name(file_name_param),
-         P_is(NULL),
+         P_is(nullptr),
          file_line(-1)
     {
     }

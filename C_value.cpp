@@ -471,7 +471,7 @@ char    get_format_percent_letter(const char  * str)
 {
     char    format_percent_letter = '\0';    // nothing found
 
-    while ((str = strchr(str, '%')) != NULL)
+    while ((str = strchr(str, '%')) != nullptr)
     {
         ++str;
 

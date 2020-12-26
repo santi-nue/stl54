@@ -84,15 +84,15 @@ M_TEST_FCT(test_build_field_loop_condition)
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
         M_TEST_EQ(field_type_name.sub_struct_2.size(), 0);
-        M_TEST_EQ(field_type_name.P_bitfield_inline, NULL);
-        M_TEST_EQ(field_type_name.P_switch_inline, NULL);
+        M_TEST_NULL(field_type_name.P_bitfield_inline);
+        M_TEST_NULL(field_type_name.P_switch_inline);
         M_TEST_EQ(field_type_name.wsgd_field_idx, -1);
-        M_TEST_EQ(field_type_name.pf_frame_to_any, NULL);
-        M_TEST_EQ(field_type_name.pf_frame_to_field, NULL);
-        M_TEST_EQ(field_type_name.P_type_enum_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_struct_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_switch_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_bitfield_def, NULL);
+        M_TEST_NULL(field_type_name.pf_frame_to_any);
+        M_TEST_NULL(field_type_name.pf_frame_to_field);
+        M_TEST_NULL(field_type_name.P_type_enum_def);
+        M_TEST_NULL(field_type_name.P_type_struct_def);
+        M_TEST_NULL(field_type_name.P_type_switch_def);
+        M_TEST_NULL(field_type_name.P_type_bitfield_def);
     }
 
     // loop_size_bits
@@ -142,15 +142,15 @@ M_TEST_FCT(test_build_field_loop_condition)
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
         M_TEST_EQ(field_type_name.sub_struct_2.size(), 0);
-        M_TEST_EQ(field_type_name.P_bitfield_inline, NULL);
-        M_TEST_EQ(field_type_name.P_switch_inline, NULL);
+        M_TEST_NULL(field_type_name.P_bitfield_inline);
+        M_TEST_NULL(field_type_name.P_switch_inline);
         M_TEST_EQ(field_type_name.wsgd_field_idx, -1);
-        M_TEST_EQ(field_type_name.pf_frame_to_any, NULL);
-        M_TEST_EQ(field_type_name.pf_frame_to_field, NULL);
-        M_TEST_EQ(field_type_name.P_type_enum_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_struct_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_switch_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_bitfield_def, NULL);
+        M_TEST_NULL(field_type_name.pf_frame_to_any);
+        M_TEST_NULL(field_type_name.pf_frame_to_field);
+        M_TEST_NULL(field_type_name.P_type_enum_def);
+        M_TEST_NULL(field_type_name.P_type_struct_def);
+        M_TEST_NULL(field_type_name.P_type_switch_def);
+        M_TEST_NULL(field_type_name.P_type_bitfield_def);
     }
 
     // if
@@ -200,15 +200,15 @@ M_TEST_FCT(test_build_field_loop_condition)
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
         M_TEST_EQ(field_type_name.sub_struct_2.size(), 0);
-        M_TEST_EQ(field_type_name.P_bitfield_inline, NULL);
-        M_TEST_EQ(field_type_name.P_switch_inline, NULL);
+        M_TEST_NULL(field_type_name.P_bitfield_inline);
+        M_TEST_NULL(field_type_name.P_switch_inline);
         M_TEST_EQ(field_type_name.wsgd_field_idx, -1);
-        M_TEST_EQ(field_type_name.pf_frame_to_any, NULL);
-        M_TEST_EQ(field_type_name.pf_frame_to_field, NULL);
-        M_TEST_EQ(field_type_name.P_type_enum_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_struct_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_switch_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_bitfield_def, NULL);
+        M_TEST_NULL(field_type_name.pf_frame_to_any);
+        M_TEST_NULL(field_type_name.pf_frame_to_field);
+        M_TEST_NULL(field_type_name.P_type_enum_def);
+        M_TEST_NULL(field_type_name.P_type_struct_def);
+        M_TEST_NULL(field_type_name.P_type_switch_def);
+        M_TEST_NULL(field_type_name.P_type_bitfield_def);
     }
 
     // if else
@@ -267,15 +267,15 @@ M_TEST_FCT(test_build_field_loop_condition)
         M_TEST_EQ(field_type_name.sub_struct_2[0].name, "c2");
         M_TEST_EQ(field_type_name.sub_struct_2[1].type, "int13");
         M_TEST_EQ(field_type_name.sub_struct_2[1].name, "c3");
-        M_TEST_EQ(field_type_name.P_bitfield_inline, NULL);
-        M_TEST_EQ(field_type_name.P_switch_inline, NULL);
+        M_TEST_NULL(field_type_name.P_bitfield_inline);
+        M_TEST_NULL(field_type_name.P_switch_inline);
         M_TEST_EQ(field_type_name.wsgd_field_idx, -1);
-        M_TEST_EQ(field_type_name.pf_frame_to_any, NULL);
-        M_TEST_EQ(field_type_name.pf_frame_to_field, NULL);
-        M_TEST_EQ(field_type_name.P_type_enum_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_struct_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_switch_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_bitfield_def, NULL);
+        M_TEST_NULL(field_type_name.pf_frame_to_any);
+        M_TEST_NULL(field_type_name.pf_frame_to_field);
+        M_TEST_NULL(field_type_name.P_type_enum_def);
+        M_TEST_NULL(field_type_name.P_type_struct_def);
+        M_TEST_NULL(field_type_name.P_type_switch_def);
+        M_TEST_NULL(field_type_name.P_type_bitfield_def);
     }
 
     // while
@@ -325,15 +325,15 @@ M_TEST_FCT(test_build_field_loop_condition)
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
         M_TEST_EQ(field_type_name.sub_struct_2.size(), 0);
-        M_TEST_EQ(field_type_name.P_bitfield_inline, NULL);
-        M_TEST_EQ(field_type_name.P_switch_inline, NULL);
+        M_TEST_NULL(field_type_name.P_bitfield_inline);
+        M_TEST_NULL(field_type_name.P_switch_inline);
         M_TEST_EQ(field_type_name.wsgd_field_idx, -1);
-        M_TEST_EQ(field_type_name.pf_frame_to_any, NULL);
-        M_TEST_EQ(field_type_name.pf_frame_to_field, NULL);
-        M_TEST_EQ(field_type_name.P_type_enum_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_struct_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_switch_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_bitfield_def, NULL);
+        M_TEST_NULL(field_type_name.pf_frame_to_any);
+        M_TEST_NULL(field_type_name.pf_frame_to_field);
+        M_TEST_NULL(field_type_name.P_type_enum_def);
+        M_TEST_NULL(field_type_name.P_type_struct_def);
+        M_TEST_NULL(field_type_name.P_type_switch_def);
+        M_TEST_NULL(field_type_name.P_type_bitfield_def);
     }
 
     // do while
@@ -384,14 +384,14 @@ M_TEST_FCT(test_build_field_loop_condition)
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].type, "int8");
         M_TEST_EQ(field_type_name.P_sub_struct->fields[1].name, "c1");
         M_TEST_EQ(field_type_name.sub_struct_2.size(), 0);
-        M_TEST_EQ(field_type_name.P_bitfield_inline, NULL);
-        M_TEST_EQ(field_type_name.P_switch_inline, NULL);
+        M_TEST_NULL(field_type_name.P_bitfield_inline);
+        M_TEST_NULL(field_type_name.P_switch_inline);
         M_TEST_EQ(field_type_name.wsgd_field_idx, -1);
-        M_TEST_EQ(field_type_name.pf_frame_to_any, NULL);
-        M_TEST_EQ(field_type_name.pf_frame_to_field, NULL);
-        M_TEST_EQ(field_type_name.P_type_enum_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_struct_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_switch_def, NULL);
-        M_TEST_EQ(field_type_name.P_type_bitfield_def, NULL);
+        M_TEST_NULL(field_type_name.pf_frame_to_any);
+        M_TEST_NULL(field_type_name.pf_frame_to_field);
+        M_TEST_NULL(field_type_name.P_type_enum_def);
+        M_TEST_NULL(field_type_name.P_type_struct_def);
+        M_TEST_NULL(field_type_name.P_type_switch_def);
+        M_TEST_NULL(field_type_name.P_type_bitfield_def);
     }
 }

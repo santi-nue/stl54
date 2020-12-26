@@ -35,7 +35,7 @@ T_interpret_read_values::T_interpret_read_values()
     , A_msg_pinfo_idx_begin(0)
     , A_msg_pinfo_idx_end(-1)
     , A_msg_other_idx_begin(0)
-    , A_this_msg_attribute_value(C_value(C_value::E_type_msg, NULL))
+    , A_this_msg_attribute_value(C_value(C_value::E_type_msg, nullptr))
     , A_this_msg_attribute_value_used(false)
 {
 }
@@ -44,7 +44,7 @@ bool
 T_interpret_read_values::is_read_variable (const string  & var_name) const
 {
     const T_attribute_value  * P_attr = get_P_attribute_value_of_read_variable(var_name);
-    if (P_attr != NULL)
+    if (P_attr != nullptr)
     {
         return  true;
     }
@@ -56,12 +56,12 @@ const C_value *
 T_interpret_read_values::get_P_value_of_read_variable (const string   & var_name) const
 {
     const T_attribute_value  * P_attr = get_P_attribute_value_of_read_variable(var_name);
-    if (P_attr != NULL)
+    if (P_attr != nullptr)
     {
         return  & P_attr->get_value();
     }
 
-    return  NULL;
+    return  nullptr;
 }
 
 bool
@@ -70,7 +70,7 @@ T_interpret_read_values::get_value_of_read_variable (
                                                   C_value  & out_value) const
 {
     const C_value  * P_value = get_P_value_of_read_variable (var_name);
-    if (P_value == NULL)
+    if (P_value == nullptr)
     {
         out_value = C_value ();
         return  false;
@@ -84,7 +84,7 @@ T_interpret_read_values::get_str_value_of_read_variable (
                                                const string  & var_name) const
 {
     const C_value  * P_value = get_P_value_of_read_variable (var_name);
-    if (P_value == NULL)
+    if (P_value == nullptr)
     {
         static const string  default_str;
         return  default_str;
@@ -98,7 +98,7 @@ T_interpret_read_values::get_int_value_of_read_variable (
                                                long long  & out_value) const
 {
     const C_value  * P_value = get_P_value_of_read_variable (var_name);
-    if (P_value == NULL)
+    if (P_value == nullptr)
     {
         return  false;
     }
@@ -128,7 +128,7 @@ T_interpret_read_values::set_read_variable (const string   & var_name,
     M_TRACE_ENTER("set_read_variable", A_current_path << " " << var_name << " = " << in_value.as_string());
 
     T_attribute_value  * P_attr = const_cast<T_attribute_value*>(get_P_attribute_value_of_read_variable(var_name));
-    if (P_attr == NULL)
+    if (P_attr == nullptr)
     {
         M_FATAL_COMMENT("set of an unknow variable/field (" << var_name << ")");
     }
@@ -235,7 +235,7 @@ T_interpret_read_values::add_ref_variable(const string  & ref_name,
     T_id                       var_id;
     const T_attribute_value  * P_attribute_value = get_P_attribute_value_of_read_variable(var_name, var_id);
 
-    if (P_attribute_value == NULL)
+    if (P_attribute_value == nullptr)
     {
         M_FATAL_COMMENT("in_out parameter on an unknow variable/field (" << var_name << ")");
     }
@@ -325,7 +325,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
             }
             else if (interpret_value.get_type() == T_interpret_value::E_type_msg)
             {
-                const char  * following_name = NULL;
+                const char  * following_name = nullptr;
                 if (full_name.find(interpret_value_name) == 0)
                 {
                     following_name = full_name.c_str() + interpret_value_name.length() + 1;
@@ -334,21 +334,21 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
                 {
                     following_name = var_name.c_str() + interpret_value_name.length() + 1;
                 }
-                if (following_name != NULL)
+                if (following_name != nullptr)
                 {
                     C_value::T_msg    msg = interpret_value.get_attribute_value().get_value().get_msg();
-                    if (msg == NULL)
+                    if (msg == nullptr)
                     {
                         M_FATAL_COMMENT("Message reference " << var_name << " not initialized");
                     }
 
                     const T_interpret_read_values  * P_interpret_read_values_msg = 
                                                  static_cast<const T_interpret_read_values  *>(msg);
-//                    if (P_interpret_read_values_msg == NULL_PTR)
+//                    if (P_interpret_read_values_msg == nullptr)
 //                    {
 //                        M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
 //                                        var_name << ") not found. Bug");
-//                        return  NULL_PTR;
+//                        return  nullptr;
 //                    }
                     const T_attribute_value  * P_attribute_value =
                         P_interpret_read_values_msg->get_P_attribute_value_of_read_variable(following_name);
@@ -406,26 +406,26 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
             }
             else if (interpret_value.get_type() == T_interpret_value::E_type_msg)
             {
-                const char  * following_name = NULL;
+                const char  * following_name = nullptr;
                 if (var_name.find(interpret_value_name) == 0)
                 {
                     following_name = var_name.c_str() + interpret_value_name.length() + 1;
                 }
-                if (following_name != NULL)
+                if (following_name != nullptr)
                 {
                     C_value::T_msg    msg = interpret_value.get_attribute_value().get_value().get_msg();
-                    if (msg == NULL)
+                    if (msg == nullptr)
                     {
                         M_FATAL_COMMENT("Message reference " << var_name << " not initialized");
                     }
 
                     const T_interpret_read_values  * P_interpret_read_values_msg =
                                                  static_cast<const T_interpret_read_values  *>(msg);
-//                    if (P_interpret_read_values_msg == NULL_PTR)
+//                    if (P_interpret_read_values_msg == nullptr)
 //                    {
 //                        M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
 //                                        var_name << ") not found. Bug");
-//                        return  NULL_PTR;
+//                        return  nullptr;
 //                    }
                     const T_attribute_value  * P_attribute_value =
                         P_interpret_read_values_msg->get_P_attribute_value_of_read_variable(following_name);
@@ -463,7 +463,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
     {
         // Check that this_msg has been set.
         // If not, we are into pre-computation, so this_msg is NOT defined.
-        if (A_this_msg_attribute_value.get_value().get_msg() != NULL)
+        if (A_this_msg_attribute_value.get_value().get_msg() != nullptr)
         {
             T_interpret_read_values  * this_not_const = const_cast<T_interpret_read_values*>(this);
             this_not_const->A_this_msg_attribute_value_used = true;
@@ -473,7 +473,7 @@ T_interpret_read_values::get_P_attribute_value_of_read_variable (
         }
     }
 
-    return  NULL;
+    return  nullptr;
 }
 
 const T_interpret_read_values *
@@ -483,7 +483,7 @@ T_interpret_read_values::get_P_interpret_read_values_min_max (
                                                     int     & var_idx_max,
                                                     int     & idx_end_var_name) const
 {
-    const T_interpret_read_values  * P_result = NULL;
+    const T_interpret_read_values  * P_result = nullptr;
     var_idx_min = -1;
     var_idx_max = -1;
     idx_end_var_name = -1;
@@ -554,7 +554,7 @@ T_interpret_read_values::get_P_interpret_read_values_min_max (
         }
         else if (interpret_value.get_type() == T_interpret_value::E_type_msg)
         {
-            const char  * following_name = NULL;
+            const char  * following_name = nullptr;
             if (full_name.find(interpret_value.get_name()) == 0)
             {
                 following_name = full_name.c_str() + interpret_value.get_name().length() + 1;
@@ -563,21 +563,21 @@ T_interpret_read_values::get_P_interpret_read_values_min_max (
             {
                 following_name = var_name.c_str() + interpret_value.get_name().length() + 1;
             }
-            if (following_name != NULL)
+            if (following_name != nullptr)
             {
                 C_value::T_msg    msg = interpret_value.get_attribute_value().get_value().get_msg();
-                if (msg == NULL)
+                if (msg == nullptr)
                 {
                     M_FATAL_COMMENT("Message reference " << var_name << " not initialized");
                 }
 
                 const T_interpret_read_values  * P_interpret_read_values_msg = 
                                              static_cast<const T_interpret_read_values  *>(msg);
-//                if (P_interpret_read_values_msg == NULL_PTR)
+//                if (P_interpret_read_values_msg == nullptr)
 //                {
 //                    M_FATAL_COMMENT("Message id=" << msg_id << " (" <<
 //                                    var_name << ") not found. Bug");
-//                    return  NULL_PTR;
+//                    return  nullptr;
 //                }
                 P_result =
                     P_interpret_read_values_msg->
@@ -632,7 +632,7 @@ T_interpret_read_values::duplicate_multiple_values(
     const T_interpret_read_values  * P_result = 
         get_P_interpret_read_values_min_max (var_name_src, var_idx_min, var_idx_max, idx_end_var_name);
 
-    if (P_result == NULL)
+    if (P_result == nullptr)
     {
         M_FATAL_COMMENT("Field/variable " << var_name_src << " not found.");
     }
@@ -809,7 +809,7 @@ T_interpret_read_values::get_attribute_value_of_read_variable (
                                                const string  & var_name) const
 {
     const T_attribute_value  * P_attr = get_P_attribute_value_of_read_variable(var_name);
-    if (P_attr == NULL)
+    if (P_attr == nullptr)
     {
         static const T_attribute_value  default_attr;
         return  default_attr;

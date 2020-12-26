@@ -35,10 +35,10 @@ void   text_unix_time()
     cout << "CLOCKS_PER_SEC = " << CLOCKS_PER_SEC << endl;  // gives 1000000
 //	cout << "CLK_TCK        = " << CLK_TCK        << endl;
     cout << "clock() = " << clock() << endl;
-    cout << "times() = " << times(NULL) << endl;
+    cout << "times() = " << times(nullptr) << endl;
     sleep(1);
     cout << "clock() = " << clock() << endl;
-    cout << "times() = " << times(NULL) << endl;
+    cout << "times() = " << times(nullptr) << endl;
 }
 #endif
 

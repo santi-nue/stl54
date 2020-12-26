@@ -31,7 +31,7 @@ using namespace std;
 
 T_attribute_value::T_attribute_value()
     :transformed(""),
-     P_error(NULL)
+     P_error(nullptr)
 {
     original = transformed.as_string();
 }
@@ -40,13 +40,13 @@ void
 T_attribute_value::reset()
 {
     transformed = C_value("");
-    P_error = NULL;
+    P_error = nullptr;
     original = transformed.as_string();
 }
 
 T_attribute_value::T_attribute_value(const C_value  & value)
     :transformed(value),
-     P_error(NULL)
+     P_error(nullptr)
 {
     original = transformed.as_string();
 }
@@ -55,17 +55,17 @@ void
 T_attribute_value::reset(const C_value  & value)
 {
     transformed = value;
-    P_error = NULL;
+    P_error = nullptr;
     original = transformed.as_string();
 }
 
 T_attribute_value::T_attribute_value(const T_attribute_value  & rhs)
     :CT_debug_object_counter<T_attribute_value>(rhs),
      transformed(rhs.transformed),
-     P_error(NULL),
+     P_error(nullptr),
      original(rhs.original)
 {
-    if (rhs.P_error != NULL)
+    if (rhs.P_error != nullptr)
     {
         P_error = new string(*rhs.P_error);
     }
@@ -79,12 +79,12 @@ T_attribute_value::operator=(const T_attribute_value  & rhs)
 
     if (rhs.P_error != P_error)
     {
-        if (P_error != NULL)
+        if (P_error != nullptr)
         {
             delete P_error;
-            P_error = NULL;
+            P_error = nullptr;
         }
-        if (rhs.P_error != NULL)
+        if (rhs.P_error != nullptr)
         {
             P_error = new string(*rhs.P_error);
         }
@@ -95,10 +95,10 @@ T_attribute_value::operator=(const T_attribute_value  & rhs)
 
 T_attribute_value::~T_attribute_value()
 {
-    if (P_error != NULL)
+    if (P_error != nullptr)
     {
         delete P_error;
-        P_error = NULL;
+        P_error = nullptr;
     }
 }
 
@@ -108,10 +108,10 @@ T_attribute_value::~T_attribute_value()
 void
 T_attribute_value::set_error(const std::string  & in_error)
 {
-    if (P_error != NULL)
+    if (P_error != nullptr)
     {
         delete P_error;
-        P_error = NULL;
+        P_error = nullptr;
     }
 
     if (in_error.empty() == false)
@@ -199,7 +199,7 @@ string    attribute_value_to_string (const T_attribute_value  & attribute_value)
     if (attribute_value.original != attribute_value.transformed.as_string())
         value_str += " (" + attribute_value.original + ")";
 
-    if (attribute_value.P_error != NULL)
+    if (attribute_value.P_error != nullptr)
         value_str += "\t" + *attribute_value.P_error;
 
     return  value_str;

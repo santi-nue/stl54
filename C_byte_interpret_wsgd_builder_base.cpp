@@ -89,7 +89,7 @@ proto_item  * cpp_dissect_generic_add_item(const int     proto_idx,
 {
     T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
     T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
-    proto_item                  * proto_item_1 = NULL;
+    proto_item                  * proto_item_1 = nullptr;
 
     M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset, field_bit_size);
 
@@ -119,7 +119,7 @@ proto_item  * cpp_dissect_generic_add_item(const int     proto_idx,
                                             little_endian);
 #endif
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         proto_item_set_text(proto_item_1, "%s", text);
     }
@@ -167,7 +167,7 @@ proto_item  * cpp_dissect_generic_add_item_string(
 {
     T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
     T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
-    proto_item                  * proto_item_1 = NULL;
+    proto_item                  * proto_item_1 = nullptr;
 
     M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset, field_bit_size);
 
@@ -221,7 +221,7 @@ proto_item  * cpp_dissect_generic_add_item_uint32(
 {
     T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
     T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
-    proto_item                  * proto_item_1 = NULL;
+    proto_item                  * proto_item_1 = nullptr;
 
     M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset, field_bit_size);
 
@@ -275,7 +275,7 @@ proto_item  * cpp_dissect_generic_add_item_int32(
 {
     T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
     T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
-    proto_item                  * proto_item_1 = NULL;
+    proto_item                  * proto_item_1 = nullptr;
 
     M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset, field_bit_size);
 
@@ -329,7 +329,7 @@ proto_item  * cpp_dissect_generic_add_item_uint64(
 {
     T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
     T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
-    proto_item                  * proto_item_1 = NULL;
+    proto_item                  * proto_item_1 = nullptr;
 
     M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset, field_bit_size);
 
@@ -383,7 +383,7 @@ proto_item  * cpp_dissect_generic_add_item_int64(
 {
     T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
     T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
-    proto_item                  * proto_item_1 = NULL;
+    proto_item                  * proto_item_1 = nullptr;
 
     M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset, field_bit_size);
 
@@ -437,7 +437,7 @@ proto_item  * cpp_dissect_generic_add_item_float(
 {
     T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
     T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
-    proto_item                  * proto_item_1 = NULL;
+    proto_item                  * proto_item_1 = nullptr;
 
     M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset, field_bit_size);
 
@@ -491,7 +491,7 @@ proto_item  * cpp_dissect_generic_add_item_double(
 {
     T_generic_protocol_data     & protocol_data = get_protocol_data(proto_idx);
     T_generic_protocol_ws_data  * P_protocol_ws_data = &protocol_data.ws_data;
-    proto_item                  * proto_item_1 = NULL;
+    proto_item                  * proto_item_1 = nullptr;
 
     M_COMPUTE_BYTE_FROM_BIT_OFFSET_SIZE(bit_offset, field_bit_size);
 
@@ -599,7 +599,7 @@ C_byte_interpret_wsgd_builder_base::missing_data(const T_type_definitions  & /* 
         M_TRACE_INFO("missing_data  bit_offset=" << in_out_frame_data.get_bit_offset_into_initial_frame());
 
         const T_attribute_value* P_attr_MSG_ID_FIELD_NAME = interpret_data.get_P_attribute_value_of_read_variable(protocol_data.MSG_ID_FIELD_NAME);
-        if (P_attr_MSG_ID_FIELD_NAME == NULL)
+        if (P_attr_MSG_ID_FIELD_NAME == nullptr)
         {
             // Perhaps the header has not been entirely read ?
             M_TRACE_WARNING("Did NOT find " << protocol_data.MSG_ID_FIELD_NAME << " (MSG_ID_FIELD_NAME) ?");

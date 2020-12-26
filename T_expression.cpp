@@ -516,11 +516,11 @@ T_expression::build_expression_words(
         }
         else
 #endif
-        const T_function_definition  * P_fct = NULL_PTR;
+        const T_function_definition  * P_fct = nullptr;
         if ((function_name != "print"))
         {
             P_fct = type_definitions.get_P_function(function_name);
-            if (P_fct == NULL_PTR)
+            if (P_fct == nullptr)
             {
                 M_FATAL_COMMENT("Function " << function_name << " does not exist.");
             }
@@ -556,7 +556,7 @@ T_expression::build_expression_words(
             // voir si param 0 calculable
             //   + promote
         }
-        else if (P_fct != NULL_PTR)
+        else if (P_fct != nullptr)
         {
             // Check the number of parameters
             if (static_cast<int>(fct_parameters.size()) < P_fct->get_nb_of_mandatory_parameters())
@@ -1246,7 +1246,7 @@ T_expression::compute_expression_function(
     else if (A_variable_or_function_name == "getenv")
     {
         const char  * env_value = getenv(P_parameter_values[0]->as_string().c_str());
-        A_value = (env_value == NULL_PTR) ? "" : env_value;
+        A_value = (env_value == nullptr) ? "" : env_value;
     }
     else if (A_variable_or_function_name == "string.length")
     {
@@ -1388,7 +1388,7 @@ T_expression::compute_expression_function(
     else
     {
         const T_function_definition  * P_fct = type_definitions.get_P_function(A_variable_or_function_name);
-        if (P_fct == NULL_PTR)
+        if (P_fct == nullptr)
         {
             M_FATAL_COMMENT("Function " << A_variable_or_function_name << " does not exist.");
         }

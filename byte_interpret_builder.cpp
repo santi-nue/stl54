@@ -32,7 +32,7 @@
 // The builder.
 //*****************************************************************************
 
-static C_byte_interpret_builder  * S_P_builder = NULL;    // recursive call ok
+static C_byte_interpret_builder  * S_P_builder = nullptr;    // recursive call ok
 
 
 //*****************************************************************************
@@ -105,10 +105,10 @@ void    interpret_builder_begin(const T_type_definitions  & type_definitions)
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_begin_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_begin_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_begin_cb)(
-                    NULL);
+                    nullptr);
             }
         }
     }
@@ -132,7 +132,7 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
 {
     M_TRACE_CHECK();
 
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->value (type_definitions, in_out_frame_data,
                              field_type_name, data_name, data_simple_name,
@@ -144,7 +144,7 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
 
     if (type_definitions.vector_plugin_output_definition.empty() == false)
     {
-        const char  * P_error = NULL;
+        const char  * P_error = nullptr;
         if (attribute_value.has_error())
         {
             P_error = attribute_value.get_P_error()->c_str();
@@ -159,12 +159,12 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
 
             if (attribute_value.get_value().get_type() == C_value::E_type_float)
             {
-                if (plugin.byte_interpret_plugin_output_value_float_cb != NULL)
+                if (plugin.byte_interpret_plugin_output_value_float_cb != nullptr)
                 {
                     M_TRACE_ENTER ("byte_interpret_plugin_output_value_float_cb", "");
                     (*plugin.byte_interpret_plugin_output_value_float_cb)(
-                        NULL,
-                        NULL,
+                        nullptr,
+                        nullptr,
                         field_type_name.type.c_str(),
                         data_name.c_str(),
                         field_type_name.name.c_str(),
@@ -176,12 +176,12 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
             }
             else if (attribute_value.get_value().get_type() == C_value::E_type_integer)
             {
-                if (plugin.byte_interpret_plugin_output_value_integer_cb != NULL)
+                if (plugin.byte_interpret_plugin_output_value_integer_cb != nullptr)
                 {
                     M_TRACE_ENTER ("byte_interpret_plugin_output_value_integer_cb", "");
                     (*plugin.byte_interpret_plugin_output_value_integer_cb)(
-                        NULL,
-                        NULL,
+                        nullptr,
+                        nullptr,
                         field_type_name.type.c_str(),
                         data_name.c_str(),
                         field_type_name.name.c_str(),
@@ -193,12 +193,12 @@ void    interpret_builder_value(    const T_type_definitions  & type_definitions
             }
             else if (attribute_value.get_value().get_type() == C_value::E_type_string)
             {
-                if (plugin.byte_interpret_plugin_output_value_string_cb != NULL)
+                if (plugin.byte_interpret_plugin_output_value_string_cb != nullptr)
                 {
                     M_TRACE_ENTER ("byte_interpret_plugin_output_value_string_cb", "");
                     (*plugin.byte_interpret_plugin_output_value_string_cb)(
-                        NULL,
-                        NULL,
+                        nullptr,
+                        nullptr,
                         field_type_name.type.c_str(),
                         data_name.c_str(),
                         field_type_name.name.c_str(),
@@ -228,7 +228,7 @@ void    interpret_builder_raw_data( const T_type_definitions  & type_definitions
 {
     M_TRACE_CHECK();
 
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->raw_data (type_definitions, in_out_frame_data, interpret_data,
                               field_type_name, data_name, data_simple_name,
@@ -247,11 +247,11 @@ void    interpret_builder_raw_data( const T_type_definitions  & type_definitions
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_raw_data_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_raw_data_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_raw_data_cb)(
-                        NULL,
-                        NULL,
+                        nullptr,
+                        nullptr,
                         field_type_name.type.c_str(),
                         data_name.c_str(),
                         field_type_name.name.c_str(),
@@ -273,7 +273,7 @@ void    interpret_builder_group_begin(const T_type_definitions  & type_definitio
 {
     M_TRACE_CHECK();
 
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->group_begin (type_definitions, in_out_frame_data,
                                   field_type_name, data_name, data_simple_name);
@@ -289,11 +289,11 @@ void    interpret_builder_group_begin(const T_type_definitions  & type_definitio
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_group_begin_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_group_begin_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_group_begin_cb)(
-                    NULL,
-                    NULL,
+                    nullptr,
+                    nullptr,
                     field_type_name.type.c_str(),
                     data_name.c_str(),
                     field_type_name.name.c_str());
@@ -312,7 +312,7 @@ void    interpret_builder_group_append_text(const T_type_definitions  & type_def
                                             const string              & data_simple_name,
                                             const string              & text)
 {
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->group_append_text (type_definitions, in_out_frame_data,
                                         data_name, data_simple_name, text);
@@ -328,11 +328,11 @@ void    interpret_builder_group_append_text(const T_type_definitions  & type_def
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_group_append_text_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_group_append_text_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_group_append_text_cb)(
-                    NULL,
-                    NULL,
+                    nullptr,
+                    nullptr,
                     data_name.c_str(),
                     data_simple_name.c_str(),
                     text.c_str());
@@ -354,7 +354,7 @@ void    interpret_builder_group_end(const T_type_definitions  & type_definitions
 {
     M_TRACE_CHECK();
 
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->group_end (type_definitions, in_out_frame_data,
                              field_type_name, data_name, data_simple_name, type_bit_size);
@@ -370,11 +370,11 @@ void    interpret_builder_group_end(const T_type_definitions  & type_definitions
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_group_end_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_group_end_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_group_end_cb)(
-                    NULL,
-                    NULL,
+                    nullptr,
+                    nullptr,
                     field_type_name.type.c_str(),
                     data_name.c_str(),
                     field_type_name.name.c_str());
@@ -396,7 +396,7 @@ void    interpret_builder_error    (const T_type_definitions  & type_definitions
 {
     M_TRACE_CHECK();
 
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->error (type_definitions, in_out_frame_data,
                             field_type_name, data_name, data_simple_name,
@@ -413,11 +413,11 @@ void    interpret_builder_error    (const T_type_definitions  & type_definitions
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_error_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_error_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_error_cb)(
-                    NULL,
-                    NULL,
+                    nullptr,
+                    nullptr,
                     data_name.c_str(),
                     field_type_name.name.c_str(),
                     error.c_str());
@@ -440,7 +440,7 @@ void    interpret_builder_missing_data( const T_type_definitions  & type_definit
 {
     M_TRACE_CHECK();
 
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->missing_data (type_definitions, in_out_frame_data, interpret_data,
                             field_type_name, data_name, data_simple_name,
@@ -457,11 +457,11 @@ void    interpret_builder_missing_data( const T_type_definitions  & type_definit
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_missing_data_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_missing_data_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_missing_data_cb)(
-                    NULL,
-                    NULL,
+                    nullptr,
+                    nullptr,
                     field_type_name.type.c_str(),
                     data_name.c_str(),
                     field_type_name.name.c_str(),
@@ -481,7 +481,7 @@ void    interpret_builder_cmd_error(const T_type_definitions  & type_definitions
                                     const string              & data_name,
                                     const string              & text_to_print)
 {
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->cmd_error (type_definitions, in_out_frame_data,
                              field_type_name, data_name, text_to_print);
@@ -497,11 +497,11 @@ void    interpret_builder_cmd_error(const T_type_definitions  & type_definitions
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_cmd_error_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_cmd_error_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_cmd_error_cb)(
-                    NULL,
-                    NULL,
+                    nullptr,
+                    nullptr,
                     data_name.c_str(),
                     field_type_name.name.c_str(),
                     text_to_print.c_str());
@@ -520,7 +520,7 @@ void    interpret_builder_cmd_print(const T_type_definitions  & type_definitions
                                     const string              & data_name,
                                     const string              & text_to_print)
 {
-    if (S_P_builder != NULL)
+    if (S_P_builder != nullptr)
     {
         S_P_builder->cmd_print (type_definitions, in_out_frame_data,
                                 field_type_name, data_name, text_to_print);
@@ -536,11 +536,11 @@ void    interpret_builder_cmd_print(const T_type_definitions  & type_definitions
         {
             const T_plugin_output_definition  & plugin = *iter;
 
-            if (plugin.byte_interpret_plugin_output_cmd_print_cb != NULL)
+            if (plugin.byte_interpret_plugin_output_cmd_print_cb != nullptr)
             {
                 (*plugin.byte_interpret_plugin_output_cmd_print_cb)(
-                    NULL,
-                    NULL,
+                    nullptr,
+                    nullptr,
                     data_name.c_str(),
                     field_type_name.name.c_str(),
                     text_to_print.c_str());

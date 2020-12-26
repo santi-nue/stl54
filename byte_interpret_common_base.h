@@ -79,8 +79,6 @@ typedef unsigned long long    ulonglong;
 
 typedef unsigned char   T_byte;
 
-#define NULL_PTR  0
-
 #ifdef FRHED
 #define endl "\r\n"
 #endif
@@ -105,6 +103,15 @@ enum E_return_code
 // NB: from foundation/csc_common
 #define M_SIZE_TAB(array) (sizeof(array)/sizeof(array[0]))
 
+
+//****************************************************************************
+// ostream << nullptr
+//****************************************************************************
+inline
+std::ostream& operator << (std::ostream& os, std::nullptr_t)
+{
+    return os << "nullptr";
+}
 
 //****************************************************************************
 // get_string

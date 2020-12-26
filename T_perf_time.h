@@ -45,7 +45,7 @@ public:
 #ifdef WIN32
         ftime (&A_perf_time);
 #else
-        A_perf_times = times(NULL);
+        A_perf_times = times(nullptr);
         A_perf_clock = clock();
 #endif
     }

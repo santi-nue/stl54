@@ -30,9 +30,9 @@ using namespace std;
 //*****************************************************************************
 
 T_frame_data::T_frame_data()
-    :A_P_bytes (NULL),
+    :A_P_bytes (nullptr),
      A_remaining_bits (0),
-     A_initial_P_bytes (NULL),
+     A_initial_P_bytes (nullptr),
      A_bit_offset_in_1st_byte (0),
      A_initial_sizeof_bits (0),
      A_initial_frame_starting_bit_offset (0)
@@ -209,7 +209,7 @@ void
 T_frame_data::read_n_bytes(short  n_bytes, void  * P_n_bytes_read_void)
 {
     M_FATAL_IF_LT(n_bytes, 1);
-    M_FATAL_IF_EQ(P_n_bytes_read_void, NULL);
+    M_FATAL_IF_NULL(P_n_bytes_read_void);
 
     const short    n_bits = n_bytes * 8;
 
@@ -303,7 +303,7 @@ void
 T_frame_data::read_n_bits(short  n_bits, void  * P_n_bytes_read_void, short  n_bytes_read)
 {
     M_FATAL_IF_LT(n_bits, 1);
-    M_FATAL_IF_EQ(P_n_bytes_read_void, NULL);
+    M_FATAL_IF_NULL(P_n_bytes_read_void);
     M_FATAL_IF_LT(n_bytes_read, 1);
 
     // I suppose that n_bytes_read is enough AND not more.

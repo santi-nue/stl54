@@ -65,7 +65,7 @@ struct T_decode_stream_frame
 
 struct T_interpret_inside_frame : public CT_debug_object_counter<T_interpret_inside_frame>
 {
-    // Fatal if AP_decode_stream_frame is NULL
+    // Fatal if AP_decode_stream_frame is nullptr
     T_decode_stream_frame &  get_decode_stream_frame() const;
     T_decode_stream_frame *  get_P_decode_stream_frame() const { return  AP_decode_stream_frame; }
 
@@ -73,7 +73,7 @@ struct T_interpret_inside_frame : public CT_debug_object_counter<T_interpret_ins
 
 
     T_interpret_inside_frame ()
-        :AP_decode_stream_frame (NULL)
+        :AP_decode_stream_frame (nullptr)
     {
     }
 

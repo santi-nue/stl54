@@ -74,7 +74,7 @@ E_return_code    get_complex_value (const T_type_definitions  & type_definitions
 
         if (real_value_str == value_str)
         {
-            if (strchr(value_str.c_str(), '*') != NULL_PTR)
+            if (strchr(value_str.c_str(), '*') != nullptr)
             {
                 return  E_rc_multiple_value;
             }

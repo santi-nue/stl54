@@ -97,6 +97,12 @@ void fct_name()
         if (get_trim(VAL1) != get_trim(VAL2))                                 \
             M_TEST_failure(VAL1, !=, VAL2)
 
+//*****************************************************************************
+// Test macro for pointer
+//*****************************************************************************
+
+#define M_TEST_NULL(PTR)        M_TEST_EQ(PTR, NULL)
+#define M_TEST_NOT_NULL(PTR)    M_TEST_NE(PTR, NULL)
 
 //*****************************************************************************
 // Test macro.

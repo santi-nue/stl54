@@ -19,6 +19,7 @@ set(DISSECTOR_CORE_UT_SRC
 	T_frame_data.cpp T_frame_data.h
 	T_frame_data_write.cpp T_frame_data_write.h
 	T_type_definitions.cpp T_type_definitions.h
+	C_reference_counter_ptr.h C_reference_counter.h
 	C_value.cpp C_value.h
 	C_setlocale_numeric_C_guard.cpp C_setlocale_numeric_C_guard.h
 	byte_interpret_builder.cpp byte_interpret_builder.h
@@ -32,6 +33,8 @@ set(DISSECTOR_CORE_UT_SRC
 	byte_interpret_common_fatal.cpp byte_interpret_common_fatal.h
 	byte_interpret_common_trace.cpp byte_interpret_common_trace.h
 	byte_interpret_common_utils.h
+	byte_interpret_plugin_output.h
+	scoped_copyable_ptr.h
 	CT_debug_object_counter.cpp CT_debug_object_counter.h
 	shark_wsutil_aes.c shark_wsutil_aes.h
 )

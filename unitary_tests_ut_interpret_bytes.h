@@ -62,7 +62,7 @@ void ut_interpret_bytes (const T_type_definitions  & type_definitions,
                          const T_byte_vector       & in_byte_vector,
                          const string              & in_input_string,
                                T_interpret_data    & interpret_data,
-                         const char                * output_expected = NULL);
+                         const char                * output_expected = nullptr);
 
 //*****************************************************************************
 // ut_interpret_bytes *********************************************************
@@ -72,7 +72,7 @@ void ut_interpret_bytes (const T_type_definitions  & type_definitions,
                          const char                * in_hexa_str_param,
                          const string              & in_input_string,
                                T_interpret_data    & interpret_data,
-                         const char                * output_expected = NULL);
+                         const char                * output_expected = nullptr);
 
 //*****************************************************************************
 // M_TEST_SIMPLE call ut_interpret_bytes with type_definitions & interpret_data

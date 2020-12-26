@@ -97,6 +97,8 @@ void    fatal_pb (const string  & lhs,
                   __FILE__, __LINE__);                                        \
     }
 
+#define M_FATAL_IF_NULL(lhs)   M_FATAL_IF_EQ(lhs, nullptr)
+
 #define M_FATAL_COMMENT(comment)                                              \
     {                                                                         \
         std::ostringstream  M_FATAL_COMMENT_oss;                              \

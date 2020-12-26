@@ -95,8 +95,8 @@ struct T_generic_protocol_subdissector_data : public CT_debug_object_counter<T_g
   dissector_handle_t     data_handle;
 
   T_generic_protocol_subdissector_data()
-      :dissector_table (NULL),
-       heur_dissector_list (NULL),
+      :dissector_table (nullptr),
+       heur_dissector_list (nullptr),
        try_heuristic_first (FALSE)
   { }
 };
@@ -162,8 +162,8 @@ struct T_generic_protocol_ws_data : public CT_debug_object_counter<T_generic_pro
 
   T_generic_protocol_ws_data()
       :proto_generic (-1),
-       P_dissect_fct (NULL),
-       dissector_handle (NULL)
+       P_dissect_fct (nullptr),
+       dissector_handle (nullptr)
   { }
 };
 

@@ -486,7 +486,7 @@ void    post_build_field_base (
 
     const T_enum_definition_representation  * P_enum = type_definitions.get_P_enum(field_type_name.type);
 
-    if (P_enum != NULL)
+    if (P_enum != nullptr)
     {
         field_type_name.basic_type_bit_size = P_enum->bit_size;
     }
@@ -535,8 +535,8 @@ const char *  build_struct_fields (
              const T_type_definitions                & type_definitions,
                    T_struct_fields                   & struct_fields,
              const char                              * end_flag1,
-             const char                              * end_flag2 = NULL_PTR,
-             const char                              * end_flag3 = NULL_PTR,
+             const char                              * end_flag2 = nullptr,
+             const char                              * end_flag3 = nullptr,
                    E_field_scope                       field_scope = E_field_scope_other,
              const char                              * return_type = "void");
 
@@ -908,7 +908,7 @@ string    build_field (istream                           & is,
         if (decoder_function_name != "")
         {
             const T_function_definition  * P_fct_def = type_definitions.get_P_function(decoder_function_name);
-            if (P_fct_def == NULL)
+            if (P_fct_def == nullptr)
             {
                 M_FATAL_COMMENT(decoder_function_name << " is not a function.");
             }
@@ -948,8 +948,8 @@ string    build_field (istream                           & is,
         build_struct_fields (is, type_definitions,
                              field_type_name.P_sub_struct->fields,
                              "}",
-                             NULL_PTR,
-                             NULL_PTR,
+                             nullptr,
+                             nullptr,
                              field_scope,
                              return_type);
 
@@ -966,8 +966,8 @@ string    build_field (istream                           & is,
             build_struct_fields (is, type_definitions,
                                field_type_name.sub_struct_2,
                                "}",
-                               NULL_PTR,
-                               NULL_PTR,
+                               nullptr,
+                               nullptr,
                                field_scope,
                                return_type);
         }
@@ -1117,10 +1117,10 @@ const char *  build_struct_fields (
 {
     M_TRACE_ENTER ("build_struct_fields", "");
 
-    if (end_flag2 == NULL_PTR)
+    if (end_flag2 == nullptr)
         end_flag2 = end_flag1;
 
-    if (end_flag3 == NULL_PTR)
+    if (end_flag3 == nullptr)
         end_flag3 = end_flag1;
 
     string    last_word_read;
@@ -1176,8 +1176,8 @@ void    build_struct_base ( istream              & is,
                        type_definitions,
                        struct_definition.fields,
                        "}",
-                       NULL_PTR,
-                       NULL_PTR,
+                       nullptr,
+                       nullptr,
                        E_field_scope_other,
                        return_type);
 
@@ -1327,7 +1327,7 @@ void    build_bitfield_unnamed_helper (
         // Could not initialize an array with 1 expression
         M_FATAL_IF_NE(field_type_name.is_an_array(), false);
 
-        const T_enum_definition_representation  * P_enum = NULL;
+        const T_enum_definition_representation  * P_enum = nullptr;
 
         long    sizeof_bitfield_field = 0;
         if (strncmp(field_type_name.type.c_str(), "uint", 4) == 0)
@@ -1336,7 +1336,7 @@ void    build_bitfield_unnamed_helper (
                                           &sizeof_bitfield_field));
             field_type_name.type = "uint32";
         }
-        else if ((P_enum = type_definitions.get_P_enum(field_type_name.type)) != NULL)
+        else if ((P_enum = type_definitions.get_P_enum(field_type_name.type)) != nullptr)
         {
             sizeof_bitfield_field = P_enum->bit_size;
         }
@@ -1411,8 +1411,8 @@ void    build_bitfield_unnamed (
     build_struct_fields (is, type_definitions,
                          def_rep.fields_definition,
                          "}",
-                         NULL_PTR,
-                         NULL_PTR,
+                         nullptr,
+                         nullptr,
                          E_field_scope_bitfield);
 
     build_bitfield_unnamed_helper(def_rep.is_a_bitstream, sizeof_bitfield_total, type_definitions, def_rep);
@@ -1907,7 +1907,7 @@ void    build_function_after_prototype (
     read_token_key_word_specified (is, "{");
 
     build_struct_fields(is, type_definitions, function_def.fields,
-                        "}", NULL_PTR, NULL_PTR,
+                        "}", nullptr, nullptr,
                         E_field_scope_other,
                         function_def.return_type.c_str());
 
@@ -1997,7 +1997,7 @@ void    build_plugin_output (const E_override            UNUSED(must_override),
 
     GModule   *handle = g_module_open(filename.c_str(), (GModuleFlags)G_MODULE_BIND_LAZY);
 
-    if (handle == NULL)
+    if (handle == nullptr)
     {
         const char  * error = g_module_error ();
         M_FATAL_COMMENT(filename << " not found or not a readable libray : " << error);
@@ -2143,7 +2143,7 @@ void    build_library  (const E_override            must_override,
 
 
     // Load library from one of the library_filenames 
-    T_library_definition  * P_library_def = NULL;
+    T_library_definition  * P_library_def = nullptr;
     string   libraries_not_found;
     string   libraries_not_loadable;
 
@@ -2173,7 +2173,7 @@ void    build_library  (const E_override            must_override,
         }
 
         void  * DLLib_handle = dlLoadLibrary (library_filename.c_str());
-        if (DLLib_handle == NULL)
+        if (DLLib_handle == nullptr)
         {
             M_TRACE_DEBUG(library_filename << " not a loadable library");
             libraries_not_loadable += " >";
@@ -2189,7 +2189,7 @@ void    build_library  (const E_override            must_override,
         break;
     }
 
-    if (P_library_def == NULL)
+    if (P_library_def == nullptr)
     {
         ostringstream  oss;
         if (libraries_not_loadable != "")
@@ -2224,7 +2224,7 @@ void    build_library  (const E_override            must_override,
         read_token_key_word_specified(is, ";");
 
         library_function_def.funptr = dlFindSymbol((DLLib*)P_library_def->DLLib_handle , library_function_def.name.c_str());
-        if (library_function_def.funptr == NULL)
+        if (library_function_def.funptr == nullptr)
         {
             M_FATAL_COMMENT(library_function_def.name << " not found into " << P_library_def->full_name << " library");
         }

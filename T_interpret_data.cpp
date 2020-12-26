@@ -69,7 +69,7 @@ void    swap(T_interpret_data  & lhs,
 // C_interpret_data_set_temporary
 //*****************************************************************************
 #if 0
-static T_interpret_data  * S_P_interpret_data = NULL;    // recursive call ok
+static T_interpret_data  * S_P_interpret_data = nullptr;    // recursive call ok
 
 C_interpret_data_set_temporary::C_interpret_data_set_temporary(T_interpret_data  & interpret_data)
     :previous_value(S_P_interpret_data),
@@ -116,7 +116,7 @@ C_interpret_data_set_temporary::forget()
 
 T_interpret_data  & get_interpret_data()
 {
-    M_FATAL_IF_FALSE(S_P_interpret_data != NULL);
+    M_FATAL_IF_FALSE(S_P_interpret_data != nullptr);
     return  * S_P_interpret_data;
 }
 

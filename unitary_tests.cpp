@@ -91,7 +91,7 @@ void    test_interpret_simple_uint8_array(const int  max_iter)
                            "4249472d5245515545535453" "4249472d5245515545535453",
                            "uint8[240]  val ;",
                            interpret_data,
-                           NULL);
+                           nullptr);
     }
 }
 

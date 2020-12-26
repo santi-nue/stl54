@@ -163,7 +163,7 @@ private:
 
         T_wsgd_group_data (proto_tree  * proto_tree_param)
             :tree (proto_tree_param),
-             item (NULL)
+             item (nullptr)
         { }
     };
 

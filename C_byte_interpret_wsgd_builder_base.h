@@ -181,10 +181,10 @@ protected:
 
         T_interpret_wsgd ()
             :proto_idx (-1),
-             wsgd_tvb (NULL),
-             wsgd_pinfo (NULL),
-             wsgd_tree (NULL),
-             wsgd_msg_root_tree (NULL)
+             wsgd_tvb (nullptr),
+             wsgd_pinfo (nullptr),
+             wsgd_tree (nullptr),
+             wsgd_msg_root_tree (nullptr)
         {
         }
     };

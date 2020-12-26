@@ -129,7 +129,7 @@ bool    is_frame_hexa_file_name (const string  & file_name)
 
 bool    is_frame_hexa_dump_file_name (const char  * file_name)
 {
-    return  strstr (file_name, ".fhexd") != NULL_PTR;
+    return  strstr (file_name, ".fhexd") != nullptr;
 }
 
 bool    is_frame_hexa_dump_file_name (const string  & file_name)
@@ -292,7 +292,7 @@ int   main (int  argc, const char * const  argv[])
     }
 
     // Lecture des types.
-    istream  * P_istream = NULL_PTR;
+    istream  * P_istream = nullptr;
     string     types_and_commands;
 
     if (strcmp (argv[arg_idx], "-help_syntax") == 0)
@@ -453,7 +453,7 @@ int   main (int  argc, const char * const  argv[])
     // Do not use cerr to avoid order problems between cout and cerr.
     ostream  & os_err = cout;
 
-    const T_byte  * P_bytes = byte_vector.size () ? &byte_vector[0] : NULL;
+    const T_byte  * P_bytes = byte_vector.size () ? &byte_vector[0] : nullptr;
     size_t          sizeof_bytes = byte_vector.size ();
 
     bool    result = build_types_and_interpret_bytes (P_bytes, sizeof_bytes,

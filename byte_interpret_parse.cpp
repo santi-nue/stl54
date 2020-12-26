@@ -613,7 +613,7 @@ void    bin_file_to_frame (const string         & file_name,
 
     // 
     FILE  * file = fopen (file_name.c_str(), "rb");
-    M_ASSERT_NE (file, NULL_PTR);
+    M_ASSERT_NE (file, nullptr);
 
     const size_t  nb_read = fread (&frame[0], size_file, 1, file);
     M_ASSERT_EQ (nb_read, 1);
@@ -631,24 +631,24 @@ void    bin_file_to_frame (const string         & file_name,
 bool    get_number (const char*   word,
                           long*   P_number)
 {
-    if (P_number != NULL_PTR)
+    if (P_number != nullptr)
         *P_number = 0;
 
     if (strcmp(word, "") == 0)
         return  false;
 
     long    number = 0;
-    char*   endptr = NULL_PTR;
+    char*   endptr = nullptr;
 
     errno = 0;
     number = strtol(word, &endptr, 0);
 
     if ((errno != 0) ||
-        (endptr == NULL_PTR) ||
+        (endptr == nullptr) ||
         (*endptr != '\0'))
         return  false;
 
-    if (P_number != NULL_PTR)
+    if (P_number != nullptr)
         *P_number = number;
 
     return  true;
@@ -669,7 +669,7 @@ bool    get_number (const char*        word,
     if (strcmp(word, "") == 0)
         return  false;
 
-    char*   endptr = NULL_PTR;
+    char*   endptr = nullptr;
 
     errno = 0;
 #if defined WIN32
@@ -679,7 +679,7 @@ bool    get_number (const char*        word,
 #endif
 
     if ((errno != 0) ||
-        (endptr == NULL_PTR) ||
+        (endptr == nullptr) ||
         (*endptr != '\0'))
         return  false;
 
@@ -694,13 +694,13 @@ bool    get_number (const char*        word,
     if (strcmp (word,"") == 0)
         return  false;
 
-    char*   endptr = NULL_PTR;
+    char*   endptr = nullptr;
 
     errno = 0;
     out_number = strtod (word, &endptr);
 
     if ((errno != 0) ||
-        (endptr == NULL_PTR) ||
+        (endptr == nullptr) ||
         (*endptr != '\0'))
         return  false;
 

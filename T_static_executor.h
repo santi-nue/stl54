@@ -30,7 +30,7 @@ public:
 private:
     void do_register();
 
-    void(*m_test_fct)() = NULL;
+    void(*m_test_fct)() = nullptr;
     std::string m_file_name;
     std::string m_fct_name;
     std::string m_label;

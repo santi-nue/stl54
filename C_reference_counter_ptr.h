@@ -61,7 +61,7 @@ public:
     //---------------------------------------------------------------------------
     //! Default constructor.
     //---------------------------------------------------------------------------
-    C_reference_counter_ptr() : _p_object(NULL_PTR) {}
+    C_reference_counter_ptr() : _p_object(nullptr) {}
 
     //---------------------------------------------------------------------------
     //! Copy constructor.
@@ -119,7 +119,7 @@ public:
     //---------------------------------------------------------------------------
     bool  operator! () const
     {
-        return  _p_object == NULL_PTR;
+        return  _p_object == nullptr;
     }
 
     //---------------------------------------------------------------------------
@@ -152,7 +152,7 @@ private:
             // add_ref ();
             // Previous code is simpler but less performant.
 
-            if (_p_object != NULL_PTR)
+            if (_p_object != nullptr)
             {
                 C_reference_counter_ptr_release(_p_object);
                 _p_object = p_object;
@@ -160,9 +160,9 @@ private:
             }
             else
             {
-                // _p_object == NULL_PTR, so :
+                // _p_object == nullptr, so :
                 // - C_reference_counter_ptr_release is forbidden
-                // - p_object != NULL_PTR
+                // - p_object != nullptr
                 _p_object = p_object;
                 C_reference_counter_ptr_add_ref(_p_object);
             }
@@ -175,7 +175,7 @@ private:
     inline
     void    add_ref()
     {
-        if (_p_object != NULL_PTR)
+        if (_p_object != nullptr)
             C_reference_counter_ptr_add_ref(_p_object);
     }
 
@@ -185,10 +185,10 @@ private:
     inline
     void    sup_ref()
     {
-        if (_p_object != NULL_PTR)
+        if (_p_object != nullptr)
         {
             C_reference_counter_ptr_release(_p_object);
-            _p_object = NULL_PTR;
+            _p_object = nullptr;
         }
     }
 

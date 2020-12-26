@@ -84,7 +84,7 @@ void
 T_frame_data_write::write_n_bytes(short  n_bytes, const void  * P_n_bytes_write_void)
 {
     M_FATAL_IF_LT(n_bytes, 1);
-    M_FATAL_IF_EQ(P_n_bytes_write_void, NULL);
+    M_FATAL_IF_NULL(P_n_bytes_write_void);
 
     const short    n_bits = n_bytes * 8;
 
@@ -198,7 +198,7 @@ void
 T_frame_data_write::write_n_bits(short  n_bits, const void  * P_n_bytes_write_void, short  n_bytes_write)
 {
     M_FATAL_IF_LT(n_bits, 1);
-    M_FATAL_IF_EQ(P_n_bytes_write_void, NULL);
+    M_FATAL_IF_NULL(P_n_bytes_write_void);
     M_FATAL_IF_LT(n_bytes_write, 1);
 
     // I suppose that n_bytes_write is enough AND not more.

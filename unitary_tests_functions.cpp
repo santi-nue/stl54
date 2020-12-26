@@ -36,8 +36,8 @@ using namespace std;
 //*****************************************************************************
 // 
 //*****************************************************************************
-T_type_definitions  * SP_type_definitions = NULL;
-T_interpret_data    * SP_interpret_data = NULL;
+T_type_definitions  * SP_type_definitions = nullptr;
+T_interpret_data    * SP_interpret_data = nullptr;
 
 long long  compute_expression_static_int(
                 const string              & expression_str)

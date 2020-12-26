@@ -126,11 +126,11 @@ void    register_enum_values(T_generic_protocol_data  & protocol_data)
             ++enum_value_idx;
         }
 
-        // Must add a last value_string with NULL ptr.
+        // Must add a last value_string with nullptr ptr.
         {
             value_string    vs;
             vs.value  = 0;
-            vs.strptr = NULL;
+            vs.strptr = nullptr;
 
             enum_value.value_strings.push_back(vs);
         }
@@ -158,9 +158,9 @@ void    register_fields_add_field_none(
 
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_filter_name_param;
     hf_register_info               hf = 
-        { NULL,    // initialized later
+        { nullptr,    // initialized later
           { strdup(field_name),
-            strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
+            strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, nullptr, 0x0,
             strdup(field_extended_name), HFILL }};
 
     P_protocol_ws_data->fields_data.hf.push_back(hf);
@@ -177,9 +177,9 @@ void    register_fields_add_field_none(
 
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
     hf_register_info               hf = 
-        { NULL,    // initialized later
+        { nullptr,    // initialized later
           { strdup(field_name.get_display_name().c_str()),
-            strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, NULL, 0x0,
+            strdup(filter_field_name.c_str()), FT_NONE, BASE_NONE, nullptr, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
     P_protocol_ws_data->fields_data.hf.push_back(hf);
@@ -196,9 +196,9 @@ void    register_fields_add_field_bytes(
 
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
     hf_register_info               hf = 
-        { NULL,    // initialized later
+        { nullptr,    // initialized later
           { strdup(field_name.get_display_name().c_str()),
-            strdup(filter_field_name.c_str()), FT_BYTES, BASE_NONE, NULL, 0x0,
+            strdup(filter_field_name.c_str()), FT_BYTES, BASE_NONE, nullptr, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
     P_protocol_ws_data->fields_data.hf.push_back(hf);
@@ -215,9 +215,9 @@ void    register_fields_add_field_string(
 
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
     hf_register_info               hf = 
-        { NULL,    // initialized later
+        { nullptr,    // initialized later
           { strdup(field_name.get_display_name().c_str()),
-            strdup(filter_field_name.c_str()), FT_STRING, BASE_NONE, NULL, 0x0,
+            strdup(filter_field_name.c_str()), FT_STRING, BASE_NONE, nullptr, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
     P_protocol_ws_data->fields_data.hf.push_back(hf);
@@ -236,9 +236,9 @@ void    register_fields_add_field_float(
     const string                   filter_field_name = protocol_data.PROTOABBREV + "." + field_name.get_filter_name();
     ftenum                         ws_size = field_bit_size<=32 ? FT_FLOAT : FT_DOUBLE;
     hf_register_info               hf = 
-        { NULL,    // initialized later
+        { nullptr,    // initialized later
           { strdup(field_name.get_display_name().c_str()),
-            strdup(filter_field_name.c_str()), ws_size, BASE_NONE, NULL, 0x0,
+            strdup(filter_field_name.c_str()), ws_size, BASE_NONE, nullptr, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
     P_protocol_ws_data->fields_data.hf.push_back(hf);
@@ -285,9 +285,9 @@ void    register_fields_add_field_int(
     M_FATAL_IF_EQ(ws_size, FT_NONE);
 
     hf_register_info               hf = 
-        { NULL,    // initialized later
+        { nullptr,    // initialized later
           { strdup(field_name.get_display_name().c_str()),
-            strdup(filter_field_name.c_str()), ws_size, BASE_DEC, NULL, 0x0,
+            strdup(filter_field_name.c_str()), ws_size, BASE_DEC, nullptr, 0x0,
             strdup(field_name.get_extended_name().c_str()), HFILL }};
 
     if (enum_idx >= 0)
@@ -388,7 +388,7 @@ void    register_fields_field_type_name(T_generic_protocol_data          & proto
         if (final_type == "switch")
         {
             // must manage inline switch
-            M_FATAL_IF_EQ (field_type_name.P_switch_inline.get(), NULL);
+            M_FATAL_IF_EQ (field_type_name.P_switch_inline.get(), nullptr);
             register_fields_switch_definition(protocol_data, field_idx, *field_type_name.P_switch_inline);
         }
         return;
@@ -396,19 +396,19 @@ void    register_fields_field_type_name(T_generic_protocol_data          & proto
 
     // struct ?
     {
-        T_struct_definition  * P_struct = NULL;
+        T_struct_definition  * P_struct = nullptr;
 
         if (final_type == "struct")
         {
             P_struct = field_type_name.P_sub_struct.get();
-            M_FATAL_IF_EQ (P_struct, NULL);
+            M_FATAL_IF_EQ (P_struct, nullptr);
         }
         else
         {
             P_struct = type_definitions.get_P_struct(final_type);
         }
 
-        if (P_struct != NULL)
+        if (P_struct != nullptr)
         {
             // name NOT specified means :
             // - user do NOT want to see it
@@ -437,7 +437,7 @@ void    register_fields_field_type_name(T_generic_protocol_data          & proto
             if (final_type == "struct")
             {
                 // must manage inline struct
-                M_FATAL_IF_EQ (field_type_name.P_sub_struct.get(), NULL);
+                M_FATAL_IF_EQ (field_type_name.P_sub_struct.get(), nullptr);
                 register_fields_struct_definition(protocol_data, field_idx, *field_type_name.P_sub_struct);
             }
             return;
@@ -469,7 +469,7 @@ void    register_fields_field_type_name(T_generic_protocol_data          & proto
             if (final_type == "bitfield")
             {
                 // must manage inline bitfield
-                M_FATAL_IF_EQ (field_type_name.P_bitfield_inline.get(), NULL);
+                M_FATAL_IF_EQ (field_type_name.P_bitfield_inline.get(), nullptr);
                 register_fields_bitfield_definition(protocol_data, field_idx, *field_type_name.P_bitfield_inline);
             }
             return;
@@ -482,7 +482,7 @@ void    register_fields_field_type_name(T_generic_protocol_data          & proto
     bool    is_enum_signed = false;
     {
         const T_enum_definition_representation  * P_enum = type_definitions.get_P_enum(final_type);
-        if (P_enum != NULL_PTR)
+        if (P_enum != nullptr)
         {
             is_enum = true;
             is_enum_signed = P_enum->is_signed;
@@ -901,7 +901,7 @@ void    compute_wsgd_file_names(vector<string>  & wsgd_file_names)
 #define M_SEARCH_IN_DIR_SUBDIR(DIR,SUBDIR)                                  \
 {                                                                           \
     const char  * p_dir_name = DIR;                                         \
-    if (p_dir_name != NULL)                                                 \
+    if (p_dir_name != nullptr)                                              \
     {                                                                       \
         std::string  dir_name = p_dir_name;                                 \
         dir_name += SUBDIR;                                                 \
@@ -1067,7 +1067,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
                                  protocol_data.SUBPROTO_SUBFIELD_TYPE_WS,
                                  BASE_DEC);
 
-        M_FATAL_IF_EQ(protocol_data.ws_data.subdissector_data.dissector_table, NULL);
+        M_FATAL_IF_EQ(protocol_data.ws_data.subdissector_data.dissector_table, nullptr);
 
         protocol_data.ws_data.subdissector_data.heur_dissector_list = register_heur_dissector_list(protocol_data.PROTOABBREV.c_str(),
                                                                                                    protocol_data.ws_data.proto_generic);
@@ -1075,7 +1075,7 @@ void    cpp_proto_register_generic(const string   & wsgd_file_name,
 
     /* Register configuration preferences */
 //    module_t  * module = prefs_register_protocol(protocol_data.ws_data.proto_generic, prefs_apply_cb);
-    module_t  * module = prefs_register_protocol(protocol_data.ws_data.proto_generic, NULL);
+    module_t  * module = prefs_register_protocol(protocol_data.ws_data.proto_generic, nullptr);
     prefs_register_bool_preference(module, "try_heuristic_first",
         "Try heuristic sub-dissectors first",
         "Try to decode a packet using an heuristic sub-dissector before using a sub-dissector registered to a specific port",
@@ -1145,12 +1145,12 @@ void    trace_dirs()
 
 void    trace_locales()
 {
-    M_TRACE_DEBUG ("locale LC_ALL         = " << setlocale(LC_ALL, NULL));
-    M_TRACE_DEBUG ("locale LC_COLLATE     = " << setlocale(LC_COLLATE, NULL));
-    M_TRACE_DEBUG ("locale LC_CTYPE       = " << setlocale(LC_CTYPE, NULL));
-    M_TRACE_DEBUG ("locale LC_MONETARY    = " << setlocale(LC_MONETARY, NULL));
-    M_TRACE_DEBUG ("locale LC_NUMERIC     = " << setlocale(LC_NUMERIC, NULL));
-    M_TRACE_DEBUG ("locale LC_TIME        = " << setlocale(LC_TIME, NULL));
+    M_TRACE_DEBUG ("locale LC_ALL         = " << setlocale(LC_ALL, nullptr));
+    M_TRACE_DEBUG ("locale LC_COLLATE     = " << setlocale(LC_COLLATE, nullptr));
+    M_TRACE_DEBUG ("locale LC_CTYPE       = " << setlocale(LC_CTYPE, nullptr));
+    M_TRACE_DEBUG ("locale LC_MONETARY    = " << setlocale(LC_MONETARY, nullptr));
+    M_TRACE_DEBUG ("locale LC_NUMERIC     = " << setlocale(LC_NUMERIC, nullptr));
+    M_TRACE_DEBUG ("locale LC_TIME        = " << setlocale(LC_TIME, nullptr));
 #if 0
 LC_ALL          The entire locale.
 LC_COLLATE      Affects the behavior of strcoll and strxfrm.
@@ -1237,7 +1237,7 @@ string    get_traces_file_name()
     string  traces_file_name = "";
 
     const char *  file = getenv("WIRESHARK_GENERIC_DISSECTOR_TRACES_FILE");
-    if (file != NULL)
+    if (file != nullptr)
     {
         traces_file_name += file;
     }
@@ -1261,7 +1261,7 @@ string    get_traces_file_full_name()
     string  traces_file_full_name = "";
     
     const char *  dir = getenv("WIRESHARK_GENERIC_DISSECTOR_TRACES_DIR");
-    if (dir != NULL)
+    if (dir != nullptr)
     {
         traces_file_full_name = dir;
         traces_file_full_name += G_DIR_SEPARATOR_S;
@@ -1381,7 +1381,7 @@ stat_tree_packet_return_type
     T_generic_protocol_tap_data  & tap_data = protocol_data.ws_data.tap_data;
     T_stats_sub_group            & sub_group = tap_data.stats.get_sub_group_by_full_name(st->cfg->name);
 
-    M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), NULL);
+    M_FATAL_IF_EQ(tap_data.RCP_last_msg_interpret_data.get(), nullptr);
     T_interpret_data& last_msg_interpret_data = *tap_data.RCP_last_msg_interpret_data;
 
     tick_stat_node(st, sub_group.node_name.c_str(), 0, FALSE);
@@ -1465,7 +1465,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
     // Create the dissector handle.
     P_protocol_ws_data->dissector_handle = create_dissector_handle(P_protocol_ws_data->P_dissect_fct,
                                                                    P_protocol_ws_data->proto_generic);
-    M_FATAL_IF_EQ(P_protocol_ws_data->dissector_handle, NULL);
+    M_FATAL_IF_EQ(P_protocol_ws_data->dissector_handle, nullptr);
 
 
     // Declare parent dissectors
@@ -1480,7 +1480,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
         M_TRACE_DEBUG ("PARENT_SUBFIELD = " << parent.PARENT_SUBFIELD.c_str());
 
         // Check that PARENT_SUBFIELD exist.
-        if (find_dissector_table(parent.PARENT_SUBFIELD.c_str()) == NULL)
+        if (find_dissector_table(parent.PARENT_SUBFIELD.c_str()) == nullptr)
         {
             wsgd_report_failure(
                         "Generic dissector did NOT succeed to attach " + protocol_data.PROTONAME +
@@ -1533,7 +1533,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
 
         if (is_an_heuristic_dissector(parent_name) != true)
         {
-            if (find_dissector_table(parent_name.c_str()) == NULL)
+            if (find_dissector_table(parent_name.c_str()) == nullptr)
             {
                 wsgd_report_failure(
                             "Generic dissector did NOT succeed to find parent heuristic dissector " + parent_name +
@@ -1587,7 +1587,7 @@ void    cpp_proto_reg_handoff_generic_proto(T_generic_protocol_data  & protocol_
         const string  & subdissector_name = *subdissector_iter;
 
         dissector_handle_t  dissector_handle = find_dissector(subdissector_name.c_str());
-        if (dissector_handle == NULL)
+        if (dissector_handle == nullptr)
         {
             wsgd_report_failure(
                         "Generic dissector did NOT succeed to find subdissector " + subdissector_name +
@@ -1659,9 +1659,9 @@ void    proto_init_routine(T_generic_protocol_data  & protocol_data)
         protocol_data.ws_data.global_data = T_generic_protocol_global_data();
 
         // init global data
-        C_interpret_builder_set_temporary  interpret_builder_set_temporary(NULL);
+        C_interpret_builder_set_temporary  interpret_builder_set_temporary(nullptr);
         T_interpret_data   & interpret_data = * protocol_data.ws_data.global_data.RCP_initialized_data;
-        const T_byte       * in_out_P_bytes = NULL_PTR;
+        const T_byte       * in_out_P_bytes = nullptr;
         size_t               in_out_sizeof_bytes = 0;
         const string         str_interpret = "var " + protocol_data.GLOBAL_DATA_TYPE + " global = zero;";
         istringstream        iss(str_interpret.c_str());
@@ -1883,7 +1883,7 @@ void    add_pinfo(const T_generic_protocol_data  & UNUSED(protocol_data),
 
     M_ADD_PINFO(current_proto);
 //  M_ADD_PINFO();  // column_info *cinfo;		/* Column formatting information */
-    if (pinfo->fd != NULL_PTR)  // frame_data*
+    if (pinfo->fd != nullptr)  // frame_data*
     {
         interpret_data.read_variable_group_begin("fd");
         M_ADD_PINFO_FD(num);         /* Frame number */
@@ -2057,8 +2057,8 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
     M_TRACE_DEBUG ("proto_idx = " << proto_idx);
     ostream                  & os = get_interpret_ostream();
 
-    // It could be mandatory to interpret the entire msg (even if msg_root_tree is NULL)
-    bool      mandatory_to_interpret_the_entire_msg = (tree != NULL);
+    // It could be mandatory to interpret the entire msg (even if msg_root_tree is nullptr)
+    bool      mandatory_to_interpret_the_entire_msg = (tree != nullptr);
     if (protocol_data.GLOBAL_DATA_TYPE != "")
     {
         mandatory_to_interpret_the_entire_msg = true;
@@ -2075,12 +2075,12 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
     T_RCP_interpret_data              RCP_interpret_data;
 
     // Global data.
-    T_generic_protocol_saved_interpreted_data  * P_where_to_save_interpret_data = NULL;
-    T_RCP_interpret_data                         RCP_prev_global_interpret_data = NULL;
+    T_generic_protocol_saved_interpreted_data  * P_where_to_save_interpret_data = nullptr;
+    T_RCP_interpret_data                         RCP_prev_global_interpret_data = nullptr;
     if (protocol_data.GLOBAL_DATA_TYPE != "")
     {
         // Search for previous msg
-        T_RCP_interpret_data    RCP_prev_saved_interpret_data = NULL;
+        T_RCP_interpret_data    RCP_prev_saved_interpret_data = nullptr;
 
         // Compute P_prev_saved_interpret_data
         // Compute P_where_to_save_interpret_data
@@ -2121,7 +2121,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             }
         }
 
-        if (P_where_to_save_interpret_data != NULL)
+        if (P_where_to_save_interpret_data != nullptr)
         {
             RCP_interpret_data = P_where_to_save_interpret_data->RCP_interpret_data;
             RCP_interpret_data->reset();
@@ -2133,7 +2133,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
         }
         // Save global data pointer
         RCP_prev_global_interpret_data = RCP_prev_saved_interpret_data;
-        if (RCP_prev_global_interpret_data.get() == NULL)
+        if (RCP_prev_global_interpret_data.get() == nullptr)
         {
             RCP_prev_global_interpret_data = protocol_data.ws_data.global_data.RCP_initialized_data;
         }
@@ -2161,7 +2161,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
     }
 
     // No wireshark output.
-    C_interpret_builder_set_temporary  interpret_builder_set_temporary(NULL);
+    C_interpret_builder_set_temporary  interpret_builder_set_temporary(nullptr);
 
     string    summary;
     string    MSG_ID_FIELD_NAME;
@@ -2207,7 +2207,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
 
         const T_attribute_value *  P_attr_MSG_ID_FIELD_NAME = interpret_data.get_P_attribute_value_of_read_variable (protocol_data.MSG_ID_FIELD_NAME);
 
-        if (P_attr_MSG_ID_FIELD_NAME == NULL)
+        if (P_attr_MSG_ID_FIELD_NAME == nullptr)
         {
             // The header has been entirely read, but the MSG_ID_FIELD_NAME has NOT been found !!!
             // ICIOA user NOT warned !!!
@@ -2238,7 +2238,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
         update_pinfo_ports(protocol_data, pinfo, interpret_data);
 
 
-        if ((tree == NULL) && (mandatory_to_interpret_the_entire_msg != true))
+        if ((tree == nullptr) && (mandatory_to_interpret_the_entire_msg != true))
         {
             if (protocol_data.PACKET_CONTAINS_ONLY_COMPLETE_MSG &&
                 protocol_data.PACKET_CONTAINS_ONLY_1_MSG)
@@ -2356,7 +2356,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
             wsgd_builder.set_is_input_data_complete(true);
         }
 
-        if (RCP_prev_global_interpret_data.get() != NULL)
+        if (RCP_prev_global_interpret_data.get() != nullptr)
         {
             // global data could have been modified by header
             // Since we read again the header, must start with the original values
@@ -2429,7 +2429,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
         // Global data and Tap.
         if (result == true)
         {
-            if ((P_where_to_save_interpret_data == NULL) &&
+            if ((P_where_to_save_interpret_data == nullptr) &&
                 (protocol_data.GLOBAL_DATA_TYPE != ""))
             {
                 M_TRACE_DEBUG ("GLOBAL_DATA saved_interpreted_datas.push_back");
@@ -2442,7 +2442,7 @@ gint    cpp_dissect_generic(      T_generic_protocol_data  & protocol_data,
                 P_where_to_save_interpret_data = & saved_interpreted_data;
             }
 
-            if (P_where_to_save_interpret_data != NULL)
+            if (P_where_to_save_interpret_data != nullptr)
             {
                 P_where_to_save_interpret_data->RCP_interpret_data = RCP_interpret_data;
             }
@@ -2695,7 +2695,7 @@ gboolean    heuristic_generic_proto(const int      proto_idx,
         {
             const void           * ptr_raw_data = tvb_get_ptr(tvb, 0, -1);
             const int              length_raw_data = tvb_reported_length_remaining(tvb, 0);
-            if ((ptr_raw_data == NULL) || (length_raw_data <= 0))
+            if ((ptr_raw_data == nullptr) || (length_raw_data <= 0))
             {
                 return  false;
             }

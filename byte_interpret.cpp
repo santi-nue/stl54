@@ -308,7 +308,7 @@ string  get_enum_symbolic_name (const T_type_definitions  & type_definitions,
                                 const string              & enum_value)
 {
     const T_enum_definition_representation  * P_enum = type_definitions.get_P_enum(orig_type);
-    if (P_enum == NULL_PTR)
+    if (P_enum == nullptr)
         return  "";
 
     const T_enum_definition  & enum_def = P_enum->definition;
@@ -339,7 +339,7 @@ void    promote_enum_symbolic_name (const T_type_definitions  & type_definitions
                                           C_value             & enum_value)
 {
     const T_enum_definition_representation  * P_enum_def_rep = type_definitions.get_P_enum(orig_type);
-    if (P_enum_def_rep == NULL)
+    if (P_enum_def_rep == nullptr)
         return;
 
     const T_enum_definition  & enum_def = P_enum_def_rep->definition;
@@ -698,9 +698,9 @@ bool    read_data (      T_frame_data  & in_out_frame_data,
 
     // only int24 at this time
 
-    T_byte  * P_where_sign_bit_is      = NULL;
-    T_byte  * P_ff_begin = NULL;
-    T_byte  * P_ff_end = NULL;
+    T_byte  * P_where_sign_bit_is      = nullptr;
+    T_byte  * P_ff_begin = nullptr;
+    T_byte  * P_ff_end = nullptr;
 
     // hope it is ok !
     if (T_interpret_byte_order::is_host_byte_order_inverted())
@@ -791,7 +791,7 @@ bool    frame_to_function_base (const T_type_definitions      & type_definitions
 void    frame_append_byte(T_decode_stream_frame  * P_decode_stream_frame,
                           unsigned char            byte)
 {
-    if (P_decode_stream_frame == NULL)
+    if (P_decode_stream_frame == nullptr)
     {
         M_FATAL_COMMENT("frame_append_byte no data");
     }
@@ -809,7 +809,7 @@ void    frame_append_data(T_decode_stream_frame  * P_decode_stream_frame,
 {
     M_TRACE_ENTER ("frame_append_data", "data=" << data << "  data_bit_size=" << data_bit_size);
 
-    if (P_decode_stream_frame == NULL)
+    if (P_decode_stream_frame == nullptr)
     {
         M_FATAL_COMMENT("frame_append_data no data");
     }
@@ -840,7 +840,7 @@ bool    frame_append_data (const T_type_definitions    & type_definitions,
     }
 
     // Compute frame address.
-    T_decode_stream_frame  * P_decode_stream_frame = NULL;
+    T_decode_stream_frame  * P_decode_stream_frame = nullptr;
     {
         const C_value  & frame_value = field_type_name.fct_parameters[0].compute_expression(
                                        type_definitions, interpret_data, in_out_frame_data,
@@ -907,7 +907,7 @@ bool    frame_append_data_array (
     }
 
     // Compute frame address.
-    T_decode_stream_frame  * P_decode_stream_frame = NULL;
+    T_decode_stream_frame  * P_decode_stream_frame = nullptr;
     {
         const C_value  & frame_value = field_type_name.fct_parameters[0].compute_expression(
                                        type_definitions, interpret_data, in_out_frame_data,
@@ -915,9 +915,9 @@ bool    frame_append_data_array (
         if (frame_value.get_type() == C_value::E_type_integer)
         {
             P_decode_stream_frame = (T_decode_stream_frame*)frame_value.get_int();
-            if (P_decode_stream_frame == NULL)
+            if (P_decode_stream_frame == nullptr)
             {
-                M_FATAL_COMMENT("frame_append_data_array expect param1 = frame (= int) != NULL");
+                M_FATAL_COMMENT("frame_append_data_array expect param1 = frame (= int) != nullptr");
                 return  false;
             }
         }
@@ -929,7 +929,7 @@ bool    frame_append_data_array (
     }
 
     // Compute value of data pointer.
-    const T_byte *  ptr = NULL;
+    const T_byte *  ptr = nullptr;
     {
         const C_value  & obj_value = field_type_name.fct_parameters[1].compute_expression(
                                        type_definitions, interpret_data, in_out_frame_data,
@@ -937,9 +937,9 @@ bool    frame_append_data_array (
         if (obj_value.get_type() == C_value::E_type_integer)
         {
             ptr = (const T_byte *)obj_value.get_int();
-            if (ptr == NULL)
+            if (ptr == nullptr)
             {
-                M_FATAL_COMMENT("frame_append_data_array expect param2 = data pointer != NULL");
+                M_FATAL_COMMENT("frame_append_data_array expect param2 = data pointer != nullptr");
                 return  false;
             }
         }
@@ -1002,7 +1002,7 @@ bool    frame_append_hexa_data (
     }
 
     // Compute frame address.
-    T_decode_stream_frame  * P_decode_stream_frame = NULL;
+    T_decode_stream_frame  * P_decode_stream_frame = nullptr;
     {
         const C_value  & frame_value = field_type_name.fct_parameters[0].compute_expression(
                                        type_definitions, interpret_data, in_out_frame_data,
@@ -1460,7 +1460,7 @@ bool    frame_to_function_base_decoder (
             }
 
             // Compute frame address.
-            T_decode_stream_frame  * P_decode_stream_frame = NULL;
+            T_decode_stream_frame  * P_decode_stream_frame = nullptr;
             {
                 const C_value  & frame_value = fct_parameters[0].compute_expression(
                                                type_definitions, interpret_data, in_out_frame_data,
@@ -1664,10 +1664,10 @@ void    decode_data_bytes_until (
             M_FATAL_COMMENT("decoded_bits(" << decoded_bits << ") < 8");
         }
 
-        if ((p_ending_char_1 != NULL) || (p_ending_char_2 != NULL))
+        if ((p_ending_char_1 != nullptr) || (p_ending_char_2 != nullptr))
         {
-            const char  ending_char_1 = (p_ending_char_1 != NULL) ? *p_ending_char_1 : *p_ending_char_2;
-            const char  ending_char_2 = (p_ending_char_2 != NULL) ? *p_ending_char_2 : *p_ending_char_1;
+            const char  ending_char_1 = (p_ending_char_1 != nullptr) ? *p_ending_char_1 : *p_ending_char_2;
+            const char  ending_char_2 = (p_ending_char_2 != nullptr) ? *p_ending_char_2 : *p_ending_char_1;
 
             // Because T_decode_stream_frame::synchronize() only manage reset,
             //  the interesting data can start at offset != 0 and not %8
@@ -2554,13 +2554,13 @@ bool    frame_to_field  (const T_type_definitions    & type_definitions,
 {
     M_TRACE_ENTER ("frame_to_field", "data_name=" << data_name);
 
-    if (field_type_name.pf_frame_to_field == NULL)
+    if (field_type_name.pf_frame_to_field == nullptr)
     {
         // Normally set at initialisation time for all types into type_definitions.
         // But some field_type_name could be created on the fly.
         build_types_finalize_itself(type_definitions, field_type_name);
 
-        if (field_type_name.pf_frame_to_field == NULL)
+        if (field_type_name.pf_frame_to_field == nullptr)
         {
             //-------------------------------------------------------------------------
             // Error
@@ -3222,8 +3222,8 @@ bool    T_expression_frame_to_function_base2 (
 
 #ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
     // dyncall
-    const bool    is_dyncall = (fct_def.P_library_def != NULL);
-    DCCallVM    * vm = NULL;
+    const bool    is_dyncall = (fct_def.P_library_def != nullptr);
+    DCCallVM    * vm = nullptr;
     struct T_dyncall_parameter
     {
         char                 int8;
@@ -3317,7 +3317,7 @@ bool    T_expression_frame_to_function_base2 (
             }
         }
 #ifdef BYTE_INTERPRET_USE_LIBRARY_DYNCALL
-        else if (vm != NULL)
+        else if (vm != nullptr)
         {
             T_dyncall_parameter  & dyncall_parameter = dyncall_parameters[idx];
 
@@ -4618,7 +4618,7 @@ bool    frame_to_string (
                           os_out, os_err,
                           decode_stream_frame,
                           final_type.c_str(),
-                          "\0", (final_type == "string_nl") ? "\n" : NULL);
+                          "\0", (final_type == "string_nl") ? "\n" : nullptr);
                 P_in_out_frame_data = & decode_stream_frame.frame_data;
             }
             else if (inside_frame.get_remaining_bits() > 0)
@@ -4913,7 +4913,7 @@ bool    frame_to_raw (const T_type_definitions    & type_definitions,
                           os_out, os_err,
                           decode_stream_frame,
                           final_type.c_str(),
-                          NULL, NULL);
+                          nullptr, nullptr);
                 P_in_out_frame_data = & decode_stream_frame.frame_data;
                 is_decoded_data = true;
             }
@@ -5074,7 +5074,7 @@ bool    G_is_a_variable_ICIOA = false;
             obj_value = C_value(0);                                           \
             if (strcmp(TYPE_NAME, "msg") == 0)                                \
             {                                                                 \
-                obj_value = C_value(C_value::E_type_msg, NULL);               \
+                obj_value = C_value(C_value::E_type_msg, nullptr);            \
             }                                                                 \
             else                                                              \
             if (strncmp(TYPE_NAME, "float", 5) != 0)                          \
@@ -5164,14 +5164,14 @@ bool    frame_to_any_ ## TYPE_NAME                                            \
                    (field_type_name.is_a_variable() ? "var " : "") <<         \
                    "data_type=" << field_type_name.type << " data_name=" << data_name); \
     const string                            & final_type = field_type_name.type;        \
-    bool                                      is_enum = false;        \
-    const T_enum_definition_representation  * P_enum_def = NULL;        \
+    bool                                      is_enum = false;                \
+    const T_enum_definition_representation  * P_enum_def = nullptr;           \
     M_READ_SIMPLE_TYPE_BASE_BEGIN(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)       \
     M_READ_SIMPLE_TYPE_BASE_COMPUTE(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)     \
     M_READ_SIMPLE_TYPE_BASE_ADD_OUTPUT(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)  \
     M_READ_SIMPLE_TYPE_BASE_END(#TYPE_NAME, TYPE_BIT_SIZE, TYPE_IMPL, sizeof(TYPE_IMPL)*8, #TYPE_IMPL)         \
 }                                                                             \
-bool    frame_to_any_ ## TYPE_NAME ## _enum                                           \
+bool    frame_to_any_ ## TYPE_NAME ## _enum                                   \
                      (const T_type_definitions    & type_definitions,         \
                             T_frame_data          & in_out_frame_data,        \
                             T_interpret_data      & interpret_data,           \
@@ -5944,7 +5944,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 
     {
         const T_struct_definition  * P_struct_def = type_definitions.get_P_struct(final_type);
-        if (P_struct_def != NULL)
+        if (P_struct_def != nullptr)
         {
             field_type_name.pf_frame_to_any = frame_to_any_struct;
             field_type_name.P_type_struct_def = P_struct_def;
@@ -5958,7 +5958,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
     bool    is_enum = false;
     {
         const T_enum_definition_representation  * P_enum_def = type_definitions.get_P_enum(final_type);
-        if (P_enum_def != NULL)
+        if (P_enum_def != nullptr)
         {
             field_type_name.P_type_enum_def = P_enum_def;
             is_enum = true;
@@ -6086,7 +6086,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 
     {
         const T_switch_definition  * P_switch = type_definitions.get_P_switch(final_type);
-        if (P_switch != NULL_PTR)
+        if (P_switch != nullptr)
         {
             field_type_name.pf_frame_to_any = frame_to_any_switch;
             field_type_name.P_type_switch_def = P_switch;
@@ -6096,7 +6096,7 @@ void    build_types_finalize_itself(T_type_definitions  & type_definitions,
 
     {
         const T_bitfield_definition  * P_bitfield_def = type_definitions.get_P_bitfield(final_type);
-        if (P_bitfield_def != NULL)
+        if (P_bitfield_def != nullptr)
         {
             field_type_name.pf_frame_to_any = frame_to_any_bitfield;
             field_type_name.P_type_bitfield_def = P_bitfield_def;
@@ -6254,13 +6254,13 @@ bool    frame_to_any (const T_type_definitions    & type_definitions,
     //-------------------------------------------------------------------------
 
 
-    if (field_type_name.pf_frame_to_any == NULL)
+    if (field_type_name.pf_frame_to_any == nullptr)
     {
         // Normally set at initialisation time for all types into type_definitions.
         // But some field_type_name could be created on the fly.
         build_types_finalize_itself(type_definitions, field_type_name);
 
-        if (field_type_name.pf_frame_to_any == NULL)
+        if (field_type_name.pf_frame_to_any == nullptr)
         {
             //-------------------------------------------------------------------------
             // Error

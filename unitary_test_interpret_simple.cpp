@@ -486,7 +486,7 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
                        "4249472d5245515545535453" "4249472d5245515545535453",
                        "uint8[240]  val ;",
                        interpret_data,
-                       NULL);
+                       nullptr);
     }
   
     interpret_data.read_variable_group_begin("A_current_path_not_empty");
