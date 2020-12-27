@@ -164,3 +164,23 @@ M_TEST_FCT(test_scoped_copyable_ptr)
     M_TEST_EQ(scptr_a->id, 4);
     M_TEST_EQ(scptr_a->generation, 1);
 }
+
+M_TEST_FCT(test_scoped_copyable_ptr__equality)
+{
+    {
+        scoped_copyable_ptr<C_scoped_copyable_ptr_object>  scptr_a;
+
+        M_TEST(scptr_a == nullptr);
+        M_TEST(!(scptr_a != nullptr));
+        M_TEST_EQ(scptr_a, nullptr);
+        M_TEST_NULL(scptr_a);
+    }
+    {
+        scoped_copyable_ptr<C_scoped_copyable_ptr_object>  scptr_a(new C_scoped_copyable_ptr_object);
+
+        M_TEST(!(scptr_a == nullptr));
+        M_TEST(scptr_a != nullptr);
+        M_TEST_NE(scptr_a, nullptr);
+        M_TEST_NOT_NULL(scptr_a);
+    }
+}

@@ -107,11 +107,7 @@ enum E_return_code
 //****************************************************************************
 // ostream << nullptr
 //****************************************************************************
-inline
-std::ostream& operator << (std::ostream& os, std::nullptr_t)
-{
-    return os << "nullptr";
-}
+std::ostream& operator << (std::ostream& os, std::nullptr_t);
 
 //****************************************************************************
 // get_string

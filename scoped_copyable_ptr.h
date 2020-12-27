@@ -145,6 +145,15 @@ public:
         b.ptr = ptr;
         ptr = tmp;
     }
+
+    bool operator==(nullptr_t) const
+    {
+        return ptr == nullptr;
+    }
+    bool operator!=(nullptr_t) const
+    {
+        return ptr != nullptr;
+    }
 };
 
 template<class T> inline void swap(scoped_copyable_ptr<T> & a, scoped_copyable_ptr<T> & b) // never throws
