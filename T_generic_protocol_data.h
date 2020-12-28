@@ -235,6 +235,7 @@ struct T_generic_protocol_data : public CT_debug_object_counter<T_generic_protoc
   T_generic_protocol_data()
       : proto_idx(-1)
       , DEBUG(E_debug_status_OFF)
+      , SUBPROTO_SUBFIELD_TYPE_WS(FT_NONE)
       , PACKET_CONTAINS_ONLY_1_MSG(false)
       , PACKET_CONTAINS_ONLY_COMPLETE_MSG(false)
       , MANAGE_WIRESHARK_PINFO(false)
