@@ -37,6 +37,7 @@ set(DISSECTOR_CORE_UT_SRC
 	scoped_copyable_ptr.h
 	CT_debug_object_counter.cpp CT_debug_object_counter.h
 	shark_wsutil_aes.c shark_wsutil_aes.h
+	T_generic_protocol_data_base.cpp T_generic_protocol_data_base.h
 )
 
 set (DISSECTOR_CORE_OTHER_SRC

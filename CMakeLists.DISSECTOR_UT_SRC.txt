@@ -26,6 +26,7 @@ set (DISSECTOR_UT_SRC
 	unitary_test_decompose_type_sep_value_sep.cpp
 	unitary_test_expression.cpp
 	unitary_test_frame_data.cpp
+	unitary_test_generic_protocol_data_base.cpp
 	unitary_test_generic_statistics.cpp
 	unitary_test_get_before_separator_after.cpp
 	unitary_test_get_number.cpp
