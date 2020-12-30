@@ -6,13 +6,16 @@
 # More precise script sequence is displayed when you launch it
  
 # This script has been tested on :
-# - CentOS 7.6         (wsl)    wireshark 2.4 to 3.2
+# - CentOS 7.6         (wsl)    wireshark 2.4 to 3.4
+# - CentOS 8.1         (wsl)    wireshark        3.4
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.2
 # - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.2
 # - Ubuntu 20.04       (wsl)    wireshark 3.2 to 3.4
 
 # Wsgd source code is now incompatible with wireshark <= 2.4
-
+# Wsgd source code is partially c++11 :
+# - could be incompatible with gcc before 4.8.1 (oldest version tested is 4.8.5)
+# - could be incompatible with Visual C++ 2013 and below (no more tested)
 
 ################################################################################
 ### tools
@@ -251,13 +254,16 @@ then
 	if [ "${wsgd_os_name}" == "centos" ]
 	then
 		#-------------------------------------------------------------------------------
-		#-- CentOS7
+		#-- CentOS7, CentOS8
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
 		sudo yum --assumeyes install git
 
 		sudo yum --assumeyes install epel-release
 		sudo yum --assumeyes install cmake3
+		sudo yum --assumeyes install make
+		sudo yum --assumeyes install python3
+		sudo yum --assumeyes install perl
 		sudo yum --assumeyes install gcc-c++
 
 		sudo yum --assumeyes install libgcrypt-devel
