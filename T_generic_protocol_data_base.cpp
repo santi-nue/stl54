@@ -111,7 +111,7 @@ T_generic_protocol_data_base::check_config_parameters_initialized() const
 //*****************************************************************************
 
 void    read_file_wsgd_until_types(
-                              istream                       & ifs,
+                              istringstream                 & iss,
                               T_generic_protocol_data_base  & protocol_data,
                               T_stats                       & stats)
 {
@@ -121,7 +121,7 @@ void    read_file_wsgd_until_types(
 #define M_READ_NAME_VALUE(NAME,VARIABLE)                     \
     else if (keyword == #NAME)  {                            \
         check_not_already_initialized(VARIABLE);             \
-        ifs >> VARIABLE;                                     \
+        iss >> VARIABLE;                                     \
         M_TRACE_DEBUG (#NAME << " = " << VARIABLE);          \
     }
 
@@ -132,7 +132,7 @@ void    read_file_wsgd_until_types(
 #define M_READ_NAME_BOOL(NAME,VARIABLE)                      \
     else if (keyword == #NAME)  {                            \
         string    word;                                      \
-        ifs >> word;                                         \
+        iss >> word;                                         \
         if ((word == "false") || (word == "no")) {           \
             VARIABLE = false;                                \
         }                                                    \
@@ -153,7 +153,7 @@ void    read_file_wsgd_until_types(
 #define M_READ_VALUES(NAME)                                  \
     else if (keyword == #NAME)  {                            \
         string    line;                                      \
-        getline (ifs, line);                                 \
+        getline (iss, line);                                 \
         istringstream  is_line(line.c_str());                \
         while (is_istream_empty(is_line) != true)            \
         {                                                    \
@@ -166,9 +166,9 @@ void    read_file_wsgd_until_types(
 // vector<string>
 #define M_READ_STRINGS(NAME,VARIABLE)                        \
     else if (keyword == #NAME)  {                            \
-        ifs >> ws;                                           \
+        iss >> ws;                                           \
         string    line;                                      \
-        getline (ifs, line);                                 \
+        getline (iss, line);                                 \
         istringstream  is_line(line.c_str());                \
         while (is_istream_empty(is_line) != true)            \
         {                                                    \
@@ -182,8 +182,8 @@ void    read_file_wsgd_until_types(
 #define M_READ_LINE(NAME)                                                \
     else if (keyword == #NAME)  {                                        \
         check_not_already_initialized(protocol_data.NAME);               \
-        ifs >> ws;                                                       \
-        getline (ifs, protocol_data.NAME);                               \
+        iss >> ws;                                                       \
+        getline (iss, protocol_data.NAME);                               \
         const string::size_type  NAME_size = protocol_data.NAME.size();  \
         if ((NAME_size > 0) &&                                           \
             (protocol_data.NAME[NAME_size-1] == '\r'))                   \
@@ -195,10 +195,10 @@ void    read_file_wsgd_until_types(
 
     // Read the 1st part of the file (until PROTO_TYPE_DEFINITIONS).
     bool  PROTO_TYPE_DEFINITIONS_found = false;
-    while (is_istream_empty(ifs) != true)
+    while (is_istream_empty(iss) != true)
     {
         string    keyword;
-        ifs >> keyword;
+        iss >> keyword;
 
         if (keyword == "DEBUG")
         {
@@ -223,37 +223,37 @@ void    read_file_wsgd_until_types(
         else if (keyword == "PARENT_SUBFIELD")
         {
             protocol_data.PARENTS.push_back(T_generic_protocol_data_base::T_parent());
-            ifs >> protocol_data.PARENTS.back().PARENT_SUBFIELD;
+            iss >> protocol_data.PARENTS.back().PARENT_SUBFIELD;
             M_TRACE_DEBUG("PARENT_SUBFIELD = " << protocol_data.PARENTS.back().PARENT_SUBFIELD);
         }
         M_READ_STRINGS(PARENT_SUBFIELD_VALUES, PARENTS.back().PARENT_SUBFIELD_VALUES_str)
         else if (keyword == "PARENT_SUBFIELD_RANGE")
         {
             pair<int, int>    low_high;
-            ifs >> low_high.first;
-            ifs >> low_high.second;
+            iss >> low_high.first;
+            iss >> low_high.second;
             protocol_data.PARENTS.back().PARENT_SUBFIELD_RANGES_int.push_back(low_high);
         }
         else if (keyword == "PARENT_HEURISTIC")
         {
             string   parent_name;
-            ifs >> parent_name;
+            iss >> parent_name;
             protocol_data.PARENTS_HEURISTIC.push_back(parent_name);
         }
         M_READ_VALUE(HEURISTIC_FUNCTION)
         else if (keyword == "ADD_FOR_DECODE_AS_TABLE")
         {
             string   table_name;
-            ifs >> table_name;
+            iss >> table_name;
             protocol_data.ADD_FOR_DECODE_AS_TABLES.push_back(table_name);
         }
 
         else if (keyword == "SUBFIELD")
         {
             check_not_already_initialized(protocol_data.SUBPROTO_SUBFIELD);
-            ifs >> ws;
+            iss >> ws;
             string    line;
-            getline(ifs, line);
+            getline(iss, line);
             {
                 istringstream  is_line(line.c_str());
                 is_line >> protocol_data.SUBPROTO_SUBFIELD;
@@ -322,7 +322,7 @@ void    read_file_wsgd_until_types(
         M_READ_BOOL(MANAGE_WIRESHARK_PINFO)
         else if (keyword == "STATISTICS")
         {
-            read_file_wsgd_statistics(ifs, stats);
+            read_file_wsgd_statistics(iss, stats);
         }
         else
         {

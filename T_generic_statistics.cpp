@@ -108,14 +108,14 @@ T_stats::get_sub_group_by_full_name(const std::string& full_name)
 // read_file_wsgd_statistics
 //*****************************************************************************
 
-void    read_file_wsgd_statistics(std::istream& is,
-    T_stats& stats)
+void  read_file_wsgd_statistics(std::istringstream& iss,
+                                T_stats&            stats)
 {
     std::vector<std::string> words;
     {
-        is >> std::ws;
+        iss >> std::ws;
         std::string    line;
-        std::getline(is, line);
+        std::getline(iss, line);
         string_to_words(line, words);
     }
     M_FATAL_IF_NE(words.size(), 4);

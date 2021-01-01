@@ -28,7 +28,7 @@
 
 #include <string>
 #include <vector>
-#include <istream>
+#include <sstream>
 
 
 //*****************************************************************************
@@ -70,8 +70,8 @@ struct T_stats
 
 //*****************************************************************************
 // read_file_wsgd_statistics
-// is should be just after STATISTICS keyword
+// iss should be just after STATISTICS keyword
 //*****************************************************************************
 
-void    read_file_wsgd_statistics (std::istream   & is,
-                                   T_stats        & stats);
+void    read_file_wsgd_statistics (std::istringstream   & iss,
+                                   T_stats              & stats);

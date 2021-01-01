@@ -416,8 +416,12 @@ void    read_file_wsgd (const string                   & wsgd_file_name,
         M_FATAL_COMMENT("Impossible to open file " << wsgd_file_name);
     }
 
-    // Read the 1st part of the file (until PROTO_TYPE_DEFINITIONS).
-    read_file_wsgd_until_types(ifs, protocol_data, protocol_data.ws_data.tap_data.stats);
+    const std::string file_content{ std::istreambuf_iterator<char>(ifs),
+                                    std::istreambuf_iterator<char>() };
+    istringstream  iss(file_content);
+
+    // Read the 1st part of the file (until PROTO_TYPE_DEFINITIONS)
+    read_file_wsgd_until_types(iss, protocol_data, protocol_data.ws_data.tap_data.stats);
 
     // Read the type definitions of the protocol.
     C_debug_set_temporary  debug_register_proto_main(protocol_data.DEBUG);
@@ -444,9 +448,9 @@ void    read_file_wsgd (const string                   & wsgd_file_name,
         protocol_data.type_definitions.map_const_value["shark::persdatafile_dir"] = get_persdatafile_dir();
     }
 
-    while (is_istream_empty(ifs) != true)
+    while (is_istream_empty(iss) != true)
     {
-        const string    result = build_types(ifs,
+        const string    result = build_types(iss,
                                              protocol_data.type_definitions);
 
         if (result == "DEBUG")

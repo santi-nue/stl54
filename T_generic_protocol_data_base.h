@@ -31,6 +31,7 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 #include "CT_debug_object_counter.h"
@@ -120,6 +121,6 @@ struct T_generic_protocol_data_base : public CT_debug_object_counter<T_generic_p
 //*****************************************************************************
 
 void    read_file_wsgd_until_types(
-                              istream                       & ifs,
+                              istringstream                 & iss,
                               T_generic_protocol_data_base  & protocol_data,
                               T_stats                       & stats);
