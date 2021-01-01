@@ -92,8 +92,18 @@ CHECKAPI(
 
 # byte_interpret
 add_executable(byte_interpret byte_interpret_main.cpp ${DISSECTOR_CORE_SRC})
+if (UNIX)
+	# Mandatory for peglib.h
+	#target_link_options(byte_interpret PRIVATE -pthread)  # cmake >= 3.13
+	target_link_libraries(byte_interpret PRIVATE "-pthread")
+endif()
 
 
 # unitary_tests
 include(CMakeLists.DISSECTOR_UT_SRC.txt)
 add_executable(unitary_tests unitary_tests.cpp ${DISSECTOR_UT_SRC})
+if (UNIX)
+	# Mandatory for peglib.h
+	#target_link_options(byte_interpret PRIVATE -pthread)  # cmake >= 3.13
+	target_link_libraries(unitary_tests PRIVATE "-pthread")
+endif()

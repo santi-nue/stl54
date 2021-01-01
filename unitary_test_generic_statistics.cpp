@@ -48,6 +48,58 @@ M_TEST_FCT(test_read_file_wsgd_statistics__basic)
 }
 
 //*****************************************************************************
+// test_read_file_wsgd_statistics_ko_1_token_missing
+//*****************************************************************************
+
+M_TEST_FCT(test_read_file_wsgd_statistics_ko_1_token_missing)
+{
+    T_stats        stats;
+    istringstream  iss("  \"Samsung TV Remote Control\"   \"Type\"              \"Message Type\"   \n");
+    M_TEST_CATCH_EXCEPTION(
+        read_file_wsgd_statistics(iss, stats),
+        C_byte_interpret_exception);
+}
+
+//*****************************************************************************
+// test_read_file_wsgd_statistics_ko_1_token_too_much
+//*****************************************************************************
+
+M_TEST_FCT(test_read_file_wsgd_statistics_ko_1_token_too_much)
+{
+    T_stats        stats;
+    istringstream  iss("  \"Samsung TV Remote Control\"   \"Type\"              \"Message Type\"  MessageType  TooMuch \n");
+    M_TEST_CATCH_EXCEPTION(
+        read_file_wsgd_statistics(iss, stats),
+        C_byte_interpret_exception);
+}
+
+//*****************************************************************************
+// test_read_file_wsgd_statistics_ko_not_a_string
+//*****************************************************************************
+
+M_TEST_FCT(test_read_file_wsgd_statistics_ko_not_a_string)
+{
+    T_stats        stats;
+    istringstream  iss("  \"Samsung TV Remote Control\"   Type              \"Message Type\"   MessageType  \n");
+    M_TEST_CATCH_EXCEPTION(
+        read_file_wsgd_statistics(iss, stats),
+        C_byte_interpret_exception);
+}
+
+//*****************************************************************************
+// test_read_file_wsgd_statistics_ko_is_a_string
+//*****************************************************************************
+
+M_TEST_FCT(test_read_file_wsgd_statistics_ko_is_a_string)
+{
+    T_stats        stats;
+    istringstream  iss("  \"Samsung TV Remote Control Type\"   \"\"              \"Message Type\"   \"MessageType\"   \n");
+    M_TEST_CATCH_EXCEPTION(
+        read_file_wsgd_statistics(iss, stats),
+        C_byte_interpret_exception);
+}
+
+//*****************************************************************************
 // test_read_file_wsgd_statistics__no_sub_group
 //*****************************************************************************
 
