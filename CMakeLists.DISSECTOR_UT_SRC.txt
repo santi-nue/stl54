@@ -42,6 +42,7 @@ set (DISSECTOR_UT_SRC
 	unitary_test_read_token_word_cplx.cpp
 	unitary_test_read_values.cpp
 	unitary_test_scoped_copyable_ptr.cpp
+	unitary_test_static_executor_manager.cpp
 	unitary_test_string_to_words.cpp
 	unitary_test_value_format.cpp
 	unitary_test_value_printf.cpp
