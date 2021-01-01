@@ -26,6 +26,7 @@
 
 #include "T_generic_protocol_data_base.h"
 #include "byte_interpret_common.h"
+#include "byte_interpret_common_utils.h"
 #include "byte_interpret_parse.h"
 #include "byte_interpret.h"
 
@@ -328,6 +329,8 @@ void    read_file_wsgd_until_types(
             M_FATAL_COMMENT("unexpected keyword=" << keyword);
         }
     }
+
+    rtrim(protocol_data.PROTONAME);
 
     if (protocol_data.MSG_TRAILER_LENGTH > 0)
     {

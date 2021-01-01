@@ -80,12 +80,16 @@ M_TEST_FCT(test_read_file_wsgd_until_types__ok_DEBUG)
     T_stats                       stats;
 
     {
-        istringstream  iss("DEBUG PROTO_TYPE_DEFINITIONS");
+        istringstream  iss(R"(
+DEBUG
+PROTO_TYPE_DEFINITIONS)");
         read_file_wsgd_until_types(iss, protocol_data, stats);
         M_TEST_EQ(protocol_data.DEBUG, E_debug_status_ON);
     }
     {
-        istringstream  iss("DEBUG_NO_TIME  PROTO_TYPE_DEFINITIONS");
+        istringstream  iss(R"(
+DEBUG_NO_TIME
+PROTO_TYPE_DEFINITIONS)");
         read_file_wsgd_until_types(iss, protocol_data, stats);
         M_TEST_EQ(protocol_data.DEBUG, E_debug_status_ON_NO_TIME);
     }
@@ -108,8 +112,39 @@ PROTOABBREV       samsung_remote
 PROTO_TYPE_DEFINITIONS)");
         read_file_wsgd_until_types(iss, protocol_data, stats);
 
-        M_TEST_EQ(protocol_data.PROTONAME, "Samsung TV Remote Control  ");  // ICIOA, trim perhaps ?
+        M_TEST_EQ(protocol_data.PROTONAME, "Samsung TV Remote Control");
         M_TEST_EQ(protocol_data.PROTOSHORTNAME, "SR");
+        M_TEST_EQ(protocol_data.PROTOABBREV, "samsung_remote");
+    }
+    // Double definition is forbidden
+    {
+        istringstream  iss(R"(
+PROTONAME         New TV Remote Control  
+PROTO_TYPE_DEFINITIONS)");
+        M_TEST_CATCH_EXCEPTION(
+            read_file_wsgd_until_types(iss, protocol_data, stats),
+            C_byte_interpret_exception);
+
+        M_TEST_EQ(protocol_data.PROTONAME, "Samsung TV Remote Control");
+    }
+    {
+        istringstream  iss(R"(
+PROTOSHORTNAME    NEW  
+PROTO_TYPE_DEFINITIONS)");
+        M_TEST_CATCH_EXCEPTION(
+            read_file_wsgd_until_types(iss, protocol_data, stats),
+            C_byte_interpret_exception);
+
+        M_TEST_EQ(protocol_data.PROTOSHORTNAME, "SR");
+    }
+    {
+        istringstream  iss(R"(
+PROTOABBREV       new_remote  
+PROTO_TYPE_DEFINITIONS)");
+        M_TEST_CATCH_EXCEPTION(
+            read_file_wsgd_until_types(iss, protocol_data, stats),
+            C_byte_interpret_exception);
+
         M_TEST_EQ(protocol_data.PROTOABBREV, "samsung_remote");
     }
 }
