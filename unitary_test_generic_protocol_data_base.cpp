@@ -451,7 +451,7 @@ M_TEST_FCT(test_read_file_wsgd_until_types__statistics)
     T_stats                       stats;
 
     istringstream  iss(R"(
-STATISTICS    "menu"  ""  "topic"  field
+STATISTICS    "menu"  [ "topic" field ]
 PROTO_TYPE_DEFINITIONS)");
     read_file_wsgd_until_types(iss, protocol_data, stats);
 
