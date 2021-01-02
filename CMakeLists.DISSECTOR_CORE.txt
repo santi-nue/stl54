@@ -38,7 +38,7 @@ set(DISSECTOR_CORE_UT_SRC
 	CT_debug_object_counter.cpp CT_debug_object_counter.h
 	shark_wsutil_aes.c shark_wsutil_aes.h
 	T_generic_protocol_data_base.cpp T_generic_protocol_data_base.h
-	peglib.h
+	peglib.h    # tools/make-plugin-reg.py fails to read it
 )
 
 set (DISSECTOR_CORE_OTHER_SRC

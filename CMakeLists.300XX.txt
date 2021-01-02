@@ -30,14 +30,15 @@ include(CMakeLists.DISSECTOR_CORE.txt)
 include(CMakeLists.DISSECTOR_SUPPORT_SRC.txt)
 
 
+# Only files needed to generate plugin.c
 set(DISSECTOR_SRC
 	packet-generic.c
-	${DISSECTOR_SUPPORT_SRC}
 )
 
 set(PLUGIN_FILES
 	plugin.c
 	${DISSECTOR_SRC}
+	${DISSECTOR_SUPPORT_SRC}
 )
 
 set(CLEAN_FILES
@@ -84,6 +85,7 @@ CHECKAPI(
 	  -g abort -g termoutput -build
 	SOURCES
 	  ${DISSECTOR_SRC}
+	  ${DISSECTOR_SUPPORT_SRC}
 	  ${DISSECTOR_HEADERS}
 )
 
