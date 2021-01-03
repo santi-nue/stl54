@@ -128,7 +128,7 @@ std::ostream& operator << (std::ostream & os, std::nullptr_t);
   {                                                                           \
     instruction_that_calls_function;                                          \
   }                                                                           \
-  catch (exception)                                                           \
+  catch (exception&)                                                          \
   {                                                                           \
     is_exception_catched = true;                                              \
   }                                                                           \

@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <algorithm>
 
 #include "T_static_executor.h"
 #include "T_static_executor_manager.h"
