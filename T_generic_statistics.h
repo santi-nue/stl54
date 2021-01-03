@@ -55,15 +55,12 @@ struct T_stats_group
 {
     std::string                     group_name;   // Appears into Statistics menu
     std::vector<T_stats_sub_group>  sub_groups;
-
-    T_stats_sub_group & get_or_create_sub_group(const std::string& sub_group_name);
 };
 
 struct T_stats
 {
     std::vector<T_stats_group>  groups;
 
-    T_stats_group     & get_or_create_group(const std::string         & group_name);
     T_stats_sub_group & get_sub_group_by_full_name(const std::string  & full_name);
 };
 

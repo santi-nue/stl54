@@ -24,8 +24,13 @@
 // Includes
 //*****************************************************************************
 
-#include "T_generic_protocol_data_base.h"
 #include "byte_interpret_common.h"
+void fatal_PROTO_TYPE_DEFINITIONS_not_found()
+{
+    M_FATAL_COMMENT("PROTO_TYPE_DEFINITIONS not found");  // must stay line 30 (for test purpose)
+}
+
+#include "T_generic_protocol_data_base.h"
 #include "byte_interpret_common_utils.h"
 #include "byte_interpret_parse.h"
 #include "byte_interpret.h"
@@ -50,9 +55,7 @@ void    check_not_already_initialized(const int    val)
 //*****************************************************************************
 void    check_initialized(const string  & val)
 {
-
-
-    M_FATAL_IF_EQ(val, "");  // I like line 73
+    M_FATAL_IF_EQ(val, "");
 }
 void    check_initialized(const int    val)
 {
@@ -339,7 +342,7 @@ void    read_file_wsgd_until_types(
 
     if (PROTO_TYPE_DEFINITIONS_found == false)
     {
-        M_FATAL_COMMENT("PROTO_TYPE_DEFINITIONS not found");
+        fatal_PROTO_TYPE_DEFINITIONS_not_found();
     }
 
     // Check/update PARENTS

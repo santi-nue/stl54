@@ -29,62 +29,6 @@
 
 
 //*****************************************************************************
-// T_stats_group::get_or_create_sub_group
-//*****************************************************************************
-T_stats_sub_group&
-T_stats_group::get_or_create_sub_group(const std::string& sub_group_name)
-{
-    for (auto& sub_group : sub_groups)
-    {
-        if (sub_group_name == sub_group.sub_group_name)
-        {
-            return  sub_group;
-        }
-    }
-
-    if (sub_groups.empty() == false)
-    {
-        if (sub_group_name.empty() != sub_groups[0].sub_group_name.empty())
-        {
-            M_FATAL_COMMENT("Statistics " << group_name  << " : all sub menus must be empty or not empty");
-        }
-    }
-
-    T_stats_sub_group  sub_group;
-    sub_group.sub_group_name = sub_group_name;
-    sub_group.full_name = group_name;
-    if (sub_group_name != "")
-    {
-        sub_group.full_name += "/";
-        sub_group.full_name += sub_group_name;
-    }
-
-    sub_groups.push_back(sub_group);
-    return  sub_groups.back();
-}
-
-//*****************************************************************************
-// T_stats::get_sub_group_by_full_name
-//*****************************************************************************
-T_stats_group&
-T_stats::get_or_create_group(const std::string& group_name)
-{
-    for (auto& group : groups)
-    {
-        if (group_name == group.group_name)
-        {
-            return  group;
-        }
-    }
-
-    T_stats_group  group;
-    group.group_name = group_name;
-
-    groups.push_back(group);
-    return  groups.back();
-}
-
-//*****************************************************************************
 // T_stats::get_sub_group_by_full_name
 //*****************************************************************************
 T_stats_sub_group&
