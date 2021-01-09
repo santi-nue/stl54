@@ -49,9 +49,83 @@ T_stats::get_sub_group_by_full_name(const std::string& full_name)
 }
 
 //*****************************************************************************
-// read_file_wsgd_statistics
+// peglib parser
 //*****************************************************************************
 #include "peglib.h"
+
+// t_parser_error
+struct t_parser_error
+{
+    size_t  line;       // line where parser stop in error, start at 1
+    size_t  col;        // column where parser stop in error, start at 1
+    string  msg;        // parser error message
+
+    t_parser_error()
+        : line(0)
+        , col(0)
+    {}
+
+    bool  is_at_beginning() const { return line == 1 && col == 1; }
+};
+
+std::ostream& operator<<(std::ostream& os, const t_parser_error& rhs)
+{
+    os << "line=" << rhs.line << " ";
+    os << "col=" << rhs.col << " ";
+    os << rhs.msg;
+    return os;
+}
+
+//*****************************************************************************
+// get_remaining
+// Get the remaining input, ie from line/col specified in parser_error
+//*****************************************************************************
+std::string  get_remaining(const std::string& input, const t_parser_error& parser_error)
+{
+    M_TRACE_ENTER_NO_LEAVE("get_remaining", "parser_error=" << parser_error);
+
+    string::size_type  offset = 0;
+    {
+        size_t             line_counter = 1;
+        while (line_counter < parser_error.line)
+        {
+            auto pos = input.find_first_of("\r\n", offset);
+            if (pos == string::npos)
+            {
+                // impossible
+                M_TRACE_ERROR("No enough lines found ???");
+                return "";
+            }
+
+            if ((input[pos] == '\r') && (input[pos + 1] == '\n'))
+            {
+                ++pos;
+            }
+
+            offset = pos + 1;
+            ++line_counter;
+        }
+    }
+    offset += (parser_error.col - 1);
+    const std::string  remaining_input = input.substr(offset);
+
+    return remaining_input;
+}
+
+//*****************************************************************************
+// get_first_line
+//*****************************************************************************
+std::string  get_first_line(const std::string& input)
+{
+    std::string result;
+    istringstream  iss(input);
+    std::getline(iss, result);
+    return result;
+}
+
+//*****************************************************************************
+// read_file_wsgd_statistics
+//*****************************************************************************
 
 void  read_file_wsgd_statistics(std::istringstream& iss,
                                 T_stats&            stats)
@@ -59,8 +133,12 @@ void  read_file_wsgd_statistics(std::istringstream& iss,
     M_TRACE_ENTER("read_file_wsgd_statistics", "");
 
     peg::parser parser;
-    parser.log = [](size_t line, size_t col, const string& msg) {
-        M_TRACE_FATAL("read_file_wsgd_statistics parse fail on " << line << ":" << col << ": " << msg);
+
+    t_parser_error  parser_error;
+    parser.log = [&parser_error](size_t line, size_t col, const string& msg) {
+        parser_error.line = line;
+        parser_error.col = col;
+        parser_error.msg = msg;
     };
 
     const bool load_result = parser.load_grammar(R"(
@@ -221,7 +299,19 @@ void  read_file_wsgd_statistics(std::istringstream& iss,
 
     if (!parse_result)
     {
-        M_FATAL_COMMENT("STATISTICS peglib parse fail");
+        ostringstream  error;
+        error << "Parse fail, " << parser_error.msg << endl << endl;
+
+        const std::string  content_first_line = get_first_line(content);
+        error << "Starting on STATISTICS" << content_first_line << endl << endl;
+
+        if (parser_error.is_at_beginning() == false)
+        {
+            const std::string  content_at_error = get_remaining(content, parser_error);
+            const std::string  content_at_error_first_line = get_first_line(content_at_error);
+            error << "At/around " << content_at_error_first_line << endl << endl;
+        }
+        M_FATAL_COMMENT(error.str());
     }
 
     // Reset iss with the remaining content
