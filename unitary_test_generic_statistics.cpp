@@ -134,6 +134,40 @@ M_TEST_FCT(test_read_file_wsgd_statistics__no_sub_group)
 }
 
 //*****************************************************************************
+// test_read_file_wsgd_statistics_ko_array_must_start_on_current_line
+//*****************************************************************************
+
+M_TEST_FCT(test_read_file_wsgd_statistics_ko_array_must_start_on_current_line)
+{
+    T_stats        stats;
+    istringstream  iss(R"( "Samsung TV Remote Control Type"
+    [  # ko must be on previous line
+    "Message Type"   MessageType
+]                                                               # comment3  
+)");
+    M_TEST_CATCH_EXCEPTION(
+        read_file_wsgd_statistics(iss, stats),
+        C_byte_interpret_exception);
+}
+
+//*****************************************************************************
+// test_read_file_wsgd_statistics_ko_reject_multiline_string
+//*****************************************************************************
+
+M_TEST_FCT(test_read_file_wsgd_statistics_ko_reject_multiline_string)
+{
+    T_stats        stats;
+    istringstream  iss(R"( "Samsung TV Remote Control
+ Type" [                            # ko reject multiline string
+    "Message Type"   MessageType,
+]
+)");
+    M_TEST_CATCH_EXCEPTION(
+        read_file_wsgd_statistics(iss, stats),
+        C_byte_interpret_exception);
+}
+
+//*****************************************************************************
 // test_read_file_wsgd_statistics__multiple_sub_group
 //*****************************************************************************
 

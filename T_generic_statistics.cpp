@@ -155,7 +155,7 @@ void  read_file_wsgd_statistics(std::istringstream& iss,
 
     RemainingContent          <- < .* >
     IdentificatorSimple       <- < [a-zA-Z_] [a-zA-Z0-9_]* >
-    String                    <- '"' < [^"]* > '"'
+    String                    <- '"' < (!EndOfLine [^"])* > '"'
 
     ~_                        <- WS / EndOfLine
     ~WS                       <- SpaceChar / LineComment
