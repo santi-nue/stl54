@@ -11,6 +11,7 @@
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.2
 # - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.2
 # - Ubuntu 20.04       (wsl)    wireshark 3.2 to 3.4
+# - Debian 10.10       (wsl)    wireshark        3.4
 
 # Wsgd source code is now incompatible with wireshark <= 2.4
 # Wsgd source code is partially c++11 :
@@ -215,9 +216,10 @@ wsgd_cmake=cmake
 
 if [ "${wsgd_os_install_packages}" == "yes" ]
 then
-	if [ "${wsgd_os_name}" == "ubuntu" ] || [ "${wsgd_os_name}" == "kali" ]
+	if [ "${wsgd_os_name}" == "debian" ] || [ "${wsgd_os_name}" == "ubuntu" ] || [ "${wsgd_os_name}" == "kali" ]
 	then
 		#-------------------------------------------------------------------------------
+		#-- Debian 10.10
 		#-- Ubuntu 18.04 ...
 		#-- Kali 2019.2
 		#-------------------------------------------------------------------------------
