@@ -44,6 +44,7 @@ set (DISSECTOR_UT_SRC
 	unitary_test_scoped_copyable_ptr.cpp
 	unitary_test_static_executor_manager.cpp
 	unitary_test_string_to_words.cpp
+	unitary_test_promote_printf_string_to_64bits.cpp
 	unitary_test_value_format.cpp
 	unitary_test_value_printf.cpp
 	unitary_tests_functions.cpp

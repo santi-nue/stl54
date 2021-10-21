@@ -898,34 +898,47 @@ void    promote_printf_string_to_64bits(string   & printf_string)
     while ((idx_any = printf_string.find ('%', idx_any)) != string::npos)
     {
         ++idx_any;
+        if (idx_any >= printf_string.size())
+        {
+            M_FATAL_COMMENT("bad printf format " << printf_string << " with last character % (should be %% to print % ?)");
+            return;
+        }
 
         if (printf_string[idx_any] == '%')
         {
-            // This is not a printf format directive.
+            // %% is not a printf format directive.
             ++idx_any;
             continue;
         }
 
         while (isalpha(printf_string[idx_any]) == 0)
         {
-            if (idx_any == printf_string.size())
+            ++idx_any;
+            if (idx_any >= printf_string.size())
             {
-                M_TRACE_ERROR("bad printf format string gives >" << printf_string << "< ");
+                M_FATAL_COMMENT("bad printf format string gives >" << printf_string << "< %... must end with a letter");
                 return;
             }
+        }
 
-            ++idx_any;
+        if ((printf_string[idx_any] == 'h') ||   // for short integer        wsgd integers are always 64 bits
+            (printf_string[idx_any] == 'l') ||   // for long  integer        wsgd integers are always 64 bits
+            (printf_string[idx_any] == 'L'))     // for long double          not managed
+        {
+            M_FATAL_COMMENT("bad printf format string gives >" << printf_string << "< %... must not contains h, l or L");
+            return;
         }
 
         if (printf_string[idx_any] != 's')
         {
-            if ((printf_string[idx_any] != 'f') &&
-                (printf_string[idx_any] != 'F') &&
-                (printf_string[idx_any] != 'e') &&
-                (printf_string[idx_any] != 'E') &&
-                (printf_string[idx_any] != 'g') &&
-                (printf_string[idx_any] != 'G'))
+            if ((printf_string[idx_any] == 'd') ||
+                (printf_string[idx_any] == 'i') ||
+                (printf_string[idx_any] == 'o') ||
+                (printf_string[idx_any] == 'u') ||
+                (printf_string[idx_any] == 'x') ||
+                (printf_string[idx_any] == 'X'))
             {
+                // wsgd integers are always 64 bits
 #ifdef WIN32
                 printf_string.insert(idx_any, "I64");
                 idx_any += 4;
