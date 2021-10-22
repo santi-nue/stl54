@@ -216,7 +216,7 @@ wsgd_cmake=cmake
 
 if [ "${wsgd_os_install_packages}" == "yes" ]
 then
-	if [ "${wsgd_os_name}" == "debian" ] || [ "${wsgd_os_name}" == "ubuntu" ] || [ "${wsgd_os_name}" == "kali" ]
+	if type apt-get 2>/dev/null
 	then
 		#-------------------------------------------------------------------------------
 		#-- Debian 10.10
@@ -249,11 +249,8 @@ then
 			wsgd__echo "fix make (and wireshark ...) will fail to find libQt5Core.so"
 			sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so
 		fi
-		
-		wsgd_os_install_packages=
-	fi
 
-	if [ "${wsgd_os_name}" == "centos" ]
+	elif type yum 2>/dev/null
 	then
 		#-------------------------------------------------------------------------------
 		#-- CentOS7, CentOS8
@@ -286,10 +283,7 @@ then
 
 		wsgd_cmake=cmake3
 
-		wsgd_os_install_packages=
-	fi
-
-	if [ "${wsgd_os_name}" == "opensuse-leap" ]
+	elif type zypper 2>/dev/null
 	then
 		#-------------------------------------------------------------------------------
 		#-- openSUSE Leap 15-1
@@ -314,12 +308,10 @@ then
 
 		sudo zypper --non-interactive in libpcap-devel
 		
-		wsgd_os_install_packages=
-	fi
-	
-	if [ ! -z ${wsgd_os_install_packages} ]
-	then
-		wsgd__echo "${wsgd_os_name} is NOT known so NO package has been installed"
+	else
+		wsgd__echo "apt-get, yum and zypper are not found"
+		wsgd__echo "One must be found to install packages"
+		wsgd__echo "So NO package has been installed"
 		read -p "wsgd: Type Enter to continue ..."
 	fi
 fi
