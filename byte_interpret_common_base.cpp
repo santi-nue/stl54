@@ -60,8 +60,8 @@ int   get_files_in_dir (const string          & dir_name,
 
     const string     filter = dir_name + "\\" + begin_file_name + "*" + end_file_name;
 
-    WIN32_FIND_DATA  FindData;
-    HANDLE           hFindFile = FindFirstFile(filter.c_str(), &FindData);
+    WIN32_FIND_DATAA FindData;
+    HANDLE           hFindFile = FindFirstFileA(filter.c_str(), &FindData);
     if (hFindFile == INVALID_HANDLE_VALUE)
     {
         M_TRACE_ERROR("filter " << filter << " not found");
@@ -79,7 +79,7 @@ int   get_files_in_dir (const string          & dir_name,
         //-------------------------------------------------------
         // Recherche du fichier suivant
         //-------------------------------------------------------
-        hOK = FindNextFile(hFindFile, &FindData);
+        hOK = FindNextFileA(hFindFile, &FindData);
     }
 
     FindClose(hFindFile);
