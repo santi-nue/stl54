@@ -31,6 +31,7 @@ include(CMakeLists.DISSECTOR_SUPPORT_SRC.txt)
 
 
 add_library(libfdesc STATIC ${DISSECTOR_CORE_SRC})
+set_target_properties(libfdesc PROPERTIES FOLDER "Wsgd")
 
 
 # Only files needed to generate plugin.c
@@ -69,6 +70,7 @@ register_plugin_files(plugin.c
 
 add_plugin_library(generic epan)
 target_link_libraries(generic PRIVATE epan libfdesc)
+set_target_properties(generic PROPERTIES FOLDER "Wsgd")
 
 install_plugin(generic epan)
 
@@ -95,6 +97,7 @@ if (UNIX)
 	target_link_libraries(byte_interpret PRIVATE "-pthread")
 endif()
 target_link_libraries(byte_interpret PRIVATE libfdesc)
+set_target_properties(byte_interpret PROPERTIES FOLDER "Wsgd")
 
 
 # unitary_tests
@@ -106,3 +109,4 @@ if (UNIX)
 	target_link_libraries(unitary_tests PRIVATE "-pthread")
 endif()
 target_link_libraries(unitary_tests PRIVATE libfdesc)
+set_target_properties(unitary_tests PROPERTIES FOLDER "Wsgd")
