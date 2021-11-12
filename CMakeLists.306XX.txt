@@ -30,6 +30,9 @@ include(CMakeLists.DISSECTOR_CORE.txt)
 include(CMakeLists.DISSECTOR_SUPPORT_SRC.txt)
 
 
+add_library(libfdesc STATIC ${DISSECTOR_CORE_SRC})
+
+
 # Only files needed to generate plugin.c
 set(DISSECTOR_SRC
 	packet-generic.c
@@ -63,7 +66,7 @@ register_plugin_files(plugin.c
 )
 
 add_plugin_library(generic epan)
-target_link_libraries(generic epan)
+target_link_libraries(generic PRIVATE epan libfdesc)
 
 install_plugin(generic epan)
 
@@ -82,14 +85,14 @@ CHECKAPI(
 
 
 
-
 # byte_interpret
-add_executable(byte_interpret byte_interpret_main.cpp ${DISSECTOR_CORE_SRC})
+add_executable(byte_interpret byte_interpret_main.cpp)
 if (UNIX)
 	# Mandatory for peglib.h
 	#target_link_options(byte_interpret PRIVATE -pthread)  # cmake >= 3.13
 	target_link_libraries(byte_interpret PRIVATE "-pthread")
 endif()
+target_link_libraries(byte_interpret PRIVATE libfdesc)
 
 
 # unitary_tests
@@ -100,3 +103,4 @@ if (UNIX)
 	#target_link_options(byte_interpret PRIVATE -pthread)  # cmake >= 3.13
 	target_link_libraries(unitary_tests PRIVATE "-pthread")
 endif()
+target_link_libraries(unitary_tests PRIVATE libfdesc)

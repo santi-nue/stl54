@@ -3,7 +3,6 @@
 # directory, but they're not dissectors themselves, i.e. they're not
 # used to generate "register.c").
 set (DISSECTOR_SUPPORT_SRC
-	${DISSECTOR_CORE_SRC}
 	generic.cpp generic.h
 	T_generic_protocol_data.cpp T_generic_protocol_data.h
 	C_byte_interpret_wsgd_builder.cpp C_byte_interpret_wsgd_builder.h

@@ -1,6 +1,5 @@
 
 set (DISSECTOR_UT_TOOLS_SRC
-	${DISSECTOR_CORE_UT_SRC}
 	unitary_tests_tools.cpp unitary_tests_tools.h
 	T_static_executor.cpp T_static_executor.h
 	T_static_executor_manager.cpp T_static_executor_manager.h
