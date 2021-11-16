@@ -1,0 +1,108 @@
+# NOT tested
+# Does something only on a tag "<wireshark container name without -dev>_..."
+
+stages:
+  - build
+  - package
+  - upload
+  - release
+
+# https://hub.docker.com/r/
+# image: wireshark/wireshark-debian-stable-dev
+# image: wireshark/wireshark-ubuntu-dev
+# image: wireshark/wireshark-opensuse-15.2-dev
+# image: wireshark/wireshark-opensuse-15.1-dev
+# image: wireshark/wireshark-centos-8-dev
+# image: wireshark/wireshark-centos-7-dev
+# image: wireshark/wireshark-fedora-dev
+
+# wireshark/.gitlab-ci.yml
+# image: registry.gitlab.com/wireshark/wireshark-containers/debian-stable-dev
+# image: registry.gitlab.com/wireshark/wireshark-containers/ubuntu-dev
+# image: registry.gitlab.com/wireshark/wireshark-containers/opensuse-15.2-dev
+# image: registry.gitlab.com/wireshark/wireshark-containers/centos-8-dev
+# image: registry.gitlab.com/wireshark/wireshark-containers/centos-7-dev
+# image: registry.gitlab.com/wireshark/wireshark-containers/fedora-dev
+
+
+variables:
+  VERSIONS: "306XX 304XX 302XX 300XX"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_TAG}/"
+
+.build:
+  stage: build
+  script:
+    - chmod +x  *.sh  .gitlab/*.sh
+    - .gitlab/info.sh
+    - .gitlab/build.sh  deliveries
+  artifacts:
+    paths:
+      - deliveries/
+
+# Build only on tag "<wireshark container without -dev>_..."
+build_debian-stable:
+  extends: .build
+  image: "registry.gitlab.com/wireshark/wireshark-containers/debian-stable-dev"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^debian-stable_/'
+
+build_ubuntu:
+  extends: .build
+  image: "registry.gitlab.com/wireshark/wireshark-containers/ubuntu-dev"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^ubuntu_/'
+
+build_opensuse-15.2:
+  extends: .build
+  image: "registry.gitlab.com/wireshark/wireshark-containers/opensuse-15.2-dev"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^opensuse-15.2_/'
+
+build_centos-7:
+  extends: .build
+  image: "registry.gitlab.com/wireshark/wireshark-containers/centos-7-dev"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^centos-7_/'
+
+build_centos-8:
+  extends: .build
+  image: "registry.gitlab.com/wireshark/wireshark-containers/centos-8-dev"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^centos-8_/'
+
+build_fedora:
+  extends: .build
+  image: "registry.gitlab.com/wireshark/wireshark-containers/fedora-dev"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^fedora_/'
+
+
+package:
+  stage: package
+  image: registry.gitlab.com/wireshark/wireshark-containers/debian-stable-dev
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - chmod +x  *.sh  .gitlab/*.sh
+    - .gitlab/packages.sh  packages  deliveries
+  artifacts:
+    paths:
+      - packages/
+
+upload:
+  stage: upload
+  image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    # chmod not available
+    - source .gitlab/uploads.sh  packages
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:v0.4.0
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    # chmod not available
+    - source .gitlab/releases.sh  packages

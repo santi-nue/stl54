@@ -40,6 +40,14 @@ wsgd__check_execution_ok ()
 	wsgd__echo "${l_wsgd_output} done"
 }
 
+wsgd__prompt_continue ()
+{
+	[ "${wsgd_non_interactive}" == "yes" ] && echo $* && return 0
+
+	read -p "wsgd: Type Enter to $*"
+	return  0
+}
+
 #-------------------------------------------------------------------------------
 #-- tools directory
 #-------------------------------------------------------------------------------
@@ -93,6 +101,51 @@ wsgd__check_executable ()
 
 
 ################################################################################
+### Options
+################################################################################
+[ -z "${wsgd_sudo}" ]  && wsgd_sudo=sudo
+[ -z "${wsgd_strip}" ] && wsgd_strip=strip
+[ -z "${wsgd_test}" ]  && wsgd_test="yes"
+wsgd_delivery_dir=""
+
+while (( $# > 0 ))
+do
+	case $1 in
+		"--packages:no")
+			wsgd_os_install_packages="no"
+			;;
+		"--packages:yes")
+			wsgd_os_install_packages="yes"
+			;;
+		"--no-sudo")
+			wsgd_sudo=""
+			;;
+		"--non-interactive")
+			wsgd_non_interactive="yes"
+			;;
+		"--fast")
+			wsgd_build_fast="yes"
+			;;
+		"--test:no")
+			wsgd_test="no"
+			;;
+		"--strip:no")
+			wsgd_strip=""
+			;;
+		"--delivery_dir")
+			shift
+			(( $# < 1 )) && echo "Missing delivery directory" && exit 2
+			wsgd_delivery_dir=$1
+			;;
+		*)
+			wsgd__echo "Unknow option $1"
+			exit 1
+			;;
+	esac
+	shift
+done
+
+################################################################################
 ### Configuration
 ################################################################################
 
@@ -110,10 +163,10 @@ then
 	uname -a | grep -i Microsoft
 	[ $? -eq 0 ] && wsgd_os_wsl="wsl"       # Windows Subsystem for Linux
 fi
+[ -z "${wsgd_os_like_name}" ]  && wsgd_os_like_name=$(cat /etc/os-release | grep "^ID_LIKE=" | sed -e "s/ID_LIKE=//" | sed -e 's/"//g')
+[ -z "${wsgd_os_like_name}" ]  && wsgd_os_like_name=${wsgd_os_name}
 
 [ -z "${wsgd_os_install_packages}" ]  && wsgd_os_install_packages="yes"
-[ X"$1" == X"--packages:yes" ]        && wsgd_os_install_packages="yes"
-[ X"$1" == X"--packages:no" ]         && wsgd_os_install_packages="no"
 
 # Set wirewhark version
 [ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=304XX
@@ -124,8 +177,8 @@ fi
 
 # Set sources repositories
 [ -z "${wsgd_wsgd_repository}" ]             && wsgd_wsgd_repository=https://gitlab.com/wsgd/wsgd.git
-[ -z "${wsgd_wireshark_repository}" ]        && wsgd_wireshark_repository=https://code.wireshark.org/review/wireshark
-[ -z "${wsgd_clone_wireshark_repository}" ]  && wsgd_clone_wireshark_repository="git  clone  ${wsgd_wireshark_repository}"
+[ -z "${wsgd_wireshark_repository}" ]        && wsgd_wireshark_repository=https://gitlab.com/wireshark/wireshark.git
+[ -z "${wsgd_clone_wireshark_repository}" ]  && wsgd_clone_wireshark_repository="git  clone  --no-checkout  ${wsgd_wireshark_repository}"
 
 # Directory where to clone
 [  -z "${wsgd_dev_base_dir}" ]         && wsgd_dev_base_dir=~/wireshark/dev
@@ -134,16 +187,10 @@ fi
 [ -z "${wsgd_wireshark_src_subdir}" ]        && wsgd_wireshark_src_subdir=git-${wsgd_wireshark_branch}--linux${wsgd_os_bits}
 
 [ -z "${wsgd_wsgd_CMakeLists}" ]             && wsgd_wsgd_CMakeLists=CMakeLists.${wsgd_wireshark_branch}.txt
+[ -z "${wsgd_cmake_build_dir}" ]             && wsgd_cmake_build_dir=${wsgd_dev_base_dir}/${wsgd_wireshark_src_subdir}
 
-if [ "${wsgd_wireshark_branch}" == "204XX" ]
-then
-	# No sub directory epan into plugins before 2.6
-	[ -z "${wsgd_wireshark_src_plugin_subdir}" ] && wsgd_wireshark_src_plugin_subdir=plugins
-	[ -z "${wsgd_wireshark_lib_plugin_subdir}" ] && wsgd_wireshark_lib_plugin_subdir=plugins
-else
-	[ -z "${wsgd_wireshark_src_plugin_subdir}" ] && wsgd_wireshark_src_plugin_subdir=plugins/epan
-	[ -z "${wsgd_wireshark_lib_plugin_subdir}" ] && wsgd_wireshark_lib_plugin_subdir=plugins/${wsgd_wireshark_plugin_version}/epan
-fi
+[ -z "${wsgd_wireshark_src_plugin_subdir}" ] && wsgd_wireshark_src_plugin_subdir=plugins/epan
+[ -z "${wsgd_wireshark_lib_plugin_subdir}" ] && wsgd_wireshark_lib_plugin_subdir=plugins/${wsgd_wireshark_plugin_version}/epan
 
 ################################################################################
 ### Script sequence
@@ -160,21 +207,34 @@ echo
 echo "- if  ${wsgd_wireshark_src_subdir}  does not exist"
 echo "  - ${wsgd_clone_wireshark_repository}   ${wsgd_wireshark_src_subdir}"
 echo "  - git checkout  ${wsgd_wireshark_checkout_label}"
-echo "- cmake ."
-echo "- make"
+if [ "${wsgd_build_fast}" == "yes" ]
+then
+	echo "- copy of libw...so into ${wsgd_cmake_build_dir}/run"
+else
+	echo "- cmake -S .  -B ${wsgd_cmake_build_dir}"
+	echo "- make"
+fi
 echo
 echo "- cd  plugins/epan"
 echo "- if  generic  does not exist"
-echo "  - git clone  ${wsgd_wsgd_repository}   generic"
+echo "  - git clone ${wsgd_wsgd_repository}  generic"
 echo "- configure generic directory"
 echo "- cd  ../.."
 echo "- add ${wsgd_wireshark_src_plugin_subdir}/generic into CMakeListsCustom.txt"
-echo "- cmake ."
-echo "- make"
+echo "- cmake -S .  -B ${wsgd_cmake_build_dir}"
+if [ "${wsgd_build_fast}" == "yes" ]
+then
+	echo "- make generic/fast byte_interpret/fast unitary_tests/fast"
+else
+	echo "- make"
+fi
 echo
-echo "- launch wsgd unitary_tests"
-echo
-read -p "wsgd: Type Enter to display configuration ..."
+if [ "${wsgd_test}" == "yes" ]
+then
+	echo "- launch wsgd unitary_tests"
+	echo
+fi
+wsgd__prompt_continue "display configuration ..."
 echo
 
 
@@ -184,6 +244,7 @@ echo
 
 echo wsgd_os_bits = ${wsgd_os_bits}
 echo wsgd_os_name = ${wsgd_os_name}
+echo wsgd_os_like_name = ${wsgd_os_like_name}
 echo wsgd_os_wsl = ${wsgd_os_wsl}
 echo wsgd_os_install_packages = ${wsgd_os_install_packages}
 
@@ -193,6 +254,7 @@ echo wsgd_wireshark_plugin_version = ${wsgd_wireshark_plugin_version}
 echo wsgd_WIRESHARK_VERSION_NUMBER = ${wsgd_WIRESHARK_VERSION_NUMBER}
 
 echo wsgd_wsgd_repository = ${wsgd_wsgd_repository}
+echo wsgd_clone_wsgd_repository = ${wsgd_clone_wsgd_repository}
 echo wsgd_wireshark_repository = ${wsgd_wireshark_repository}
 echo wsgd_clone_wireshark_repository = ${wsgd_clone_wireshark_repository}
 
@@ -200,6 +262,7 @@ echo wsgd_dev_base_dir = ${wsgd_dev_base_dir}
 
 echo wsgd_wireshark_src_subdir = ${wsgd_wireshark_src_subdir}
 echo wsgd_wsgd_CMakeLists = ${wsgd_wsgd_CMakeLists}
+echo wsgd_cmake_build_dir = ${wsgd_cmake_build_dir}
 
 echo wsgd_wireshark_src_plugin_subdir = ${wsgd_wireshark_src_plugin_subdir}
 echo wsgd_wireshark_lib_plugin_subdir = ${wsgd_wireshark_lib_plugin_subdir}
@@ -207,7 +270,7 @@ echo wsgd_wireshark_lib_plugin_subdir = ${wsgd_wireshark_lib_plugin_subdir}
 echo 
 wsgd__echo "You must check parameters displayed above"
 wsgd__echo "If they are not good, stop the script and fix them"
-read -p "wsgd: Type Enter to continue ..."
+wsgd__prompt_continue "continue ..."
 
 ################################################################################
 ### build wireshark : packages
@@ -224,30 +287,30 @@ then
 		#-- Kali 2019.2
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
-		sudo apt-get update
-		sudo apt-get --assume-yes install git
+		${wsgd_sudo} apt-get update
+		${wsgd_sudo} apt-get --assume-yes install git
 
-		sudo apt-get --assume-yes install cmake
-		sudo apt-get --assume-yes install g++
-		sudo apt-get --assume-yes install libgtk2.0-dev
-		sudo apt-get --assume-yes install libgcrypt-dev
-		sudo apt-get --assume-yes install flex
-		sudo apt-get --assume-yes install bison
-		sudo apt-get --assume-yes install libc-ares-dev
+		${wsgd_sudo} apt-get --assume-yes install cmake
+		${wsgd_sudo} apt-get --assume-yes install g++
+		${wsgd_sudo} apt-get --assume-yes install libgtk2.0-dev
+		${wsgd_sudo} apt-get --assume-yes install libgcrypt-dev
+		${wsgd_sudo} apt-get --assume-yes install flex
+		${wsgd_sudo} apt-get --assume-yes install bison
+		${wsgd_sudo} apt-get --assume-yes install libc-ares-dev
 
-		sudo apt-get --assume-yes install qtdeclarative5-dev
-		sudo apt-get --assume-yes install qttools5-dev
-		sudo apt-get --assume-yes install qtmultimedia5-dev
-		sudo apt-get --assume-yes install libqt5svg5-dev
+		${wsgd_sudo} apt-get --assume-yes install qtdeclarative5-dev
+		${wsgd_sudo} apt-get --assume-yes install qttools5-dev
+		${wsgd_sudo} apt-get --assume-yes install qtmultimedia5-dev
+		${wsgd_sudo} apt-get --assume-yes install libqt5svg5-dev
 
-		sudo apt-get --assume-yes install libpcap-dev
+		${wsgd_sudo} apt-get --assume-yes install libpcap-dev
 
 
 		if [ "${wsgd_os_wsl}" == "wsl" ]
 		then
 			# Problem seen on Kali 2019.2 & Ubuntu 20.04
 			wsgd__echo "fix make (and wireshark ...) will fail to find libQt5Core.so"
-			sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so
+			${wsgd_sudo} strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so
 		fi
 
 	elif type yum 2>/dev/null
@@ -256,30 +319,30 @@ then
 		#-- CentOS7, CentOS8
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
-		sudo yum --assumeyes install git
+		${wsgd_sudo} yum --assumeyes install git
 
-		sudo yum --assumeyes install epel-release
-		sudo yum --assumeyes install cmake3
-		sudo yum --assumeyes install make
-		sudo yum --assumeyes install python3
-		sudo yum --assumeyes install perl
-		sudo yum --assumeyes install gcc-c++
+		${wsgd_sudo} yum --assumeyes install epel-release
+		${wsgd_sudo} yum --assumeyes install cmake3 libarchive
+		${wsgd_sudo} yum --assumeyes install make
+		${wsgd_sudo} yum --assumeyes install python3
+		${wsgd_sudo} yum --assumeyes install perl
+		${wsgd_sudo} yum --assumeyes install gcc-c++
 
-		sudo yum --assumeyes install libgcrypt-devel
-		sudo yum --assumeyes install glib2-devel
-		sudo yum --assumeyes install flex
-		sudo yum --assumeyes install bison
-		sudo yum --assumeyes install c-ares-devel
+		${wsgd_sudo} yum --assumeyes install libgcrypt-devel
+		${wsgd_sudo} yum --assumeyes install glib2-devel
+		${wsgd_sudo} yum --assumeyes install flex
+		${wsgd_sudo} yum --assumeyes install bison
+		${wsgd_sudo} yum --assumeyes install c-ares-devel
 
-		sudo yum --assumeyes install qt5-qttools
-		sudo yum --assumeyes install qt5-qtbase-devel
-		sudo yum --assumeyes install qt5-qttools-devel
-		sudo yum --assumeyes install qt5-qtmultimedia-devel
-		sudo yum --assumeyes install qt5-qtsvg-devel
+		${wsgd_sudo} yum --assumeyes install qt5-qttools
+		${wsgd_sudo} yum --assumeyes install qt5-qtbase-devel
+		${wsgd_sudo} yum --assumeyes install qt5-qttools-devel
+		${wsgd_sudo} yum --assumeyes install qt5-qtmultimedia-devel
+		${wsgd_sudo} yum --assumeyes install qt5-qtsvg-devel
 
-		sudo yum --assumeyes install libpcap-devel
-		sudo yum --assumeyes install zlib-devel
-		sudo yum --assumeyes install harfbuzz-devel.x86_64
+		${wsgd_sudo} yum --assumeyes install libpcap-devel
+		${wsgd_sudo} yum --assumeyes install zlib-devel
+		${wsgd_sudo} yum --assumeyes install harfbuzz-devel.x86_64
 
 		wsgd_cmake=cmake3
 
@@ -289,30 +352,30 @@ then
 		#-- openSUSE Leap 15-1
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
-		sudo zypper --non-interactive in git
+		${wsgd_sudo} zypper --non-interactive in git
 
-		sudo zypper --non-interactive in cmake
-		sudo zypper --non-interactive in gcc-c++
-		sudo zypper --non-interactive in glib2-devel
-		sudo zypper --non-interactive in libgcrypt-devel
-		sudo zypper --non-interactive in flex
-		sudo zypper --non-interactive in bison
-		sudo zypper --non-interactive in c-ares-devel
+		${wsgd_sudo} zypper --non-interactive in cmake
+		${wsgd_sudo} zypper --non-interactive in gcc-c++
+		${wsgd_sudo} zypper --non-interactive in glib2-devel
+		${wsgd_sudo} zypper --non-interactive in libgcrypt-devel
+		${wsgd_sudo} zypper --non-interactive in flex
+		${wsgd_sudo} zypper --non-interactive in bison
+		${wsgd_sudo} zypper --non-interactive in c-ares-devel
 
-		sudo zypper --non-interactive in libQt5Core-devel
-		sudo zypper --non-interactive in libqt5-linguist-devel
-		sudo zypper --non-interactive in libqt5-qttools-devel
-		sudo zypper --non-interactive in libqt5-qtmultimedia-devel
-		sudo zypper --non-interactive in libQt5PrintSupport-devel
-		sudo zypper --non-interactive in libqt5-qtsvg-devel
+		${wsgd_sudo} zypper --non-interactive in libQt5Core-devel
+		${wsgd_sudo} zypper --non-interactive in libqt5-linguist-devel
+		${wsgd_sudo} zypper --non-interactive in libqt5-qttools-devel
+		${wsgd_sudo} zypper --non-interactive in libqt5-qtmultimedia-devel
+		${wsgd_sudo} zypper --non-interactive in libQt5PrintSupport-devel
+		${wsgd_sudo} zypper --non-interactive in libqt5-qtsvg-devel
 
-		sudo zypper --non-interactive in libpcap-devel
+		${wsgd_sudo} zypper --non-interactive in libpcap-devel
 		
 	else
 		wsgd__echo "apt-get, yum and zypper are not found"
 		wsgd__echo "One must be found to install packages"
 		wsgd__echo "So NO package has been installed"
-		read -p "wsgd: Type Enter to continue ..."
+		wsgd__prompt_continue "continue ..."
 	fi
 fi
 
@@ -324,7 +387,7 @@ fi
 
 
 ################################################################################
-### build wireshark
+### clone & cmake wireshark
 ################################################################################
 wsgd__cd_create_if_not_exist  ${wsgd_dev_base_dir}
 
@@ -348,17 +411,51 @@ fi
 
 wsgd_wireshark_src_dir=$(pwd)
 
-# Build
-wsgd__echo "wireshark ${wsgd_cmake} ."
-${wsgd_cmake} .
+
+# cmake (3.11 does not have -S -B options)
+wsgd__cd ${wsgd_cmake_build_dir}
+wsgd__echo "wireshark ${wsgd_cmake}  ${wsgd_wireshark_src_dir}"
+${wsgd_cmake}  ${wsgd_wireshark_src_dir}
 wsgd__check_execution_ok  "wireshark ${wsgd_cmake}"
 
-wsgd__echo "wireshark make"
-make
-wsgd__check_execution_ok  "wireshark make"
 
-# Check wireshark
-wsgd__check_executable  run/wireshark  "is present"
+################################################################################
+### build wireshark
+################################################################################
+wsgd__cd ${wsgd_wireshark_src_dir}
+
+if [ "${wsgd_build_fast}" == "yes" ]
+then
+	wireshark_prebuild_file=../wireshark_run/${wsgd_os_name}/${wsgd_wireshark_branch}/libw.tgz
+	[ ! -r "${wireshark_prebuild_file}" ] && wireshark_prebuild_file=../wireshark_run/${wsgd_os_like_name}/${wsgd_wireshark_branch}/libw.tgz
+
+	if [ ! -r "${wireshark_prebuild_file}" ]
+	then
+		# Prebuild file not found, so need to build wireshark
+		wsgd_build_fast="no"
+	else
+		wsgd__echo "No wireshark build : creation of run with libw*.so*"
+		mkdir -p ${wsgd_cmake_build_dir}/run && tar xzvf "${wireshark_prebuild_file}" -C ${wsgd_cmake_build_dir}/run
+		ls -l ${wsgd_cmake_build_dir}/run
+
+		# CMake Error at /home/olivier/wireshark/dev/git-304XX_02/CMakeFiles/CMakeTmp/CMakeLists.txt:14 (add_executable):
+		#  Cannot find source file:
+		#    /home/olivier/wireshark/dev/git-304XX_02/cmake/TestFileOffsetBits.c
+		# rm -f $(find . -name "*.c")
+	fi
+fi
+
+if [ "${wsgd_build_fast}" != "yes" ]
+then
+	# Build
+	wsgd__cd  ${wsgd_cmake_build_dir}
+	wsgd__echo "wireshark make"
+	make
+	wsgd__check_execution_ok  "wireshark make"
+
+	# Check wireshark
+	wsgd__check_executable  ${wsgd_cmake_build_dir}/run/wireshark  "is present"
+fi
 
 
 ################################################################################
@@ -430,17 +527,27 @@ then
 fi
 
 # Build
-wsgd__echo "wireshark+wsgd ${wsgd_cmake} ."
-${wsgd_cmake} .
+wsgd__cd ${wsgd_cmake_build_dir}
+wsgd__echo "wireshark+wsgd ${wsgd_cmake}  ${wsgd_wireshark_src_dir}"
+${wsgd_cmake}  ${wsgd_wireshark_src_dir}
 wsgd__check_execution_ok  "wireshark+wsgd ${wsgd_cmake}"
 
-wsgd__echo "wireshark+wsgd make"
-make
-wsgd__check_execution_ok  "wireshark+wsgd make"
+wsgd__cd  ${wsgd_cmake_build_dir}
+if [ "${wsgd_build_fast}" == "yes" ]
+then
+	wsgd__echo "wireshark+wsgd make generic/fast byte_interpret/fast unitary_tests/fast"
+	make libfdesc/fast generic/fast byte_interpret/fast unitary_tests/fast
+	wsgd__check_execution_ok  "wireshark+wsgd make generic/fast byte_interpret/fast unitary_tests/fast"
+else
+	wsgd__echo "wireshark+wsgd make"
+	make
+	wsgd__check_execution_ok  "wireshark+wsgd make"
+fi
 
 # Check generic.so
 # Check byte_interpret (not necessary for wireshark)
 # Check unitary_tests (not necessary for wireshark)
+wsgd__cd  ${wsgd_cmake_build_dir}
 wsgd__check_exists      run/${wsgd_wireshark_lib_plugin_subdir}/generic.so    "is present"
 wsgd__check_executable  run/byte_interpret                                    "is present"
 wsgd__check_executable  run/unitary_tests                                     "is present"
@@ -451,9 +558,39 @@ wsgd__check_executable  run/unitary_tests                                     "i
 ################################################################################
 wsgd__cd  ${wsgd_wsgd_src_dir}
 
-wsgd__echo "${wsgd_wireshark_src_dir}/run/unitary_tests"
-${wsgd_wireshark_src_dir}/run/unitary_tests
-wsgd__check_execution_ok  "unitary_tests"
+if [ "${wsgd_test}" == "yes" ]
+then
+	wsgd__echo "${wsgd_cmake_build_dir}/run/unitary_tests"
+	${wsgd_cmake_build_dir}/run/unitary_tests
+	wsgd__check_execution_ok  "unitary_tests"
+fi
+
+################################################################################
+### strip
+################################################################################
+if [ ! -z "${wsgd_strip}" ]
+then
+	${wsgd_strip}  ${wsgd_cmake_build_dir}/run/byte_interpret
+	${wsgd_strip}  ${wsgd_cmake_build_dir}/run/${wsgd_wireshark_lib_plugin_subdir}/generic.so
+fi
+
+################################################################################
+### delivery
+################################################################################
+if [ ! -z "${wsgd_delivery_dir}" ]
+then
+	wsgd__cd  ${wsgd_delivery_dir}
+	cp -p  ${wsgd_cmake_build_dir}/run/byte_interpret  .
+	cp -p  ${wsgd_cmake_build_dir}/run/${wsgd_wireshark_lib_plugin_subdir}/generic.so  .
+	if [ "${wsgd_build_fast}" != "yes" ]
+	then
+		wsgd__cd  ${wsgd_cmake_build_dir}/run
+		[ ! -z "${wsgd_strip}" ] && ${wsgd_strip}  libw*.so*
+		tar cvzf ${wsgd_delivery_dir}/libw.tgz  libw*.so*
+		[ ! -z "${wsgd_strip}" ] && ${wsgd_strip}  tshark
+		tar cvzf ${wsgd_delivery_dir}/tshark.tgz  tshark
+	fi
+fi
 
 
 wsgd__echo "Done"
