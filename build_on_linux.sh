@@ -7,11 +7,12 @@
  
 # This script has been tested on :
 # - CentOS 7.6         (wsl)    wireshark 2.4 to 3.4
-# - CentOS 8.1         (wsl)    wireshark        3.4
-# - Kali 2019.2        (wsl)    wireshark 2.4 to 3.2
-# - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.2
-# - Ubuntu 20.04       (wsl)    wireshark 3.2 to 3.4
-# - Debian 10.10       (wsl)    wireshark        3.4
+# - CentOS 8.1         (wsl)    wireshark 3.0 to 3.6
+# - Kali 2019.2        (wsl)    wireshark 2.4 to 3.6
+# - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.6
+# - Ubuntu 20.04       (wsl)    wireshark 3.2 to 3.6
+# - Ubuntu 22.04       (wsl)    wireshark        3.6
+# - Debian 10.10       (wsl)    wireshark 3.4 to 3.6
 
 # Wsgd source code is now incompatible with wireshark <= 2.4
 # Wsgd source code is partially c++11 :
@@ -169,10 +170,10 @@ fi
 [ -z "${wsgd_os_install_packages}" ]  && wsgd_os_install_packages="yes"
 
 # Set wirewhark version
-[ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=304XX
-[ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=3.4
-[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v3.4.0
-[ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=30400
+[ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=306XX
+[ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=3.6
+[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v3.6.0
+[ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=30600
 
 
 # Set sources repositories
