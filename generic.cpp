@@ -1365,11 +1365,20 @@ static void    generic_stats_tree_init(stats_tree  * st)
 #define stat_tree_packet_return_value    1
 #endif
 static
+#if WIRESHARK_VERSION_NUMBER >= 40000
+stat_tree_packet_return_type
+              generic_stats_tree_packet(stats_tree      * st,
+                                        packet_info     * pinfo,
+                                        epan_dissect_t  * edt,
+                                  const void            * p,
+                                        tap_flags_t       UNUSED(flags))
+#else
 stat_tree_packet_return_type
               generic_stats_tree_packet(stats_tree      * st,
                                         packet_info     * pinfo,
                                         epan_dissect_t  * edt,
                                   const void            * p)
+#endif
 {
     T_generic_protocol_data  & protocol_data = *(T_generic_protocol_data*)p;
     C_debug_set_temporary      debug_stats(protocol_data.DEBUG);
