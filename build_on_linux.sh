@@ -8,10 +8,11 @@
 # This script has been tested on :
 # - CentOS 7.6         (wsl)    wireshark 2.4 to 3.4
 # - CentOS 8.1         (wsl)    wireshark 3.0 to 3.6
+# - CentOS stream 9    (wsl)    wireshark        4.0
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.6
 # - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.6
 # - Ubuntu 20.04       (wsl)    wireshark 3.2 to 3.6
-# - Ubuntu 22.04       (wsl)    wireshark        3.6
+# - Ubuntu 22.04       (wsl)    wireshark 3.6 to 4.0
 # - Debian 10.10       (wsl)    wireshark 3.4 to 3.6
 
 # Wsgd source code is now incompatible with wireshark <= 2.4
@@ -170,10 +171,10 @@ fi
 [ -z "${wsgd_os_install_packages}" ]  && wsgd_os_install_packages="yes"
 
 # Set wirewhark version
-[ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=306XX
-[ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=3.6
-[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v3.6.0
-[ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=30600
+[ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=400XX
+[ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=4.0
+[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v4.0.0
+[ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=40000
 
 
 # Set sources repositories
@@ -255,7 +256,6 @@ echo wsgd_wireshark_plugin_version = ${wsgd_wireshark_plugin_version}
 echo wsgd_WIRESHARK_VERSION_NUMBER = ${wsgd_WIRESHARK_VERSION_NUMBER}
 
 echo wsgd_wsgd_repository = ${wsgd_wsgd_repository}
-echo wsgd_clone_wsgd_repository = ${wsgd_clone_wsgd_repository}
 echo wsgd_wireshark_repository = ${wsgd_wireshark_repository}
 echo wsgd_clone_wireshark_repository = ${wsgd_clone_wireshark_repository}
 
@@ -303,7 +303,7 @@ then
 		${wsgd_sudo} apt-get --assume-yes install qttools5-dev
 		${wsgd_sudo} apt-get --assume-yes install qtmultimedia5-dev
 		${wsgd_sudo} apt-get --assume-yes install libqt5svg5-dev
-
+		
 		${wsgd_sudo} apt-get --assume-yes install libpcap-dev
 
 
@@ -317,7 +317,10 @@ then
 	elif type yum 2>/dev/null
 	then
 		#-------------------------------------------------------------------------------
-		#-- CentOS7, CentOS8
+		#-- CentOS7         eol: 2024-06-30						4.0 needs gcrypt 1.8.0
+		#-- CentOS8         eol: 2021-12-31						4.0 needs pcre2
+		#-- CentOS Stream 8 eol: 2024-05-31						libpcap-devel not found : PowerTools
+		#-- CentOS Stream 9 eol: ~2027
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
 		${wsgd_sudo} yum --assumeyes install git
@@ -334,6 +337,11 @@ then
 		${wsgd_sudo} yum --assumeyes install flex
 		${wsgd_sudo} yum --assumeyes install bison
 		${wsgd_sudo} yum --assumeyes install c-ares-devel
+
+		if (( $wsgd_WIRESHARK_VERSION_NUMBER >= 40000 ))
+		then
+			${wsgd_sudo} yum --assumeyes install pcre2-devel
+		fi
 
 		${wsgd_sudo} yum --assumeyes install qt5-qttools
 		${wsgd_sudo} yum --assumeyes install qt5-qtbase-devel
@@ -369,7 +377,7 @@ then
 		${wsgd_sudo} zypper --non-interactive in libqt5-qtmultimedia-devel
 		${wsgd_sudo} zypper --non-interactive in libQt5PrintSupport-devel
 		${wsgd_sudo} zypper --non-interactive in libqt5-qtsvg-devel
-
+		
 		${wsgd_sudo} zypper --non-interactive in libpcap-devel
 		
 	else
