@@ -55,8 +55,10 @@ M_TEST_FCT(test_promote_printf_string_to_64bits)
     // Modifications for integers
 #ifdef WIN32
     M_TEST_OK("%d %i %u %o %x %X", "%I64d %I64i %I64u %I64o %I64x %I64X");
+    M_TEST_OK("%03d %+02i", "%03I64d %+02I64i");
 #else
     M_TEST_OK("%d %i %u %o %x %X", "%lld %lli %llu %llo %llx %llX");
+    M_TEST_OK("%03d %+02i", "%03lld %+02lli");
 #endif
 
     // Errors
