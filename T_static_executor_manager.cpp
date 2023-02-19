@@ -75,18 +75,26 @@ T_static_executor_manager::build_execution_filters(const int           argc,
     for (; arg_idx < argc; ++arg_idx)
     {
         std::string  filter = argv[arg_idx];
+
+        T_execution_filters_base * p_filters = &execution_filters.accept;
+        if (starts_with(filter, "-"))
+        {
+            filter.erase(0, 1);
+            p_filters = &execution_filters.reject;
+        }
+
         if (ends_with(filter, ".cpp"))
         {
-            execution_filters.filter_file_name_ends.push_back(filter);
+            p_filters->filter_file_name_ends.push_back(filter);
         }
         else if (ends_with(filter, "*"))
         {
             filter.pop_back();
-            execution_filters.filter_function_name_starts.push_back(filter);
+            p_filters->filter_function_name_starts.push_back(filter);
         }
         else
         {
-            execution_filters.filter_function_names.push_back(filter);
+            p_filters->filter_function_names.push_back(filter);
         }
     }
 
@@ -94,13 +102,21 @@ T_static_executor_manager::build_execution_filters(const int           argc,
 }
 
 bool
-T_static_executor_manager::T_execution_filters::must_execute(const T_static_executor& executor) const
+T_static_executor_manager::T_execution_filters_base::is_defined() const
 {
-    bool must_match = false;   // will be true if any filter is specified
+    return !filter_function_names.empty() ||
+           !filter_function_name_starts.empty() ||
+           !filter_file_name_ends.empty();
+}
+
+bool
+T_static_executor_manager::T_execution_filters_base::match(const T_static_executor_base& executor) const
+{
+    bool match = true;   // set to false if any filter is specified
 
     if (!filter_function_names.empty())
     {
-        must_match = true;
+        match = false;
         if (find(begin(filter_function_names), end(filter_function_names), executor.get_fct_name()) != end(filter_function_names))
         {
             return  true;
@@ -109,7 +125,7 @@ T_static_executor_manager::T_execution_filters::must_execute(const T_static_exec
 
     if (!filter_function_name_starts.empty())
     {
-        must_match = true;
+        match = false;
         for (const auto& filter_function_name_start : filter_function_name_starts)
         {
             if (starts_with(executor.get_fct_name(), filter_function_name_start))
@@ -121,7 +137,7 @@ T_static_executor_manager::T_execution_filters::must_execute(const T_static_exec
 
     if (!filter_file_name_ends.empty())
     {
-        must_match = true;
+        match = false;
         for (const auto& filter_file_name_end : filter_file_name_ends)
         {
             if (ends_with_case_insensitive(executor.get_file_name(), filter_file_name_end))
@@ -131,5 +147,23 @@ T_static_executor_manager::T_execution_filters::must_execute(const T_static_exec
         }
     }
 
-    return  !must_match;
+    return  match;
+}
+
+bool
+T_static_executor_manager::T_execution_filters::must_execute(const T_static_executor_base& executor) const
+{
+    if (reject.is_defined() && reject.match(executor))
+    {
+        return false;
+    }
+
+    if (accept.is_defined())
+    {
+        return accept.match(executor);
+    }
+    else
+    {
+        return true;
+    }
 }

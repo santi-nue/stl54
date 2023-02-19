@@ -10,16 +10,15 @@
 static T_static_executor M_static_executor_##FCT(FCT, std::string(__FILE__), #FCT);
 
 
-class T_static_executor
+class T_static_executor_base
 {
 public:
-    T_static_executor(void(*test_fct)(), const std::string& file_name, const std::string& fct_name)
+    T_static_executor_base(void(*test_fct)(), const std::string& file_name, const std::string& fct_name)
         : m_test_fct(test_fct)
         , m_file_name(file_name)
         , m_fct_name(fct_name)
         , m_label(file_name + " " + fct_name)
     {
-        do_register();
     }
 
     void execute();
@@ -28,10 +27,21 @@ public:
     const std::string &  get_file_name() const { return m_file_name; }
 
 private:
-    void do_register();
-
     void(*m_test_fct)() = nullptr;
     std::string m_file_name;
     std::string m_fct_name;
     std::string m_label;
+};
+
+class T_static_executor : public T_static_executor_base
+{
+public:
+    T_static_executor(void(*test_fct)(), const std::string& file_name, const std::string& fct_name)
+        : T_static_executor_base(test_fct, file_name, fct_name)
+    {
+        do_register();
+    }
+
+private:
+    void do_register();
 };

@@ -22,13 +22,21 @@ public:
                 const int           arg_idx);
 
 public:  // for UT
-    struct T_execution_filters
+    struct T_execution_filters_base
     {
         std::vector<std::string>  filter_file_name_ends;
         std::vector<std::string>  filter_function_names;
         std::vector<std::string>  filter_function_name_starts;
 
-        bool  must_execute(const T_static_executor& executor) const;
+        bool  is_defined() const;
+        bool  match(const T_static_executor_base& executor) const;
+    };
+    struct T_execution_filters
+    {
+        T_execution_filters_base  accept;
+        T_execution_filters_base  reject;
+
+        bool  must_execute(const T_static_executor_base& executor) const;
     };
 
     static
