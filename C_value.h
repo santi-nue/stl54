@@ -102,6 +102,10 @@ struct C_value : public CT_debug_object_counter<C_value>
     const std::string  & get_str ()  const;
     T_msg                get_msg ()  const;
 
+    // Fatal if internal type is not integer or float
+    long long            as_int()  const;
+    double               as_flt()  const;
+
     // Returns the internal string.
     const std::string  & as_string () const;
 

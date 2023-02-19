@@ -378,6 +378,23 @@ C_value::get_bool ()  const
 }
 
 //*****************************************************************************
+// Fatal if internal type is not integer or float
+//*****************************************************************************
+long long
+C_value::as_int()  const
+{
+    M_FATAL_IF_FALSE((A_type == E_type_integer) || (A_type == E_type_float));
+    return  A_integer;
+}
+
+double
+C_value::as_flt()  const
+{
+    M_FATAL_IF_FALSE((A_type == E_type_integer) || (A_type == E_type_float));
+    return  A_flt;
+}
+
+//*****************************************************************************
 // No fatal.
 //*****************************************************************************
 
@@ -817,7 +834,9 @@ C_value::sprintf_values(const std::string      & printf_format,
             // Search if %...s is specified.
             const char  * p_format = tmp_str_format;
             while ((*p_format != '\0') &&
-                   ((isalpha(*p_format) == 0) || (*p_format == 'l') || (*p_format == 'L')))
+                   ((isalpha(*p_format) == 0) ||
+                    (*p_format == 'l') || (*p_format == 'L') ||
+                    (*p_format == 'I' /*I64*/)))
             {
                 ++p_format;
             }
@@ -825,6 +844,20 @@ C_value::sprintf_values(const std::string      & printf_format,
             if (*p_format == 's')
             {
                 sprintf(tmp_str+strlen(tmp_str), tmp_str_format, value.as_string().c_str());
+            }
+            else if (*p_format == 'f' || *p_format == 'F' ||
+                     *p_format == 'e' || *p_format == 'E' ||
+                     *p_format == 'g' || *p_format == 'G' ||
+                     *p_format == 'a' || *p_format == 'A')
+            {
+                sprintf(tmp_str + strlen(tmp_str), tmp_str_format, value.as_flt());
+            }
+            else if (*p_format == 'd' || *p_format == 'i' ||
+                     *p_format == 'u' ||
+                     *p_format == 'o' ||
+                     *p_format == 'x' || *p_format == 'X')
+            {
+                sprintf(tmp_str + strlen(tmp_str), tmp_str_format, value.as_int());
             }
             else if (value.get_type() == C_value::E_type_float)
             {

@@ -114,15 +114,15 @@ std::string to_string(const std::string format,
     return oss.str();
 }
 
-template<typename TYPE>
-void test_same_result_printf(const std::string format_param, const TYPE value_c)
+template<typename TYPE, typename TYPE_FOR_PRINTF>
+void test_same_result_printf_base(const std::string format_param, const TYPE value_c, const TYPE_FOR_PRINTF value_c_for_printf)
 {
     std::string format = format_param;
     promote_printf_string_to_64bits(format);
 
     char printf_value[1000 + 1];
     const std::string format_printf = sizeof(TYPE) >= 8 ? format : format_param;
-    sprintf(printf_value, format_printf.c_str(), value_c);
+    sprintf(printf_value, format_printf.c_str(), value_c_for_printf);
 
     vector<C_value>    values;
     values.push_back(C_value(value_c));
@@ -137,6 +137,24 @@ void test_same_result_printf(const std::string format_param, const TYPE value_c)
     }
     cout << "\n";
     M_TEST_EQ(printed_value, printf_value);
+}
+
+template<typename TYPE>
+void test_same_result_printf(const std::string format_param, const TYPE value_c)
+{
+    test_same_result_printf_base(format_param, value_c, value_c);
+}
+
+template<typename TYPE>
+void test_same_result_printf_flt(const std::string format_param, const TYPE value_c)
+{
+    test_same_result_printf_base(format_param, value_c, (double)value_c);
+}
+
+template<typename TYPE>
+void test_same_result_printf_int(const std::string format_param, const TYPE value_c)
+{
+    test_same_result_printf_base(format_param, value_c, (long long)value_c);
 }
 
 M_TEST_FCT(test_value_printf_int)
@@ -174,17 +192,17 @@ M_TEST_FCT(test_value_printf_int)
         test_same_result_printf(format, -4985123963LL);
     }
 
-    // floats, invalid types for these formats !
+    // floats, invalid types for these printf formats, but valid for wsgd
     for (std::string format : formats)
     {
-        test_same_result_printf(format, 123.1);
-        test_same_result_printf(format, 257.2);
-        test_same_result_printf(format, 65539.3);
-        test_same_result_printf(format, 4985123963.4);
-        test_same_result_printf(format, -123.5);
-        test_same_result_printf(format, -257.6);
-        test_same_result_printf(format, -65539.7);
-        test_same_result_printf(format, -4985123963.8);
+        test_same_result_printf_int(format, 123.1);
+        test_same_result_printf_int(format, 257.2);
+        test_same_result_printf_int(format, 65539.3);
+        test_same_result_printf_int(format, 4985123963.4);
+        test_same_result_printf_int(format, -123.5);
+        test_same_result_printf_int(format, -257.6);
+        test_same_result_printf_int(format, -65539.7);
+        test_same_result_printf_int(format, -4985123963.8);
     }
 }
 
@@ -212,25 +230,25 @@ M_TEST_FCT(test_value_printf_flt)
         test_same_result_printf(format, -4985123963.8);
     }
 
-    // integers, invalid types for these formats !
+    // integers, invalid types for these printf formats, but valid for wsgd
     for (std::string format : formats)
     {
-        test_same_result_printf(format,         123);
-        test_same_result_printf(format,         257);
-        test_same_result_printf(format,       65539);
-        test_same_result_printf(format,  4985123963);
-        test_same_result_printf(format,         123LL);
-        test_same_result_printf(format,         257LL);
-        test_same_result_printf(format,       65539LL);
-        test_same_result_printf(format,  4985123963LL);
-        //test_same_result_printf(format,        -123);  // KO, ie output -nan differ from printf
-        //test_same_result_printf(format,        -257);  // idem
-        //test_same_result_printf(format,      -65539);  // idem
-        test_same_result_printf(format, -4985123963);
-        test_same_result_printf(format,        -123LL);
-        test_same_result_printf(format,        -257LL);
-        test_same_result_printf(format,      -65539LL);
-        test_same_result_printf(format, -4985123963LL);
+        test_same_result_printf_flt(format,         123);
+        test_same_result_printf_flt(format,         257);
+        test_same_result_printf_flt(format,       65539);
+        test_same_result_printf_flt(format,  4985123963);
+        test_same_result_printf_flt(format,         123LL);
+        test_same_result_printf_flt(format,         257LL);
+        test_same_result_printf_flt(format,       65539LL);
+        test_same_result_printf_flt(format,  4985123963LL);
+        test_same_result_printf_flt(format,        -123);
+        test_same_result_printf_flt(format,        -257);
+        test_same_result_printf_flt(format,      -65539);
+        test_same_result_printf_flt(format, -4985123963);
+        test_same_result_printf_flt(format,        -123LL);
+        test_same_result_printf_flt(format,        -257LL);
+        test_same_result_printf_flt(format,      -65539LL);
+        test_same_result_printf_flt(format, -4985123963LL);
     }
 }
 
