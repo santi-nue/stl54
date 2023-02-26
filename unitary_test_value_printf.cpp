@@ -58,7 +58,11 @@ M_TEST_FCT(test_value_printf)
     M_TEST_OK("%f",   123.0, "123.000000");            // NB: do not care about precise format
     M_TEST_OK("%e",   123.0, "1.230000e+02");          // NB: do not care about precise format
     M_TEST_OK("%g",   123.0, "123");                   // NB: do not care about precise format
+#ifdef WIN32
     M_TEST_OK("%a",   123.0, "0x1.ec00000000000p+6");  // NB: do not care about precise format
+#else
+    M_TEST_OK("%a",   123.0, "0x1.ecp+6");             // NB: do not care about precise format
+#endif
 
     M_TEST_OK("%d",   -123, "-123");
 	//M_TEST_OK("0x%x", -123, "-0x7b");     // donne 0xffffffffffffff85
@@ -68,7 +72,11 @@ M_TEST_FCT(test_value_printf)
     M_TEST_OK("%f",   -123.0, "-123.000000");            // NB: do not care about precise format
     M_TEST_OK("%e",   -123.0, "-1.230000e+02");          // NB: do not care about precise format
     M_TEST_OK("%g",   -123.0, "-123");                   // NB: do not care about precise format
+#ifdef WIN32
     M_TEST_OK("%a",   -123.0, "-0x1.ec00000000000p+6");  // NB: do not care about precise format
+#else
+    M_TEST_OK("%a",   -123.0, "-0x1.ecp+6");             // NB: do not care about precise format
+#endif
 
        
     M_TEST_OK("%f", -123.0, "-123.000000");              // NB: do not care about precise format
