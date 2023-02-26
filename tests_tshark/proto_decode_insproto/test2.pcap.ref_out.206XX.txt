@@ -1,0 +1,52 @@
+Frame 1: 52 bytes on wire (416 bits), 52 bytes captured (416 bits)
+TEST2 (BLE) UART, direction: dev2pc (1)  
+    uart_packet_direction
+        direction: dev2pc (1)
+    uart_packet
+        slip_start: 0xab (171)
+        header
+            payload_length: 42
+            protocol_version: 2
+            packet_counter: 4
+            packet_id: event_packet (6)
+        ble_packet
+            header
+                length: 10
+                flags
+                    phy: phy_1M (0)
+                    mic_ok: false (0)
+                    encrypted: false (0)
+                    direction: slave_to_master (0)
+                    crc_ok: true (1)
+                channel: 37
+                rssi: -53 (53)
+                event_counter: 0
+                time_diff_us: 183344096
+            payload
+                Bluetooth Low Energy Link Layer
+                    Access Address: 0x8e89bed6
+                    Packet Header: 0x1660 (PDU Type: ADV_IND, ChSel: #2, TxAdd: Random)
+                        .... 0000 = PDU Type: ADV_IND (0x0)
+                        ...0 .... = RFU: 0
+                        ..1. .... = Channel Selection Algorithm: #2
+                        .1.. .... = Tx Address: Random
+                        0... .... = Reserved: False
+                        Length: 22
+                    Advertising Address: d4:4f:cf:eb:cd:d6
+                    Advertising Data
+                        Flags
+                            Length: 2
+                            Type: Flags (0x01)
+                            000. .... = Reserved: 0x0
+                            ...0 .... = Simultaneous LE and BR/EDR to Same Device Capable (Host): false (0x0)
+                            .... 0... = Simultaneous LE and BR/EDR to Same Device Capable (Controller): false (0x0)
+                            .... .1.. = BR/EDR Not Supported: true (0x1)
+                            .... ..1. = LE General Discoverable Mode: true (0x1)
+                            .... ...0 = LE Limited Discoverable Mode: false (0x0)
+                        Device Name: HomeWSN_DLS
+                            Length: 12
+                            Type: Device Name (0x09)
+                            Device Name: HomeWSN_DLS
+                    CRC: 0x800b13
+        slip_end: 0xbc (188)
+

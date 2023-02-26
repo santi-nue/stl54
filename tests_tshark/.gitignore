@@ -1,0 +1,11 @@
+
+*.pcap.tst_err.full.txt
+*.pcap.tst_err.txt
+*.pcap.tst_out.full.txt
+*.pcap.tst_out.txt
+wireshark_generic_dissector_traces.txt
+
+/old_*
+/_proto_*
+* - Copie*
+* - Raccourci.lnk

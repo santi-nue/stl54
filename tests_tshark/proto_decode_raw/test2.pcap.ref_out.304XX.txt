@@ -1,0 +1,28 @@
+Frame 1: 52 bytes on wire (416 bits), 52 bytes captured (416 bits)
+TEST2 (BLE) UART, direction: dev2pc (1)  
+    uart_packet_direction
+        direction: dev2pc (1)
+    uart_packet
+        slip_start: 0xab (171)
+        header
+            payload_length: 42
+            protocol_version: 2
+            packet_counter: 4
+            packet_id: event_packet (6)
+        ble_packet
+            header
+                length: 10
+                flags
+                    phy: phy_1M (0)
+                    mic_ok: false (0)
+                    encrypted: false (0)
+                    direction: slave_to_master (0)
+                    crc_ok: true (1)
+                channel: 37
+                rssi: -53 (53)
+                event_counter: 0
+                time_diff_us: 183344096
+            payload
+                full_data: d6be898e6016d6cdebcf4fd40201060c09486f6d6557534e5f444c5301d0c8
+        slip_end: 0xbc (188)
+

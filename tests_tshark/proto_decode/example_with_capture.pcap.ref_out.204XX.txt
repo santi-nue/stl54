@@ -1,0 +1,306 @@
+Frame 1: 78 bytes on wire (624 bits), 78 bytes captured (624 bits)
+Ethernet II, Src: 00:01:c0:04:3b:c4, Dst: 00:17:f2:cc:73:a7
+Internet Protocol Version 4, Src: 172.16.0.1, Dst: 172.16.0.10
+Transmission Control Protocol, Src Port: 32821, Dst Port: 13600, Seq: 1, Ack: 1, Len: 12
+Example_2 Protocol, Type: cs_start (7077899)  Size: 8  
+    Header
+        Type: cs_start (7077899)
+        Size: 8
+    id: 0
+    acronym: 
+
+Frame 2: 1050 bytes on wire (8400 bits), 1050 bytes captured (8400 bits)
+Ethernet II, Src: 00:17:f2:cc:73:a7, Dst: 00:01:c0:04:3b:c4
+Internet Protocol Version 4, Src: 172.16.0.10, Dst: 172.16.0.1
+Transmission Control Protocol, Src Port: 13600, Dst Port: 32821, Seq: 1, Ack: 13, Len: 984
+Example_2 Protocol, Type: sc_start_ack (65547)  Size: 980  
+    Header
+        Type: sc_start_ack (65547)
+        Size: 980
+    chat: Let's try the basic types
+        [Expert Info (Chat/Malformed): chat: Let's try the basic types]
+            [chat: Let's try the basic types]
+            [Severity level: Chat]
+            [Group: Malformed]
+    test_basic_types
+        three_bytes: 00f400
+        bool1: true (1)
+        bool8: false (0)
+        bool16: 59600	ERROR unknown enum value
+            [Expert Info (Error/Malformed): bool16: 59600	ERROR unknown enum value]
+                [bool16: 59600	ERROR unknown enum value]
+                [Severity level: Error]
+                [Group: Malformed]
+        bool32: 67109184	ERROR unknown enum value
+            [Expert Info (Error/Malformed): bool32: 67109184	ERROR unknown enum value]
+                [bool32: 67109184	ERROR unknown enum value]
+                [Severity level: Error]
+                [Group: Malformed]
+        int2: 0
+        int3: 0
+        int4: 3
+        int5: -1
+        int6: -1
+        int7: -15
+        int8: -16
+        int9: 0
+        int10: 0
+        int11: 0
+        int12: 6
+        int13: 7
+        int14: -2
+        int15: 263
+        int16: 0
+        int17: 16448
+        int18: 18428
+        int19: 7313
+        int20: -261807
+        int21: -773488
+        int22: 723150
+        int23: 2512467
+        int24: -8166907
+        int25: 937453
+        int26: 20099514
+        int27: 11567397
+        int28: -73875392
+        int29: 150994944
+        int30: 8
+        int31: 136314880
+        int32: 8
+        int64: 585467951558164495
+        uint1: 0
+        uint2: 0
+        uint3: 4
+        uint4: 0
+        uint5: 16
+        uint6: 0
+        uint7: 0
+        uint8: 0
+        uint9: 0
+        uint10: 0
+        uint11: 64
+        uint12: 1032
+        uint13: 0
+        uint14: 0
+        uint15: 0
+        uint16: 6176
+        uint17: 16384
+        uint18: 0
+        uint19: 8
+        uint20: 32896
+        uint21: 0
+        uint22: 10
+        uint23: 7340032
+        uint24: 131072
+        uint25: 8191
+        uint26: 67076096
+        uint27: 0
+        uint28: 1664
+        uint29: 75509968
+        uint30: 141690056
+        uint31: 16842753
+        uint32: 2228224
+        float32: 3.36312e-044
+        float64: 1.74402e-274
+        string: 
+        string_2_or_4: "
+        raw: 00000408000100
+    note: Let's try the specifications
+        [Expert Info (Note/Malformed): note: Let's try the specifications]
+            [note: Let's try the specifications]
+            [Severity level: Note]
+            [Group: Malformed]
+    test_specifications
+        x: 3.9609e+006 (16711680)	ERROR is > to 65537
+            [Expert Info (Error/Malformed): x: 3.9609e+006 (16711680)	ERROR is > to 65537]
+                [x: 3.9609e+006 (16711680)	ERROR is > to 65537]
+                [Severity level: Error]
+                [Group: Malformed]
+        y: 0x3fc00 (65280)
+        y_bis: 0x3fc (255)	ERROR is > to 203
+            [Expert Info (Error/Malformed): y_bis: 0x3fc (255)	ERROR is > to 203]
+                [y_bis: 0x3fc (255)	ERROR is > to 203]
+                [Severity level: Error]
+                [Group: Malformed]
+        z: b11101000 (210)
+        alpha: -4427611715  units per hour (-368967645)	ERROR is < to -128000
+            [Expert Info (Error/Malformed): alpha: -4427611715  units per hour (-368967645)	ERROR is < to -128000]
+                [alpha: -4427611715  units per hour (-368967645)	ERROR is < to -128000]
+                [Severity level: Error]
+                [Group: Malformed]
+    warning: Let's try the arrays
+        [Expert Info (Warning/Malformed): warning: Let's try the arrays]
+            [warning: Let's try the arrays]
+            [Severity level: Warning]
+            [Group: Malformed]
+    test_arrays
+        a_value: 0
+        an_array[0]: 0
+        an_array[1]: 0
+        an_array[2]: 4
+        an_array[3]: 8
+        an_array[4]: 0
+        another_value: 1
+        another_array_dim2: 2
+        another_array_dim3: 6
+        another_array[0][0][0]: 0
+        another_array[1][0][0]: 0
+        another_array[2][0][0]: 255
+        another_array[0][1][0]: 0
+        another_array[1][1][0]: 0
+        another_array[2][1][0]: 255
+        another_array[0][0][1]: 0
+        another_array[1][0][1]: 0
+        another_array[2][0][1]: 255
+        another_array[0][1][1]: 0
+        another_array[1][1][1]: 0
+        another_array[2][1][1]: 0
+        another_array[0][0][2]: 210
+        another_array[1][0][2]: 234
+        another_array[2][0][2]: 2
+        another_array[0][1][2]: 0
+        another_array[1][1][2]: 36
+        another_array[2][1][2]: 0
+        another_array[0][0][3]: 0
+        another_array[1][0][3]: 0
+        another_array[2][0][3]: 4
+        another_array[0][1][3]: 8
+        another_array[1][1][3]: 0
+        another_array[2][1][3]: 1
+        another_array[0][0][4]: 0
+        another_array[1][0][4]: 0
+        another_array[2][0][4]: 255
+        another_array[0][1][4]: 0
+        another_array[1][1][4]: 0
+        another_array[2][1][4]: 255
+        another_array[0][0][5]: 0
+        another_array[1][0][5]: 0
+        another_array[2][0][5]: 255
+        another_array[0][1][5]: 0
+        another_array[1][1][5]: 0
+        another_array[2][1][5]: 0
+    error: Let's try the enums
+        [Expert Info (Error/Malformed): error: Let's try the enums]
+            [error: Let's try the enums]
+            [Severity level: Error]
+            [Group: Malformed]
+    test_enum
+        enum11: symbol (1687)
+        enum_more: 1281	ERROR unknown enum value
+            [Expert Info (Error/Malformed): enum_more: 1281	ERROR unknown enum value]
+                [enum_more: 1281	ERROR unknown enum value]
+                [Severity level: Error]
+                [Group: Malformed]
+        note: enum11 is NOT on (symbol = 1687)
+            [Expert Info (Note/Malformed): note: enum11 is NOT on (symbol = 1687)]
+                [note: enum11 is NOT on (symbol = 1687)]
+                [Severity level: Note]
+                [Group: Malformed]
+    Let's try the bitfields
+    test_bitfield
+        bitfield_1  0x250000
+            field1: b0 (0)
+            field3: 23844.3 (10240)
+            field4: 2	ERROR unknown enum value
+                [Expert Info (Error/Malformed): field4: 2	ERROR unknown enum value]
+                    [field4: 2	ERROR unknown enum value]
+                    [Severity level: Error]
+                    [Group: Malformed]
+            field5: false (0)
+    Let's try the loops
+    test_loop
+        field_inside_loop: 0
+        field_inside_loop_after_continue: 4
+        field_inside_loop: 8
+        field_inside_loop_after_continue: 0
+        field_inside_loop: 1
+        field_inside_loop_after_continue: 0
+        field_inside_loop: 0
+        field_inside_loop_after_continue: 255
+        field_inside_loop: 0
+        field_inside_loop_after_continue: 0
+        field_inside_loop: 255
+        field_inside_loop_after_continue: 0
+        field_inside_loop: 0
+        field_inside_loop_after_continue: 255
+        field_inside_loop: 0
+        field_inside_loop: 0
+        field_inside_loop: 0
+        field_inside_infinite_loop: 6
+        field_inside_infinite_loop: 4
+        bit_inside_loop_size_bits: 1
+        bits_inside_loop_size_bits: 29
+        bit_inside_loop_size_bits: 0
+        bits_inside_loop_size_bits: 32
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 1
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 0
+        bit_inside_loop_size_bytes: 1
+        bit_inside_loop_size_bytes: 0
+    Let's try the switch
+    test_switch
+        operation: CREATION (0)
+        CREATION value
+        value: 4
+    Let's try the frame
+    test_frame
+        val16: 2048
+        val32: 16777471
+        str4: 
+        var16: 0
+        var64: 34360260608
+        varstr4: 
+        ten_bytes: 00ff000000d2
+        outside_var64: 34360260608
+        outside_varstr4: 
+        outside_val16: 2048
+        outside_val32: 16777471
+        outside_str4: 
+    Let's try the global
+    test_global
+        global.msg_counter -> 2
+    end_of_msg: 00ff000000d2ea020027000000040800010000ff0000ff00...
+
+Frame 3: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+Ethernet II, Src: 00:01:c0:04:3b:c4, Dst: 00:17:f2:cc:73:a7
+Internet Protocol Version 4, Src: 172.16.0.1, Dst: 172.16.0.10
+Transmission Control Protocol, Src Port: 32821, Dst Port: 13600, Seq: 13, Ack: 985, Len: 40
+Example_2 Protocol, Type: cs_request (3604485)  Size: 40  
+
+Frame 4: 98 bytes on wire (784 bits), 98 bytes captured (784 bits)
+Ethernet II, Src: 00:17:f2:cc:73:a7, Dst: 00:01:c0:04:3b:c4
+Internet Protocol Version 4, Src: 172.16.0.10, Dst: 172.16.0.1
+Transmission Control Protocol, Src Port: 13600, Dst Port: 32821, Seq: 985, Ack: 53, Len: 32
+Example_2 Protocol, Type: sc_ctx_data (65538)  Size: 28  
+    Header
+        Type: sc_ctx_data (65538)
+        Size: 28
+    end_of_msg: 000000000187000000000000000000000000000028000000...
+
+Frame 5: 70 bytes on wire (560 bits), 70 bytes captured (560 bits)
+Ethernet II, Src: 00:01:c0:04:3b:c4, Dst: 00:17:f2:cc:73:a7
+Internet Protocol Version 4, Src: 172.16.0.1, Dst: 172.16.0.10
+Transmission Control Protocol, Src Port: 32821, Dst Port: 13600, Seq: 53, Ack: 1017, Len: 4
+[2 Reassembled TCP Segments (44 bytes): #3(40), #5(4)]
+Example_2 Protocol, Type: cs_request (3604485)  Size: 40  
+    Header
+        Type: cs_request (3604485)
+        Size: 40
+    id: 40960
+    acronym: W
+    unknow_data: 08000000ffffff00620005000c000000
+    request: BIG-REQUESTS
+    request_id: 34560
+    request_counter: 256
+

@@ -1,0 +1,195 @@
+enum8 T_uart_direction
+{
+	pc2dev                   0
+	dev2pc                   1
+}
+
+enum8 T_uart_packet_id
+{
+	event_packet             0x06
+}
+
+enum3 T_ble_phy
+{
+	phy_1M                   0
+	phy_2M                   1
+	phy_coded                2
+}
+
+enum1 T_ble_direction
+{
+	slave_to_master          0
+	master_to_slave          1
+}
+
+const uint8 slip_code::start     = 0xAB;
+const uint8 slip_code::end       = 0xBC;
+const uint8 slip_code::esc       = 0xCD;
+const uint8 slip_code::esc_start = 0xAC;
+const uint8 slip_code::esc_end   = 0xBD;
+const uint8 slip_code::esc_esc   = 0xCE;
+
+function void slip_decode (in frame frame, in uint32 nb_of_bits_needed)
+{
+#output           ++;
+	hide var uint32 nb_of_bytes_needed = nb_of_bits_needed / 8;
+	hide var uint32 add_byte_needed = nb_of_bits_needed % 8;
+	if (add_byte_needed > 0)
+	{
+		set nb_of_bytes_needed = nb_of_bytes_needed + 1;
+	}
+	
+	while (nb_of_bytes_needed > 0)
+	{
+		if (slip_decode_ble_packet_payload_idx == 6)
+		{
+			hide uint8 byte_zero_to_ignore;
+			set slip_decode_ble_packet_payload_idx = slip_decode_ble_packet_payload_idx + 1;
+		}
+		
+		hide uint8 byte1;
+		if (slip_decode_ble_packet_payload_idx >= 0)
+		{
+			set slip_decode_ble_packet_payload_idx = slip_decode_ble_packet_payload_idx + 1;
+		}
+		
+		if (byte1 == slip_code::esc)
+		{
+			hide uint8 byte2;
+			if (slip_decode_ble_packet_payload_idx >= 0)
+			{
+				set slip_decode_ble_packet_payload_idx = slip_decode_ble_packet_payload_idx + 1;
+			}
+
+			switch(byte2)
+			{
+			case slip_code::esc_start :
+				set byte1 = slip_code::start;
+			case slip_code::esc_end :
+				set byte1 = slip_code::end;
+			case slip_code::esc_esc :
+				set byte1 = slip_code::esc;
+			}
+		}
+		call frame_append_data (frame, byte1);
+		set nb_of_bytes_needed = nb_of_bytes_needed - 1;
+	}
+#output           --;
+}
+
+function uint8 get_protover ()
+{
+#	output           ++;
+	save_position    fixed_header_start_position;
+	move_position_bytes   2;
+	uint8            protover;
+	goto_position    fixed_header_start_position;
+#	output           --;
+	return           protover;
+}
+
+function string print_rssi (in uint8 rssi)
+{
+	hide var string  rssi_str = print("-%u", rssi);
+	return rssi_str;
+}
+
+struct T_fixed_header
+{
+	hide var uint8                     protover = get_protover ();
+                          
+	switch(protover)      
+	{                     
+	case 1 :              
+		uint8                          header_length;
+		uint8                          payload_length;
+	case 2 :              
+		uint16                         payload_length;
+	}                     
+                          
+	uint8                              protocol_version;
+	uint16                             packet_counter;
+	T_uart_packet_id                   packet_id;
+}
+
+struct T_ble_packet_header_flags
+{
+	hide bool1                         reserved;
+	T_ble_phy                          phy;
+	bool1                              mic_ok;
+	bool1                              encrypted;
+	T_ble_direction                    direction;
+	bool1                              crc_ok;
+}
+
+struct T_ble_packet_header
+{
+	uint8                              length;
+	T_ble_packet_header_flags          flags;
+	uint8                              channel;
+	uint8{de=print_rssi(this)}         rssi;
+	uint16                             event_counter;
+	uint32                             time_diff_us;
+}
+
+struct T_ble_packet_payload
+{
+# there should be decoded by slip_decode function data array here:
+# d6 be 89 8e 60 16 00 d6 cd eb cf 4f d4 02 01 06 0c 09 48 6f 6d 65 57 53 4e 5f 44 4c 53 01 d0 c8
+#                   ^^
+# it's needed to cut the 7th 'padding' byte, so the array should be
+# d6 be 89 8e 60 16 d6 cd eb cf 4f d4 02 01 06 0c 09 48 6f 6d 65 57 53 4e 5f 44 4c 53 01 d0 c8
+# please see packet.txt
+
+# and pass the resulting array to btle subdissector
+
+#	uint8{d=hex}[31]                    full_data;
+#	raw(31)                             full_data;
+#	subproto(31){dissector=btle}        full_data;
+	insproto(31){dissector=btle}        full_data;
+}
+
+struct T_ble_packet
+{
+	T_ble_packet_header                header;
+	set slip_decode_ble_packet_payload_idx = 0;
+	T_ble_packet_payload               payload;
+}
+
+struct T_msg_packet
+{
+    hide var int16  slip_decode_ble_packet_payload_idx = -1;
+	decoder slip_decode;
+
+	uint8{d=hex}                       slip_start;
+	T_fixed_header                     header;
+	if (payload_length > 0)
+	{
+		switch(packet_id)
+		{
+		case T_uart_packet_id::event_packet :
+			T_ble_packet               ble_packet;
+		}
+	}
+	uint8{d=hex}                       slip_end;
+
+	decoder nil;
+}
+
+struct T_msg_header
+{
+	T_uart_direction                   direction;
+}
+
+struct T_msg
+{
+	T_msg_header                       uart_packet_direction;
+	T_msg_packet                       uart_packet;
+}
+
+switch T_msg_switch
+{
+case T_uart_direction::pc2dev : T_msg  "";
+case T_uart_direction::dev2pc : T_msg  "";
+default :                       raw(*) unknown_message;
+}
