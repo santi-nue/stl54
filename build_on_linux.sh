@@ -31,15 +31,13 @@ wsgd__echo ()
 
 wsgd__check_execution_ok ()
 {
-	l_wsgd_output=$1
-	
 	if [ $? -ne 0 ]
 	then
-		wsgd__echo "Error ${l_wsgd_output}"
+		wsgd__echo "Error $1"
 		exit 1
 	fi
 	
-	wsgd__echo "${l_wsgd_output} done"
+	wsgd__echo "$1 done"
 }
 
 wsgd__prompt_continue ()
@@ -234,6 +232,7 @@ echo
 if [ "${wsgd_test}" == "yes" ]
 then
 	echo "- launch wsgd unitary_tests"
+	echo "- launch wsgd tests_tshark"
 	echo
 fi
 wsgd__prompt_continue "display configuration ..."
@@ -566,6 +565,7 @@ wsgd__check_executable  run/unitary_tests                                     "i
 
 ################################################################################
 ### unitary_tests
+### tests_tshark
 ################################################################################
 wsgd__cd  ${wsgd_wsgd_src_dir}
 
@@ -574,6 +574,10 @@ then
 	wsgd__echo "${wsgd_cmake_build_dir}/run/unitary_tests"
 	${wsgd_cmake_build_dir}/run/unitary_tests
 	wsgd__check_execution_ok  "unitary_tests"
+
+	wsgd__echo "./tests_tshark/test.sh"
+	./tests_tshark/test.sh
+	wsgd__check_execution_ok  "tests_tshark"
 fi
 
 ################################################################################
