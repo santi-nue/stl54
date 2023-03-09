@@ -1,0 +1,96 @@
+
+# This is an example of what can be done with Generic Dissector.
+# This is not a real example (ie used in real life).
+# I just put here many possible syntax.
+
+# If you want to understand how to build a .fdesc and .wsgd from zero,
+#  please refer to :
+# http://wsgd.free.fr/first_proto.html
+#  and :
+# http://wsgd.free.fr/fdesc_format.html
+# http://wsgd.free.fr/wsgd_format.html
+
+# NB: the declaration order is important,
+#      i.e. you must declare a type before using it.
+
+###############################################################################
+# Message identifier
+###############################################################################
+
+enum24 T_Type_message
+{
+  cs_start           7077899
+  sc_start_ack         65547
+  cs_request         3604485
+  sc_ctx_data          65538
+  cs_ping            8847361
+  sc_rpy_data          65539
+}
+
+###############################################################################
+# A very specific way to know the size of the message.
+# To match the example_capture.pcap
+###############################################################################
+
+function  uint32  compute_size_after_header (in T_Type_message  msg_id)
+{
+  hide var uint32  size_after_header = 0;
+
+  switch(msg_id)     # T_Type_message
+  {
+  # The message fit the packet.
+  case T_Type_message::cs_start     :  set  size_after_header =   8;
+  case T_Type_message::sc_start_ack :  set  size_after_header = 980;
+  case T_Type_message::sc_ctx_data  :  set  size_after_header =  28;
+  
+  # The message is on 2 packets.
+  case T_Type_message::cs_request   :  set  size_after_header =  40;
+  }
+  
+  return  size_after_header;
+}
+
+###############################################################################
+# Header
+###############################################################################
+
+struct  T_msg_header_type
+{
+  byte_order          big_endian;
+  T_Type_message      Type;
+  spare               not_used_field;
+
+  var uint16          Size = compute_size_after_header(Type);
+  
+  hide var string     Msg_Title = print("%s (0x%x), Size=%d and where is the fish ?", Type, Type, Size);
+}
+
+###############################################################################
+# Messages
+###############################################################################
+
+struct  T_msg_cs_start
+{
+  T_msg_header_type        Header;
+  uint32                   id;
+  string(4)                acronym;
+}
+
+struct  T_msg_unknow
+{
+  T_msg_header_type        Header;
+  raw(*)                   end_of_msg;
+}
+
+###############################################################################
+# Main switch
+###############################################################################
+
+switch  T_msg_switch  T_Type_message
+{
+case  T_Type_message::cs_start       : T_msg_cs_start         "";  # "" permits to avoid a useless supplementary tree
+default        : 
+
+#  fatal ("Unknow msg identifier %d (%s)", Type, Type);
+  T_msg_unknow  "";
+}
