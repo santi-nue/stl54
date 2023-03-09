@@ -1,6 +1,9 @@
 
-2020/01/09  Upd : improve STATISTICS parse error message
-2020/01/03  Mod : STATISTICS <menu> [ <sub menu> [ <topic> <field name>, ..., <topic> <field name> ], ... ]
+2023/02/21  Mod : print("%f", int) works as printf("%f", (double)int)
+                  print("%d", flt) works as printf("%lld", (long long)flt)
+2021/10/21  Mod : printf format rejects h, l or L
+2021/01/09  Upd : improve STATISTICS parse error message
+2021/01/03  Mod : STATISTICS <menu> [ <sub menu> [ <topic> <field name>, ..., <topic> <field name> ], ... ]
 2020/12/25  Add : STATISTICS <menu> <sub menu> <topic> <field name>
 2020/11/27  Fix : Dissectors called by subproto, insproto and raw now receive decoded data
 2020/11/07  Sup : Source code is now incompatible with wireshark <= 2.4
