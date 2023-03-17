@@ -276,8 +276,6 @@ M_TEST_FCT(test_frame_data)
 M_TEST_FCT(test_frame_data_write)
 {
     unsigned char  bytes[200];
-    long           initial_sizeof_bytes = sizeof(bytes)/sizeof(bytes[0]);
-
     unsigned char  data[] = { 0xe0, 0xd7, 0xc3, 0x20, 0x31, 0x40, 0x51, 0x72, 0x03, 0x04, 0xff, 0xaa, 0x37 };
     long           initial_sizeof_data = sizeof(data)/sizeof(data[0]);
 

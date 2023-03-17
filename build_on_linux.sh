@@ -6,12 +6,15 @@
 # More precise script sequence is displayed when you launch it
  
 # This script has been tested on :
-# - CentOS 7.6         (wsl)    wireshark 2.4 to 3.4
+# - CentOS 7.6         (wsl)    wireshark 2.4 to 3.6
 # - CentOS 8.1         (wsl)    wireshark 3.0 to 3.6
+# - CentOS stream 8    (wsl)    wireshark 3.0 to 4.0
 # - CentOS stream 9    (wsl)    wireshark        4.0
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.6
 # - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.6
-# - Ubuntu 20.04       (wsl)    wireshark 3.2 to 3.6
+# - Ubuntu 16.04       (wsl)    wireshark 3.2 to 3.4
+# - Ubuntu 18.04       (wsl)    wireshark 3.0 to 3.6
+# - Ubuntu 20.04       (wsl)    wireshark 3.0 to 3.6
 # - Ubuntu 22.04       (wsl)    wireshark 3.6 to 4.0
 # - Debian 10.10       (wsl)    wireshark 3.4 to 3.6
 
@@ -283,6 +286,7 @@ then
 	then
 		#-------------------------------------------------------------------------------
 		#-- Debian 10.10
+		#-- Ubuntu 16.04 						                3.6 needs Qt 5.6
 		#-- Ubuntu 18.04 						                4.0 needs pcre2
 		#-- Ubuntu 20.04
 		#-- Ubuntu 22.04
@@ -321,6 +325,7 @@ then
 		#-- CentOS7         eol: 2024-06-30						4.0 needs gcrypt 1.8.0
 		#-- CentOS8         eol: 2021-12-31						4.0 needs pcre2
 		#-- CentOS Stream 8 eol: 2024-05-31						libpcap-devel not found : PowerTools
+		#														radiotap-gen compilation error : pcap.h not found into wspcap.h
 		#-- CentOS Stream 9 eol: ~2027
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
