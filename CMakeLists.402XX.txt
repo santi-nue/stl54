@@ -1,0 +1,110 @@
+# CMakeLists.txt
+#
+# Wireshark - Network traffic analyzer
+# By Gerald Combs <gerald@wireshark.org>
+# Copyright 1998 Gerald Combs
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+include(WiresharkPlugin)
+
+# Plugin name and version info (major minor micro extra)
+set_module_info(generic 0 5 2 0)
+
+include(cmake_wireshark_version_number.cmake)
+
+include(CMakeLists.DISSECTOR_CORE.txt)
+include(CMakeLists.DISSECTOR_SUPPORT_SRC.txt)
+
+
+add_library(libfdesc STATIC ${DISSECTOR_CORE_SRC})
+set_target_properties(libfdesc PROPERTIES FOLDER "Wsgd")
+
+
+# Only files needed to generate plugin.c
+set(DISSECTOR_SRC
+	packet-generic.c
+)
+
+set(PLUGIN_FILES
+	plugin.c
+	${DISSECTOR_SRC}
+	${DISSECTOR_SUPPORT_SRC}
+)
+
+if (UNIX)
+	set_source_files_properties(
+		${PLUGIN_FILES}
+		PROPERTIES
+	# Too many errors (sign compare, ...)
+	#	COMPILE_FLAGS "${WERROR_COMMON_FLAGS}"
+		COMPILE_FLAGS ""
+	)
+else()
+	set_source_files_properties(
+		${PLUGIN_FILES}
+		PROPERTIES
+		COMPILE_FLAGS "${WERROR_COMMON_FLAGS}"
+	)
+endif()
+
+register_plugin_files(plugin.c
+	plugin
+	${DISSECTOR_SRC}
+)
+
+add_wireshark_plugin_library(generic epan)
+target_link_libraries(generic PRIVATE epan libfdesc)
+set_target_properties(generic PROPERTIES FOLDER "Wsgd")
+
+install_plugin(generic epan)
+
+file(GLOB DISSECTOR_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.h")
+CHECKAPI(
+	NAME
+	  generic
+	SWITCHES
+	  --group dissectors-prohibited
+	  --group dissectors-restricted
+	SOURCES
+	  ${DISSECTOR_SRC}
+	  ${DISSECTOR_SUPPORT_SRC}
+	  ${DISSECTOR_HEADERS}
+)
+
+
+
+# byte_interpret
+add_executable(byte_interpret byte_interpret_main.cpp)
+if (UNIX)
+	# Mandatory for peglib.h
+	#target_link_options(byte_interpret PRIVATE -pthread)  # cmake >= 3.13
+	target_link_libraries(byte_interpret PRIVATE "-pthread")
+endif()
+target_link_libraries(byte_interpret PRIVATE libfdesc)
+set_target_properties(byte_interpret PROPERTIES FOLDER "Wsgd")
+
+
+# unitary_tests
+include(CMakeLists.DISSECTOR_UT_SRC.txt)
+add_executable(unitary_tests unitary_tests.cpp ${DISSECTOR_UT_SRC})
+if (UNIX)
+	# Mandatory for peglib.h
+	#target_link_options(byte_interpret PRIVATE -pthread)  # cmake >= 3.13
+	target_link_libraries(unitary_tests PRIVATE "-pthread")
+endif()
+target_link_libraries(unitary_tests PRIVATE libfdesc)
+set_target_properties(unitary_tests PROPERTIES FOLDER "Wsgd")

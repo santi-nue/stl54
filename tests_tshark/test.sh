@@ -42,7 +42,7 @@ function get_versions_from_to_lower()
     our_version=$1
     
     version_list=""
-    for version in 204XX 206XX 300XX 302XX 304XX 306XX 400XX
+    for version in 204XX 206XX 300XX 302XX 304XX 306XX 400XX 402XX
     do
         # echo ${version}
         version_list="${version} ${version_list}"

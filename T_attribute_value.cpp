@@ -200,7 +200,11 @@ string    attribute_value_to_string (const T_attribute_value  & attribute_value)
         value_str += " (" + attribute_value.original + ")";
 
     if (attribute_value.P_error != nullptr)
+#if WIRESHARK_VERSION_NUMBER >= 40200
+        value_str += "    " + *attribute_value.P_error;
+#else
         value_str += "\t" + *attribute_value.P_error;
+#endif
 
     return  value_str;
 }

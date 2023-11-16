@@ -272,7 +272,11 @@ M_TEST_ERROR_ALREADY_KNOWN__OPEN(3535660, "char are displayed as integer")
     M_TEST_SIMPLE("3fc2", " int16{q=2:o=13.6}{min=-31604.5:max=-30000} val ;", "val = -31604.4 (-15809)" K_eol);
 
     // min/max ERROR
+#if WIRESHARK_VERSION_NUMBER >= 40200
+    M_TEST_SIMPLE("3fc2", "uint16{q=2:o=13}{min=99468}    val ;", "val = 99467 (49727)    ERROR is < to 99468" K_eol);
+#else
     M_TEST_SIMPLE("3fc2", "uint16{q=2:o=13}{min=99468}    val ;", "val = 99467 (49727)\tERROR is < to 99468" K_eol);
+#endif
 
     // display
     M_TEST_SIMPLE("3fc2", "uint16{d=hex}  val ;", "val = 0xc23f (49727)" K_eol);

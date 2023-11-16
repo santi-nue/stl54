@@ -100,7 +100,9 @@ void fct_name()
 //*****************************************************************************
 // Test macro for pointer
 //*****************************************************************************
+#if !defined(__GNUC__) || __GNUC__ < 11
 std::ostream& operator << (std::ostream & os, std::nullptr_t);
+#endif
 
 #define M_TEST_NULL(PTR)        M_TEST_EQ(PTR, nullptr)
 #define M_TEST_NOT_NULL(PTR)    M_TEST_NE(PTR, nullptr)

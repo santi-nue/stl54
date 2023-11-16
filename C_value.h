@@ -78,6 +78,7 @@ struct C_value : public CT_debug_object_counter<C_value>
 
     // Assignment operator
     C_value &  operator=(const C_value  & rhs);
+    C_value(const C_value  & rhs) = default;
 
     // Type of the value
     E_type               get_type () const { return  A_type; }

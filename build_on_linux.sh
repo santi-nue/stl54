@@ -9,13 +9,13 @@
 # - CentOS 7.6         (wsl)    wireshark 2.4 to 3.6
 # - CentOS 8.1         (wsl)    wireshark 3.0 to 3.6
 # - CentOS stream 8    (wsl)    wireshark 3.0 to 4.0
-# - CentOS stream 9    (wsl)    wireshark        4.0
+# - CentOS stream 9    (wsl)    wireshark 4.0 to 4.2
 # - Kali 2019.2        (wsl)    wireshark 2.4 to 3.6
 # - openSUSE Leap 15-1 (wsl)    wireshark 2.4 to 3.6
 # - Ubuntu 16.04       (wsl)    wireshark 3.2 to 3.4
 # - Ubuntu 18.04       (wsl)    wireshark 3.0 to 3.6
 # - Ubuntu 20.04       (wsl)    wireshark 3.0 to 3.6
-# - Ubuntu 22.04       (wsl)    wireshark 3.6 to 4.0
+# - Ubuntu 22.04       (wsl)    wireshark 3.6 to 4.2
 # - Debian 10.10       (wsl)    wireshark 3.4 to 3.6
 
 # Wsgd source code is now incompatible with wireshark <= 2.4
@@ -172,10 +172,10 @@ fi
 [ -z "${wsgd_os_install_packages}" ]  && wsgd_os_install_packages="yes"
 
 # Set wirewhark version
-[ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=400XX
-[ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=4.0
-[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v4.0.0
-[ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=40000
+[ -z "${wsgd_wireshark_branch}" ]         && wsgd_wireshark_branch=402XX
+[ -z "${wsgd_wireshark_plugin_version}" ] && wsgd_wireshark_plugin_version=4.2
+[ -z "${wsgd_wireshark_checkout_label}" ] && wsgd_wireshark_checkout_label=v4.2.0
+[ -z "${wsgd_WIRESHARK_VERSION_NUMBER}" ] && wsgd_WIRESHARK_VERSION_NUMBER=40200
 
 
 # Set sources repositories
@@ -288,7 +288,7 @@ then
 		#-- Debian 10.10
 		#-- Ubuntu 16.04 						                3.6 needs Qt 5.6
 		#-- Ubuntu 18.04 						                4.0 needs pcre2
-		#-- Ubuntu 20.04
+		#-- Ubuntu 20.04                                        4.2 needs Qt 6
 		#-- Ubuntu 22.04
 		#-- Kali 2019.2
 		#-------------------------------------------------------------------------------
@@ -304,10 +304,28 @@ then
 		${wsgd_sudo} apt-get --assume-yes install bison
 		${wsgd_sudo} apt-get --assume-yes install libc-ares-dev
 
-		${wsgd_sudo} apt-get --assume-yes install qtdeclarative5-dev
-		${wsgd_sudo} apt-get --assume-yes install qttools5-dev
-		${wsgd_sudo} apt-get --assume-yes install qtmultimedia5-dev
-		${wsgd_sudo} apt-get --assume-yes install libqt5svg5-dev
+		if (( $wsgd_WIRESHARK_VERSION_NUMBER >= 40200 ))
+		then
+			${wsgd_sudo} apt-get --assume-yes install qt6-base-dev
+			${wsgd_sudo} apt-get --assume-yes install qt6-multimedia-dev
+			${wsgd_sudo} apt-get --assume-yes install qt6-tools-dev
+			${wsgd_sudo} apt-get --assume-yes install qt6-tools-dev-tools
+			${wsgd_sudo} apt-get --assume-yes install qt6-l10n-tools
+			${wsgd_sudo} apt-get --assume-yes install libqt6core5compat6-dev
+			# ${wsgd_sudo} apt-get --assume-yes install freeglut3-dev
+			# ${wsgd_sudo} apt-get --assume-yes install libvulkan-dev
+			# ${wsgd_sudo} apt-get --assume-yes install libxkbcommon-dev
+		else
+			${wsgd_sudo} apt-get --assume-yes install qtdeclarative5-dev
+			${wsgd_sudo} apt-get --assume-yes install qttools5-dev
+			${wsgd_sudo} apt-get --assume-yes install qtmultimedia5-dev
+			${wsgd_sudo} apt-get --assume-yes install libqt5svg5-dev
+		fi
+		
+		if (( $wsgd_WIRESHARK_VERSION_NUMBER >= 40200 ))
+		then
+			${wsgd_sudo} apt-get --assume-yes install libspeexdsp-dev
+		fi
 		
 		${wsgd_sudo} apt-get --assume-yes install libpcap-dev
 
@@ -317,6 +335,9 @@ then
 			# Problem seen on Kali 2019.2 & Ubuntu 20.04
 			wsgd__echo "fix make (and wireshark ...) will fail to find libQt5Core.so"
 			${wsgd_sudo} strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so
+			# Problem seen on Ubuntu 22.04
+			wsgd__echo "fix make will fail to find libQt6Core.so.6"
+			${wsgd_sudo} strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt6Core.so.6
 		fi
 
 	elif type yum 2>/dev/null
@@ -326,6 +347,7 @@ then
 		#-- CentOS8         eol: 2021-12-31						4.0 needs pcre2
 		#-- CentOS Stream 8 eol: 2024-05-31						libpcap-devel not found : PowerTools
 		#														radiotap-gen compilation error : pcap.h not found into wspcap.h
+		#														4.2 needs qt6
 		#-- CentOS Stream 9 eol: ~2027
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
@@ -349,22 +371,45 @@ then
 			${wsgd_sudo} yum --assumeyes install pcre2-devel
 		fi
 
-		${wsgd_sudo} yum --assumeyes install qt5-qttools
-		${wsgd_sudo} yum --assumeyes install qt5-qtbase-devel
-		${wsgd_sudo} yum --assumeyes install qt5-qttools-devel
-		${wsgd_sudo} yum --assumeyes install qt5-qtmultimedia-devel
-		${wsgd_sudo} yum --assumeyes install qt5-qtsvg-devel
+		if (( $wsgd_WIRESHARK_VERSION_NUMBER >= 40200 ))
+		then
+			${wsgd_sudo} yum --assumeyes install qt6-qttools
+			${wsgd_sudo} yum --assumeyes install qt6-qtbase-devel
+			${wsgd_sudo} yum --assumeyes install qt6-qttools-devel
+			${wsgd_sudo} yum --assumeyes install qt6-qtmultimedia-devel
+			${wsgd_sudo} yum --assumeyes install qt6-qtsvg-devel
+			${wsgd_sudo} yum --assumeyes install qt6-qt5compat-devel
+		else
+			${wsgd_sudo} yum --assumeyes install qt5-qttools
+			${wsgd_sudo} yum --assumeyes install qt5-qtbase-devel
+			${wsgd_sudo} yum --assumeyes install qt5-qttools-devel
+			${wsgd_sudo} yum --assumeyes install qt5-qtmultimedia-devel
+			${wsgd_sudo} yum --assumeyes install qt5-qtsvg-devel
+		fi
+
+		if (( $wsgd_WIRESHARK_VERSION_NUMBER >= 40200 ))
+		then
+			# yum did not find speexdsp-devel on CentOS Stream 9
+			${wsgd_sudo} dnf --enablerepo=crb install speexdsp-devel
+		fi
 
 		${wsgd_sudo} yum --assumeyes install libpcap-devel
 		${wsgd_sudo} yum --assumeyes install zlib-devel
 		${wsgd_sudo} yum --assumeyes install harfbuzz-devel.x86_64
+
+		if [ "${wsgd_os_wsl}" == "wsl" ]
+		then
+			# Problem seen on CentOS Stream 9
+			wsgd__echo "fix make will fail to find libQt6Core.so"
+			${wsgd_sudo} strip --remove-section=.note.ABI-tag /usr/lib64/libQt6Core.so.6
+		fi
 
 		wsgd_cmake=cmake3
 
 	elif type zypper 2>/dev/null
 	then
 		#-------------------------------------------------------------------------------
-		#-- openSUSE Leap 15-1
+		#-- openSUSE Leap 15-1 				                    4.2 needs cmake 3.13
 		#-------------------------------------------------------------------------------
 		wsgd__echo "install packages mandatory to build wireshark"
 		${wsgd_sudo} zypper --non-interactive in git

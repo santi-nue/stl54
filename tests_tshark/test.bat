@@ -9,7 +9,7 @@ rem ***************************************************************************
 rem Build versions list (from our version to lower)
 rem ***************************************************************************
 
-set version_list_full=204XX;206XX;300XX;302XX;304XX;306XX;400XX
+set version_list_full=204XX;206XX;300XX;302XX;304XX;306XX;400XX;402XX
 set version_list=
 
 for %%v in (%version_list_full%) do (
